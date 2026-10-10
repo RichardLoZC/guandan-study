@@ -1,0 +1,18 @@
+{
+  "checked": "2026-10-11",
+  "source": "https://www.innerscene.com/tools/library/3d-parts/posable-anatomical-right-hand-f6098b4f",
+  "download": "https://www.innerscene.com/api/library/posable-anatomical-right-hand-f6098b4f/download",
+  "author": "Innerscene, based on MakeHuman / MPFB CC0 assets",
+  "license": "CC0-1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "license_evidence": "Author asset page explicitly permits use, modification and redistribution, including commercially, under CC0.",
+  "file": "hand-posable.glb",
+  "bytes": 506476,
+  "sha256": "d1705ec1317516e79deb5c5ce4ef34e69bf6315bba9025e8a7374fbd0c745f47",
+  "runtime_files": [
+    "web/assets/3d/left-hand.glb",
+    "web/assets/3d/right-hand.glb"
+  ],
+  "converter": "scripts/prepare-3d-hands.py",
+  "conversion": "Blender background mode with auto-execution disabled; static mesh and vertex colors, no scripts, skeleton, textures or external requests in exported hands."
+}

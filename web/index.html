@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="day">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>掼蛋研习社</title>
+  <link rel="icon" type="image/png" href="/assets/brand/app-icon.png">
+  <link rel="stylesheet" href="/app/table.css?v=170">
+  <link rel="stylesheet" href="/app/desktop.css?v=170">
+  <link rel="stylesheet" href="/app/deal-animation.css?v=170">
+  <link rel="stylesheet" href="/app/table3d.css?v=170">
+  <link rel="stylesheet" href="/app/lan.css?v=170">
+  <link rel="stylesheet" href="/app/mobile.css?v=170">
+  <script src="/app/locales/en.js?v=170" defer></script>
+  <script src="/app/i18n.js?v=170" defer></script>
+  <script src="/app/core.js?v=170" defer></script>
+  <script src="/app/tuo3.js?v=170" defer></script>
+  <script src="/app/match.js?v=170" defer></script>
+  <script src="/app/model-client.js?v=170" defer></script>
+  <script src="/app/deal-animation.js?v=170" defer></script>
+  <script src="/app/presentation.js?v=170" defer></script>
+  <script src="/app/arrange.js?v=170" defer></script>
+  <script src="/app/table.js?v=170" defer></script>
+  <script src="/app/lan-client.js?v=170" defer></script>
+  <script src="/app/table-view.js?v=170" defer></script>
+  <script src="/app/review.js?v=170" defer></script>
+</head>
+<body>
+  <main id="preview" class="view active-view">
+    <div class="app-frame">
+      <header class="app-top">
+        <div class="brand"><img class="brand-icon" src="/assets/brand/app-icon.png" alt="" width="44" height="44"><div><strong>掼蛋研习社</strong><span id="engine-indicator" role="status">正在加载离线模型…</span></div></div>
+        <div class="top-controls">
+          <button class="text-action language-toggle" id="language-toggle" translate="no" aria-label="切换到英文">English</button>
+          <button class="mode-entry" id="open-lan">单人练习 <span aria-hidden="true">⌄</span></button>
+          <div class="view-picker" role="group" aria-label="牌桌视角"><button id="view-2d" aria-pressed="true">2D</button><button id="view-3d" aria-pressed="false">3D 握牌</button></div>
+          <button class="text-action" id="open-review">复盘</button>
+          <button class="text-action" id="open-settings">设置</button>
+        </div>
+      </header>
+
+      <div id="lan-status" hidden><span id="lan-status-text" role="status"></span><button id="lan-show-room">查看房间</button></div>
+      <div id="error-banner" role="alert" hidden><span id="error-message"></span><button id="retry-model">重试</button><button id="export-raw">导出存档</button></div>
+      <div class="arena-layout">
+        <section id="deal-stage" class="deal-stage" aria-label="发牌动画" hidden></section>
+        <section id="tribute-receipt" class="tribute-receipt" aria-label="本副贡还摘要" hidden>
+          <div class="tribute-receipt-heading"><strong id="tribute-receipt-title"></strong><span id="tribute-receipt-leader"></span></div>
+          <div id="tribute-receipt-cards" class="tribute-receipt-cards"></div>
+        </section>
+        <section class="play-zone" aria-label="牌桌与手牌">
+          <section id="lan-waiting-table" class="lan-waiting-table" hidden><span class="section-label">朋友在这张桌相聚</span><h2 id="lan-waiting-title">等待玩家入座</h2><p id="lan-waiting-note">人齐后由房主开局，自动随机分位。</p><button class="primary-button" id="lan-open-lobby">打开牌桌</button></section>
+          <div id="three-stage" hidden></div>
+          <div class="view-toolbar"><span id="view-status" role="status" hidden></span></div>
+          <div class="felt" aria-hidden="true"><div class="felt-line"></div><div class="felt-emblem">掼</div></div>
+          <div class="match-strip">
+            <div class="score-pair" id="classic-score"><span>我方 <b id="our-level">2</b></span><i></i><span>对方 <b id="their-level">2</b></span></div>
+            <div class="score-pair" id="tuo3-score" hidden><span>我的积分 <b id="my-points">0</b></span><i></i><span>搭档 <strong id="current-partner"></strong></span></div>
+            <div class="level-label"><span id="round-label">第1副</span> · 打 <b id="current-level">2</b><span class="wild-reference" id="wild-reference">♥2 逢人配</span></div>
+          </div>
+
+          <div class="player teammate seat-2" data-seat="2">
+            <span class="avatar" aria-hidden="true"><img src="assets/avatars/zhi-qiu.png" alt=""></span>
+            <div class="player-info"><strong>知秋 <span class="relation">队友</span></strong><span class="remaining">剩 <b>27</b> 张</span><span class="seat-bubble">不出</span></div><div class="seat-anchor"></div>
+          </div>
+          <div class="player opponent-left seat-3" data-seat="3">
+            <span class="avatar" aria-hidden="true"><img src="assets/avatars/mo-bai.png" alt=""></span>
+            <div class="player-info"><strong>墨白 <span class="relation">对手</span></strong><span class="remaining">剩 <b>27</b> 张</span><span class="seat-bubble">不出</span></div><div class="seat-anchor"></div>
+          </div>
+          <div class="player opponent-right seat-1 last-player" data-seat="1">
+            <span class="avatar" aria-hidden="true"><img src="assets/avatars/qing-lan.png" alt=""></span>
+            <div class="player-info"><strong>青岚 <span class="relation">对手</span></strong><span class="remaining">剩 <b>25</b> 张</span><span class="seat-bubble recent-play">刚出 <b>对10</b></span></div><div class="seat-anchor"></div>
+          </div>
+          <div class="self-play-anchor seat-0"></div>
+
+          <section id="tribute-panel" class="tribute-panel" aria-label="本局贡还明牌" hidden>
+            <header><h2 id="tribute-title"></h2><p id="tribute-reason"></p><p id="tribute-message" role="status" aria-live="polite"></p></header>
+            <div id="tribute-transfers" class="tribute-transfers"></div>
+          </section>
+
+          <div class="round-end-banner" id="round-end-banner" hidden><span>本局已结束</span><h2>我方双上</h2><p>知秋第1，你第2。本局升3级。</p><div class="end-actions"><button class="secondary-button" id="reopen-review">查看整局复盘</button><button class="primary-button" id="next-round">开始下一副</button></div></div>
+          <section id="round-final-play" class="round-final-play" aria-label="本局最后出牌" hidden><h3>最后打出的牌</h3><div class="final-play-content"></div></section>
+          <section id="round-score" class="round-scores" aria-label="本副积分明细" hidden></section>
+          <section id="round-reveal" class="round-reveal" aria-label="终局明牌" hidden><h3>终局明牌</h3><p>本局已结束，未出完的手牌在这里明示。</p><div class="revealed-hands"></div></section>
+          <section class="hand-pane" aria-label="你的手牌">
+            <div class="hand-heading">
+              <h1>我的手牌 <span id="hand-count">27</span></h1>
+              <div class="turn-pill" role="status" aria-live="polite"><span class="turn-dot"></span><strong>轮到你出牌</strong></div>
+              <div class="hand-options"><button id="arrange-hand" class="text-action">理牌</button><button id="clear-selection" class="text-action">取消选择</button></div>
+            </div>
+            <div id="arrangement-summary" class="arrangement-summary" aria-live="polite" hidden></div>
+            <div class="hand-scroll" id="hand-scroll" tabindex="0" aria-label="手牌区域，可上下滚动查看"><div id="hand-cards"></div></div>
+            <div class="action-bar">
+              <div class="selection-status" id="selection-status" role="status" aria-live="polite">请选择手牌<span>或点击「看建议」</span></div>
+              <div class="actions"><select id="play-kind" aria-label="选择牌型解释" hidden></select><button id="hint-button" class="hint-button">看建议</button><button id="pass-button" class="secondary-button">不出</button><button id="play-button" class="primary-button" disabled>出牌 <span aria-hidden="true">↗</span></button><button class="primary-button" id="confirm-tribute" hidden>开始出牌</button></div>
+              <button class="table-history" id="open-history">出牌记录</button>
+            </div>
+          </section>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <dialog id="lan-dialog" class="analysis-dialog game-dialog" aria-labelledby="lan-title">
+    <header class="dialog-header"><div><h2 id="lan-title">来一局掼蛋</h2></div><button class="close-button" data-close-dialog="lan-dialog" aria-label="关闭游戏选择">×</button></header>
+    <div class="game-mode-tabs" role="group" aria-label="游戏方式"><button id="mode-solo" aria-pressed="true">单人练习<span>和 DanLM 切磋牌技</span></button><button id="mode-multi" aria-pressed="false">多人游戏<span>同一 Wi-Fi，2—4 人同桌</span></button></div>
+    <p id="lan-message" role="status" hidden></p>
+    <section id="solo-panel" class="mode-panel">
+      <div id="solo-current"><h3>继续你的牌局</h3><p id="solo-progress"></p><div class="lan-actions"><button class="primary-button" id="solo-continue">继续这局</button><button class="secondary-button" id="new-game">重新开始</button></div></div>
+      <section id="lan-leave-confirm" hidden><h3>回到单人练习</h3><p id="lan-leave-note"></p><div class="lan-actions"><button class="primary-button" id="lan-confirm-leave">切换到单人练习</button><button class="secondary-button" id="lan-cancel-leave">留在多人牌桌</button></div></section>
+    </section>
+    <section id="multi-panel" class="mode-panel" hidden>
+      <section id="lan-connect">
+        <div class="lan-create-row"><div><h3>和朋友一起打牌</h3><p>一台电脑开桌，其他设备输入房间码加入。</p></div><button class="primary-button" id="lan-host">开一桌</button></div>
+        <button class="secondary-button" id="lan-restore" hidden>继续上次牌桌</button>
+        <div class="lan-nearby-heading"><h3>附近的牌桌</h3><button class="text-action" id="lan-refresh">刷新</button></div>
+        <p id="lan-discovery-status" role="status">正在寻找同一 Wi-Fi 下的牌桌…</p>
+        <div id="lan-nearby" class="lan-nearby"></div>
+        <form id="lan-join-form" class="lan-join-row"><label class="lan-field" for="lan-code">房间码<input id="lan-code" placeholder="6 位数字" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="off" required></label><button class="primary-button" id="lan-join" type="submit">加入牌桌</button></form>
+        <details id="lan-manual" class="lan-minor"><summary>没找到牌桌？手动加入</summary><label class="lan-field">房主显示的地址<input id="lan-address" placeholder="例如：192.168.1.8:18765" inputmode="url" autocapitalize="off" spellcheck="false"></label></details>
+        <details class="lan-minor"><summary>修改我的称呼</summary><label class="lan-field">你的称呼<input id="lan-name" maxlength="12" placeholder="默认使用设备名称" autocomplete="nickname"></label></details>
+      </section>
+      <section id="lan-room" hidden>
+        <div class="lan-code-card"><div><span>房间码 · 告诉同桌的朋友</span><h3 id="lan-room-title"></h3></div><strong id="lan-count">1 / 4 人</strong></div>
+        <div id="lan-members" class="lan-seats" aria-label="四个玩家座位"></div>
+        <p id="lan-room-note"></p>
+        <div class="lan-actions lan-primary-actions"><button class="primary-button" id="lan-start">等待朋友入座</button><button class="primary-button" id="lan-resume" hidden>返回牌桌</button><button class="secondary-button" id="lan-retry" hidden>重新连接</button></div>
+        <details class="lan-minor" id="lan-options"><summary>房间选项</summary><p>手动加入地址：<strong id="lan-addresses"></strong></p><div id="lan-manage-members"></div><div class="lan-actions"><button class="secondary-button" id="lan-lobby" hidden>重新组桌</button><button class="secondary-button" id="lan-new-game" hidden>重新计分</button></div>
+          <section id="lan-lobby-confirm" class="lan-confirm" hidden><p>结束当前联机牌局，回到等候入座的牌桌？玩家与房间码保留。</p><button class="secondary-button" id="lan-cancel-lobby">取消</button><button class="primary-button" id="lan-confirm-lobby">确认重新组桌</button></section>
+        </details>
+      </section>
+      <p id="lan-footnote" class="lan-footnote">不足四人时，空位由 DanLM 补齐。联机时请让房主电脑保持开机。</p>
+    </section>
+  </dialog>
+  <dialog id="analysis-dialog" class="analysis-dialog" aria-labelledby="analysis-title">
+    <header class="dialog-header"><div><span class="section-label">模型推荐 · 规则解读</span><h2 id="analysis-title">这一手的取舍</h2></div><button class="close-button" id="close-analysis" aria-label="关闭教学面板">×</button></header>
+    <p class="explanation-source" id="advice-source">根据你的手牌与公开牌局计算。</p>
+    <div class="suggested-cards" id="suggested-cards"></div>
+    <section class="dialog-recommendation"><div><span>推荐打法</span><h3 id="advice-title">计算中…</h3><p id="advice-reason"></p></div><button class="primary-button" id="adopt-from-dialog" disabled>选中推荐</button></section>
+    <div id="teaching-details"></div>
+    <div class="dialog-bottom"><button class="secondary-button" id="return-table">返回牌桌</button><span>采用建议仅选牌，出牌由你确认</span></div>
+  </dialog>
+  <dialog id="history-dialog" class="analysis-dialog" aria-labelledby="history-title"><header class="dialog-header"><h2 id="history-title">本局出牌记录</h2><button class="close-button" id="close-history" aria-label="关闭出牌记录">×</button></header><div id="history-list" class="history-list"></div><p>这里记录本局实际发生的行动。</p></dialog>
+  <dialog id="skin-dialog" class="analysis-dialog skin-dialog" aria-labelledby="skin-title">
+    <header class="dialog-header"><div><span class="section-label">外观偏好</span><h2 id="skin-title">挑一副顺眼的牌</h2></div><button class="close-button" data-close-dialog="skin-dialog" aria-label="关闭牌面选择">×</button></header>
+    <div class="skin-grid" id="skin-options" role="group" aria-label="牌面样式"></div>
+    <div class="dialog-bottom"><p class="source-note">手牌、桌面出牌和复盘使用同一副牌面。</p><button class="primary-button" id="apply-skin">使用此牌面</button></div>
+  </dialog>
+
+  <dialog id="review-dialog" class="analysis-dialog review-dialog" aria-labelledby="review-title">
+    <header class="dialog-header"><div><span id="review-source" class="section-label">本局回顾</span><h2 id="review-title">这一局，回头看清楚</h2></div><button class="close-button" data-close-dialog="review-dialog" aria-label="关闭整局复盘">×</button></header>
+    <label class="review-selector">查看 <select id="review-selector" aria-label="选择复盘牌局"><option value="current">当前这一局</option></select></label>
+    <div class="review-tabs" role="tablist" aria-label="复盘内容"><button role="tab" id="tab-overview" aria-controls="review-overview" aria-selected="true" data-review-tab="overview">本局总览</button><button role="tab" id="tab-decisions" aria-controls="review-decisions" aria-selected="false" tabindex="-1" data-review-tab="decisions">关键选择</button><button role="tab" id="tab-replay" aria-controls="review-replay" aria-selected="false" tabindex="-1" data-review-tab="replay">逐手回放</button></div>
+    <section id="review-overview" role="tabpanel" aria-labelledby="tab-overview">
+      <div class="result-hero"><div><span class="section-label">本局结果</span><h3 id="result-title"></h3><p id="result-summary"></p></div><div class="result-badge" id="result-badge"></div></div>
+      <div class="review-stats" id="review-stats"></div><div class="finish-list" id="finish-list"></div>
+      <section id="review-score" class="round-scores" aria-label="复盘积分明细" hidden></section>
+      <section id="review-final-play" class="round-final-play" aria-label="复盘最后出牌" hidden><h3>最后打出的牌</h3><div class="final-play-content"></div></section>
+      <section id="review-reveal" class="round-reveal" aria-label="终局明牌" hidden><h3>终局明牌</h3><p>这些是结算时剩余的手牌。</p><div class="revealed-hands"></div></section>
+      <div class="review-section-heading"><h3>回看本局的关键选择</h3><button class="text-action" data-go-review="decisions">展开分析 →</button></div><div class="takeaway-grid" id="takeaways"></div>
+      <p id="review-boundary" class="review-boundary">复盘来自本局实际行动。记录当时请求过的建议，不使用赛后信息重写推荐。</p>
+    </section>
+    <section id="review-decisions" role="tabpanel" aria-labelledby="tab-decisions" hidden><p class="review-intro">回到做决定的那一刻，看手牌、桌面和各家余牌。</p><div id="decision-list" class="decision-list"></div></section>
+    <section id="review-replay" role="tabpanel" aria-labelledby="tab-replay" hidden>
+      <div class="replay-toolbar"><label class="moment-control">时点 <select id="replay-moment"><option value="before">行动前</option><option value="after" selected>行动后</option></select></label><button id="replay-first" aria-label="回到第一步">⏮</button><button id="replay-prev" aria-label="上一步">←</button><button id="replay-auto">播放</button><button id="replay-next" aria-label="下一步">→</button><button id="replay-last" aria-label="跳到最后一步">⏭</button><strong id="replay-counter"></strong><label class="mine-filter"><input type="checkbox" id="replay-mine">记录只看我</label></div>
+      <input type="range" id="replay-range" aria-label="回放进度" min="0" value="0">
+      <div class="replay-layout"><div><div class="replay-felt" id="replay-felt" aria-label="当时牌桌"></div><details class="replay-hand"><summary id="replay-hand-title">行动后的我的手牌</summary><div class="review-hand-cards" id="replay-hand-cards"></div></details></div><div class="timeline-wrap"><h3>完整行动记录</h3><div id="review-timeline" class="review-timeline"></div></div></div>
+    </section>
+    <footer class="review-footer"><span>本机牌局记录 · 规则解读</span><div><button class="secondary-button" id="export-review">导出复盘</button><button class="primary-button" data-close-dialog="review-dialog">返回牌桌</button></div></footer>
+  </dialog>
+
+
+  <dialog id="settings-dialog" class="analysis-dialog" aria-labelledby="settings-title">
+    <header class="dialog-header"><h2 id="settings-title">牌室设置</h2><button class="close-button" data-close-dialog="settings-dialog" aria-label="关闭设置">×</button></header>
+    <section class="settings-section"><h3>外观与显示</h3><div class="settings-appearance"><div class="theme-picker" role="group" aria-label="界面主题"><button id="theme-day" aria-pressed="true">晴日</button><button id="theme-night" aria-pressed="false">夜色</button></div><button class="secondary-button" id="open-skins">牌面样式</button><button class="secondary-button" id="large-type" aria-pressed="false">大字</button></div><label class="setting-check"><input type="checkbox" id="deal-animation-enabled" checked>播放发牌动画</label></section>
+    <section class="settings-section"><button class="secondary-button" id="pause-button" aria-pressed="false">暂停</button><p>出牌进度自动保存，退出应用后可继续。</p></section>
+    <details class="settings-section"><summary>模型与教学</summary><p id="model-status">正在检查模型…</p><label class="setting-check"><input type="checkbox" id="book-enabled" checked>秘籍策略增强</label><p>DanLM 负责机器人的行动与教学推荐，只能看到行动者的手牌、公开出牌和贡还记录。开启增强后，结合四份技巧资料比较候选打法。</p><button id="recheck-model" class="secondary-button">重新检查模型</button></details>
+    <details class="settings-section"><summary>存档与备份</summary><p id="save-status">每一步自动保存在本机，关窗或退出后可继续。最多保留最近8局完整复盘。</p><button id="export-save" class="secondary-button">导出存档备份</button></details>
+    <details><summary>规则与说明</summary><p>两副牌、四人对坐搭档。从2升级至A；红桃级牌为逢人配。支持单张、对子、三张、三带二、顺子、连对、钢板、炸弹、同花顺和四王炸。下一副按实际名次进贡、还贡或抗贡。</p><p>中文说明由教学层根据牌局和候选生成，并非模型内部思考。模型评分和未见牌采样不代表胜率。</p><p>关闭窗口会保留应用。⌘Q退出，Control+⌘F全屏；⌘+与⌘−调整界面大小。</p><p><a href="/mobile/DanLM-LICENSE.txt">DanLM许可（含非商业条件）</a> · <a href="/mobile/ONNX-Runtime-LICENSE.txt">ONNX Runtime许可</a> · <a href="/card-sources/SVGCards-README-license.txt">纸牌素材来源</a> · <a href="/assets/3d/CREDITS.txt">3D 素材来源</a> · <a href="/vendor/three/LICENSE">Three.js 许可</a></p></details>
+    <div class="dialog-bottom"><button class="primary-button" data-close-dialog="settings-dialog">回到牌桌</button><span>Desktop 1.7.0 · 离线单机与局域网联机</span></div>
+  </dialog>
+  <dialog id="confirm-dialog" class="analysis-dialog" aria-labelledby="confirm-title">
+    <header class="dialog-header"><h2 id="confirm-title">开始全新的游戏</h2><button class="close-button" data-close-dialog="confirm-dialog" aria-label="取消重开">×</button></header>
+    <p id="new-game-warning">确认后结束当前牌局，重新洗牌发牌；已完成的历史复盘保留。</p>
+    <div class="dialog-bottom"><button class="secondary-button" data-close-dialog="confirm-dialog">继续当前牌局</button><button class="primary-button" id="confirm-new">开始新游戏</button></div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+# 掼蛋研习社 · Guandan Study
+
+[English](README.md) · [下载安装包](https://github.com/RichardLoZC/guandan-study/releases)
+
+支持 macOS、Windows、安卓手机和平板的掼蛋应用。可离线与 DanLM 对局，也可在同一局域网内与朋友一起玩。牌桌顶部点击 **English / 中文** 即可切换语言，当前牌局和选牌保留。
+
+**内置 DanLM 模型仅限非商业用途。** 公开仓库不代表所有组件都可无限制商用，详见[许可与素材来源](THIRD_PARTY_NOTICES.md)。
+
+## 功能
+
+- 默认第一人称 3D 握牌，可切换 2D；三套牌面、日夜主题和大字模式。
+- 一键理牌，轮换展示不同组合。
+- 单人练习，模型建议、教学、整局复盘、逐手回放与导出。
+- 桌面显示进贡、还贡、抗贡；各家保留本轮最近一次出牌或 PASS；终局显示最后出牌和剩余手牌。
+- 同一 Wi-Fi 内 2～4 位真人联机，空位由 DanLM 补齐；四人可全部是真人。
+- 电脑开桌，其他电脑、手机、平板自动找桌并输入六位房间码加入。新游戏或破 A 后重新随机分位。
+- 安卓横竖屏适配，牌局自动保存在各自设备，无需账号或在线模型服务。
+
+## 安装与使用
+
+从 [Releases](https://github.com/RichardLoZC/guandan-study/releases) 下载对应文件。
+
+- **Mac：** 解压 Universal ZIP，将 `掼蛋研习社.app` 放入“应用程序”。支持 Apple 芯片和 Intel。
+- **Windows：** 解压完整 ZIP，运行 `GuandanStudy.exe`，无需安装到系统目录。提供 x64 版本。
+- **安卓：** 安装 APK，手机和平板共用一个安装包。需要 Android 8 或更新系统，以及 WebView 120 或更新组件。同包名、同签名可覆盖更新。
+
+Mac 使用本地 ad-hoc 签名，未公证；Windows 未使用 Authenticode 证书签名。安卓使用独立发布密钥。
+
+点击“单人练习”打开模式面板，再选“多人游戏”。一台 Mac 或 Windows 电脑“开一桌”，其他设备选择附近牌桌并输入房间码。安卓当前作为加入端。房主保持开机；如 Wi-Fi 禁止设备互访，自动发现和手动连接都可能失败。
+
+## 模型与语言
+
+DanLM ONNX 权重负责候选行动评分，规则层验证合法性，可选秘籍策略辅助选择。中英文、2D/3D 和不同设备共用同一套权重，本次没有重新训练模型。
+
+讲解来自教学层。英文讲解显示推荐行动、余牌、候选分数及公开信息范围；不是模型的内部思考，分数不代表胜率。语言切换不改规则、模型输入或存档内容。旧拖 3 存档保持兼容，新游戏不再提供拖 3。
+
+## 开发
+
+```sh
+npm ci
+npm test
+npm start
+npm run build:mac
+npm run build:win
+npm run build:android
+```
+
+需要 Node.js 22.12+；安卓另需 JDK 17、Gradle 8.13、Android SDK 36 和 Build Tools 36.0.0。详细环境变量见[构建说明](docs/BUILDING.md)。首次开发构建需要下载依赖，安装后的游戏可离线运行。
+
+Mac 存档位于 `~/Library/Application Support/GuandanStudyOffline`。Windows 默认位于 EXE 旁的“掼蛋数据”，目录不可写时使用 `%APPDATA%/GuandanStudyOffline`。安卓保存在应用私有目录。卸载前请先导出备份。
+
+联机只面向可信局域网，采用 HTTP/UDP，房间码不提供加密。不要将房主端口映射到互联网。
+
+原始应用来自 Windows 1.0.0 离线包，原包没有提供 React/TypeScript 源码。本项目保留压缩代码及提取哈希供核对，并重写了可维护的界面、状态管理、3D、联机与跨平台入口。原作者、DanLM、纸牌和手部素材许可均保留。本项目不代表 DanLM 官方。

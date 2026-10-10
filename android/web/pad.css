@@ -1,0 +1,118 @@
+/* Tablet overrides are packaged only in Android; the macOS layout is unchanged. */
+html[data-platform=pad] {
+  --hand-card-width: 76px;
+  --hand-card-height: 114px;
+  --hand-step: 48px;
+  --hand-row-step: 78px;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior: none;
+}
+body { user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+#preview { max-width: none; padding: 0; }
+.app-frame { height: 100dvh; min-height: 0; border: 0; border-radius: 0; }
+.app-top { height: auto; min-height: 70px; padding: 8px 20px; }
+.brand strong { font-size: 24px; white-space: nowrap; }
+.top-controls { gap: 5px; }
+.top-controls .text-action, .theme-picker button { font-size: 18px; min-height: 48px; padding: 8px 12px; }
+button:not(.playing-card), select, summary { min-height: 48px; }
+.close-button, .replay-toolbar > button { min-width: 48px; min-height: 48px; }
+.hand-pane { left: 28px; right: 28px; bottom: 16px; }
+.hand-heading { min-height: 48px; }
+.hand-scroll { touch-action: pan-y; max-height: min(38dvh, 360px); }
+.playing-card { touch-action: pan-y; }
+.playing-card:hover:not(.selected) { transform: none; }
+.playing-card img { pointer-events: none; }
+.selected-mark { pointer-events: none; }
+.action-bar { gap: 18px; }
+.actions { flex-wrap: wrap; justify-content: center; }
+.actions > button { min-height: 54px; min-width: 98px; }
+#play-kind { max-width: 190px; }
+.selection-status, .action-bar > .toast { font-size: 18px; line-height: 1.45; }
+.player .avatar { width: 68px; height: 68px; }
+.player-info > strong { font-size: 28px; }
+.remaining b { font-size: 48px; }
+.relation { font-size: 19px; }
+.seat-bubble { font-size: 22px; }
+.analysis-dialog { max-height: calc(100dvh - 32px); width: min(1120px, calc(100vw - 32px)); }
+.analysis-dialog p { user-select: text; -webkit-user-select: text; }
+.review-dialog { width: min(1160px, calc(100vw - 32px)); }
+.skin-option { min-height: 100px; }
+.setting-check { min-height: 52px; }
+.setting-check input, .mine-filter input { width: 24px; height: 24px; }
+#replay-range { min-height: 48px; }
+.hand-heading h1 .pad-touch-note { font-size: 16px; color: var(--felt-muted); font-weight: 400; }
+.view-3d .pad-touch-note { display: none; }
+#error-banner { position: relative; inset: auto; margin: 8px 16px; flex-wrap: wrap; }
+#error-message { flex-basis: 60%; }
+.play-zone.is-round-over { padding-bottom: 24px; }
+
+@media (max-width: 1150px) {
+  .app-top { padding-inline: 14px; gap: 10px; }
+  .brand strong { font-size: 21px; }
+  .brand-icon { display: none; }
+  .top-controls { gap: 2px; }
+  .top-controls .text-action, .theme-picker button { padding-inline: 9px; font-size: 17px; }
+  .player .avatar { width: 58px; height: 58px; }
+  .player-info > strong { font-size: 25px; }
+  .remaining b { font-size: 46px; }
+  .opponent-left .seat-anchor { left: 0; top: calc(100% + 12px); }
+  .opponent-right .seat-anchor { right: 0; top: calc(100% + 12px); }
+}
+@media (orientation: portrait) {
+  .teammate { top: 12%; }
+  .opponent-left, .opponent-right { top: 39%; }
+  .self-play-anchor { bottom: calc(var(--hand-pane-height,320px) + 36px); }
+  .hand-scroll { --hand-row-step: 82px; }
+  .pad-touch-note { display: none; }
+}
+@media (max-width: 850px) {
+  html[data-platform=pad] { --hand-card-width: 72px; --hand-card-height: 108px; --hand-step: 44px; --hand-row-step: 74px; }
+  .app-top { flex-wrap: wrap; justify-content: center; padding: 5px 10px; gap: 0; }
+  .brand { display: none; }
+  .top-controls { flex: 1; justify-content: center; gap: 3px; }
+  .top-controls .text-action, .theme-picker button { font-size: 16px; padding-inline: 8px; }
+  .hand-pane { left: 16px; right: 16px; }
+  .hand-heading { flex-wrap: wrap; gap: 4px 12px; }
+  .hand-heading h1 { font-size: 19px; }
+  .turn-pill { font-size: 20px; }
+  .action-bar { grid-template-columns: 1fr auto; gap: 8px 12px; }
+  .selection-status, .action-bar > .toast { grid-area: 1 / 1; font-size: 17px; }
+  .table-history { display: block; grid-area: 1 / 2; font-size: 17px; }
+  .actions { grid-column: 1 / -1; grid-row: 2; }
+  .actions > button { flex: 1; max-width: 210px; }
+  .pad-touch-note { display: none; }
+  .player .avatar { width: 48px; height: 48px; }
+  .player-info > strong { font-size: 23px; }
+  .remaining b { font-size: 40px; }
+  .relation { font-size: 17px; }
+  .seat-bubble { font-size: 19px; }
+  .teammate { top: 75px; }
+  .opponent-left, .opponent-right { top: clamp(165px, calc((100% - var(--hand-pane-height,340px) - 160px) / 2), 28%); }
+  .table-cards { --table-width: 48px; --table-step: 30px; }
+}
+@media (max-height: 700px) and (min-width: 851px) {
+  html[data-platform=pad] { --hand-card-width: 68px; --hand-card-height: 102px; --hand-step: 44px; }
+  .app-top { min-height: 58px; padding-block: 4px; }
+  .hand-pane { bottom: 10px; }
+  .hand-heading { min-height: 42px; }
+  .opponent-left, .opponent-right { top: 90px; }
+  .teammate { top: 55px; }
+  .player .avatar { width: 48px; height: 48px; }
+  .player-info > strong { font-size: 23px; }
+  .remaining b { font-size: 38px; }
+}
+@media (max-width: 600px) {
+  .match-strip { left: 14px; right: 14px; font-size: 16px; gap: 8px; }
+  .score-pair { gap: 8px; }
+  .score-pair b, .level-label b { font-size: 24px; }
+  .wild-reference { display: none; }
+  .player .avatar { width: 40px; height: 40px; }
+  .player { gap: 8px; }
+  .player-info > strong { font-size: 21px; }
+  .relation { display: none; }
+  .remaining b { font-size: 34px; }
+  .table-caption strong { max-width: 140px; }
+  .analysis-dialog { padding: 18px; }
+  .review-stats { grid-template-columns: repeat(2, 1fr); row-gap: 14px; }
+  .finish-person { flex-wrap: wrap; }
+}

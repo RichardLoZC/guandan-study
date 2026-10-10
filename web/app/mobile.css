@@ -1,0 +1,140 @@
+/* One responsive layout for Android phones and narrow desktop windows. */
+html[lang=en] .joker-label { writing-mode:vertical-rl; text-orientation:upright; font-size:12px; line-height:1; letter-spacing:-2px; }
+html[lang=en] .joker-label span { display:inline; }
+html[lang=en] .player-info > strong { overflow-wrap:anywhere; }
+html[lang=en] .table-caption strong { line-height:1.25; }
+.language-toggle { white-space:nowrap; }
+@media (max-width:720px), (max-height:500px) {
+  html body { -webkit-text-size-adjust:100%; }
+  html #preview { padding:0; }
+  html .app-frame { height:100dvh; min-height:0; border:0; border-radius:0; }
+  html .app-top { height:auto; min-height:54px; padding:3px 6px; gap:0; }
+  html .brand { display:none; }
+  html .top-controls { width:100%; justify-content:space-between; gap:2px; flex-wrap:nowrap; }
+  html .top-controls > button,html .view-picker button { min-height:44px; padding:5px 7px; font-size:14px; line-height:1.2; }
+  html .view-picker { gap:0; padding:1px; }
+  html .mode-entry { max-width:130px; white-space:normal; }
+  html .analysis-dialog { width:calc(100vw - 16px); max-width:none; max-height:calc(100dvh - 16px); padding:16px; scrollbar-gutter:auto; }
+  html .analysis-dialog h2 { font-size:24px; }
+  html .analysis-dialog h3 { font-size:21px; }
+  html .analysis-dialog p, html .analysis-dialog summary { font-size:16px; line-height:1.6; }
+  html .analysis-dialog button { min-height:44px; font-size:16px; padding:9px 14px; }
+  html .analysis-dialog .close-button { flex:0 0 44px; padding:4px; }
+  html .dialog-recommendation { padding:18px; gap:12px; }
+  html .dialog-recommendation > div { flex-basis:100%; }
+  html .dialog-recommendation > button { width:100%; }
+  html .game-mode-tabs button { padding:12px 8px; font-size:18px; }
+  html .game-mode-tabs button span { font-size:13px; }
+  html .lan-create-row { flex-wrap:wrap; }
+  html .lan-join-row { grid-template-columns:minmax(0,1fr) auto; }
+  html .lan-field { min-width:0; }
+  html .lan-field input { width:100%; min-width:0; }
+  html .lan-seats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  html .lan-actions { flex-wrap:wrap; }
+  html .replay-felt { padding:12px 8px; gap:15px 4px; }
+  html .replay-seat { min-width:0; padding:7px; }
+  html .review-avatar { width:32px; height:32px; }
+  html .replay-seat-meta { gap:5px; }
+  html .review-tabs { gap:3px; top:-16px; }
+  html .review-tabs button { padding:8px; flex:1; }
+  html .timeline-event { grid-template-columns:24px 70px minmax(0,1fr); }
+  html .finish-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  html .final-play-content,html .revealed-hand { grid-template-columns:minmax(0,1fr); }
+  html .settings-appearance { flex-wrap:wrap; }
+  html .round-end-banner h2 { font-size:29px; }
+  html .end-actions button { padding:10px 14px; font-size:17px; }
+  html .play-zone.is-round-over { padding:65px 14px 20px; }
+  html .tribute-panel { padding:12px; margin:60px 10px 0; }
+  html .tribute-panel h2 { font-size:22px; }
+  html .tribute-panel p { font-size:16px; }
+  html .tribute-transfers { grid-template-columns:minmax(0,1fr); }
+  html .tribute-receipt { max-height:96px; overflow:auto; }
+  html .tribute-receipt-heading { flex-wrap:wrap; }
+}
+@media (max-width:720px) and (orientation:portrait) {
+  html { --hand-card-width:64px; --hand-card-height:96px; --hand-step:35px; --hand-row-step:48px; }
+  html .match-strip { inset:10px 12px auto; font-size:14px; gap:4px; }
+  html .score-pair { gap:6px; }
+  html .score-pair b, html .level-label b { font-size:22px; }
+  html .wild-reference { display:none; }
+  html .player { gap:7px; }
+  html .player .avatar { width:38px; height:38px; }
+  html .player-info > strong { font-size:18px; }
+  html .player .relation { display:none; }
+  html .remaining { font-size:13px; }
+  html .remaining b { font-size:29px; }
+  html .seat-bubble { font-size:14px; padding:3px 7px; margin-top:3px; }
+  html .play-zone:not(.is-tribute) .teammate, html.view-3d .play-zone:not(.is-tribute) .teammate { top:53px; }
+  html .play-zone:not(.is-tribute) .opponent-left, html .play-zone:not(.is-tribute) .opponent-right { top:180px; }
+  html .opponent-left { left:12px; } html .opponent-right { right:12px; }
+  html .opponent-left .seat-anchor { left:0; top:calc(100% + 6px); }
+  html .opponent-right .seat-anchor { right:0; top:calc(100% + 6px); }
+  html .teammate .seat-anchor { top:calc(100% + 6px); }
+  html .table-play { padding:4px 6px; gap:5px; max-width:170px; flex-wrap:wrap; }
+  html .table-caption { font-size:12px; }
+  html .table-caption strong { font-size:16px; max-width:145px; }
+  html .table-cards { --table-width:36px; --table-step:21px; }
+  html .hand-pane { left:10px; right:10px; bottom:6px; }
+  html .hand-heading { display:flex; flex-wrap:wrap; gap:4px; min-height:36px; justify-content:space-between; }
+  html .hand-heading h1 { font-size:16px; }
+  html .turn-pill { font-size:17px; position:static; transform:none; }
+  html .hand-options { gap:5px; min-width:0; }
+  html .hand-options button { font-size:14px; min-height:44px; padding:4px 7px; }
+  html .hand-scroll { max-height:30dvh; --hand-row-step:48px; }
+  html .action-bar { display:grid; grid-template-columns:1fr auto; gap:5px 8px; padding:6px 8px; }
+  html .selection-status { grid-area:1/1; font-size:14px; min-width:0; }
+  html .selection-status span { font-size:12px; }
+  html .table-history { display:block; grid-area:1/2; font-size:14px; padding:5px; min-height:44px; }
+  html .actions { grid-area:2/1/3/3; display:flex; gap:8px; }
+  html .actions > button { flex:1; min-width:0; min-height:48px; padding:8px 10px; font-size:18px; }
+  html .actions select { flex-basis:100%; max-width:100%; min-width:0; }
+  html.view-3d .hand-pane { inset:0; }
+  html.view-3d .action-bar { left:6px; right:6px; bottom:4px; }
+  html.view-3d .hand-heading { display:contents; }
+  html.view-3d .hand-heading h1 { left:12px; bottom:calc(var(--grip-height,300px) + 10px); }
+  html.view-3d .hand-options { right:10px; bottom:calc(var(--grip-height,300px) + 2px); }
+  html.view-3d .turn-pill { position:absolute; left:12px; bottom:117px; font-size:17px; }
+  html.view-3d .hand-scroll { max-height:none; }
+  html.view-3d .self-play-anchor { top:48%; left:90%; max-width:150px; }
+}
+@media (max-height:500px) and (orientation:landscape) {
+  html { --hand-card-width:64px; --hand-card-height:96px; --hand-step:28px; --hand-row-step:40px; }
+  html .app-top { min-height:46px; padding-block:1px; }
+  html .top-controls { justify-content:flex-end; }
+  html .top-controls .mode-entry { margin-right:auto; }
+  html .match-strip { top:7px; left:12px; right:12px; font-size:13px; }
+  html .score-pair b, html .level-label b { font-size:19px; }
+  html .wild-reference { display:none; }
+  html .player .avatar { width:30px; height:30px; }
+  html .player-info > strong { font-size:16px; }
+  html .player .relation { display:none; }
+  html .remaining { font-size:12px; } html .remaining b { font-size:24px; }
+  html .seat-bubble { font-size:13px; padding:2px 5px; margin-top:2px; }
+  html .play-zone:not(.is-tribute) .teammate,html.view-3d .play-zone:not(.is-tribute) .teammate { top:6px; }
+  html .play-zone:not(.is-tribute) .teammate .player-info { display:flex; align-items:center; gap:8px; }
+  html .play-zone:not(.is-tribute) .opponent-left, html .play-zone:not(.is-tribute) .opponent-right { top:60px; }
+  html .opponent-left { left:16px; } html .opponent-right { right:16px; }
+  html .hand-pane { bottom:3px; left:10px; right:10px; }
+  html .hand-heading { min-height:28px; }
+  html .hand-heading h1,html .turn-pill { font-size:14px; }
+  html .hand-options button { min-height:36px; font-size:14px; }
+  html .hand-scroll { max-height:120px; padding-top:10px; }
+  html .action-bar { display:flex; padding:3px 8px; gap:10px; align-items:center; justify-content:center; }
+  html .selection-status { flex:1; font-size:13px; }
+  html .selection-status span { font-size:12px; }
+  html .actions { flex-wrap:nowrap; gap:8px; }
+  html .actions > button { min-height:44px; min-width:65px; padding:5px 12px; font-size:17px; }
+  html .table-history { min-height:44px; font-size:13px; }
+  html.view-3d .hand-pane { inset:0; }
+  html.view-3d .hand-scroll { max-height:none; padding:0; }
+  html.view-3d .action-bar { bottom:3px; left:8px; right:8px; }
+  html.view-3d .hand-heading h1 { left:15px; bottom:96px; }
+  html.view-3d .turn-pill { bottom:68px; left:15px; }
+  html.view-3d .hand-options { bottom:59px; right:12px; }
+  html .table-caption { font-size:12px; } html .table-caption strong { font-size:15px; }
+  html .table-play { padding:2px 6px; }
+  html .opponent-left .seat-anchor { left:0; top:calc(100% + 5px); }
+  html .opponent-right .seat-anchor { right:0; top:calc(100% + 5px); }
+  html .teammate .seat-anchor { top:calc(100% + 3px); }
+  html .table-cards { --table-width:30px; --table-step:18px; }
+}

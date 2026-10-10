@@ -1,0 +1,65 @@
+/* Cards remain face down until the saved hand opens. No opponent faces are rendered. */
+.deal-stage { position:absolute; inset:0; z-index:6; overflow:hidden; color:var(--on-felt); isolation:isolate; }
+.deal-veil { position:absolute; inset:0; z-index:-1; background:radial-gradient(ellipse at 50% 46%,var(--felt),var(--felt-deep) 88%); transition:opacity .35s; }
+.deal-veil::after { content:""; position:absolute; inset:28px; border:1px solid #e4c88738; border-radius:42% / 24%; }
+.deal-intro { position:absolute; left:32px; top:22px; line-height:1.4; }
+.deal-intro > span { font-size:17px; color:var(--gold); letter-spacing:3px; }
+.deal-intro h2 { font-size:32px; margin:4px 0; }
+.deal-intro p { font-size:18px; color:var(--felt-muted); }
+.deal-card-back { display:block; width:72px; height:108px; border:3px solid #f3e7c7; border-radius:7px; background-color:#173e32; background-image:repeating-linear-gradient(45deg,transparent 0 6px,#dcbb7026 6px 7px,transparent 7px 13px),repeating-linear-gradient(-45deg,transparent 0 6px,#dcbb7026 6px 7px,transparent 7px 13px); box-shadow:0 5px 14px #031d1a55; }
+.deal-card-back::before { content:""; position:absolute; inset:5px; border:1px solid #e4c887aa; border-radius:3px; }
+.deal-card-back::after { content:"♥"; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:32px; height:38px; display:grid; place-items:center; background:#173e32; border:1px solid #c4a564; border-radius:50%; color:#e4c887; font:24px/1 Georgia,serif; }
+.deal-deck { position:absolute; left:50%; top:47%; width:72px; height:108px; transform:translate(-50%,-50%); }
+.deal-deck > i { position:absolute; inset:0; transform:translate(4px,6px) rotate(7deg); }
+.deal-deck > i:nth-child(2) { transform:translate(-3px,3px) rotate(-8deg); }
+.deal-deck > i:nth-child(3) { transform:rotate(-3deg); }
+.deal-stage[data-phase=shuffle] .deal-deck > i:nth-child(odd) { animation:deal-cut-left .55s ease-in-out both; }
+.deal-stage[data-phase=shuffle] .deal-deck > i:nth-child(even) { animation:deal-cut-right .55s ease-in-out both; }
+@keyframes deal-cut-left { 0% {transform:translate(-12px,10px) rotate(-12deg)} 45% {transform:translate(-60px,-6px) rotate(-18deg)} 100% {transform:translate(-3px,3px) rotate(-7deg)} }
+@keyframes deal-cut-right { 0% {transform:translate(12px,-8px) rotate(12deg)} 45% {transform:translate(60px,6px) rotate(18deg)} 100% {transform:translate(3px,0) rotate(5deg)} }
+.deal-status { position:absolute; right:32px; top:28px; max-width:calc(50% - 32px); font-size:20px; font-weight:600; white-space:nowrap; color:var(--gold); }
+.deal-seat { position:absolute; z-index:4; display:flex; gap:12px; align-items:center; transform:translate(-50%,-50%); }
+.deal-seat-0 { left:50%; top:81%; }
+.deal-seat-1 { left:85%; top:47%; }
+.deal-seat-2 { left:50%; top:17%; }
+.deal-seat-3 { left:15%; top:47%; }
+.deal-pocket { position:relative; flex:0 0 48px; width:48px; height:72px; margin-right:6px; box-shadow:3px 3px 0 #eddcb8,5px 5px 0 #174334,7px 7px 0 #eddcb8,0 8px 14px #041c1855; opacity:0; }
+.deal-pocket::after { width:24px; height:30px; font-size:18px; }
+.deal-seat-3 .deal-pocket { order:1; margin-right:0; margin-left:6px; }
+.deal-avatar { display:grid; place-items:center; flex:0 0 48px; width:48px; height:48px; overflow:hidden; border-radius:50%; border:2px solid var(--seat); box-shadow:0 0 0 4px color-mix(in srgb,var(--seat) 14%,transparent); background:var(--felt-deep); color:var(--seat); font-size:22px; }
+.deal-avatar img { width:100%; height:100%; object-fit:cover; }
+.deal-player { min-width:76px; }
+.deal-player > strong { font-size:23px; color:var(--seat); white-space:nowrap; }
+.deal-counter { display:block; font-size:18px; white-space:nowrap; font-variant-numeric:tabular-nums; }
+.deal-counter b { font-size:34px; line-height:1.25; }
+.deal-flight { position:absolute; z-index:3; pointer-events:none; }
+.deal-skip { position:absolute; z-index:5; bottom:22px; right:28px; min-height:46px; padding:8px 20px; font-size:18px; color:var(--on-felt); background:#153b30; border:1px solid #cbd9bc80; border-radius:9px; }
+.deal-skip:hover { background:#315b48; }
+.deal-stage[data-phase=reveal] { pointer-events:none; }
+.deal-stage[data-phase=reveal] .deal-skip { pointer-events:auto; }
+.deal-stage[data-phase=reveal] :is(.deal-veil,.deal-seat,.deal-deck,.deal-status,.deal-intro) { opacity:0; transition:opacity .24s; }
+@media(max-width:1000px) {
+  .deal-seat { gap:9px; }
+  .deal-seat-1 { left:84%; } .deal-seat-3 { left:16%; }
+  .deal-avatar { width:42px; height:42px; flex-basis:42px; }
+  .deal-intro { left:24px; top:18px; }
+  .deal-intro h2 { font-size:28px; }
+  .deal-status { right:24px; top:24px; }
+}
+@media(max-height:680px) {
+  .deal-intro { top:14px; }
+  .deal-intro > span { display:none; }
+  .deal-seat-2 { top:18%; }
+  .deal-seat-0 { top:79%; }
+  .deal-skip { bottom:16px; }
+}
+@media(max-width:650px) {
+  .deal-pocket { display:none; }
+  .deal-player { min-width:60px; }
+  .deal-player > strong { font-size:20px; }
+  .deal-seat { gap:8px; }
+  .deal-seat-1 { left:83%; } .deal-seat-3 { left:17%; }
+  .deal-intro h2 { font-size:24px; }
+  .deal-intro p { font-size:17px; }
+  .deal-status { right:18px; top:18px; font-size:17px; white-space:normal; text-align:right; }
+}

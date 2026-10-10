@@ -1,0 +1,698 @@
+[
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/spadeAce.svg",
+    "file": "assets/jumbo/spadeAce.svg",
+    "bytes": 6694,
+    "sha256": "f26ba79bd78b5bdeb6ba7fa74c3df27366bbc86708c974efff0ea89a7c1732d7"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/spade2.svg",
+    "file": "assets/jumbo/spade2.svg",
+    "bytes": 7309,
+    "sha256": "f1e84b4864736cd07bfc4142c93daeef9fee442226fa60c56e82bce7fd97b2a0"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/spade3.svg",
+    "file": "assets/jumbo/spade3.svg",
+    "bytes": 7938,
+    "sha256": "b4f0f31939bee5bbfd012749c5b7b6156393421f337e8910e06d29c6e4504b09"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/spade4.svg",
+    "file": "assets/jumbo/spade4.svg",
+    "bytes": 8591,
+    "sha256": "b18847a7158716117ce77a384e75f9c239f26c9d977fce6723dcd2ca689cb3dc"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/spade5.svg",
+    "file": "assets/jumbo/spade5.svg",
+    "bytes": 9209,
+    "sha256": "b018550000669a1229c67f1e97aa4db00ea291b72a25cdfad9888ecf97910f0f"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/spade6.svg",
+    "file": "assets/jumbo/spade6.svg",
+    "bytes": 9675,
+    "sha256": "0813d176fd452a72bd4827f9ce11abb14572229d66a5e0685a82da04e4968a39"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/spade7.svg",
+    "file": "assets/jumbo/spade7.svg",
+    "bytes": 10300,
+    "sha256": "be2fdc90c312e5c918d337ae7b24da515e5496c13488dd94279b0b8da00ce0b5"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/spade8.svg",
+    "file": "assets/jumbo/spade8.svg",
+    "bytes": 10903,
+    "sha256": "0e801f602fad8fbda8acc909398f3b527d959b98d4c6cc928ebe7cec9a911e91"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/spade9.svg",
+    "file": "assets/jumbo/spade9.svg",
+    "bytes": 11515,
+    "sha256": "ccdb21dffd82d5b4594a50c4e004ef92ffeb2ea961bf10b654e859404de36699"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/spade10.svg",
+    "file": "assets/jumbo/spade10.svg",
+    "bytes": 12200,
+    "sha256": "0c71562fc96daf17a61db33ffa8509a98ec4ef4df77ffa378192b88b9c0594ed"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/spadeJack.svg",
+    "file": "assets/jumbo/spadeJack.svg",
+    "bytes": 690531,
+    "sha256": "42866dffa8a9524698e76a39c399648eba0244b94af7468ae838da510ca515e2"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/spadeQueen.svg",
+    "file": "assets/jumbo/spadeQueen.svg",
+    "bytes": 426026,
+    "sha256": "b63fc1f68e648aee8f0be8f8b42a5abc33fc21dbd373d4affb84c4e4e7d8e4d6"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/spadeKing.svg",
+    "file": "assets/jumbo/spadeKing.svg",
+    "bytes": 392309,
+    "sha256": "a7ab767de1a3a75cf3b90dd9663440c4623223e1e93bcf8dca4e182451c59de9"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/heartAce.svg",
+    "file": "assets/jumbo/heartAce.svg",
+    "bytes": 6339,
+    "sha256": "dfbc90c2af253a25754f606735ad953a9c75c61c3ea75ca0ae432e4cee9a354d"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/heart2.svg",
+    "file": "assets/jumbo/heart2.svg",
+    "bytes": 6780,
+    "sha256": "0e6adb210b4f29f22e4fe7cf3ce62a7fe33a8d841bac450a7e813434ba2fc6e7"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/heart3.svg",
+    "file": "assets/jumbo/heart3.svg",
+    "bytes": 7269,
+    "sha256": "9caa73db46efe414b106bfbfeae0800d7d2e33e8f618f19b5b9897abcbe9b928"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/heart4.svg",
+    "file": "assets/jumbo/heart4.svg",
+    "bytes": 7781,
+    "sha256": "e006092fb17351b6df64d8b6f876528c746f8bb48af37bf7bcea19872fb63b6a"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/heart5.svg",
+    "file": "assets/jumbo/heart5.svg",
+    "bytes": 8257,
+    "sha256": "5ce52cf6d15870328c8f22cd4df366c1125de90864115ab9e60b2478aee98bb5"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/heart6.svg",
+    "file": "assets/jumbo/heart6.svg",
+    "bytes": 8617,
+    "sha256": "cda9631a6545c10baa0ccf332e60cceb8d5f7b674900123128ce45b0f9b40080"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/heart7.svg",
+    "file": "assets/jumbo/heart7.svg",
+    "bytes": 9109,
+    "sha256": "c783155dee65e58296d190f343b156da97d27624abe7a98b68b7af3c6fd68eb3"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/heart8.svg",
+    "file": "assets/jumbo/heart8.svg",
+    "bytes": 9578,
+    "sha256": "d82d6a82465a924f1821ba9f8abebec205d4530987a32de28eafb8d507f7cae2"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/heart9.svg",
+    "file": "assets/jumbo/heart9.svg",
+    "bytes": 10052,
+    "sha256": "41709dedf1429d1ac5da313c4b3d93cd1b7e84e0a48e1bd014d4f3fc8cfa3d08"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/heart10.svg",
+    "file": "assets/jumbo/heart10.svg",
+    "bytes": 10804,
+    "sha256": "60dc4c8789551d86f0600f0e85ce3d18a7888a1368cbefd0bc25bba1596087f5"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/heartJack.svg",
+    "file": "assets/jumbo/heartJack.svg",
+    "bytes": 617586,
+    "sha256": "9c8257f00fb8319ec4c470318df8008b44a42c8ff2334f87b1661bbd8068b6f5"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/heartQueen.svg",
+    "file": "assets/jumbo/heartQueen.svg",
+    "bytes": 618032,
+    "sha256": "e485fc2d97ca67bb2ed7b53310c7cb9a8e011f9b1db276fbfd2065df61f3c5a9"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/heartKing.svg",
+    "file": "assets/jumbo/heartKing.svg",
+    "bytes": 770501,
+    "sha256": "9a0e45927a026e17210a49f2654fae7fea4cdf7a1720081775dadb74c6309369"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/clubAce.svg",
+    "file": "assets/jumbo/clubAce.svg",
+    "bytes": 6932,
+    "sha256": "8bd3944b0dd715caa0a0a9073a5c9817a7d607265bc4965f9ffb4fe06f1397da"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/club2.svg",
+    "file": "assets/jumbo/club2.svg",
+    "bytes": 7564,
+    "sha256": "8b48a747be324b34d2127094b7660364b0f402dafec2e41b283cfbd24cd68820"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/club3.svg",
+    "file": "assets/jumbo/club3.svg",
+    "bytes": 8274,
+    "sha256": "e605e58528d3baa9f21cbc9ec7092aad045b9b08ac464e3b88e2c9207b924b49"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/club4.svg",
+    "file": "assets/jumbo/club4.svg",
+    "bytes": 9155,
+    "sha256": "d138a67e3f456f13d7fa010ef6284bf76c49bea6e7f8790ec691e7d5bf3e1a9f"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/club5.svg",
+    "file": "assets/jumbo/club5.svg",
+    "bytes": 9674,
+    "sha256": "170ed910228b2fa23c6f2e92d16bd776e902a89fd5c2a5b0b00a7428fc4751be"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/club6.svg",
+    "file": "assets/jumbo/club6.svg",
+    "bytes": 10165,
+    "sha256": "6e5efe3336d2b35cce4d4418c17098d69ec8d168fdaf0038d8019111e82feeff"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/club7.svg",
+    "file": "assets/jumbo/club7.svg",
+    "bytes": 10852,
+    "sha256": "7cdbd79f81a361deb63036d9c2252cf1a49fbe07a8a628e868641ee13d868b51"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/club8.svg",
+    "file": "assets/jumbo/club8.svg",
+    "bytes": 11530,
+    "sha256": "38aed134a2a2eaf68b3d4d9f7b691349a06081ae6330c8a4edef2ac00f225957"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/club9.svg",
+    "file": "assets/jumbo/club9.svg",
+    "bytes": 12196,
+    "sha256": "2bb4fb6aabfbb95ba43172e9fa54665d00bb9fd6715c3fb3bac9d79fc9925813"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/club10.svg",
+    "file": "assets/jumbo/club10.svg",
+    "bytes": 12873,
+    "sha256": "e4949197641bdc211f11b11594dcea112df04d6570984314a13b2c9c90d64ad1"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/clubJack.svg",
+    "file": "assets/jumbo/clubJack.svg",
+    "bytes": 458822,
+    "sha256": "15ca481724d004b5b5cccfcb0c7a3449d21adc26f99dc5dbfe80a8f9e313a5d8"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/clubQueen.svg",
+    "file": "assets/jumbo/clubQueen.svg",
+    "bytes": 1113886,
+    "sha256": "eb925da6d6ecf94b90794b94bfb5d76b498dde6f87c49cba6f28b9a022294410"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/clubKing.svg",
+    "file": "assets/jumbo/clubKing.svg",
+    "bytes": 1134081,
+    "sha256": "7420d4009d0fcdd1fb17523695a2e7083702579239968c7002048a0d7879748b"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/diamondAce.svg",
+    "file": "assets/jumbo/diamondAce.svg",
+    "bytes": 6512,
+    "sha256": "c6d3147b12aed8000ddb148207f54231d4b05996c334fdb1ae580b8d542b2e2b"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/diamond2.svg",
+    "file": "assets/jumbo/diamond2.svg",
+    "bytes": 7013,
+    "sha256": "e2a067c995d2c3a0e3645b41e1de85fd5f88e1bd4392949353728fa02f34eb04"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/diamond3.svg",
+    "file": "assets/jumbo/diamond3.svg",
+    "bytes": 7596,
+    "sha256": "9b73d78b39850a4ffb7313b037934d62bc515992c9debc3266ef849d9b985b1e"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/diamond4.svg",
+    "file": "assets/jumbo/diamond4.svg",
+    "bytes": 8161,
+    "sha256": "93f6dbea69ee66561448b33a15332ef61355f4596d2ec67296a837974984947f"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/diamond5.svg",
+    "file": "assets/jumbo/diamond5.svg",
+    "bytes": 8710,
+    "sha256": "90a307a66a17afa219336cfcbf9f1315378c0c811d62dc7f4e6f695a0e9e3c23"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/diamond6.svg",
+    "file": "assets/jumbo/diamond6.svg",
+    "bytes": 9052,
+    "sha256": "7491a05af117ee47ba1843702cca8fadb66a6ee0d2aedda95073a745562f1935"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/diamond7.svg",
+    "file": "assets/jumbo/diamond7.svg",
+    "bytes": 10342,
+    "sha256": "14f96e9e34181bbacfc88ec2de2bc277e05d36ef9b23edef7ea65062c21d053c"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/diamond8.svg",
+    "file": "assets/jumbo/diamond8.svg",
+    "bytes": 10191,
+    "sha256": "a0bba6a717f3f1b49c566d3573b204d9e50d55c58450dc02a144a1019c4a5a5b"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/diamond9.svg",
+    "file": "assets/jumbo/diamond9.svg",
+    "bytes": 10730,
+    "sha256": "6b8f84ef87d4da43b1932ef51be95304e5deca6a96a48834bd18ad68c0cc7515"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/diamond10.svg",
+    "file": "assets/jumbo/diamond10.svg",
+    "bytes": 11274,
+    "sha256": "71c7441e2499e2bd6eb4cff79b2fd78f37637cacf0fdcddb1ae3c891f585d13f"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/diamondJack.svg",
+    "file": "assets/jumbo/diamondJack.svg",
+    "bytes": 398919,
+    "sha256": "a7efd85e8f0905cebcd0c8efed96999286ea2f446b49e35ebaf7b330788f23d5"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/diamondQueen.svg",
+    "file": "assets/jumbo/diamondQueen.svg",
+    "bytes": 341138,
+    "sha256": "2dd5e7db6fa8e348d82aba34d758f1fc4828931482bb2cc2d6334886775e290a"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/diamondKing.svg",
+    "file": "assets/jumbo/diamondKing.svg",
+    "bytes": 616968,
+    "sha256": "bba82786ec4a36ef6eb60b3b31b8b6cfdf0999f10c046f79fcf5ff6ec0bfee2b"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/blackJoker.svg",
+    "file": "assets/jumbo/blackJoker.svg",
+    "bytes": 12082,
+    "sha256": "8e8ef0df6c630a0347714eb3423a0b711fe80c8f4be541f4191011d35666e26a"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/redJoker.svg",
+    "file": "assets/jumbo/redJoker.svg",
+    "bytes": 12136,
+    "sha256": "08cdb87583c7b55cb36a97d20bd8f05c3ed92782bac674de7c2d14a395c647ca"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Vertical2/svgs/blueBack.svg",
+    "file": "assets/jumbo/blueBack.svg",
+    "bytes": 250590,
+    "sha256": "13794ea7890f254971af7c8b0edd77e927d64b76c6199ec638c39f61436ab52b"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/spadeAce.svg",
+    "file": "assets/accessible/spadeAce.svg",
+    "bytes": 6649,
+    "sha256": "1b9ba3c48746d22490e644cc3d6381f9a633d2ba51625aace01c6cf5adfd9dc4"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/heartKing.svg",
+    "file": "assets/accessible/heartKing.svg",
+    "bytes": 770513,
+    "sha256": "3661754ffa9230bed384dfb89c03ddedfc4d8edd114f2b3c14114f51603287c5"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/clubQueen.svg",
+    "file": "assets/accessible/clubQueen.svg",
+    "bytes": 1041943,
+    "sha256": "1d36a7b61300a9bcd6ed1ce9c442fc4be371ae49bc2b333c2f3e38357d1d7abb"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/diamondJack.svg",
+    "file": "assets/accessible/diamondJack.svg",
+    "bytes": 370300,
+    "sha256": "31eba89df74713b43071045a26d594abf22d827ab3cd0950b4d9f0f6f2b06932"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/README.md",
+    "file": "sources/SVGCards-README-license.txt",
+    "bytes": 7987,
+    "sha256": "3704576ee4e092cd4bb17b737a953d67633cb452c88c2828aa4bd90cdc2e3f7b"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/htdebeer/SVG-cards/6d88bf9c594997b82bc5668ab0877a4e9b717665/png/1x/spade_1.png",
+    "file": "assets/classic/spade_1.png",
+    "bytes": 4111,
+    "sha256": "755584e5f78c89302045edb1f916398c7b56861758f9593c65de7037f7fbd4d7"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/htdebeer/SVG-cards/6d88bf9c594997b82bc5668ab0877a4e9b717665/png/1x/heart_king.png",
+    "file": "assets/classic/heart_king.png",
+    "bytes": 43557,
+    "sha256": "3a4474016db20d1b16adcc1e7196790a37de8df08dd8c85872e5fe071cc0e974"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/htdebeer/SVG-cards/6d88bf9c594997b82bc5668ab0877a4e9b717665/png/1x/club_queen.png",
+    "file": "assets/classic/club_queen.png",
+    "bytes": 43259,
+    "sha256": "94a8a139a291818dabb6c991eabf1f0140fea9df1b111feaf1699053ed145644"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/htdebeer/SVG-cards/6d88bf9c594997b82bc5668ab0877a4e9b717665/png/1x/diamond_jack.png",
+    "file": "assets/classic/diamond_jack.png",
+    "bytes": 42466,
+    "sha256": "dafbf2585d1557694dce67f18abedc997afc56724d4b13aec5e42f7cf7ad03a7"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/htdebeer/SVG-cards/6d88bf9c594997b82bc5668ab0877a4e9b717665/LICENSE",
+    "file": "sources/SVG-cards-LGPL-2.1.txt",
+    "bytes": 26530,
+    "sha256": "dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/htdebeer/SVG-cards/6d88bf9c594997b82bc5668ab0877a4e9b717665/README.md",
+    "file": "sources/SVG-cards-README.txt",
+    "bytes": 8029,
+    "sha256": "010e1a4c29eb848196806862f22a890440f69076413d047a2e69bb923f9f6d2e"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/spade3.svg",
+    "file": "assets/accessible/spade3.svg",
+    "bytes": 7893,
+    "sha256": "06dcdf95fffddde44a5ab71cc9ef10af6225bb375737cf222b5522a936b6c67e"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/heart9.svg",
+    "file": "assets/accessible/heart9.svg",
+    "bytes": 10064,
+    "sha256": "7cbfc2e348be6bbe06eb5b7d5c0847559609363534e4884d704ca4f7941796a3"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/diamondAce.svg",
+    "file": "assets/accessible/diamondAce.svg",
+    "bytes": 6512,
+    "sha256": "f5295b74cfa712af46c41ce8a816b85c14d4edab1493c459d9ada045f96e68c9"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/heart8.svg",
+    "file": "assets/accessible/heart8.svg",
+    "bytes": 9565,
+    "sha256": "043bb4a09738b780cedbddd50adc5b3aead91589bbe7f7be66f6cb48b1667fee"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/spade2.svg",
+    "file": "assets/accessible/spade2.svg",
+    "bytes": 7253,
+    "sha256": "b42350e1c34d672323119870aab863d684e8ca385070f5606702819809ce0658"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/spadeKing.svg",
+    "file": "assets/accessible/spadeKing.svg",
+    "bytes": 392264,
+    "sha256": "4380fae7ef28297ece77a1c051bc55e1c9ac6a707f508c486868d793a92fa6ef"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/clubJack.svg",
+    "file": "assets/accessible/clubJack.svg",
+    "bytes": 430838,
+    "sha256": "57cd46eb0f2c59a1e42f4d5265db0e9c80b147a035c10c1052e4702f2312a7f2"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/spade5.svg",
+    "file": "assets/accessible/spade5.svg",
+    "bytes": 9164,
+    "sha256": "3dac0a8bb7d6567c1656b9dff45a1987f35e2c1146e7b7a08d6130f89e066560"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/clubAce.svg",
+    "file": "assets/accessible/clubAce.svg",
+    "bytes": 6886,
+    "sha256": "a53868d43874dc5b5505bfa50a627cd7e4511dfa75aaeff47354eb7b7715f957"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/spade4.svg",
+    "file": "assets/accessible/spade4.svg",
+    "bytes": 8546,
+    "sha256": "32e6aee2244539396cbe83a7b0cae9fb2e709e53d45c69141a1e35be1b2e21cd"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/club10.svg",
+    "file": "assets/accessible/club10.svg",
+    "bytes": 12930,
+    "sha256": "014e9dc8aec816c05beda2c5290b94867a74e10dcbeb752f9434759953e98aa7"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/diamond8.svg",
+    "file": "assets/accessible/diamond8.svg",
+    "bytes": 10191,
+    "sha256": "b4626cf3005709f531d0cab8bdc2bd40c03aef7a11ce3523e11a81606a88567d"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/spade6.svg",
+    "file": "assets/accessible/spade6.svg",
+    "bytes": 9630,
+    "sha256": "5d3781d2875438b0ceeffc717f562c5dc122a2cc8b4abe015f700d7b8d17c212"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/heartAce.svg",
+    "file": "assets/accessible/heartAce.svg",
+    "bytes": 6282,
+    "sha256": "84a6ed39672b7b5fab50ac19034a7b3d8d8574510159c25e3cd6ab87597015fb"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/spade7.svg",
+    "file": "assets/accessible/spade7.svg",
+    "bytes": 10255,
+    "sha256": "bcb5728b5ffd961b34ef84d7bc03d80abee0d8de6075e4c051f1bfbba28dcd53"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/diamond9.svg",
+    "file": "assets/accessible/diamond9.svg",
+    "bytes": 10730,
+    "sha256": "b2c6ada21bd5eeec0233133d6aebd2c70359b99c71f267075c5bbe37135363a9"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/club3.svg",
+    "file": "assets/accessible/club3.svg",
+    "bytes": 8228,
+    "sha256": "90b53f2dcaef287377d4db4ffbca77c3aa5f8086e90924b372b67e001bb137d7"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/club2.svg",
+    "file": "assets/accessible/club2.svg",
+    "bytes": 7562,
+    "sha256": "0d7bb6b0341696f43305f80f7dc1391f3002de4028ae304034398bf9f03a36d7"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/spadeQueen.svg",
+    "file": "assets/accessible/spadeQueen.svg",
+    "bytes": 425981,
+    "sha256": "1356ba0baf788f69b73b51e5eb255b668385eb1432685d8c95215dde0a89207b"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/club5.svg",
+    "file": "assets/accessible/club5.svg",
+    "bytes": 9628,
+    "sha256": "39cd442cb0caca29ae429320ef03e38e9be4613e5777cc36816da142d871f5a3"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/club4.svg",
+    "file": "assets/accessible/club4.svg",
+    "bytes": 9109,
+    "sha256": "13a0d61a1d4febb6e66ffb28ae39c8a0397b2256b6ee239a7ea780b8fc76ab35"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/diamondKing.svg",
+    "file": "assets/accessible/diamondKing.svg",
+    "bytes": 616913,
+    "sha256": "070ee47c13beb689e0419a5a4b61149ccfa6313461c5a64079c57e89156caf91"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/club6.svg",
+    "file": "assets/accessible/club6.svg",
+    "bytes": 10119,
+    "sha256": "aadb9c41a366ec3e229979a3534de6d2b79c9dbea6b86290b7b4418e0fc3d7e9"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/club7.svg",
+    "file": "assets/accessible/club7.svg",
+    "bytes": 10806,
+    "sha256": "062ca579881698bf8371e1e6aa593a1779af91dfcc7f8e16a9a1086d9b1003ca"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/diamondQueen.svg",
+    "file": "assets/accessible/diamondQueen.svg",
+    "bytes": 341138,
+    "sha256": "a3dbf6489c3ae4826df60b11c6d312bba38595594e60d884e4036fc09bd8137f"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/redJoker.svg",
+    "file": "assets/accessible/redJoker.svg",
+    "bytes": 12136,
+    "sha256": "a5ac76e190f2801d5e930b8e47d13ab23d9d9b891d695ce87233b594eedf9dbd"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/heartJack.svg",
+    "file": "assets/accessible/heartJack.svg",
+    "bytes": 617598,
+    "sha256": "3da531076422048440b3d9c88f38623845e56bc219fec22df1b3e0614d5857e8"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/blackJoker.svg",
+    "file": "assets/accessible/blackJoker.svg",
+    "bytes": 12082,
+    "sha256": "48f74f845f9fce93325c97da96ae1dd37ad1a4995bac95990a7ae6b3418a47e5"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/club9.svg",
+    "file": "assets/accessible/club9.svg",
+    "bytes": 12150,
+    "sha256": "2927853f722665903b085b2f8463f4321a7e62a3fda8b9511786ff184203ef29"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/club8.svg",
+    "file": "assets/accessible/club8.svg",
+    "bytes": 11484,
+    "sha256": "364f690a390e9f1b777a541cb894d659fb3021eb0ab6288d80e29c17d97c047b"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/spadeJack.svg",
+    "file": "assets/accessible/spadeJack.svg",
+    "bytes": 690486,
+    "sha256": "78d119d1671dc3ae69fde61175e7488479b06ded66cf6c7f55f8cb49466cdc5b"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/clubKing.svg",
+    "file": "assets/accessible/clubKing.svg",
+    "bytes": 1051299,
+    "sha256": "33c8931b14ca5ed45d6dc5f1acf5d820c647818d0f1e8077bb9ed5597f81b5df"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/heart10.svg",
+    "file": "assets/accessible/heart10.svg",
+    "bytes": 10816,
+    "sha256": "660d3b880b43d8cd60ec326b17c349a8526af6e6c0c584e7eb3ce856c5216332"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/spade10.svg",
+    "file": "assets/accessible/spade10.svg",
+    "bytes": 12155,
+    "sha256": "c75ea1f3b40dd12d18e2d2f3686ddb3625bc7a9a493ac8ed1e9f2c26940afc5c"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/diamond4.svg",
+    "file": "assets/accessible/diamond4.svg",
+    "bytes": 8161,
+    "sha256": "7f92a6543121454c19f2ee3afedbb75fb9cd892f4ebcf902f90be14f726bb05c"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/diamond5.svg",
+    "file": "assets/accessible/diamond5.svg",
+    "bytes": 8710,
+    "sha256": "2a84bd0410c79ec0aa3a86edc0f96d07d1a4d7f29849b7036a3e6acaf32e5e75"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/diamond7.svg",
+    "file": "assets/accessible/diamond7.svg",
+    "bytes": 10230,
+    "sha256": "9be7ea07beb4d4430938de66acbcd3a99cf89d17a1f016d8255fde45a5a3b127"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/spade9.svg",
+    "file": "assets/accessible/spade9.svg",
+    "bytes": 11470,
+    "sha256": "9b24ea953ccd58330e3d50da717e095ca77c3421ee3f700a08280cd66a184472"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/heart3.svg",
+    "file": "assets/accessible/heart3.svg",
+    "bytes": 7281,
+    "sha256": "894a65c6f41f326e3f4e428dd8e778578cff571a9076539069bbe54fb2d2b2d9"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/heart2.svg",
+    "file": "assets/accessible/heart2.svg",
+    "bytes": 6792,
+    "sha256": "2eff605c11b667ae8c49d08a7341c4d39a4092553e8bf625730d055bb475f110"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/spade8.svg",
+    "file": "assets/accessible/spade8.svg",
+    "bytes": 10858,
+    "sha256": "b9d0615a4fd202b7b330d2c93da2674c55a650137cafd594a36ea05b80a67a8a"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/diamond6.svg",
+    "file": "assets/accessible/diamond6.svg",
+    "bytes": 9052,
+    "sha256": "f608f5d805127a91617ee1e1f7653b8cefd8ac724287576f4d0be60585c4f887"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/diamond2.svg",
+    "file": "assets/accessible/diamond2.svg",
+    "bytes": 7057,
+    "sha256": "86e5be0b2ba826675e093317c77d479c76a661966fde80c7d4298635d230c9ab"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/heartQueen.svg",
+    "file": "assets/accessible/heartQueen.svg",
+    "bytes": 617987,
+    "sha256": "71ef8fb50b8f60ccc5701cf0240be2494eb07ebd6b4b462e865436a90a33b999"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/heart6.svg",
+    "file": "assets/accessible/heart6.svg",
+    "bytes": 8629,
+    "sha256": "13f1c41608df138ab953b242a763c4a1f5b8340720a53702c6e32d6751a589f7"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/diamond10.svg",
+    "file": "assets/accessible/diamond10.svg",
+    "bytes": 11274,
+    "sha256": "dea3e22a0883ecef3d0c6098fe3459fde720c119cc3fb541c2be0f1b2abb74f3"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/heart7.svg",
+    "file": "assets/accessible/heart7.svg",
+    "bytes": 9121,
+    "sha256": "4fc90f20edbdf184ebdd0cb9b133db21eb38fda72c53a8e86c5edd6a708546dd"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/diamond3.svg",
+    "file": "assets/accessible/diamond3.svg",
+    "bytes": 7596,
+    "sha256": "2313d0c2925d75ae21bcbcac3d28ae5a1d1133e2bca965ec62f1365ce51547f5"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/heart5.svg",
+    "file": "assets/accessible/heart5.svg",
+    "bytes": 8269,
+    "sha256": "2de8381911e1c028c824fc8cfe96a5609aba80cf85f4796ccd2d4042f0a0e591"
+  },
+  {
+    "source": "https://raw.githubusercontent.com/saulspatz/SVGCards/f8df28774736ea2545fc8e7fb693eb55ce031945/Decks/Accessible/Vertical/svgs/heart4.svg",
+    "file": "assets/accessible/heart4.svg",
+    "bytes": 7793,
+    "sha256": "6ec895528b77cd51bfe561fb7ccb8887947cbb7e0a84746121665d13f7f2d6db"
+  }
+]

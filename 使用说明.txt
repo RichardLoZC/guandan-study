@@ -1,0 +1,29 @@
+掼蛋研习社 / Guandan Study 1.7.0
+
+中文：牌桌顶部点 English 切换英文，再点“中文”切回。当前牌局和选牌保留。
+English: Use the English / 中文 button at the top. Language changes preserve your game and selection.
+
+Mac：解压应用后放入本机“应用程序”，打开“掼蛋研习社”。
+Windows: Extract the whole ZIP, then run GuandanStudy.exe.
+Android：安装 APK，手机和平板共用；支持横竖屏。需要 Android 8+ / WebView 120+。
+
+2D / 3D：顶部切换；默认 3D，图形不可用时返回 2D。
+理牌 / Arrange：轮换展示不同组合。点击或空格选牌，再点“出牌 / Play”。
+看建议 / Hint：DanLM 推荐，只选中建议，不会替你确认出牌。
+复盘 / Review：查看实际行动、最后出牌、终局明牌与逐手回放；可导出文本。
+设置 / Settings：主题、牌面、大字、发牌动画、暂停、备份和许可。
+
+多人 / Multiplayer：同一可信 Wi-Fi，电脑开桌，其他设备输入六位房间码加入。支持 2～4 真人，空位由 DanLM 补齐。安卓作为加入端。房主电脑保持开机。房间码不提供加密，不要把端口开放到互联网。
+
+每步自动保存。Mac：~/Library/Application Support/GuandanStudyOffline。
+Windows：EXE 旁“掼蛋数据”，不可写时回退 %APPDATA%/GuandanStudyOffline。
+Android：应用私有目录。卸载前导出备份。
+
+模型权重未修改。讲解来自教学层，不是神经网络的内部思考；评分不是胜率。
+Model weights are unchanged. Explanations come from a teaching layer; scores are not win probabilities.
+
+DanLM 含非商业限制。完整许可和素材来源见应用设置及 THIRD_PARTY_NOTICES.md。
+DanLM is for non-commercial use under its bundled license.
+
+Mac 为 ad-hoc 签名、未公证。Windows 无 Authenticode 签名。
+Mac is ad-hoc signed, not notarized. Windows is not Authenticode signed.

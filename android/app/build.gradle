@@ -1,0 +1,48 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.guandan.study'
+    compileSdk 36
+    defaultConfig {
+        applicationId 'com.guandan.study'
+        minSdk 26
+        targetSdk 36
+        versionCode 170
+        versionName '1.7.0'
+    }
+    signingConfigs {
+        release {
+            if (System.getenv('GUANDAN_STORE_FILE')) {
+                storeFile file(System.getenv('GUANDAN_STORE_FILE'))
+                storePassword System.getenv('GUANDAN_STORE_PASSWORD')
+                keyAlias 'guandan'
+                keyPassword System.getenv('GUANDAN_STORE_PASSWORD')
+            }
+        }
+    }
+    buildTypes {
+        debug { applicationIdSuffix '.dev'; versionNameSuffix '-test' }
+        release { signingConfig signingConfigs.release; minifyEnabled false }
+    }
+    buildFeatures { buildConfig true }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+    androidResources { noCompress += ['onnx', 'wasm'] }
+}
+
+// Share the exact rules, model, artwork and review implementation with macOS.
+def prepareWeb = tasks.register('prepareWeb', Sync) {
+    from('../../web') { into 'web' }
+    from('../web') { into 'web/pad' }
+    into layout.buildDirectory.dir('generated/guandan-assets')
+    doLast {
+        def page = layout.buildDirectory.file('generated/guandan-assets/web/index.html').get().asFile
+        page.setText(page.getText('UTF-8')
+            .replace('<html lang="zh-CN"', '<html lang="zh-CN" data-platform="pad"')
+            .replace('<title>掼蛋研习社</title>', '<title>掼蛋研习社 · Android</title>')
+            .replace('</head>', '<link rel="stylesheet" href="/pad/pad.css"><link rel="stylesheet" href="/app/mobile.css?v=170"><script src="/pad/pad.js" defer></script></head>')
+            .replace('Desktop 1.7.0 · 离线单机与局域网联机', 'Android 1.7.0 · 离线单机与局域网联机')
+            .replace('关闭窗口会保留应用。⌘Q退出，Control+⌘F全屏；⌘+与⌘−调整界面大小。', '点击选牌，沿手牌横向滑动可连续选择或取消。横竖屏和分屏均可使用；系统返回先关闭面板，再返回桌面。每一步自动保存，下次打开继续。'), 'UTF-8')
+    }
+}
+android.sourceSets.main.assets.srcDir(layout.buildDirectory.dir('generated/guandan-assets'))
+tasks.named('preBuild').configure { dependsOn prepareWeb }

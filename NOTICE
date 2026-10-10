@@ -1,0 +1,5 @@
+Guandan Study / 掼蛋研习社
+Original application notice: Copyright (c) 2026 shef-wang.
+Platform, UI, localization and LAN adaptations: Copyright (c) 2026 Richard Lo.
+
+The root MIT license covers original project code and the MIT-licensed original application components. It does not replace third-party licenses. In particular, DanLM models are subject to the non-commercial restriction in web/mobile/DanLM-LICENSE.txt. Bundled application distributions must follow that restriction. See THIRD_PARTY_NOTICES.md for source and modification notices.
