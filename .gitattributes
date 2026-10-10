@@ -1,0 +1,10 @@
+# Keep authored text consistent on every platform.
+* text=auto eol=lf
+
+# Preserve distributed upstream bytes for provenance and SHA-256 verification.
+web/app/core.js -text
+web/assets/** -text
+web/card-sources/** -text
+web/vendor/** -text
+web/mobile/** -text
+web/index-legacy.html -text
