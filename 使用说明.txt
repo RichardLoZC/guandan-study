@@ -1,4 +1,4 @@
-掼蛋研习社 / Guandan Study 1.7.0
+掼蛋研习社 / Guandan Study 1.7.1
 
 中文：牌桌顶部点 English 切换英文，再点“中文”切回。当前牌局和选牌保留。
 English: Use the English / 中文 button at the top. Language changes preserve your game and selection.

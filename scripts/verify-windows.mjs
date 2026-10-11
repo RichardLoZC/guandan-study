@@ -43,7 +43,8 @@ try{
  assert.equal(pe.readUInt16LE(peOffset+4),info.arch==='x64'?0x8664:0xaa64,'Wrong Windows executable architecture');
 
  const asar=path.join(appRoot,'resources','app.asar');
- const bundled=JSON.parse(extractFile(asar,'package.json'));
+ const readBundle=name=>extractFile(asar,path.normalize(name));
+ const bundled=JSON.parse(readBundle('package.json'));
  assert.equal(bundled.version,metadata.version);
  assert.equal(bundled.main,'main.cjs');
  const entries=listPackage(asar).map(name=>name.replace(/^[/\\]+/,'').replaceAll('\\','/'));
@@ -57,7 +58,7 @@ try{
    expected.add(relative);
    if(entry.isDirectory())await compare(relative);
    else if(relative!=='package.json'){
-    assert.equal(sha256(extractFile(asar,relative)),sha256(await fs.readFile(path.join(project,relative))),`Bundled source mismatch: ${relative}`);
+    assert.equal(sha256(readBundle(relative)),sha256(await fs.readFile(path.join(project,relative))),`Bundled source mismatch: ${relative}`);
     checkedFiles++;
    }
   }
@@ -65,7 +66,7 @@ try{
  await compare();
  assert.ok(entries.every(name=>expected.has(name)),'Archive contains a stale runtime entry');
  const modelHashes={};
- for(const name of ['context.onnx','scores.onnx'])modelHashes[name]=sha256(extractFile(asar,'web/mobile/'+name));
+ for(const name of ['context.onnx','scores.onnx'])modelHashes[name]=sha256(readBundle('web/mobile/'+name));
 
  let nativeRuntime={tested:false,reason:'Requires matching native Windows architecture'};
  if(process.platform==='win32'&&process.arch===info.arch){
