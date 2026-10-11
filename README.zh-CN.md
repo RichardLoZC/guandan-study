@@ -2,6 +2,14 @@
 
 [English](README.md) · [下载安装包](https://github.com/RichardLoZC/guandan-study/releases)
 
+## 原作者鸣谢
+
+**原项目由严锋教授创建。严锋教授是复旦大学中文系教授、2024 微博年度新知博主。**
+
+本项目是在严锋教授原有工作基础上的改编与扩展。感谢严锋教授的原创工作，为本项目提供了基础。当前仓库中的跨平台适配、界面改版、3D 展示、中英切换和局域网联机等功能，由 Richard Lo 在此基础上继续改编与维护。
+
+## 项目介绍
+
 支持 macOS、Windows、安卓手机和平板的掼蛋应用。可离线与 DanLM 对局，也可在同一局域网内与朋友一起玩。牌桌顶部点击 **English / 中文** 即可切换语言，当前牌局和选牌保留。
 
 **内置 DanLM 模型仅限非商业用途。** 公开仓库不代表所有组件都可无限制商用，详见[许可与素材来源](THIRD_PARTY_NOTICES.md)。
@@ -51,4 +59,4 @@ Mac 存档位于 `~/Library/Application Support/GuandanStudyOffline`。Windows �
 
 联机只面向可信局域网，采用 HTTP/UDP，房间码不提供加密。不要将房主端口映射到互联网。
 
-原始应用来自 Windows 1.0.0 离线包，原包没有提供 React/TypeScript 源码。本项目保留压缩代码及提取哈希供核对，并重写了可维护的界面、状态管理、3D、联机与跨平台入口。原作者、DanLM、纸牌和手部素材许可均保留。本项目不代表 DanLM 官方。
+本项目基于严锋教授原项目的 Windows 1.0.0 离线包改编，原包没有提供 React/TypeScript 源码。本项目保留压缩代码及提取哈希供核对，并重写了可维护的界面、状态管理、3D、联机与跨平台入口。原包所附的 Copyright 2026 shef-wang 声明，以及 DanLM、纸牌和手部素材许可均按原样保留。本项目不代表 DanLM 官方。

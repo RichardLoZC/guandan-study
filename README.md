@@ -2,6 +2,16 @@
 
 [简体中文](README.zh-CN.md) · [Downloads](https://github.com/RichardLoZC/guandan-study/releases)
 
+## Original creator · 原作者鸣谢
+
+**原项目由严锋教授创建。严锋教授是复旦大学中文系教授、2024 微博年度新知博主。** 本项目是在严锋教授原有工作基础上的改编与扩展。感谢严锋教授的原创工作，为本项目提供了基础。
+
+**The original project was created by Professor Yan Feng (严锋)**, a professor in Fudan University's Department of Chinese Language and Literature. He was recognized as a 2024 Weibo “年度新知博主” (New Knowledge Blogger of the Year). This repository adapts and extends his original work. We thank Professor Yan Feng for creating the project on which this adaptation is built.
+
+The platform ports, redesigned interface, 3D presentation, localization and LAN features in this repository are subsequent adaptations by Richard Lo.
+
+## About
+
 Play Guandan offline against DanLM, or share a table with friends on your local network. Available for macOS, Windows and Android phones/tablets. Switch between Chinese and English with the button at the top of the table.
 
 **The bundled DanLM model has a non-commercial license.** This public repository is not a claim that every included component is unrestricted open source. See [licenses and credits](THIRD_PARTY_NOTICES.md).
@@ -67,4 +77,6 @@ The original Windows 1.0.0 distribution did not include its React/TypeScript sou
 
 ## Credits
 
-DanLM: [dashidhy/DanLM](https://github.com/dashidhy/DanLM). Original application notice: Copyright 2026 shef-wang. Three.js and ONNX Runtime are included under their respective licenses. Cards derive from public-domain SVGCards; the hand mesh derives from a CC0 Innerscene/MakeHuman asset. All notices and modification details are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Original project creator: **Professor Yan Feng (严锋)**. This repository is an adaptation of his work.
+
+DanLM: [dashidhy/DanLM](https://github.com/dashidhy/DanLM). The original distribution's copyright notice, Copyright 2026 shef-wang, is retained as supplied. Three.js and ONNX Runtime are included under their respective licenses. Cards derive from public-domain SVGCards; the hand mesh derives from a CC0 Innerscene/MakeHuman asset. All notices and modification details are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

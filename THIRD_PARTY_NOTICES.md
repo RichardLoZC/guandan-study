@@ -1,5 +1,11 @@
 # Licenses and credits
 
+## Original project creator
+
+**Professor Yan Feng (严锋)**, a professor in Fudan University's Department of Chinese Language and Literature and a 2024 Weibo “年度新知博主” honoree, created the original project. This repository adapts and extends his work. We thank him for providing the foundation for this project. The original distribution's license and copyright notices below are retained as supplied.
+
+## Component licenses
+
 This repository contains components with different licenses. Public availability does not remove their restrictions. In particular, the bundled DanLM component and distributed application containing it are for **non-commercial use** unless the DanLM copyright holder grants permission.
 
 | Component | Source / notice | License and modifications |
