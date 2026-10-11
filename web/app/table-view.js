@@ -10,7 +10,7 @@
     flat.setAttribute('aria-pressed',String(desired==='2d'));spatial.setAttribute('aria-pressed',String(desired==='3d'));
     spatial.textContent=loading?'载入 3D…':'3D 握牌';spatial.setAttribute('aria-busy',String(loading));
     host.hidden=!active;status.hidden=!active;status.textContent='点选牌面 · 理牌可轮换组合';
-    document.getElementById('hand-scroll').setAttribute('aria-label',active?'扇形手牌；Tab 逐张查看，空格选牌':'手牌区域，可上下滚动查看');
+    document.getElementById('hand-scroll').setAttribute('aria-label',active?'扇形手牌；Tab 逐张查看，空格选牌':'双层手牌；自由理牌可拖动换位，窄屏可左右滚动');
   }
   function resetButtons(){for(const button of bridge.buttons().values())button.style.removeProperty('--hit-x'),button.style.removeProperty('--hit-y'),button.style.removeProperty('--hit-w'),button.style.removeProperty('--hit-h');}
   function clear(){renderer?.dispose();renderer=null;host.replaceChildren();resetButtons();controls();bridge.layout();}
@@ -22,6 +22,7 @@
   }
   async function choose(mode){
     if(mode==='3d'&&desired==='3d'&&(loading||renderer))return;
+    bridge.cancelDrag();
     desired=mode;const token=++generation;loadingController?.abort();loadingController=null;
     if(mode==='2d'){loading=false;clear();return;}
     if(renderer){controls();return;}
@@ -31,7 +32,7 @@
     try{
       const module=await import('./table3d.js');
       if(token!==generation||disposed)return;
-      candidate=await module.createTableView({host,zone,signal,onSelect:id=>bridge.select(id),onFailure:error=>{if(token===generation&&desired==='3d'&&candidate&&renderer===candidate)fallback(error);}});
+      candidate=await module.createTableView({host,zone,signal,onSelect:id=>bridge.select(id),onArrangeStart:(event,id)=>bridge.arrangeStart(event,id),onFailure:error=>{if(token===generation&&desired==='3d'&&candidate&&renderer===candidate)fallback(error);}});
       if(token!==generation||disposed){candidate.dispose();return;}
       renderer=candidate;loading=false;
       controls();bridge.layout();sync();renderer?.resize();
@@ -46,6 +47,6 @@
   document.getElementById('large-type').addEventListener('click',()=>{sync();});
   document.addEventListener('visibilitychange',()=>renderer?.setVisible(!document.hidden));
   window.addEventListener('beforeunload',()=>{disposed=true;generation++;loadingController?.abort();observer.disconnect();renderer?.dispose();});
-  window.tableView=Object.freeze({sync});controls();
+  window.tableView=Object.freeze({sync,dropTarget:(x,y)=>renderer?.dropTarget(x,y)});controls();
   if(new URLSearchParams(location.search).get('view')!=='2d')choose('3d');
 })();

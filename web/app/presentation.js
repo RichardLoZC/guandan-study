@@ -26,17 +26,17 @@
   function tableCards(snapshot){
     return snapshot.tableActions?snapshot.tableActions.flatMap(action=>action?.cards||[]):snapshot.table?.cards||[];
   }
-  function project(round,{hand=null,groups=null,skin='jumbo',theme='day',selected=new Set(),enabled=false,allowed=null,dealing=false,large=false,reduceMotion=false}={}){
+  function project(round,{hand=null,groups=null,rows=null,arranging=false,skin='jumbo',theme='day',selected=new Set(),enabled=false,allowed=null,dealing=false,large=false,reduceMotion=false}={}){
     if(!round)return null;
     hand=hand||round.hand;const counts=new Map(),ordinals=new Map();
     hand.forEach(card=>counts.set(card.face,(counts.get(card.face)||0)+1));
     return {
       id:round.id,revision:round.revision,classic:!round.isTuo3,phase:round.phase,
-      ended:Boolean(round.game.result),dealing,skin,theme,large,reduceMotion,level:round.state.level,
+      ended:Boolean(round.game.result),dealing,skin,theme,large,reduceMotion,arranging,level:round.state.level,
       hand:hand.map(card=>{
         const ordinal=(ordinals.get(card.face)||0)+1;ordinals.set(card.face,ordinal);
         return {id:card.id,face:card.face,rank:card.rank,label:card.label,isWild:Boolean(card.isWild),
-          joker:card.suit==='joker',ordinal,duplicates:counts.get(card.face),
+          joker:card.suit==='joker',ordinal,duplicates:counts.get(card.face),row:rows?.findIndex(row=>row.includes(card.id)),
           group:groups?.findIndex(g=>g.ids.length>1&&g.ids.includes(card.id))??-1,arranged:Boolean(groups),selected:selected.has(card.id),selectable:enabled&&(!allowed||allowed.has(card.id))};
       }),
       seats:round.game.players.map((player,seat)=>({seat,count:player.hand.length,finished:Boolean(player.finished)})),
@@ -52,7 +52,9 @@
     const cards=Array.isArray(hand)?hand:Array.from({length:hand},(_,id)=>({id}));
     const count=cards.length,cardWidth=120,cardHeight=180,result=Array(count);
     let tiers=[cards.map((card,index)=>({card,index}))];
-    if(count>14){
+    if(cards.length&&cards.every(card=>card.row===0||card.row===1)){
+      tiers=[[],[]];cards.forEach((card,index)=>tiers[card.row].push({card,index}));
+    }else if(count>14){
       const high=[],low=[];
       cards.forEach((card,index)=>(card.joker||card.isWild||['10','J','Q','K','A'].includes(card.rank)?high:low).push({card,index}));
       tiers=!cards.some(c=>c.arranged)&&high.length>=4&&low.length>=4&&high.length<=16&&low.length<=16?[high,low]:[tiers[0].slice(0,Math.ceil(count/2)),tiers[0].slice(Math.ceil(count/2))];
@@ -70,6 +72,21 @@
     for(const p of result){p.x=width/2+(p.x-width/2)*scale;p.y=80+(p.y-80)*scale;p.width*=scale;p.height*=scale;p.hitWidth*=scale;p.z*=scale;}
     return result;
   }
+  // Insertion targets follow the exposed top corners, rather than overlapping
+  // rectangular hit boxes. Empty tiers remain usable while editing.
+  function fanDropTarget(hand,width,height,x,y){
+    const scale=gripScale(width,height),items=fanLayout(hand,width,height),targets=[];
+    if(x<width/2-245*scale||x>width/2+245*scale)return null;
+    for(let row=0;row<2;row++){
+      const tier=items.filter(item=>item.tier===row);
+      if(!tier.length){targets.push({row,index:0,x:width/2-35*scale,y:height-(80+((row===0?383:285)-80)*scale),height:65*scale});continue;}
+      const corners=tier.map(p=>({x:p.x-p.width/2*Math.cos(p.angle)-p.height/2*Math.sin(p.angle),y:height-p.y+p.width/2*Math.sin(p.angle)-p.height/2*Math.cos(p.angle)}));
+      corners.forEach((p,index)=>targets.push({row,index,x:p.x,y:p.y,height:65*scale}));
+      const last=corners.at(-1);targets.push({row,index:tier.length,x:last.x+35*scale,y:last.y+18*scale,height:65*scale});
+    }
+    const target=targets.reduce((best,p)=>Math.hypot(x-p.x,y-p.y-25*scale)<Math.hypot(x-best.x,y-best.y-25*scale)?p:best);
+    return Math.hypot(x-target.x,y-target.y-25*scale)>110*scale?null:target;
+  }
   function departing(previous,next){
     if(!previous||!next||previous.id!==next.id||next.revision<=previous.revision||next.ended||next.dealing||next.table?.owner!==0)return [];
     const held=new Set(next.hand.map(card=>card.id)),played=new Set(next.table.ids);
@@ -85,6 +102,6 @@
     return Boolean(previous&&next&&previous.id===next.id&&next.revision>previous.revision&&!next.ended&&!next.dealing&&next.table?.ids.length&&
       (previous.table?.owner!==next.table.owner||previous.table?.ids.join('|')!==next.table.ids.join('|')));
   }
-  const api={gripScale,project,tableActions,tableCards,fanLayout,departing,tableLayout,isNewTablePlay};
+  const api={gripScale,project,tableActions,tableCards,fanLayout,fanDropTarget,departing,tableLayout,isNewTablePlay};
   if(typeof module==='object'&&module.exports)module.exports=api;else scope.GuandanPresentation=Object.freeze(api);
 })(globalThis);

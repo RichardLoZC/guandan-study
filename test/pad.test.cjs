@@ -12,7 +12,7 @@ function harness(initial=[],key=null){
     return nodes.get(id);
   }
   const cards=Array.from({length:6},(_,i)=>{const card=node('card'+i);card.dataset.id=String(i);return card;});
-  const context={GuandanI18n:require('../web/app/i18n.js'),selected:new Set(initial),playKey:key,liveRound:{revision:1,phase:'playing'},activeTask:null,workEpoch:0,fault:null,
+  const context={handEditor:{editing:false,cancel(){},setEditing(value){this.editing=value;}},GuandanI18n:require('../web/app/i18n.js'),selected:new Set(initial),playKey:key,liveRound:{revision:1,phase:'playing'},activeTask:null,workEpoch:0,fault:null,
     canPlay:()=>true,byId:node,clearToast(){},updateSelection(){},toast(){},downloadText(){},
     scheduleBots(){calls.scheduled++;},stopBots(){},stopReplay(){},renderGame(){},checkModel(){calls.health++;},closeDialog(dialog){dialog.open=false;},
     model:{ready:true,cancel(){calls.cancelled++;}},performance:{now:()=>100},dealMotion:{active:false,finish(){this.active=false;}},
@@ -77,4 +77,11 @@ test('Pad background and back controls finish a dealing animation',()=>{
   const h=harness();h.context.dealMotion.active=true;
   assert.equal(h.context.window.guandanPad.back(),true);assert.equal(h.context.dealMotion.active,false);
   h.context.dealMotion.active=true;h.context.window.guandanPad.suspend();assert.equal(h.context.dealMotion.active,false);
+});
+
+test('free arranging owns touch drags and system Back exits arranging before clearing cards',()=>{
+ const h=harness(['0']);h.context.handEditor.editing=true;
+ h.event('pointerdown',10);h.event('pointermove',200);h.event('pointerup',200);
+ assert.deepEqual([...h.context.selected],['0']);
+ assert.equal(h.context.window.guandanPad.back(),true);assert.equal(h.context.handEditor.editing,false);assert.deepEqual([...h.context.selected],['0']);
 });

@@ -451,6 +451,16 @@ const patterns=[
  [/已使用(.+)。/g,'Using $1.'],[/的剩余手牌/g,"’s remaining cards"],[/的区域/g,"’s seat"],[/的牌桌/g,"’s table"],
  [/实际牌局记录/g,'Actual game record'],[/未抗贡/g,'Tribute required'],[/ · 未抗贡/g,' · Tribute required']
 ];
+Object.assign(messages,{
+  '双层手牌；自由理牌可拖动换位，窄屏可左右滚动':'Two hand rows. Free arrange to drag cards; scroll sideways in narrow windows.',
+  '双层手牌；点击选牌，自由理牌可拖动换位，空白处左右滚动':'Two hand rows. Tap cards to select, use Free arrange to move, swipe empty space to scroll.',
+  '自由理牌':'Free arrange','完成理牌':'Done arranging','撤销移动':'Undo move','自由理牌中':'Arranging cards',
+  '上排':'Upper','下排':'Lower','上排手牌':'Upper hand row','下排手牌':'Lower hand row','放这里':'Place here',
+  '把已选牌放到上排末尾':'Move selected cards to the end of the upper row','把已选牌放到下排末尾':'Move selected cards to the end of the lower row',
+  '拖到上下两排任意位置 · 选中多张可一起拖动':'Drag between rows · Select several cards to move them together',
+  '拖动单张或已选牌；完成后出牌':'Drag cards or a selection. Finish arranging to play.',
+  '牌序已调整，但未能保存到本机。':'Cards arranged, but the layout could not be saved on this device.'
+});
 const escape=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 const keys=Object.keys(messages).sort((a,b)=>b.length-a.length);
 const matcher=new RegExp(keys.map(escape).join('|'),'g');

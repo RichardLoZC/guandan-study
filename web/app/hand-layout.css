@@ -1,0 +1,63 @@
+/* Two permanent shelves. Long rows scroll sideways instead of becoming a third tier. */
+html:not(.view-3d) .hand-scroll { --hand-row-step:82px; max-height:none; height:calc(var(--hand-card-height) + var(--hand-row-step) + 22px); padding:16px 8px 6px; touch-action:pan-x; }
+html:not(.view-3d) .hand-scroll.empty-hand { height:56px; }
+html:not(.view-3d) #hand-cards { min-width:var(--row-width); }
+html:not(.view-3d) .card-row { align-items:flex-start; justify-content:center; padding-inline:38px; border-radius:9px; }
+html:not(.view-3d) .card-row .playing-card { flex:0 0 var(--hand-step); width:var(--hand-step); }
+html:not(.view-3d) .card-row .playing-card:nth-last-child(2) { flex-basis:var(--hand-card-width); width:var(--hand-card-width); }
+html:not(.view-3d) .playing-card.group-start { margin-left:10px; }
+html:not(.view-3d) .playing-card.arranged { border-bottom:0; }
+html:not(.view-3d) .playing-card.arranged::before { content:''; position:absolute; left:2px; top:34px; width:calc(var(--hand-step) - 5px); height:4px; border-radius:3px; background:var(--group-color); z-index:2; }
+.hand-tier-label { position:absolute; left:5px; top:20px; color:var(--felt-muted); font-size:13px; letter-spacing:.08em; writing-mode:vertical-rl; }
+.hand-row-end { display:none; }
+.hand-edit-help { color:#f8e5b7; text-align:center; font-size:15px; line-height:1.5; margin:2px 0; }
+.hand-options #free-arrange[aria-pressed=true] { background:#e7cb87; color:#183d2e; border-radius:8px; font-weight:650; }
+.hand-editing:not(.view-3d) .card-row { outline:1px dashed #e7cb874d; background:#153b2c3b; }
+.hand-editing:not(.view-3d) .card-row.drop-row { outline:2px solid #edce87; background:#e7cb871a; }
+.hand-editing:not(.view-3d) .playing-card { cursor:grab; touch-action:none; }
+.hand-editing:not(.view-3d) .hand-row-end { display:block; flex:0 0 62px; margin-left:9px; padding:7px 4px; align-self:flex-start; margin-top:18px; min-height:44px; font-size:14px; color:#f9e7b8; background:#153b2c9e; border:1px dashed #e7cb8777; border-radius:8px; }
+.hand-editing:not(.view-3d) .hand-row-end:disabled { opacity:.35; }
+.hand-editing #three-stage canvas { touch-action:none; }
+.hand-dragging, .hand-dragging * { cursor:grabbing!important; user-select:none; }
+.hand-drag-ghost { position:fixed; z-index:1000; pointer-events:none; width:78px; height:117px; transform:rotate(5deg); filter:drop-shadow(0 8px 12px #0008); }
+.hand-drag-ghost img { width:100%; height:100%; border-radius:5px; }
+.hand-drag-ghost b { position:absolute; right:-9px; top:-9px; padding:5px 9px; border-radius:18px; color:#173e2c; background:#f4d38a; font-size:17px; }
+.hand-drop-marker { position:fixed; z-index:999; pointer-events:none; width:4px; border-radius:4px; background:#ffde8a; box-shadow:0 0 0 2px #183e2f,0 0 16px #f3d490; }
+.hand-drop-marker::before { content:''; position:absolute; left:-4px; top:-5px; width:12px; height:5px; border-radius:3px; background:#ffde8a; }
+.drag-source { opacity:.5; }
+.view-3d .hand-tier-label,.view-3d .hand-row-end { display:none; }
+.view-3d .hand-edit-help { position:absolute; bottom:calc(var(--grip-height,400px) + 4px); left:20%; right:20%; pointer-events:none; }
+.view-3d .hand-options { bottom:104px; right:24px; flex-wrap:wrap; max-width:46%; }
+@media(max-width:720px) {
+  html:not(.view-3d) .hand-scroll { --hand-row-step:68px; }
+  html:not(.view-3d) .card-row { padding-inline:32px; justify-content:flex-start; }
+  .hand-edit-help { font-size:13px; }
+  html.view-3d .hand-options { bottom:calc(var(--grip-height,300px) + 8px); right:10px; max-width:100%; }
+  html.view-3d.hand-editing .hand-heading h1 { display:none; }
+  html.view-3d .hand-edit-help { left:8px; right:8px; bottom:calc(var(--grip-height,300px) - 18px); }
+}
+/* Compact landscape keeps two rows and leaves public plays above the controls. */
+@media(max-height:500px) and (orientation:landscape) {
+  html .hand-edit-help { display:none; }
+  html .play-zone:not(.is-tribute) .player .avatar { width:30px; height:30px; }
+  html .play-zone:not(.is-tribute) .player-info > strong { font-size:16px; }
+  html .play-zone:not(.is-tribute) .remaining b { font-size:24px; }
+  html .play-zone:not(.is-tribute) .table-caption strong { font-size:15px; }
+  html:not(.view-3d),html[data-platform=pad]:not(.view-3d) { --hand-card-width:56px; --hand-card-height:84px; --hand-step:30px; }
+  html:not(.view-3d) .hand-scroll { --hand-row-step:44px; height:140px; padding:8px 8px 4px; }
+  html:not(.view-3d) .play-zone:not(.is-tribute) .opponent-left,html:not(.view-3d) .play-zone:not(.is-tribute) .opponent-right { top:38px; }
+  html:not(.view-3d) .play-zone:not(.is-tribute) .player-info { display:flex; align-items:center; gap:7px; }
+  html:not(.view-3d) .play-zone:not(.is-tribute) .remaining { margin:0; font-size:12px; }
+  html:not(.view-3d) .play-zone:not(.is-tribute) .seat-bubble { font-size:12px; margin:0; }
+  html:not(.view-3d) .play-zone:not(.is-tribute) .self-play-anchor { top:75px; bottom:auto; left:64%; }
+  html:not(.view-3d) .play-zone:not(.is-tribute) .table-play { max-width:220px; }
+  html:not(.view-3d) .play-zone:not(.is-tribute) .table-cards img { width:30px; height:45px; }
+  html:not(.view-3d) .joker-label { width:27px; height:53px; font-size:17px; padding:2px; }
+  html:not(.view-3d) .selected-mark { top:39px; }
+  html:not(.view-3d) .hand-row-end { margin-top:8px; }
+  html.view-3d .hand-options { flex-wrap:nowrap; max-width:54%; gap:0; bottom:58px; }
+  html.view-3d .self-play-anchor { top:52%; left:76%; }
+  html.view-3d .play-zone:not(.is-tribute) .opponent-left .seat-anchor,html.view-3d .play-zone:not(.is-tribute) .opponent-right .seat-anchor { top:calc(100% + 5px); }
+  html.view-3d .play-zone:not(.is-tribute) .teammate .seat-anchor { top:0; left:calc(100% + 8px); transform:none; }
+}
+html[lang=en]:not(.view-3d) .joker-label { display:block; writing-mode:vertical-rl; text-orientation:upright; width:25px; height:66px; font-size:10px; padding:3px; line-height:1; }

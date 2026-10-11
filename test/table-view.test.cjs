@@ -3,7 +3,7 @@ function harness(search="?view=2d"){
   const elements=new Map(),flags=new Set(),messages=[],views=[];let snapshot={classic:true,large:false,id:'first',revision:1,hand:[]};
   function el(id){if(!elements.has(id))elements.set(id,{clientWidth:1280,hidden:false,listeners:{},attrs:{},style:{removeProperty(){}},setAttribute(k,v){this.attrs[k]=v;},addEventListener(k,fn){this.listeners[k]=fn;},replaceChildren(){},classList:{toggle(){},contains(){return false;}}});return elements.get(id);}
   const root=el('root');root.classList={toggle(k,on){on?flags.add(k):flags.delete(k);},contains:k=>flags.has(k)};
-  const bridge={snapshot:()=>snapshot,buttons:()=>new Map(),layout(){},notice:text=>messages.push(text)};
+  const bridge={cancelDrag(){},snapshot:()=>snapshot,buttons:()=>new Map(),layout(){},notice:text=>messages.push(text)};
   let factory=async()=>make();function make(){const v={disposed:0,states:[],dispose(){this.disposed++;},setState(s){this.states.push(s);},resize(){},hover(){},setVisible(){}};views.push(v);return v;}
   const win={GuandanTable:bridge,addEventListener(){}};
   const source=fs.readFileSync(require.resolve('../web/app/table-view.js'),'utf8').replace("import('./table3d.js')","loadModule()");

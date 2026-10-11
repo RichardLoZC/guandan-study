@@ -1,4 +1,4 @@
-掼蛋研习社 / Guandan Study 1.7.1
+掼蛋研习社 / Guandan Study 1.8.0
 
 中文：牌桌顶部点 English 切换英文，再点“中文”切回。当前牌局和选牌保留。
 English: Use the English / 中文 button at the top. Language changes preserve your game and selection.
@@ -9,6 +9,8 @@ Android：安装 APK，手机和平板共用；支持横竖屏。需要 Android 
 
 2D / 3D：顶部切换；默认 3D，图形不可用时返回 2D。
 理牌 / Arrange：轮换展示不同组合。点击或空格选牌，再点“出牌 / Play”。
+自由理牌 / Free arrange：拖动单张或已选的多张牌，在上下两排自由换位；2D 和 3D 共用牌序。支持撤销；点“完成理牌”后继续出牌。2D 可点“放这里”把已选牌移到该排末尾，也可用 Alt / Option + 方向键移动。出牌保留其余牌序，重新打开同一副会恢复；窄屏可左右滚动。
+Free arrange: Drag cards or a selection between the two rows. Undo a move, then choose Done arranging to play. Layouts persist for the same round and are shared by both views.
 看建议 / Hint：DanLM 推荐，只选中建议，不会替你确认出牌。
 复盘 / Review：查看实际行动、最后出牌、终局明牌与逐手回放；可导出文本。
 设置 / Settings：主题、牌面、大字、发牌动画、暂停、备份和许可。

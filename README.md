@@ -21,6 +21,7 @@ Play Guandan offline against DanLM, or share a table with friends on your local 
 - First-person 3D cards and hands, with a 2D alternative and automatic graphics fallback.
 - Three card styles, day/night themes and larger text.
 - One-click hand arrangements that cycle through different possible combinations.
+- Free arrangement in both views: drag single cards or a selection between two rows, keep combinations together and undo a move. Layouts survive plays and reopening the same round.
 - DanLM suggestions, a teaching layer, round reviews, replay and text exports.
 - Visible tribute/return/exemption cards, each player's latest play or pass, and all remaining cards after a round.
 - Solo practice and LAN games with 2–4 human players. DanLM fills empty seats; four humans can play without bots.
@@ -40,6 +41,12 @@ Get an archive or APK from [Releases](https://github.com/RichardLoZC/guandan-stu
 The Mac build uses an ad-hoc signature and is not notarized. The Windows build has no Authenticode signature. Android releases use a dedicated release key. Existing Android installations with the same application ID and signing key can update in place.
 
 For multiplayer, connect devices to the same trusted Wi-Fi. Choose **Solo practice → Multiplayer**. Host a room on a computer, then join using its code. New games and clearing A randomize seats. Android joins rooms; it does not host them. Guest Wi-Fi isolation can prevent discovery; manual entry uses the address shown in Room options. The host must remain awake.
+
+## Arrange your hand
+
+Choose **Free arrange**, then drag a card to either row. Select several cards first to move them together. The gold marker shows the insertion point; **Undo move** reverses the last move. Choose **Done arranging** to return to playing. In 2D you can also select cards and tap **Place here**, or use Alt/Option + arrow keys on a focused card. Narrow 2D rows scroll sideways.
+
+Layouts stay on your device and are shared by 2D and 3D. Played cards disappear without re-sorting the rest; a new round starts with a fresh arrangement. Auto arrangement remains available. Neither manual nor automatic display arrangements change game rules or DanLM inputs.
 
 ## Develop
 

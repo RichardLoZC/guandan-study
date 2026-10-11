@@ -24,7 +24,7 @@ function addHandLight(scene){
   const key=new THREE.DirectionalLight(0xfff4e5,2.0);key.position.set(-300,450,550);scene.add(key);
   const fill=new THREE.DirectionalLight(0xddeaff,.4);fill.position.set(400,80,220);scene.add(fill);
 }
-export async function createTableView({host,zone,onFailure,onSelect,signal}){
+export async function createTableView({host,zone,onFailure,onSelect,onArrangeStart,signal}){
   let failure=null,disposed=false,visible=!document.hidden,raf=0,dirty=true,lastTime=0,hovered=null,state=null,buttons=new Map(),width=1,height=1;
   let outgoing=null,skinToken=0,skin='',loadingTextures='',loadingFaces=new Set(),activeTextures=new Map();const pendingImages=new Set(),cards=new Map(),hands=[],publicCards=new Map();let tableKey='';
   const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'low-power'});
@@ -59,10 +59,10 @@ export async function createTableView({host,zone,onFailure,onSelect,signal}){
     const found=raycaster.intersectObjects([...cards.values()].map(entry=>entry.faceMesh),false)[0];
     return found?.object.userData.cardId??null;
   }
-  function pointMove(event){hovered=hit(event);renderer.domElement.style.cursor=cards.get(hovered)?.selectable?'pointer':'default';request();}
+  function pointMove(event){hovered=hit(event);renderer.domElement.style.cursor=cards.get(hovered)?.selectable?(state?.arranging?'grab':'pointer'):'default';request();}
   function pointLeave(){hovered=null;pointerDown=null;request();}
-  function pointDown(event){if(event.button===0)pointerDown=hit(event);}
-  function pointUp(event){const id=hit(event);if(event.button===0&&id&&id===pointerDown&&cards.get(id)?.selectable)onSelect(id);pointerDown=null;}
+  function pointDown(event){if(event.button===0){const id=hit(event);if(state?.arranging){pointerDown=null;if(id)onArrangeStart(event,id);}else pointerDown=id;}}
+  function pointUp(event){const id=hit(event);if(!state?.arranging&&event.button===0&&id&&id===pointerDown&&cards.get(id)?.selectable)onSelect(id);pointerDown=null;}
   const pointerListeners={pointermove:pointMove,pointerleave:pointLeave,pointerdown:pointDown,pointerup:pointUp};
   for(const [type,listener] of Object.entries(pointerListeners))renderer.domElement.addEventListener(type,listener);
   function request(){dirty=true;if(!raf&&!disposed&&visible)raf=requestAnimationFrame(frame);}
@@ -170,7 +170,7 @@ export async function createTableView({host,zone,onFailure,onSelect,signal}){
     return {id:card.id,face:card.face,faceMesh:face,group,material,ring,mark,band,lift:0,baseY:0,selected:card.selected,selectable:card.selectable};
   }
   function layout(){
-    if(!state)return;const items=GuandanPresentation.fanLayout(state.hand,width,height);const scale=GuandanPresentation.gripScale(width,height);zone.style.setProperty('--grip-height',(80+((state.hand.length>14?400:300)-80)*scale)+'px');
+    if(!state)return;const items=GuandanPresentation.fanLayout(state.hand,width,height);const scale=GuandanPresentation.gripScale(width,height);zone.style.setProperty('--grip-height',(80+((state.hand.some(card=>card.row===0)?400:300)-80)*scale)+'px');
     const ownCaption=new THREE.Vector3(2.85,.4,2.85).project(camera);
     zone.style.setProperty('--self-pile-x',((ownCaption.x+1)*width/2)+'px');
     zone.style.setProperty('--self-pile-y',Math.min((1-ownCaption.y)*height/2,height-160)+'px');
@@ -179,11 +179,12 @@ export async function createTableView({host,zone,onFailure,onSelect,signal}){
       const button=buttons.get(card.id);if(button){button.style.setProperty('--hit-x',(p.x-p.width/2)+'px');button.style.setProperty('--hit-y',(height-p.y-p.height/2-20)+'px');button.style.setProperty('--hit-w',p.hitWidth+'px');button.style.setProperty('--hit-h',(p.height+22)+'px');}
     }
     // A compact single fan rests in the left hand; the right hand drops out of view.
+    const twoTiers=state.hand.some(card=>card.row===0);
     const supportX=85+Math.min(45,(state.hand.length-1)*2);
     const gripX=-40-Math.min(45,(state.hand.length-1)*3);
     hands.forEach((hand,index)=>{
       const grip=index===0;
-      hand.position.set(width/2+(grip?gripX:supportX)*scale,80+((grip?72:(state.hand.length<=14?-180:52))-80)*scale,(grip?55:45)*scale);
+      hand.position.set(width/2+(grip?gripX:supportX)*scale,80+((grip?72:(!twoTiers?-180:52))-80)*scale,(grip?55:45)*scale);
       hand.rotation.set(-.7,0,grip?-.4:.55,'ZYX');hand.scale.setScalar((grip?1000:900)*scale);
       hand.userData.base=hand.position.clone();hand.visible=!state.ended&&!state.dealing&&state.hand.length>0;
     });
@@ -226,6 +227,6 @@ export async function createTableView({host,zone,onFailure,onSelect,signal}){
     if(failure)throw failure;
     // Slots are assigned by role, independent of asset request completion order.
     resize();
-    return {setState,resize,hover(id){hovered=id;request();},setVisible(value){visible=value;finishOutgoing();if(!visible){cancelAnimationFrame(raf);raf=0;}else request();},dispose};
+    return {setState,resize,dropTarget(x,y){if(!state?.arranging)return null;const box=renderer.domElement.getBoundingClientRect(),p=GuandanPresentation.fanDropTarget(state.hand,width,height,x-box.left,y-box.top);return p?{...p,x:p.x+box.left,y:p.y+box.top}:null;},hover(id){hovered=id;request();},setVisible(value){visible=value;finishOutgoing();if(!visible){cancelAnimationFrame(raf);raf=0;}else request();},dispose};
   }catch(error){dispose();throw error;}
 }

@@ -11,7 +11,7 @@
   note.className = 'pad-touch-note';
   note.textContent = '点击牌面选牌';
   byId('hand-count').after(document.createTextNode(' '), note);
-  byId('hand-scroll').setAttribute('aria-label', '手牌区域，点击选牌，横向滑动连续选择，上下滚动查看');
+  byId('hand-scroll').setAttribute('aria-label', '双层手牌；点击选牌，自由理牌可拖动换位，空白处左右滚动');
 
   let gesture = null, suppressClickUntil = 0;
   const hand = byId('hand-cards');
@@ -32,7 +32,7 @@
     gesture = null;
   }
   hand.addEventListener('pointerdown', event => {
-    if (event.pointerType === 'mouse' || !event.isPrimary || !canPlay() || liveRound.phase !== 'playing') return;
+    if (handEditor?.editing || event.pointerType === 'mouse' || !event.isPrimary || !canPlay() || liveRound.phase !== 'playing') return;
     const card = event.target.closest('.playing-card');
     if (!card || card.disabled) return;
     gesture = { pointer: event.pointerId, x: event.clientX, y: event.clientY, lastX: event.clientX,
@@ -41,7 +41,7 @@
   });
   hand.addEventListener('pointermove', event => {
     if (!gesture || event.pointerId !== gesture.pointer) return;
-    if (!canPlay() || liveRound.revision !== gesture.revision) { cancelGesture(); return; }
+    if (handEditor?.editing || !canPlay() || liveRound.revision !== gesture.revision) { cancelGesture(); return; }
     if (!gesture.dragging) {
       const dx = Math.abs(event.clientX - gesture.x), dy = Math.abs(event.clientY - gesture.y);
       if (dy > dx && dy > 10) { gesture = null; return; }
@@ -75,12 +75,13 @@
       const dialog = [...document.querySelectorAll('dialog[open]')].at(-1);
       if (dialog) { closeDialog(dialog); return true; }
       if (dealMotion.active) { dealMotion.finish(); return true; }
+      if (handEditor?.editing) { handEditor.setEditing(false); return true; }
       if (selected.size) { byId('clear-selection').click(); return true; }
       return false;
     },
     suspend() {
       if (suspended) return;
-      suspended = true; cancelGesture(); dealMotion.finish(); stopBots();
+      suspended = true; cancelGesture(); handEditor?.cancel(); dealMotion.finish(); stopBots();
       if (activeTask) {
         workEpoch++; activeTask = null; model.cancel();
         if (byId('analysis-dialog').open) closeDialog(byId('analysis-dialog'));

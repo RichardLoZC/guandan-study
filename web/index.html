@@ -5,25 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>掼蛋研习社</title>
   <link rel="icon" type="image/png" href="/assets/brand/app-icon.png">
-  <link rel="stylesheet" href="/app/table.css?v=171">
-  <link rel="stylesheet" href="/app/desktop.css?v=171">
-  <link rel="stylesheet" href="/app/deal-animation.css?v=171">
-  <link rel="stylesheet" href="/app/table3d.css?v=171">
-  <link rel="stylesheet" href="/app/lan.css?v=171">
-  <link rel="stylesheet" href="/app/mobile.css?v=171">
-  <script src="/app/locales/en.js?v=171" defer></script>
-  <script src="/app/i18n.js?v=171" defer></script>
-  <script src="/app/core.js?v=171" defer></script>
-  <script src="/app/tuo3.js?v=171" defer></script>
-  <script src="/app/match.js?v=171" defer></script>
-  <script src="/app/model-client.js?v=171" defer></script>
-  <script src="/app/deal-animation.js?v=171" defer></script>
-  <script src="/app/presentation.js?v=171" defer></script>
-  <script src="/app/arrange.js?v=171" defer></script>
-  <script src="/app/table.js?v=171" defer></script>
-  <script src="/app/lan-client.js?v=171" defer></script>
-  <script src="/app/table-view.js?v=171" defer></script>
-  <script src="/app/review.js?v=171" defer></script>
+  <link rel="stylesheet" href="/app/table.css?v=180">
+  <link rel="stylesheet" href="/app/desktop.css?v=180">
+  <link rel="stylesheet" href="/app/deal-animation.css?v=180">
+  <link rel="stylesheet" href="/app/table3d.css?v=180">
+  <link rel="stylesheet" href="/app/lan.css?v=180">
+  <link rel="stylesheet" href="/app/mobile.css?v=180">
+  <link rel="stylesheet" href="/app/hand-layout.css?v=180">
+  <script src="/app/locales/en.js?v=180" defer></script>
+  <script src="/app/i18n.js?v=180" defer></script>
+  <script src="/app/core.js?v=180" defer></script>
+  <script src="/app/tuo3.js?v=180" defer></script>
+  <script src="/app/match.js?v=180" defer></script>
+  <script src="/app/model-client.js?v=180" defer></script>
+  <script src="/app/deal-animation.js?v=180" defer></script>
+  <script src="/app/presentation.js?v=180" defer></script>
+  <script src="/app/arrange.js?v=180" defer></script>
+  <script src="/app/hand-layout.js?v=180" defer></script>
+  <script src="/app/hand-editor.js?v=180" defer></script>
+  <script src="/app/table.js?v=180" defer></script>
+  <script src="/app/lan-client.js?v=180" defer></script>
+  <script src="/app/table-view.js?v=180" defer></script>
+  <script src="/app/review.js?v=180" defer></script>
 </head>
 <body>
   <main id="preview" class="view active-view">
@@ -85,10 +88,11 @@
             <div class="hand-heading">
               <h1>我的手牌 <span id="hand-count">27</span></h1>
               <div class="turn-pill" role="status" aria-live="polite"><span class="turn-dot"></span><strong>轮到你出牌</strong></div>
-              <div class="hand-options"><button id="arrange-hand" class="text-action">理牌</button><button id="clear-selection" class="text-action">取消选择</button></div>
+              <div class="hand-options"><button id="arrange-hand" class="text-action">理牌</button><button id="free-arrange" class="text-action" aria-pressed="false">自由理牌</button><button id="undo-arrange" class="text-action" hidden disabled>撤销移动</button><button id="clear-selection" class="text-action">取消选择</button></div>
             </div>
+            <p id="hand-edit-help" class="hand-edit-help" hidden>拖到上下两排任意位置 · 选中多张可一起拖动</p>
             <div id="arrangement-summary" class="arrangement-summary" aria-live="polite" hidden></div>
-            <div class="hand-scroll" id="hand-scroll" tabindex="0" aria-label="手牌区域，可上下滚动查看"><div id="hand-cards"></div></div>
+            <div class="hand-scroll" id="hand-scroll" tabindex="0" aria-label="双层手牌；自由理牌可拖动换位，窄屏可左右滚动"><div id="hand-cards"></div></div>
             <div class="action-bar">
               <div class="selection-status" id="selection-status" role="status" aria-live="polite">请选择手牌<span>或点击「看建议」</span></div>
               <div class="actions"><select id="play-kind" aria-label="选择牌型解释" hidden></select><button id="hint-button" class="hint-button">看建议</button><button id="pass-button" class="secondary-button">不出</button><button id="play-button" class="primary-button" disabled>出牌 <span aria-hidden="true">↗</span></button><button class="primary-button" id="confirm-tribute" hidden>开始出牌</button></div>
@@ -176,7 +180,7 @@
     <details class="settings-section"><summary>模型与教学</summary><p id="model-status">正在检查模型…</p><label class="setting-check"><input type="checkbox" id="book-enabled" checked>秘籍策略增强</label><p>DanLM 负责机器人的行动与教学推荐，只能看到行动者的手牌、公开出牌和贡还记录。开启增强后，结合四份技巧资料比较候选打法。</p><button id="recheck-model" class="secondary-button">重新检查模型</button></details>
     <details class="settings-section"><summary>存档与备份</summary><p id="save-status">每一步自动保存在本机，关窗或退出后可继续。最多保留最近8局完整复盘。</p><button id="export-save" class="secondary-button">导出存档备份</button></details>
     <details><summary>规则与说明</summary><p>两副牌、四人对坐搭档。从2升级至A；红桃级牌为逢人配。支持单张、对子、三张、三带二、顺子、连对、钢板、炸弹、同花顺和四王炸。下一副按实际名次进贡、还贡或抗贡。</p><p>中文说明由教学层根据牌局和候选生成，并非模型内部思考。模型评分和未见牌采样不代表胜率。</p><p>关闭窗口会保留应用。⌘Q退出，Control+⌘F全屏；⌘+与⌘−调整界面大小。</p><p><a href="/mobile/DanLM-LICENSE.txt">DanLM许可（含非商业条件）</a> · <a href="/mobile/ONNX-Runtime-LICENSE.txt">ONNX Runtime许可</a> · <a href="/card-sources/SVGCards-README-license.txt">纸牌素材来源</a> · <a href="/assets/3d/CREDITS.txt">3D 素材来源</a> · <a href="/vendor/three/LICENSE">Three.js 许可</a></p></details>
-    <div class="dialog-bottom"><button class="primary-button" data-close-dialog="settings-dialog">回到牌桌</button><span>Desktop 1.7.1 · 离线单机与局域网联机</span></div>
+    <div class="dialog-bottom"><button class="primary-button" data-close-dialog="settings-dialog">回到牌桌</button><span>Desktop 1.8.0 · 离线单机与局域网联机</span></div>
   </dialog>
   <dialog id="confirm-dialog" class="analysis-dialog" aria-labelledby="confirm-title">
     <header class="dialog-header"><h2 id="confirm-title">开始全新的游戏</h2><button class="close-button" data-close-dialog="confirm-dialog" aria-label="取消重开">×</button></header>
