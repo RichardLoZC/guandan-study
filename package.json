@@ -15,9 +15,11 @@
     "build:mac": "node scripts/build-macos.mjs",
     "test:mac": "node scripts/smoke-macos.mjs",
     "build:win": "node scripts/build-windows.mjs",
+    "verify:win": "node scripts/verify-windows.mjs",
     "build:android": "node scripts/build-android.mjs"
   },
   "devDependencies": {
+    "@electron/asar": "4.3.1",
     "@electron/packager": "20.3.0",
     "electron": "44.7.0",
     "playwright": "1.64.0"

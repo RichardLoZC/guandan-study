@@ -1,0 +1,46 @@
+name: Windows package
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/windows.yml'
+      - '.gitattributes'
+      - 'package*.json'
+      - 'scripts/**'
+      - '*.cjs'
+      - 'web/**'
+      - 'build/icon.ico'
+      - 'icon.png'
+      - 'LICENSE'
+      - 'NOTICE'
+      - 'THIRD_PARTY_NOTICES.md'
+      - '使用说明.txt'
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Build Windows portable ZIP
+        run: npm run build:win
+      - name: Verify ZIP, resources and native executable
+        run: npm run verify:win
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-x64-${{ github.sha }}
+          path: dist/GuandanStudy-Windows/*
+          if-no-files-found: error
+          retention-days: 7

@@ -6,12 +6,15 @@ Use Node.js 22.12+ and `npm ci`. `npm test` runs the rules, saves, LAN, presenta
 
 ```sh
 npm run build:win   # Windows x64 portable ZIP; also works from macOS
+npm run verify:win  # Extract ZIP and check packaged resources; native EXE check on Windows
 npm run build:mac   # macOS only; Universal archive and ad-hoc signature
 ```
 
 Set `GUANDAN_BUILD_ARCH=x64` or `arm64` for a single architecture. The Mac default is `universal`; Windows defaults to `x64`. Output is in `dist/`. The desktop build downloads the pinned Electron runtime on first use. No external models are downloaded while playing.
 
 Mac builds use a local temporary staging directory to keep cloud-drive metadata out of code signatures. Windows builds edit PE resources with the packager's JavaScript resource editor; Wine is not required. Windows archives must be fully extracted before launch.
+
+The `Windows package` GitHub workflow builds on a Windows runner, verifies the extracted ZIP against source, and runs the shipped EXE in Electron's Node CLI mode. The CLI check exercises runtime startup, rules, English text and portable storage; it does not test the graphical interface or model inference. `build-info.json` records the source commit and build platform; `verification.json` records the results and model hashes. Rebuilds create a fresh ZIP so removed files cannot remain in an older archive.
 
 ## Android
 
