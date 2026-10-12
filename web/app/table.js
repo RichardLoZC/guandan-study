@@ -10,7 +10,7 @@ prefs.handStyle=prefs.handStyle==='fan'?'fan':'flat';root.dataset.handStyle=pref
 if(!Object.hasOwn(GuandanArrange.priorities,prefs.arrangePriority))prefs.arrangePriority='balanced';
 let liveRound=null,loadError=null,initialDeal=false;
 try{initialDeal=!localStorage.getItem(GuandanMatch.SAVE_KEY);liveRound=GuandanMatch.read(localStorage);}catch(error){loadError=error;}
-let selected=new Set(),toastTimer,botTimer,hintSnapshot=null,playKey=null,handLayout=null,handEditor=null;
+let selected=new Set(),toastTimer,botTimer,botWait=null,hintSnapshot=null,playKey=null,handLayout=null,handEditor=null;
 let paused=Boolean(prefs.paused),fault=null,faultKind=null,workEpoch=0,activeTask=null,confirmMode='restart';
 const model=new DanLMClient(),cardNodes=new Map(),dialogFocus=new WeakMap();
 const dealView=new DealAnimation.TableView({stage:byId('deal-stage'),table:document.querySelector('.play-zone'),receipt:byId('tribute-receipt'),hand:byId('hand-cards')});
@@ -243,8 +243,12 @@ function updateGroupActions(){
     button.setAttribute('aria-label','打出组合 · '+note);
   }
 }
+function currentTurnStatus(){
+  return GuandanPresentation.turnStatus(liveRound,{blocked:Boolean(paused||fault||dealMotion.active||(liveRound?.remote?window.GuandanLan?.turnMessage:hasOpenDialog()))});
+}
 function renderTable(){
   const game=liveRound.game,table=game.tablePlay,actions=GuandanPresentation.tableActions(game,liveRound.state.level);
+  const turn=currentTurnStatus();
   for(let seat=0;seat<4;seat++){
     const action=actions[seat],anchor=seat===0?document.querySelector('.self-play-anchor'):document.querySelector('.player[data-seat="'+seat+'"] .seat-anchor');
     let play=anchor.querySelector('.table-play');
@@ -267,12 +271,13 @@ function renderTable(){
     if(!score){score=document.createElement('span');score.className='player-score';player.querySelector('.player-info').append(score);}
     score.hidden=!liveRound.isTuo3;score.textContent=liveRound.isTuo3?'累计 '+signed(liveRound.state.tuo3.totals[liveRound.playerIds[seat]])+' 分':'';
     player.querySelector('.remaining b').textContent=game.players[seat].hand.length;
-    player.classList.toggle('last-player',table?.owner===seat);player.classList.toggle('is-turn',!game.result&&!liveRound.needsTributeConfirmation&&liveRound.actingSeat===seat);
+    player.classList.toggle('last-player',table?.owner===seat);player.classList.toggle('is-turn',turn?.seat===seat);
+    player.classList.toggle('is-thinking',turn?.seat===seat&&turn.kind==='ai');
     const bubble=player.querySelector('.seat-bubble'),finished=game.players[seat].finished||Boolean(game.result),isTurn=player.classList.contains('is-turn');
     bubble.classList.toggle('recent-play',table?.owner===seat);
     bubble.hidden=liveRound.phase==='playing'&&!game.result&&!finished&&!isTurn&&Boolean(actions[seat]);
-    bubble.textContent=finished?'第'+(game.finishOrder.indexOf(seat)+1)+'名':isTurn?'正在出牌':!game.actionHistory.length&&game.starter===seat?'本副先手':'等待出牌';
-    if(liveRound.phase!=='playing')bubble.textContent=liveRound.actingSeat===seat?(liveRound.phase==='give'?'正在进贡':'正在还贡'):'等待贡还';
+    bubble.textContent=finished?'第'+(game.finishOrder.indexOf(seat)+1)+'名':isTurn?turn.label:!game.actionHistory.length&&game.starter===seat?'本副先手':'等待出牌';
+    if(liveRound.phase!=='playing')bubble.textContent=isTurn?turn.label:'等待贡还';
   });
 }
 function renderSeatRemainders(){
@@ -396,6 +401,7 @@ function reportError(error,kind='action'){
 function clearError(kind){if(kind&&faultKind!==kind)return;fault=null;faultKind=null;byId('error-banner').hidden=true;}
 function stopBots(){
   clearTimeout(botTimer);botTimer=null;
+  botWait?.cancel();botWait=null;
   if(activeTask==='npc'){workEpoch++;activeTask=null;model.cancel();}
 }
 function openDialog(dialog,trigger){
@@ -448,8 +454,10 @@ function renderGame(){
   renderSeatRemainders();
   byId('pause-button').setAttribute('aria-pressed',String(paused));byId('pause-button').textContent=paused?'继续':'暂停';
   const actor=playerAt(liveRound.actingSeat)?.name||'';
-  let turn=game.result?'本局已结束':paused?'对局已暂停':fault?'请处理提示':dealMotion.active?'正在发牌':liveRound.needsTributeConfirmation?(liveRound.isTuo3?'看清分组后开始':'看清贡还后开始'):liveRound.phase==='give'?actor+'进贡':liveRound.phase==='return'?actor+'还贡':liveRound.confirmWaiting?'等待其他玩家确认':liveRound.actingSeat===0?'轮到你出牌':actor+'正在思考';
+  const status=currentTurnStatus(),connection=liveRound.remote?window.GuandanLan?.turnMessage:'';
+  let turn=game.result?'本局已结束':paused?'对局已暂停':fault?'请处理提示':connection|| (dealMotion.active?'正在发牌':liveRound.needsTributeConfirmation?(liveRound.isTuo3?'看清分组后开始':'看清贡还后开始'):liveRound.confirmWaiting?'等待其他玩家确认':liveRound.phase==='give'?actor+'进贡':liveRound.phase==='return'?actor+'还贡':status?.seat===0?'轮到你出牌':status?actor+' · '+status.label:'对局已暂停');
   document.querySelector('.turn-pill strong').textContent=turn;
+  document.querySelector('.turn-pill').classList.toggle('is-self-turn',status?.seat===0);
   if(game.result){byId('round-end-banner').querySelector('h2').textContent=(game.result.winnerTeam===0?'我方':'对方')+(liveRound.isTuo3?'取得头游':'获胜');byId('round-end-banner').querySelector('p').textContent=game.result.summary;}
   byId('engine-indicator').textContent=fault?'需要处理提示':activeTask==='health'?'正在加载离线模型…':model.ready?'DanLM · 离线就绪':'模型等待加载';
   resizeHand();renderHand();window.GuandanLan?.controls();
@@ -470,23 +478,20 @@ function scheduleBots(){
   if(!liveRound||liveRound.remote||liveRound.game.result||liveRound.needsTributeConfirmation||paused||fault||dealMotion.active||hasOpenDialog()||document.hidden||liveRound.actingSeat===0||activeTask)return;
   const id=liveRound.id,revision=liveRound.revision,seat=liveRound.actingSeat;
   botTimer=setTimeout(async()=>{
-    botTimer=null;if(!liveRound||id!==liveRound.id||revision!==liveRound.revision||liveRound.needsTributeConfirmation||paused||fault||dealMotion.active||hasOpenDialog()||document.hidden)return;
-    if(liveRound.phase!=='playing'){
-      try{
-        const decision=liveRound.chooseTribute();
-        saveAction(()=>liveRound.commit(seat,[decision.card.id],{expectedRevision:revision,automatic:true}));
-      }catch(error){reportError(error);}
-      return;
-    }
-    const epoch=++workEpoch;activeTask='npc';renderGame();
+    botTimer=null;if(!liveRound||liveRound.remote||id!==liveRound.id||revision!==liveRound.revision||liveRound.actingSeat!==seat||liveRound.needsTributeConfirmation||paused||fault||dealMotion.active||hasOpenDialog()||document.hidden||activeTask)return;
+    const epoch=++workEpoch,wait=GuandanTurnTiming.begin();botWait=wait;activeTask='npc';renderGame();
     try{
-      const rawResponse=await model.request({observation:liveRound.observation(seat),provider:'danlm',book:prefs.book,variant:liveRound.state.ruleMode});
-      if(epoch!==workEpoch||id!==liveRound.id||revision!==liveRound.revision||paused||dealMotion.active||hasOpenDialog()||document.hidden)return;
-      const response=liveRound.adaptModel(rawResponse,seat);
-      activeTask=null;saveAction(()=>liveRound.commitModel(response,revision,seat));
+      const decision=liveRound.phase!=='playing'?liveRound.chooseTribute():null;
+      const [rawResponse,ready]=await Promise.all([
+        decision?null:model.request({observation:liveRound.observation(seat),provider:'danlm',book:prefs.book,variant:liveRound.state.ruleMode}),wait.promise
+      ]);
+      if(!ready||epoch!==workEpoch||!liveRound||liveRound.remote||id!==liveRound.id||revision!==liveRound.revision||liveRound.actingSeat!==seat||liveRound.needsTributeConfirmation||paused||fault||dealMotion.active||hasOpenDialog()||document.hidden)return;
+      activeTask=null;
+      if(decision)saveAction(()=>liveRound.commit(seat,[decision.card.id],{expectedRevision:revision,automatic:true}));
+      else{const response=liveRound.adaptModel(rawResponse,seat);saveAction(()=>liveRound.commitModel(response,revision,seat));}
     }catch(error){if(epoch===workEpoch){activeTask=null;reportError(new Error('AI 计算失败：'+error.message),'model');}}
-    finally{if(epoch===workEpoch){activeTask=null;renderGame();}}
-  },600);
+    finally{wait.cancel();if(botWait===wait)botWait=null;if(epoch===workEpoch){activeTask=null;renderGame();}}
+  },0);
 }
 async function checkModel(){
   if(window.GuandanLan?.active){await window.GuandanLan.reconnect();return;}

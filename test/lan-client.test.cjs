@@ -107,6 +107,24 @@ test('leaving during advice clears busy and restores a usable session', async ()
   assert.equal(h.api.ready,true);
   assert.equal(h.node('lan-retry').disabled,false);
 });
+test('turn indicators restore on reconnect without needing a new game revision',async()=>{
+  const room=new Room(),host=room.host('Mac'),guest=room.join({code:room.code,name:'Pad',protocol:PROTOCOL});
+  await room.request(host.token,{op:'start',version:room.version,requestId:'indicator-start'});
+  let fail=false;
+  const h=harness({stored:{...guest,address:'127.0.0.1:18765',host:false},request:payload=>fail?Promise.reject(new Error('offline')):room.request(payload.token,payload.body)});
+  await flush();assert.equal(h.api.turnMessage,'');assert.equal([...h.timers.values()][0].ms,400);
+  assert.deepEqual(Array.from(h.context.liveRound.humanSeats),room.projected(room.authenticate(guest.token)).round.humanSeats);
+  let renders=0;h.context.renderGame=()=>renders++;
+  fail=true;await h.fireTimer();assert.equal(h.api.turnMessage,'正在重连');assert.equal([...h.timers.values()][0].ms,1200);
+  const before=renders;fail=false;await h.fireTimer();assert.equal(h.api.turnMessage,'');assert.equal(renders,before+1);
+  room.paused=true;await h.fireTimer();assert.equal(h.api.turnMessage,'多人牌局已暂停');
+});
+test('human seat fallback understands a room hosted by the previous app version',async()=>{
+  const room=new Room(),host=room.host('Mac'),guest=room.join({code:room.code,name:'Pad',protocol:PROTOCOL});
+  await room.request(host.token,{op:'start',version:room.version,requestId:'old-host'});
+  const h=harness({stored:{...guest,address:'127.0.0.1:18765',host:false},request:async payload=>{const data=await room.request(payload.token,payload.body);delete data.round.humanSeats;return data;}});
+  await flush();const data=room.projected(room.authenticate(guest.token));assert.deepEqual(Array.from(h.context.liveRound.humanSeats),data.round.humanSeats);
+});
 
 test('completion from an old generation cannot unlock a newer command', async () => {
   const oldAdvice = deferred(), newPlay = deferred();
@@ -192,7 +210,7 @@ test('a rejected AI request from the previous match cannot fault a new match', a
   const host = room.host('Mac');
   room.join({code:room.code,name:'Pad',protocol:PROTOCOL,clientId:randomUUID()});
   await room.request(host.token,{op:'start',version:room.version,requestId:'start'});
-  room.match.state.game.currentPlayer = room.seats.indexOf(null);
+  room.match.state.game.currentPlayer = room.seats.findIndex(id=>String(id).startsWith('bot:'));
   const oldId = room.match.id;
   const ticking = room.tick();
   assert.equal(room.busy,true);

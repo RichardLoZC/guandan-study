@@ -25,6 +25,8 @@
   function remoteRound(data){
     data.names.forEach(name=>GuandanI18n.protectName(name));const round=Object.create(GuandanMatch.Match.prototype);round.state=data.state;round.revision=data.revision;round.remote=true;
     for(const key of ['playerIds','names','actingSeat','tributeDisplay','tributeChoices','needsTributeConfirmation','canAct'])Object.defineProperty(round,key,{value:data[key]});
+    const self=room?.members.find(member=>member.self);
+    round.humanSeats=data.humanSeats||(self?room.members.map(member=>(member.seat-self.seat+4)%4):[0]);
     round.confirmWaiting=data.confirmWaiting;round.persist=()=>{};round.adaptModel=response=>response;
     return round;
   }
@@ -112,9 +114,9 @@
   }
   function apply(data){
     if(!data?.room||!session||data.room.id!==session.roomId||room&&data.room.version<room.version)return;
-    const started=room?.started;room=data.room;online=true;
+    const started=room?.started,wasOnline=online;room=data.room;online=true;
     const signature=[room.id,room.version,room.paused,room.error,room.modelReady,room.waiting.join('|'),room.members.map(m=>m.id+':'+m.connected).join('|')].join('/');
-    if(signature!==lastRender){
+    if(signature!==lastRender||!wasOnline){
       lastRender=signature;
       if(data.round){
         const oldId=liveRound?.remote?liveRound.id:null;liveRound=remoteRound(data.round);paused=false;clearError();
@@ -135,7 +137,7 @@
     if(!session||pollingEpoch===generation)return;const epoch=generation;pollingEpoch=epoch;
     try{const data=await transport({action:'request',address:session.address,token:session.token,body:{op:'poll'}});if(epoch===generation){apply(data);message();}}
     catch(error){if(epoch===generation){online=false;message(error.message);renderGame();controls();}}
-    finally{if(pollingEpoch===epoch)pollingEpoch=null;if(session&&epoch===generation){clearTimeout(pollTimer);pollTimer=setTimeout(poll,900);}}
+    finally{if(pollingEpoch===epoch)pollingEpoch=null;if(session&&epoch===generation){clearTimeout(pollTimer);pollTimer=setTimeout(poll,online?400:1200);}}
   }
   async function command(op,details={}){
     if(!session||!room||busy)return;busy=true;const epoch=generation;
@@ -196,7 +198,7 @@
   byId('lan-retry').addEventListener('click',reconnect);
   byId('lan-cancel-leave').addEventListener('click',()=>showMode('multi'));
   byId('lan-confirm-leave').addEventListener('click',async()=>{const host=session?.host;let left=false;try{if(online)left=Boolean((await command('leave'))?.left);}catch{}leaveLocal(host||!left);});
-  window.GuandanLan=Object.freeze({get active(){return Boolean(session);},get ready(){return online&&!busy&&!room?.paused&&!room?.waiting?.length&&!room?.error;},get hosting(){return room?.host;},command,reconnect,controls});
+  window.GuandanLan=Object.freeze({get active(){return Boolean(session);},get ready(){return online&&!busy&&!room?.paused&&!room?.waiting?.length&&!room?.error;},get turnMessage(){return !online?'正在重连':room?.paused?'多人牌局已暂停':room?.waiting?.length?'等待玩家重连':room?.error?'请处理提示':'';},get hosting(){return room?.host;},command,reconnect,controls});
   window.addEventListener?.('guandan-language-change',()=>{memberSignature='';controls();});
   byId('lan-name').value=read(KEY+'.name')||'';controls();
   try{const stored=JSON.parse(read(KEY)||'null');if(stored?.address&&stored?.token){suspendOffline();session=stored;generation++;mode='multi';controls();reconnect();}}catch{}

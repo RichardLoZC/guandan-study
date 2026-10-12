@@ -1,4 +1,4 @@
-/* Public, read-only presentation data. Never hand the renderer a Match object. */
+/* Read-only presentation helpers; exported card snapshots contain public cards only. */
 (function(scope){
   'use strict';
   function publicCard(card,level){
@@ -46,6 +46,13 @@
     else if(play?.type==='joker-bomb'){rarity='crown';color='#ffe797';}
     return {rarity,color};
   }
-  const api={tableActions,tableCards,combinationStyle};
+  function turnStatus(round,{blocked=false}={}){
+    if(!round||blocked||round.game.result||round.needsTributeConfirmation||round.confirmWaiting)return null;
+    const seat=round.actingSeat;
+    if(!Number.isInteger(seat)||seat<0||seat>3)return null;
+    const human=(round.remote?round.humanSeats||[0]:[0]).includes(seat);
+    return {seat,kind:human?'human':'ai',label:human?(round.phase==='give'?'正在进贡':round.phase==='return'?'正在还贡':'正在出牌'):'思考中'};
+  }
+  const api={tableActions,tableCards,combinationStyle,turnStatus};
   if(typeof module==='object'&&module.exports)module.exports=api;else scope.GuandanPresentation=Object.freeze(api);
 })(globalThis);

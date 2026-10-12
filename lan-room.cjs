@@ -2,6 +2,7 @@
 const {randomBytes,randomInt}=require('node:crypto');
 const fs=require('node:fs');
 const {Match}=require('./web/app/match.js');
+const TurnTiming=require('./web/app/turn-timing.js');
 const core=require('./web/app/core.js');
 const copy=value=>structuredClone(value);
 const token=()=>randomBytes(24).toString('hex');
@@ -44,8 +45,9 @@ function perspective(match,seat,names){
 }
 
 class Room {
-  constructor({savePath=null,runModel,now=Date.now,random=randomInt,restored=null}={}){
+  constructor({savePath=null,runModel,now=Date.now,random=randomInt,restored=null,startThinking=TurnTiming.begin}={}){
     this.savePath=savePath;this.runModel=runModel;this.now=now;this.random=random;
+    this.startThinking=startThinking;this.botWait=null;
     this.members=[];this.match=null;this.seats=[];this.version=1;this.code=String(random(100000,1000000));this.id=token();this.paused=false;this.acks=[];this.error=null;this.modelReady=false;this.busy=false;this.completed=new Map();this.closed=false;
     if(restored){this.id=restored.id;this.code=restored.code;this.members=restored.members.map(m=>({...m,lastSeen:0}));this.seats=restored.seats;this.version=restored.version+1;this.match=restored.state?new Match(restored.state):null;this.paused=restored.paused;this.acks=restored.acks||[];}
     this.members.forEach((m,index)=>m.identity??=index);
@@ -64,7 +66,7 @@ class Room {
   save(){if(!this.savePath)return;const temporary=this.savePath+'.tmp';fs.writeFileSync(temporary,JSON.stringify(this.serialize()),{mode:0o600});fs.renameSync(temporary,this.savePath);}
   change(action){
     const before=copy(this.serialize()),revision=this.match?.revision;
-    try{action();this.version++;this.save();}catch(error){this.members=before.members;this.seats=before.seats;this.version=before.version;this.match=before.state?new Match(before.state):null;if(this.match)this.match.revision=revision;this.paused=before.paused;this.acks=before.acks;throw error;}
+    try{action();this.version++;this.save();this.botWait?.cancel();}catch(error){this.members=before.members;this.seats=before.seats;this.version=before.version;this.match=before.state?new Match(before.state):null;if(this.match)this.match.revision=revision;this.paused=before.paused;this.acks=before.acks;throw error;}
   }
   host(name){const m=this.members.find(m=>m.host);this.change(()=>{m.name=nameOf(name||m.name);m.lastSeen=this.now();});return {token:m.token,roomId:this.id,protocol:PROTOCOL};}
   authenticate(auth){const member=this.members.find(m=>m.token===auth);if(!member)throw new Error('房间身份失效，请重新加入');member.lastSeen=this.now();return member;}
@@ -95,6 +97,7 @@ class Room {
     const needs=this.match.needsTributeConfirmation&&!this.acks.includes(member.id);
     round.revision=this.version;round.playerIds=[0,1,2,3].map(i=>this.identity(this.seats[(i+seat)%4]));
     round.names=[0,1,2,3].map(i=>i===0?'你':names[(i+seat)%4]);
+    round.humanSeats=this.members.map(m=>(this.seats.indexOf(m.id)-seat+4)%4);
     round.needsTributeConfirmation=needs;
     if(round.tributeDisplay)round.tributeDisplay.awaitingConfirmation=needs;
     round.canAct=!this.paused&&!waiting.length&&!this.error&&!this.match.needsTributeConfirmation&&!this.match.game.result&&this.match.actingSeat===seat;
@@ -151,23 +154,27 @@ class Room {
     return op==='leave'?{left:true}:this.projected(m);
   }
   async tick(){
-    if(this.closed||this.busy||this.error||!this.match||this.paused||this.waiting.length||this.match.game.result)return;
+    if(this.closed||this.error||!this.match||this.paused||this.waiting.length||this.match.game.result){this.botWait?.cancel();return;}
+    if(this.busy)return;
     if(this.match.needsTributeConfirmation){
       if(this.members.every(p=>this.acks.includes(p.id)))this.change(()=>this.match.acknowledgeTribute());
       return;
     }
     const seat=this.match.actingSeat;
     if(this.members.some(m=>m.id===this.seats[seat]))return;
-    const version=this.version,id=this.match.id;this.busy=true;
+    const version=this.version,id=this.match.id,phase=this.match.phase,wait=this.startThinking();this.busy=true;this.botWait=wait;
     try{
-      if(this.match.phase!=='playing')this.change(()=>this.match.commit(seat,[this.match.chooseTribute().card.id],{automatic:true}));
-      else{
-        const response=await this.runModel({observation:this.match.observation(seat),provider:'danlm',book:true});
-        if(this.closed||this.version!==version||this.match?.id!==id||this.paused||this.waiting.length)return;
-        this.change(()=>this.match.commitModel(response,this.match.revision,seat));this.modelReady=true;
-      }
+      // Inference runs during the visible thinking period, not after it.
+      const decision=phase!=='playing'?this.match.chooseTribute():null;
+      const [response,ready]=await Promise.all([
+        phase==='playing'?this.runModel({observation:this.match.observation(seat),provider:'danlm',book:true}):null,
+        wait.promise
+      ]);
+      if(!ready||this.closed||this.version!==version||this.match?.id!==id||this.match.actingSeat!==seat||this.paused||this.waiting.length)return;
+      if(decision)this.change(()=>this.match.commit(seat,[decision.card.id],{automatic:true}));
+      else{this.change(()=>this.match.commitModel(response,this.match.revision,seat));this.modelReady=true;}
     }catch(error){if(!this.closed&&this.version===version&&this.match?.id===id){this.error='Mac 模型或存档处理失败：'+error.message;this.version++;}}
-    finally{this.busy=false;}
+    finally{wait.cancel();if(this.botWait===wait)this.botWait=null;this.busy=false;}
   }
 }
 module.exports={Room,perspective,PROTOCOL};

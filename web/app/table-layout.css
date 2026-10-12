@@ -3,7 +3,7 @@
 html .arena-layout { display:flex; flex-direction:column; overflow:hidden; }
 html .arena-layout > .play-zone { display:flex; flex-direction:column; min-height:0; overflow:auto; padding:0 24px; }
 html .play-zone > .match-strip { position:relative; inset:auto; flex:0 0 44px; margin:0; }
-html .table-seats { position:relative; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,1fr); grid-template-rows:auto auto; align-content:space-between; gap:12px 26px; flex:1 0 auto; min-height:270px; padding:4px 22px 8px; }
+html .table-seats { position:relative; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,1fr); grid-template-rows:auto auto; align-content:space-between; gap:12px 26px; flex:1 0 auto; min-height:270px; padding:30px 22px 8px; }
 html .table-seats > .player { position:relative; inset:auto; transform:none; display:grid; grid-template-columns:64px minmax(0,1fr); grid-template-rows:auto auto; gap:8px 14px; align-items:center; width:max-content; max-width:100%; align-self:center; justify-self:center; }
 html .table-seats > .teammate { grid-area:1/2; }
 html .table-seats > .opponent-left { grid-area:1/1/3/2; }
@@ -18,6 +18,15 @@ html .table-seats .remaining b { font-size:36px; }
 html .table-seats .seat-bubble { position:absolute; top:-18px; right:0; margin:0; padding:1px 6px; font-size:13px; border:0; background:#163d30; }
 /* The active seat already has an explicit status; avoid a second Turn badge. */
 html .table-seats .player.is-turn .player-info > strong::after { display:none; }
+html .table-seats .player.is-turn .avatar { outline:3px solid var(--seat); outline-offset:4px; }
+html .table-seats .player.is-turn .seat-bubble { top:-30px; padding:4px 10px; color:#102f25; background:var(--seat); border-radius:20px; font-size:16px; line-height:1.25; font-weight:800; white-space:nowrap; }
+html .table-seats .player.is-turn .seat-bubble::before { content:''; display:inline-block; width:7px; height:7px; margin-right:6px; border-radius:50%; background:currentColor; vertical-align:2px; }
+html .table-seats .player.is-thinking .avatar { animation:thinking-halo 1.5s ease-in-out infinite; }
+html .table-seats .player.is-thinking .seat-bubble::before { animation:thinking-dot 1.5s ease-in-out infinite; }
+html .hand-command-bar .turn-pill.is-self-turn { padding:3px 10px; border-radius:16px; color:#183a2d; background:#edd493; }
+@keyframes thinking-halo { 0%,100% { box-shadow:0 0 0 7px color-mix(in srgb,var(--seat) 16%,transparent); } 50% { box-shadow:0 0 0 11px color-mix(in srgb,var(--seat) 35%,transparent); } }
+@keyframes thinking-dot { 0%,100% { opacity:1; } 50% { opacity:.35; } }
+@media(prefers-reduced-motion:reduce) { html .table-seats .player.is-thinking .avatar,html .table-seats .player.is-thinking .seat-bubble::before { animation:none; } }
 html .table-seats .seat-anchor { grid-area:2/1/3/3; position:static; inset:auto; transform:none; width:max-content; max-width:100%; justify-self:center; }
 html .table-seats .self-play-anchor { grid-area:2/2; position:relative; inset:auto; transform:none; width:max-content; max-width:100%; align-self:center; justify-self:center; }
 html .table-seats .table-play { position:relative; inset:auto; transform:none; display:flex; flex-direction:row; align-items:center; flex-wrap:wrap; justify-content:center; max-width:100%; gap:5px 10px; padding:6px 9px; border-radius:0 8px 8px 0; }

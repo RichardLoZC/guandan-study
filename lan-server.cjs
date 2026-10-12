@@ -58,7 +58,7 @@ async function start({savePath,runModel,port=18765,webRoot=null,room:existingRoo
   let closing;
   return {room,server,address:'127.0.0.1:'+bound,addresses:[...new Set(addresses)],close(){
     if(closing)return closing;
-    clearInterval(timer);room.closed=true;beacon?.close();server.closeAllConnections();
+    clearInterval(timer);room.closed=true;room.botWait?.cancel();beacon?.close();server.closeAllConnections();
     closing=new Promise(resolve=>server.close(resolve));return closing;
   }};
 }

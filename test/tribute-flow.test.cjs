@@ -3,23 +3,45 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
 const source=fs.readFileSync(require('node:path').join(__dirname,'../web/app/table.js'),'utf8');
-function scheduling(){
+function scheduling(begin=()=>({promise:Promise.resolve(true),cancel(){}})){
   const timers=[],calls={commits:0,requests:0};
-  const context={botTimer:null,paused:false,fault:null,activeTask:null,workEpoch:0,dealMotion:{active:false},
+  const context={botTimer:null,botWait:null,GuandanTurnTiming:{begin},paused:false,fault:null,activeTask:null,workEpoch:0,dealMotion:{active:false},
     liveRound:{state:{},adaptModel:response=>response,id:'test',revision:0,actingSeat:1,game:{result:null},phase:'playing',needsTributeConfirmation:true,
       observation:()=>({}),commitModel(){calls.commits++;}},
     document:{hidden:false},hasOpenDialog:()=>false,
     clearTimeout(){},setTimeout(fn){timers.push(fn);return timers.length;},
     prefs:{book:true},renderGame(){},reportError(error){throw error;},saveAction:fn=>fn(),
-    model:{async request(){calls.requests++;return {};}}
+    model:{cancel(){},async request(){calls.requests++;return {};}}
   };
-  vm.createContext(context);vm.runInContext(source.match(/function scheduleBots\(\)\{[\s\S]*?\n\}/)[0],context);
+  vm.createContext(context);for(const name of ['scheduleBots','stopBots'])vm.runInContext(source.match(new RegExp('function '+name+'\\(\\)\\{[\\s\\S]*?\\n\\}'))[0],context);
   return {context,timers,calls};
 }
 test('bot startup and lifecycle rescheduling cannot bypass the tribute confirmation',()=>{
   const h=scheduling();for(let i=0;i<3;i++)h.context.scheduleBots();
   assert.equal(h.timers.length,0);assert.equal(h.calls.requests,0);
   h.context.liveRound.needsTributeConfirmation=false;h.context.scheduleBots();assert.equal(h.timers.length,1);
+});
+test('solo inference starts immediately but a fast result waits for the thinking period',async()=>{
+  let release;
+  const h=scheduling(()=>({promise:new Promise(done=>release=done),cancel(){}}));
+  h.context.liveRound.needsTributeConfirmation=false;h.context.scheduleBots();const work=h.timers[0]();
+  assert.equal(h.calls.requests,1);await Promise.resolve();assert.equal(h.calls.commits,0);
+  release(true);await work;assert.equal(h.calls.commits,1);
+});
+test('stopping a solo turn cancels its delay and discards late inference',async()=>{
+  let release,modelReply,cancelled=0;
+  const h=scheduling(()=>({promise:new Promise(done=>release=done),cancel(){cancelled++;release(false);}}));
+  h.context.model.request=()=>new Promise(done=>modelReply=done);
+  h.context.liveRound.needsTributeConfirmation=false;h.context.scheduleBots();const work=h.timers[0]();
+  h.context.stopBots();assert.equal(cancelled,1);modelReply({});await work;
+  assert.equal(h.calls.commits,0);assert.equal(h.context.activeTask,null);assert.equal(h.context.botWait,null);
+});
+test('a delayed solo tribute uses the strategy once and cannot commit after a round switch',async()=>{
+  let release,choices=0;
+  const h=scheduling(()=>({promise:new Promise(done=>release=done),cancel(){}}));
+  Object.assign(h.context.liveRound,{phase:'return',needsTributeConfirmation:false,chooseTribute(){choices++;return {card:{id:'return'}};},commit(){h.calls.commits++;}});
+  h.context.scheduleBots();const work=h.timers[0]();assert.equal(choices,1);assert.equal(h.calls.requests,0);assert.equal(h.calls.commits,0);
+  h.context.liveRound.id='next';release(true);await work;assert.equal(h.calls.commits,0);
 });
 test('an already queued bot timer rechecks confirmation before requesting the model',async()=>{
   const h=scheduling();h.context.liveRound.needsTributeConfirmation=false;h.context.scheduleBots();

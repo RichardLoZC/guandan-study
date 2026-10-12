@@ -1,6 +1,23 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const view=require('../web/app/presentation.js');
 const {Match}=require('../web/app/match.js');
+test('turn status distinguishes solo AI, LAN humans and tribute phases',()=>{
+ const round={game:{result:null},phase:'playing',actingSeat:1};
+ assert.deepEqual(view.turnStatus(round),{seat:1,kind:'ai',label:'思考中'});
+ round.remote=true;round.humanSeats=[0,1,3];assert.deepEqual(view.turnStatus(round),{seat:1,kind:'human',label:'正在出牌'});
+ round.actingSeat=2;assert.equal(view.turnStatus(round).kind,'ai');
+ round.actingSeat=3;round.phase='return';assert.equal(view.turnStatus(round).label,'正在还贡');
+ round.phase='give';assert.equal(view.turnStatus(round).label,'正在进贡');
+ round.humanSeats=[0,1,2,3];round.phase='playing';for(let seat=0;seat<4;seat++){round.actingSeat=seat;assert.equal(view.turnStatus(round).kind,'human');}
+});
+test('turn marker clears for blocked, finished and tribute-confirmation states',()=>{
+ const round={game:{result:null},phase:'playing',actingSeat:1};
+ assert.equal(view.turnStatus(round,{blocked:true}),null);
+ for(const key of ['needsTributeConfirmation','confirmWaiting'])assert.equal(view.turnStatus({...round,[key]:true}),null);
+ assert.equal(view.turnStatus({...round,game:{result:{}}}),null);
+ assert.equal(view.turnStatus({...round,actingSeat:-1}),null);
+ assert.equal(view.turnStatus(null),null);
+});
 test('public table presentation contains committed faces only and cannot mutate a match',()=>{
  const match=new Match(),seat=match.actingSeat,id=match.game.players[seat].hand[0].id;
  match.commit(seat,[id]);const before=JSON.stringify(match.state),actions=view.tableActions(match.game,match.level);

@@ -27,6 +27,7 @@ Play Guandan offline against DanLM, or share a table with friends on your local 
 - Free arrangement in both views: drag single cards or a selection between two rows, keep combinations together and undo a move. Layouts survive plays and reopening the same round.
 - DanLM suggestions, a teaching layer, round reviews, replay and text exports.
 - Visible tribute/return/exemption cards, each player's latest play or pass, and all remaining cards after a round.
+- AI turns have a randomized minimum display time of 1.6–2.6 seconds while inference runs. Highlighted avatars distinguish AI thinking from human turns.
 - Solo practice and LAN games with 2–4 human players. DanLM fills empty seats; four humans can play without bots.
 - Automatic room discovery and six-digit room codes. A Mac or Windows computer hosts; desktop and Android devices can join.
 - Local saves, offline assets, no account and no hosted inference service.

@@ -16,6 +16,9 @@ test('UI localization does not mutate model observations, cards, saves or legal 
 test('dynamic counters and legal combination names are translated',()=>{
  for(const [zh,english]of [['第12副','Round 12'],['剩 27 张','27 cards left'],['已选 2 张','2 selected'],['对10','Pair of 10'],['单张 A','Single A'],['三带二 K','Full house K'],['四王炸','Four-joker bomb'],['3 人开局','Start with 3 players']])assert.equal(i18n.t(zh,'en'),english);
 });
+test('AI, human and disconnected turn labels translate in English',()=>{
+ for(const source of ['思考中','正在出牌','正在进贡','正在还贡','正在重连','等待玩家重连','青岚 · 思考中'])assert.ok(!/[\u3400-\u9fff]/u.test(i18n.t(source,'en')),source);
+});
 test('tribute, reconnect and invalid selections retain their conditions in English',()=>{
  for(const s of ['知秋持有两张大王，满足抗贡条件。','墨白上副末游；未满足两张大王的抗贡条件，需单贡。','所选牌压不过桌面上的对K','等待 Alice 重新连接'])assert.ok(!/[\u3400-\u9fff]/u.test(i18n.t(s,'en')),i18n.t(s,'en'));
 });

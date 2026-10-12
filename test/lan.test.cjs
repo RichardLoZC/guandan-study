@@ -2,7 +2,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const {Room,perspective,PROTOCOL}=require('../lan-room.cjs'),net=require('../lan-server.cjs'),{Match}=require('../web/app/match.js');
 let sequence=0;
 const command=(r,t,op,fields={})=>r.request(t,{op,version:r.version,requestId:String(++sequence),...fields});
-async function setup(options={}){const r=new Room({random:(...args)=>args.length===2?123456:0,runModel:async()=>{throw new Error('fixture model');},...options}),host=r.host('Mac'),pad=r.join({code:r.code,name:'Pad',protocol:PROTOCOL});await command(r,host.token,'start');r.match.game.currentPlayer=0;r.match.game.starter=0;r.save();return {r,host,pad};}
+async function setup(options={}){const r=new Room({random:(...args)=>args.length===2?123456:0,startThinking:()=>({promise:Promise.resolve(true),cancel(){}}),runModel:async()=>{throw new Error('fixture model');},...options}),host=r.host('Mac'),pad=r.join({code:r.code,name:'Pad',protocol:PROTOCOL});await command(r,host.token,'start');r.match.game.currentPlayer=0;r.match.game.starter=0;r.save();return {r,host,pad};}
 function complete(m){let guard=2000;while(!m.game.result&&guard--){if(m.needsTributeConfirmation){m.acknowledgeTribute();continue;}if(m.phase!=='playing'){m.commit(m.actingSeat,[m.tributeChoices[0].id]);continue;}const seat=m.actingSeat,card=m.game.players[seat].hand.find(c=>m.selection([c.id],seat).play);m.commit(seat,card?[card.id]:[]);}assert.ok(m.game.result);}
 test('four perspectives expose only own cards and public history, including replay data',async()=>{
   const {r}=await setup();for(let seat=0;seat<4;seat++){
@@ -58,6 +58,30 @@ test('model response after host pauses is discarded',async()=>{
   await command(r,pad.token,'play',{ids:[r.match.game.players[0].hand[0].id]});const actions=r.match.game.actionHistory.length;
   const work=r.tick();await command(r,host.token,'pause');resolve({result:{candidates:[{type:'pass'}],engine:'fixture'}});await work;
   assert.equal(r.match.game.actionHistory.length,actions);
+});
+test('LAN human seats rotate with each viewer, so humans never appear as AI',async()=>{
+  const {r}=await setup();
+  for(const member of r.members){
+    const view=r.projected(member),self=r.seats.indexOf(member.id);
+    assert.deepEqual(view.round.humanSeats,r.members.map(m=>(r.seats.indexOf(m.id)-self+4)%4));
+    assert.ok(view.round.humanSeats.includes(0));assert.equal(view.round.humanSeats.length,2);
+  }
+});
+test('LAN inference and thinking run together, duplicate ticks cannot skip the delay',async()=>{
+  let release,requests=0;
+  const {r,host,pad}=await setup({startThinking:()=>({promise:new Promise(done=>release=done),cancel(){}}),runModel:async()=>{requests++;return {result:{candidates:[{type:'pass'}],engine:'fixture'}};}});
+  await command(r,pad.token,'play',{ids:[r.match.game.players[0].hand[0].id]});
+  const work=r.tick();assert.equal(requests,1);await r.tick();assert.equal(requests,1);
+  assert.equal(r.match.game.actionHistory.length,1);assert.equal(r.busy,true);
+  release(true);await work;assert.equal(r.match.game.actionHistory.length,2);assert.equal(r.busy,false);
+});
+test('LAN disconnect cancels a pending bot turn even if the player reconnects before inference returns',async()=>{
+  let now=100000,release,reply,cancelled=0;
+  const {r,host,pad}=await setup({now:()=>now,startThinking:()=>({promise:new Promise(done=>release=done),cancel(){cancelled++;release(false);}}),runModel:()=>new Promise(done=>reply=done)});
+  await command(r,pad.token,'play',{ids:[r.match.game.players[0].hand[0].id]});const work=r.tick();
+  now+=13000;r.authenticate(host.token);await r.tick();assert.equal(cancelled,1);
+  r.authenticate(pad.token);reply({result:{candidates:[{type:'pass'}],engine:'fixture'}});await work;
+  assert.equal(r.match.game.actionHistory.length,1);assert.equal(r.error,null);assert.equal(r.busy,false);
 });
 test('tribute choices are private, and every connected player acknowledges the public receipt',async()=>{
   const {r,host,pad}=await setup();r.match.state.phase='give';r.match.state.tribute={donors:[3,1],winners:[0,2],offers:[]};
