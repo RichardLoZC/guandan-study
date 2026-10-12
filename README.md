@@ -26,6 +26,7 @@ Play Guandan offline against DanLM, or share a table with friends on your local 
 - One-click hand arrangements that cycle through different possible combinations.
 - Free arrangement in both views: drag single cards or a selection between two rows, keep combinations together and undo a move. Layouts survive plays and reopening the same round.
 - DanLM suggestions, a teaching layer, round reviews, replay and text exports.
+- Independent strategy-book switches for AI players and hints in Settings. AI choices persist locally; LAN rooms share the host’s setting.
 - Visible tribute/return/exemption cards, each player's latest play or pass, and all remaining cards after a round.
 - AI turns have a randomized minimum display time of 1.6–2.6 seconds while inference runs. Highlighted avatars distinguish AI thinking from human turns.
 - Solo practice and LAN games with 2–4 human players. DanLM fills empty seats; four humans can play without bots.
@@ -71,7 +72,7 @@ Mac packaging must run on macOS. Windows packaging supports cross-builds from ma
 
 ## How it works
 
-The game engine validates cards and moves. The bundled DanLM ONNX model ranks legal play candidates with ONNX Runtime Web. Optional strategy guidance adjusts candidate selection. Bots and hints use the same model weights; those weights were not retrained for this project.
+The game engine validates cards and moves. The bundled DanLM ONNX model ranks legal play candidates with ONNX Runtime Web. Optional strategy guidance adjusts candidate selection. Bots and hints use the same model weights; those weights were not retrained for this project. In **Settings → AI play strategy**, turn off strategy-book guidance to use the original DanLM scores. It applies from the next AI move and does not change hint preferences or tribute returns. Only the host can change the shared bot setting in a LAN room.
 
 Tribute returns use a separate deterministic hand-structure policy. It evaluates legal return cards using only the bot's own hand and level, preserving useful combinations before using lower rank as a tie-breaker. This is a bounded heuristic, not a DanLM return decision or a guarantee of optimal play.
 

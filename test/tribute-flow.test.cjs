@@ -10,7 +10,7 @@ function scheduling(begin=()=>({promise:Promise.resolve(true),cancel(){}})){
       observation:()=>({}),commitModel(){calls.commits++;}},
     document:{hidden:false},hasOpenDialog:()=>false,
     clearTimeout(){},setTimeout(fn){timers.push(fn);return timers.length;},
-    prefs:{book:true},renderGame(){},reportError(error){throw error;},saveAction:fn=>fn(),
+    prefs:{book:true,aiBook:true},renderGame(){},reportError(error){throw error;},saveAction:fn=>fn(),
     model:{cancel(){},async request(){calls.requests++;return {};}}
   };
   vm.createContext(context);for(const name of ['scheduleBots','stopBots'])vm.runInContext(source.match(new RegExp('function '+name+'\\(\\)\\{[\\s\\S]*?\\n\\}'))[0],context);
@@ -27,6 +27,14 @@ test('solo inference starts immediately but a fast result waits for the thinking
   h.context.liveRound.needsTributeConfirmation=false;h.context.scheduleBots();const work=h.timers[0]();
   assert.equal(h.calls.requests,1);await Promise.resolve();assert.equal(h.calls.commits,0);
   release(true);await work;assert.equal(h.calls.commits,1);
+});
+test('solo bots use their own strategy setting independently of the hint setting',async()=>{
+  for(const enabled of [false,true]){
+    const h=scheduling();h.context.prefs.aiBook=enabled;h.context.prefs.book=!enabled;
+    let book;h.context.model.request=async payload=>{book=payload.book;return {};};
+    h.context.liveRound.needsTributeConfirmation=false;h.context.scheduleBots();await h.timers[0]();
+    assert.equal(book,enabled);assert.equal(h.calls.commits,1);
+  }
 });
 test('stopping a solo turn cancels its delay and discards late inference',async()=>{
   let release,modelReply,cancelled=0;

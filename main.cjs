@@ -85,7 +85,7 @@ ipcMain.handle('guandan-lan',async(event,payload)=>{
         if(fs.existsSync(savePath))fs.copyFileSync(savePath,savePath+'.before-new');
         await lanService?.close();lanService=null;
       }
-      if(!lanService)lanService=await lan.start({savePath,runModel:runLanModel,fresh:payload.fresh===true});
+      if(!lanService)lanService=await lan.start({savePath,runModel:runLanModel,fresh:payload.fresh===true,aiBook:payload.aiBook!==false});
       const identity=lanService.room.host(payload.name);
       if(powerBlock===null)powerBlock=powerSaveBlocker.start('prevent-app-suspension');
       return {...identity,address:lanService.address,addresses:lanService.addresses};

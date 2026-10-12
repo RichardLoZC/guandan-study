@@ -6,6 +6,9 @@ const PLAYERS=[{name:'你',avatar:null},{name:'青岚',avatar:'assets/avatars/qi
 let prefs={theme:'day',large:false,book:true,paused:false,dealAnimation:true,handStyle:'flat',arrangePriority:'balanced'};
 let currentSkin='jumbo',pendingSkin='jumbo';
 try{const previous=JSON.parse(localStorage.getItem('guandan-engine-choices')||'null');if(previous?.book===false)prefs.book=false;Object.assign(prefs,JSON.parse(localStorage.getItem(PREFS_KEY)||'{}'));const saved=localStorage.getItem(SKIN_KEY);if(Object.hasOwn(SKINS,saved))currentSkin=saved;}catch{}
+// Existing solo games used one switch for bots and advice. Preserve that choice
+// on upgrade, then store the two preferences independently.
+if(typeof prefs.aiBook!=='boolean')prefs.aiBook=prefs.book!==false;
 prefs.handStyle=prefs.handStyle==='fan'?'fan':'flat';root.dataset.handStyle=prefs.handStyle;
 if(!Object.hasOwn(GuandanArrange.priorities,prefs.arrangePriority))prefs.arrangePriority='balanced';
 let liveRound=null,loadError=null,initialDeal=false;
@@ -483,7 +486,7 @@ function scheduleBots(){
     try{
       const decision=liveRound.phase!=='playing'?liveRound.chooseTribute():null;
       const [rawResponse,ready]=await Promise.all([
-        decision?null:model.request({observation:liveRound.observation(seat),provider:'danlm',book:prefs.book,variant:liveRound.state.ruleMode}),wait.promise
+        decision?null:model.request({observation:liveRound.observation(seat),provider:'danlm',book:prefs.aiBook,variant:liveRound.state.ruleMode}),wait.promise
       ]);
       if(!ready||epoch!==workEpoch||!liveRound||liveRound.remote||id!==liveRound.id||revision!==liveRound.revision||liveRound.actingSeat!==seat||liveRound.needsTributeConfirmation||paused||fault||dealMotion.active||hasOpenDialog()||document.hidden)return;
       activeTask=null;
@@ -518,7 +521,7 @@ async function openAdvice(trigger){
   byId('teaching-details').replaceChildren();byId('suggested-cards').replaceChildren();
   const epoch=++workEpoch;activeTask='teaching';renderGame();
   try{
-    const rawResponse=liveRound.remote?await window.GuandanLan.command('advice'):await model.request({observation:liveRound.observation(0),selected:chosen,teaching:true,provider:'danlm',book:prefs.book,variant:liveRound.state.ruleMode});
+    const rawResponse=liveRound.remote?await window.GuandanLan.command('advice',{book:prefs.book!==false}):await model.request({observation:liveRound.observation(0),selected:chosen,teaching:true,provider:'danlm',book:prefs.book,variant:liveRound.state.ruleMode});
     if(epoch!==workEpoch||revision!==liveRound.revision||id!==liveRound.id||!byId('analysis-dialog').open)return;
     const response=liveRound.adaptModel(rawResponse,0);
     const candidate=response.result?.candidates?.[0];if(!candidate)throw new Error('没有获得推荐打法');
@@ -535,10 +538,10 @@ async function openAdvice(trigger){
 
 function renderAdviceContent(){
   if(!displayedAdvice)return;
-  const {response,candidate,notes,advanced,line}=displayedAdvice,ids=candidate.play?.cards.map(c=>c.id)||[];
+  const {response,candidate,notes,advanced,line}=displayedAdvice,ids=candidate.play?.cards.map(c=>c.id)||[],usedBook=Boolean(response.result?.book||advanced?.book);
   byId('teaching-details').replaceChildren();
     byId('advice-title').textContent=candidate.play?'出'+candidate.play.label:'建议不出';
-    byId('advice-reason').textContent=line;byId('advice-source').textContent=liveRound.isTuo3?'DanLM + 拖3规则筛选 · 权重未针对拖3重训':'DanLM'+(prefs.book?' + 秘籍策略':'')+' · 解释来自教学层，评分不等于胜率';
+    byId('advice-reason').textContent=line;byId('advice-source').textContent=liveRound.isTuo3?'DanLM + 拖3规则筛选 · 权重未针对拖3重训':'DanLM'+(usedBook?' + 秘籍策略':'')+' · 解释来自教学层，评分不等于胜率';
     byId('suggested-cards').replaceChildren(...(candidate.play?.cards||[]).map(card=>imageFor(GuandanMatch.decorate(card).face,GuandanCore.cardLabel(card))));
     byId('adopt-from-dialog').textContent=ids.length?'选中推荐':'返回并确认不出';byId('adopt-from-dialog').disabled=false;
     addTeachingDetails('推荐依据',notes.filter(item=>typeof item==='string'),{open:true});
@@ -557,7 +560,7 @@ function renderAdviceContent(){
       table?.owner===2?'Your partner controls the trick. Passing lets them keep the lead and preserves your cards.':'Pass this turn and keep your current hand.';
     byId('teaching-details').replaceChildren();
     addTeachingDetails('Recommendation and context',[
-      'DanLM ranked the legal candidate moves using your hand and public information.'+(prefs.book?' Strategy-book guidance is enabled.':''),
+      'DanLM ranked the legal candidate moves using your hand and public information.'+(usedBook?' Strategy-book guidance is enabled.':''),
       table?`${t(playerAt(table.owner).name)} currently leads with ${t(table.play.label)}.`:'You are leading a new trick.',
       `Remaining cards: ${liveRound.game.players.map((p,i)=>t(playerAt(i).name)+' '+p.hand.length).join(' · ')}.`,
       'This is a factual teaching summary, not the neural network’s internal reasoning. Model scores are not win probabilities.'
@@ -621,6 +624,15 @@ byId('next-round').addEventListener('click',()=>{
   try{replaceMatch(liveRound.next());}catch(error){reportError(error,'save');}
 });
 byId('open-settings').addEventListener('click',event=>openDialog(byId('settings-dialog'),event.currentTarget));
+async function setAiBook(enabled){
+  if(window.GuandanLan?.active){
+    try{await window.GuandanLan.command('ai-book',{enabled});}catch{}finally{window.GuandanLan.controls();}
+    return;
+  }
+  stopBots();prefs.aiBook=enabled;savePrefs();renderGame();scheduleBots();
+}
+byId('ai-book-enabled').checked=prefs.aiBook;
+byId('ai-book-enabled').addEventListener('change',event=>setAiBook(event.target.checked));
 byId('book-enabled').checked=prefs.book!==false;
 byId('book-enabled').addEventListener('change',event=>{prefs.book=event.target.checked;hintSnapshot=null;savePrefs();});
 byId('deal-animation-enabled').checked=prefs.dealAnimation!==false;

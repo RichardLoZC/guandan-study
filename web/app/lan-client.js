@@ -84,8 +84,13 @@
     byId('lan-waiting-title').textContent=online?(count===4?'四位玩家已到齐':'等待朋友入座')+' · '+count+'/4':'尚未连接到牌桌';
     byId('lan-waiting-note').textContent=online?'人齐后由房主开局，自动随机分位。':'请打开牌桌查看连接状态，也可以切回单人练习。';
     for(const id of ['next-round','new-game','lan-new-game','pause-button'])byId(id).disabled=Boolean(session&&(!room?.host||!online||busy));
-    if(session){byId('book-enabled').disabled=true;byId('pause-button').textContent=room?.paused?'继续多人牌局':'暂停多人牌局';byId('engine-indicator').textContent=count===4?'4 位玩家 · 自主出牌':room?.error?'房主模型需要重试':'多人游戏 · DanLM 补齐空位';}
-    else byId('book-enabled').disabled=false;
+    const supportsBook=typeof room?.aiBook==='boolean';
+    byId('ai-book-enabled').checked=session?room?.aiBook!==false:prefs.aiBook!==false;
+    byId('ai-book-enabled').disabled=Boolean(session&&(!supportsBook||!room?.host||!online||busy));
+    byId('ai-book-scope').textContent=!session?'适用于单人练习，自动保存你的选择。':!room?'正在同步房间设置…':!supportsBook?'更新房主应用后可调整 AI 秘籍策略。':room.host?'本牌桌所有 AI 共用此设置，其他玩家同步查看。':'由房主统一设置，当前显示的是本牌桌的选择。';
+    byId('book-enabled').disabled=Boolean(session&&!supportsBook);
+    byId('book-enabled').checked=session&&!supportsBook?true:prefs.book!==false;
+    if(session){byId('pause-button').textContent=room?.paused?'继续多人牌局':'暂停多人牌局';byId('engine-indicator').textContent=count===4?'4 位玩家 · 自主出牌':room?.error?'房主模型需要重试':'多人游戏 · DanLM 补齐空位';}
   }
   function renderNearby(){
     const list=byId('lan-nearby');list.replaceChildren();
@@ -162,7 +167,7 @@
       const name=byId('lan-name').value.trim()||(GuandanI18n.locale==='en'?(window.GuandanLanNative?'Desktop player':'Android player'):(window.GuandanLanNative?'电脑玩家':'安卓玩家'));
       let clientId=read(KEY+'.device');if(!clientId)clientId=crypto.randomUUID();
       try{localStorage.setItem(KEY+'.device',clientId);localStorage.setItem(KEY+'.name',name);}catch{}
-      const result=host?await transport({action:'host',name,fresh:true}):await transport({action:'request',address,body:{op:'join',code,name,clientId,protocol:PROTOCOL}});
+      const result=host?await transport({action:'host',name,fresh:true,aiBook:prefs.aiBook!==false}):await transport({action:'request',address,body:{op:'join',code,name,clientId,protocol:PROTOCOL}});
       if(epoch!==generation)return;
       suspendOffline();session={...result,address:result.address||address,host,name};generation++;mode='multi';remember();lastRender='';await poll();
     }catch(error){message(error.message);}

@@ -45,9 +45,10 @@ function perspective(match,seat,names){
 }
 
 class Room {
-  constructor({savePath=null,runModel,now=Date.now,random=randomInt,restored=null,startThinking=TurnTiming.begin}={}){
+  constructor({savePath=null,runModel,now=Date.now,random=randomInt,restored=null,startThinking=TurnTiming.begin,aiBook=true}={}){
     this.savePath=savePath;this.runModel=runModel;this.now=now;this.random=random;
     this.startThinking=startThinking;this.botWait=null;
+    this.aiBook=restored?restored.aiBook!==false:aiBook!==false;
     this.members=[];this.match=null;this.seats=[];this.version=1;this.code=String(random(100000,1000000));this.id=token();this.paused=false;this.acks=[];this.error=null;this.modelReady=false;this.busy=false;this.completed=new Map();this.closed=false;
     if(restored){this.id=restored.id;this.code=restored.code;this.members=restored.members.map(m=>({...m,lastSeen:0}));this.seats=restored.seats;this.version=restored.version+1;this.match=restored.state?new Match(restored.state):null;this.paused=restored.paused;this.acks=restored.acks||[];}
     this.members.forEach((m,index)=>m.identity??=index);
@@ -62,11 +63,11 @@ class Room {
     }
     return new Room(options);
   }
-  serialize(){return {protocol:PROTOCOL,id:this.id,code:this.code,members:this.members,seats:this.seats,version:this.version,state:this.match?.state||null,paused:this.paused,acks:this.acks};}
+  serialize(){return {protocol:PROTOCOL,id:this.id,code:this.code,members:this.members,seats:this.seats,version:this.version,state:this.match?.state||null,paused:this.paused,acks:this.acks,aiBook:this.aiBook};}
   save(){if(!this.savePath)return;const temporary=this.savePath+'.tmp';fs.writeFileSync(temporary,JSON.stringify(this.serialize()),{mode:0o600});fs.renameSync(temporary,this.savePath);}
   change(action){
     const before=copy(this.serialize()),revision=this.match?.revision;
-    try{action();this.version++;this.save();this.botWait?.cancel();}catch(error){this.members=before.members;this.seats=before.seats;this.version=before.version;this.match=before.state?new Match(before.state):null;if(this.match)this.match.revision=revision;this.paused=before.paused;this.acks=before.acks;throw error;}
+    try{action();this.version++;this.save();this.botWait?.cancel();}catch(error){this.members=before.members;this.seats=before.seats;this.version=before.version;this.match=before.state?new Match(before.state):null;if(this.match)this.match.revision=revision;this.paused=before.paused;this.acks=before.acks;this.aiBook=before.aiBook;throw error;}
   }
   host(name){const m=this.members.find(m=>m.host);this.change(()=>{m.name=nameOf(name||m.name);m.lastSeen=this.now();});return {token:m.token,roomId:this.id,protocol:PROTOCOL};}
   authenticate(auth){const member=this.members.find(m=>m.token===auth);if(!member)throw new Error('房间身份失效，请重新加入');member.lastSeen=this.now();return member;}
@@ -89,7 +90,7 @@ class Room {
   shuffle(){const slots=[...this.members.map(m=>m.id),...[0,1,2,3].filter(id=>!this.members.some(m=>m.identity===id)).map(id=>'bot:'+id)];for(let i=3;i>0;i--){const j=this.random(i+1);[slots[i],slots[j]]=[slots[j],slots[i]];}this.seats=slots;}
   projected(member){
     const seat=this.seats.indexOf(member.id),waiting=this.waiting;
-    const info={protocol:PROTOCOL,id:this.id,version:this.version,code:this.code,host:member.host,started:Boolean(this.match),paused:this.paused,waiting,error:this.error,modelReady:this.modelReady,
+    const info={protocol:PROTOCOL,id:this.id,version:this.version,code:this.code,host:member.host,started:Boolean(this.match),paused:this.paused,waiting,error:this.error,modelReady:this.modelReady,aiBook:this.aiBook,
       members:this.members.map(m=>({id:m.id,name:m.name,identity:m.identity,self:m.id===member.id,host:m.host,connected:this.connected(m),seat:this.seats.indexOf(m.id)}))};
     if(!this.match)return {room:info,round:null};
     if(seat<0)throw new Error('没有此玩家的座位');
@@ -112,12 +113,12 @@ class Room {
     const cacheKey=m.id+':'+body.requestId;
     if(this.completed.has(cacheKey))return this.projected(m);
     if(body.version!==this.version)throw new Error('牌局已变化，已同步最新状态，请再操作一次');
-    if(['start','new','next','lobby','kick','pause','retry'].includes(op)&&!m.host)throw new Error('请由房主操作');
+    if(['start','new','next','lobby','kick','pause','retry','ai-book'].includes(op)&&!m.host)throw new Error('请由房主操作');
     if(op==='advice'){
       if(!this.match||this.paused||this.waiting.length||this.error||this.match.actingSeat!==this.seats.indexOf(m.id)||this.match.phase!=='playing'||this.match.needsTributeConfirmation)throw new Error('现在不能请求建议');
       if(this.busy)throw new Error('模型正在思考，请稍后再试');
       const version=this.version,seat=this.seats.indexOf(m.id);this.busy=true;
-      try{const result=await this.runModel({observation:this.match.observation(seat),teaching:true,provider:'danlm',book:true});if(this.version!==version)throw new Error('牌局已变化，请重新计算');return {advice:result};}finally{this.busy=false;}
+      try{const result=await this.runModel({observation:this.match.observation(seat),teaching:true,provider:'danlm',book:body.book!==false});if(this.version!==version)throw new Error('牌局已变化，请重新计算');return {advice:result};}finally{this.busy=false;}
     }
     this.change(()=>{
       if(['start','new'].includes(op)){
@@ -138,6 +139,9 @@ class Room {
       }
       else if(op==='leave'){
         if(m.host){this.paused=true;}else{this.members=this.members.filter(p=>p.id!==m.id);this.seats=this.seats.map(id=>id===m.id?'bot:'+m.identity:id);this.acks=this.acks.filter(id=>id!==m.id);}
+      }else if(op==='ai-book'){
+        if(typeof body.enabled!=='boolean')throw new Error('秘籍开关状态无效');
+        this.aiBook=body.enabled;
       }else if(op==='pause')this.paused=!this.paused;
       else if(op==='retry'){this.error=null;this.modelReady=false;}
       else if(op==='ack'){
@@ -167,7 +171,7 @@ class Room {
       // Inference runs during the visible thinking period, not after it.
       const decision=phase!=='playing'?this.match.chooseTribute():null;
       const [response,ready]=await Promise.all([
-        phase==='playing'?this.runModel({observation:this.match.observation(seat),provider:'danlm',book:true}):null,
+        phase==='playing'?this.runModel({observation:this.match.observation(seat),provider:'danlm',book:this.aiBook}):null,
         wait.promise
       ]);
       if(!ready||this.closed||this.version!==version||this.match?.id!==id||this.match.actingSeat!==seat||this.paused||this.waiting.length)return;

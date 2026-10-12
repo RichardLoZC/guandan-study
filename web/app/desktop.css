@@ -303,3 +303,14 @@ html[data-theme=night] .identity-3 { --seat-ink:#ee9d8c; }
   .player-name { max-width:120px; }
   .table-caption { display:block; white-space:normal; }
 }
+
+/* The bot policy is visible immediately, separate from optional teaching. */
+.ai-strategy-setting .setting-check { padding:12px 14px; border:1px solid var(--line); border-radius:12px; background:var(--surface); font-weight:650; line-height:1.4; cursor:pointer; }
+.ai-strategy-setting input[type=checkbox] { appearance:none; flex:0 0 46px; width:46px; height:28px; margin:0; border:2px solid #7e8b81; border-radius:18px; background:#7e8b81; position:relative; cursor:pointer; }
+.ai-strategy-setting input::before { content:''; position:absolute; left:2px; top:2px; width:20px; height:20px; border-radius:50%; background:#fffdf3; transition:transform .15s ease; }
+.ai-strategy-setting input:checked { background:var(--green); border-color:var(--green); }
+.ai-strategy-setting input:checked::before { transform:translateX(18px); }
+.ai-strategy-setting input:focus-visible { outline:3px solid #bd9341; outline-offset:3px; }
+.ai-strategy-setting input:disabled { opacity:.55; cursor:default; }
+#ai-book-scope { color:var(--muted); font-size:16px; }
+@media(prefers-reduced-motion:reduce) { .ai-strategy-setting input::before { transition:none; } }

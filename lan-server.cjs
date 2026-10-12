@@ -22,8 +22,8 @@ async function request(address,body,token=''){
     });req.on('error',()=>reject(new Error('无法连接房间，请确认同一 Wi-Fi、地址正确且房主应用已打开')));req.on('timeout',()=>req.destroy(new Error('房间响应超时')));req.end(data);
   });
 }
-async function start({savePath,runModel,port=18765,webRoot=null,room:existingRoom=null,discoverable=port===18765,fresh=false}={}){
-  const room=existingRoom||(fresh?new Room({savePath,runModel}):Room.load({savePath,runModel})),attempts=new Map();
+async function start({savePath,runModel,port=18765,webRoot=null,room:existingRoom=null,discoverable=port===18765,fresh=false,aiBook=true}={}){
+  const room=existingRoom||(fresh?new Room({savePath,runModel,aiBook}):Room.load({savePath,runModel,aiBook})),attempts=new Map();
   const server=http.createServer(async(req,res)=>{
     const reply=(status,value)=>{if(!res.headersSent)res.writeHead(status,{'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff'});res.end(JSON.stringify(value));};
     try{

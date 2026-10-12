@@ -119,6 +119,24 @@ test('turn indicators restore on reconnect without needing a new game revision',
   const before=renders;fail=false;await h.fireTimer();assert.equal(h.api.turnMessage,'');assert.equal(renders,before+1);
   room.paused=true;await h.fireTimer();assert.equal(h.api.turnMessage,'多人牌局已暂停');
 });
+test('AI policy controls follow the authoritative room and guests cannot edit them',async()=>{
+  const room=new Room({aiBook:false}),host=room.host('Mac'),guest=room.join({code:room.code,name:'Pad',protocol:PROTOCOL});
+  const hostView=harness({stored:{...host,address:'127.0.0.1:18765',host:true},request:payload=>payload.action==='host'?Promise.resolve({...room.host('Mac'),address:'127.0.0.1:18765'}):room.request(payload.token,payload.body)});
+  const guestView=harness({stored:{...guest,address:'127.0.0.1:18765',host:false},request:payload=>room.request(payload.token,payload.body)});
+  await flush();
+  assert.equal(hostView.node('ai-book-enabled').checked,false);assert.equal(hostView.node('ai-book-enabled').disabled,false);
+  assert.equal(guestView.node('ai-book-enabled').checked,false);assert.equal(guestView.node('ai-book-enabled').disabled,true);
+  assert.equal(guestView.node('book-enabled').disabled,false,'hint preference stays personal');
+  await hostView.api.reconnect();await hostView.api.command('ai-book',{enabled:true});await guestView.api.reconnect();
+  assert.equal(guestView.node('ai-book-enabled').checked,true);
+  guestView.context.prefs.aiBook=false;await guestView.click('lan-confirm-leave');
+  assert.equal(guestView.node('ai-book-enabled').disabled,false);assert.equal(guestView.node('ai-book-enabled').checked,false,'returning to solo restores the local preference');
+});
+test('old hosts show their always-on AI policy without offering an unsupported toggle',async()=>{
+  const h=harness({request:()=>Promise.resolve(snapshot())});await flush();
+  assert.equal(h.node('ai-book-enabled').checked,true);assert.equal(h.node('ai-book-enabled').disabled,true);
+  assert.match(h.node('ai-book-scope').textContent,/更新房主/);
+});
 test('human seat fallback understands a room hosted by the previous app version',async()=>{
   const room=new Room(),host=room.host('Mac'),guest=room.join({code:room.code,name:'Pad',protocol:PROTOCOL});
   await room.request(host.token,{op:'start',version:room.version,requestId:'old-host'});

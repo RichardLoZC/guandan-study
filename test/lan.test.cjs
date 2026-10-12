@@ -67,6 +67,33 @@ test('LAN human seats rotate with each viewer, so humans never appear as AI',asy
     assert.ok(view.round.humanSeats.includes(0));assert.equal(view.round.humanSeats.length,2);
   }
 });
+test('host controls the shared bot policy, while hint guidance remains a personal request',async()=>{
+  const requests=[];
+  const {r,host,pad}=await setup({aiBook:false,runModel:async payload=>{requests.push(payload);return {result:{candidates:[{type:'pass'}],engine:'fixture'}};}});
+  assert.equal(r.projected(r.authenticate(pad.token)).room.aiBook,false);
+  await assert.rejects(command(r,pad.token,'ai-book',{enabled:true}),/房主/);
+  await assert.rejects(command(r,host.token,'ai-book',{enabled:'false'}),/无效/);assert.equal(r.aiBook,false);
+  await command(r,pad.token,'advice',{book:true});assert.equal(requests.at(-1).book,true);assert.equal(r.aiBook,false);
+  await command(r,pad.token,'advice',{book:false});assert.equal(requests.at(-1).book,false);
+  await command(r,pad.token,'play',{ids:[r.match.game.players[0].hand[0].id]});await r.tick();assert.equal(requests.at(-1).book,false);
+  await command(r,host.token,'ai-book',{enabled:true});await r.tick();assert.equal(requests.at(-1).book,true);
+  assert.equal(r.projected(r.authenticate(pad.token)).room.aiBook,true);
+});
+test('changing bot policy discards a pending inference and recalculates with the new setting',async()=>{
+  let reply;const requests=[];
+  const {r,host,pad}=await setup({runModel:payload=>{requests.push(payload.book);return payload.book?new Promise(done=>reply=done):Promise.resolve({result:{candidates:[{type:'pass'}],engine:'fixture'}});}});
+  await command(r,pad.token,'play',{ids:[r.match.game.players[0].hand[0].id]});const pending=r.tick();
+  await command(r,host.token,'ai-book',{enabled:false});reply({result:{candidates:[{type:'pass'}],engine:'fixture'}});await pending;
+  assert.equal(r.match.game.actionHistory.length,1);await r.tick();assert.equal(r.match.game.actionHistory.length,2);assert.deepEqual(requests,[true,false]);
+});
+test('bot policy survives room restore and resets neither on new games nor failed saves',async()=>{
+  const {r,host}=await setup({aiBook:false});
+  assert.equal(new Room({restored:r.serialize()}).aiBook,false);
+  await command(r,host.token,'new');assert.equal(r.aiBook,false);
+  const legacy=r.serialize();delete legacy.aiBook;assert.equal(new Room({restored:legacy,aiBook:false}).aiBook,true);
+  const version=r.version;r.save=()=>{throw new Error('disk full');};
+  await assert.rejects(command(r,host.token,'ai-book',{enabled:true}),/disk full/);assert.equal(r.aiBook,false);assert.equal(r.version,version);
+});
 test('LAN inference and thinking run together, duplicate ticks cannot skip the delay',async()=>{
   let release,requests=0;
   const {r,host,pad}=await setup({startThinking:()=>({promise:new Promise(done=>release=done),cancel(){}}),runModel:async()=>{requests++;return {result:{candidates:[{type:'pass'}],engine:'fixture'}};}});
