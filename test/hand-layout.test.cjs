@@ -1,10 +1,26 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict');
-const layout=require('../web/app/hand-layout.js'),view=require('../web/app/presentation.js');
+const layout=require('../web/app/hand-layout.js');
 const {Match}=require('../web/app/match.js'),arrange=require('../web/app/arrange.js');
 const cards=ids=>ids.map(id=>({id,rank:'4',suit:'clubs'}));
 const sample=()=>({version:1,key:'round-a',rows:[['a','b','c'],['d','e','f']],groups:[],source:'default'});
 const storage=()=>{const data=new Map();return {getItem:k=>data.get(k),setItem:(k,v)=>data.set(k,v)};};
+test('an untouched hand starts entirely on the lower shelf in the match rank order',()=>{
+ const match=new Match(),hand=match.hand,before=JSON.stringify(match.state),expected=hand.map(c=>c.id);
+ const fresh=layout.create(match.id,hand);assert.deepEqual(fresh.rows,[[],expected]);
+ const legacy={...fresh,rows:[expected.slice(0,14),expected.slice(14)]};
+ assert.deepEqual(layout.reconcile(legacy,match.id,hand).rows,[[],expected]);
+ const manual=layout.move(fresh,[expected[3]],0,0);
+ assert.deepEqual(layout.reconcile(manual,match.id,hand).rows,manual.rows);
+ const plan=arrange.plans(hand,match.level)[0],automatic=layout.fromPlan(match.id,hand,plan);
+ assert.deepEqual(layout.reconcile(automatic,match.id,hand).rows,automatic.rows);
+ assert.deepEqual(layout.fromPlan(match.id,hand,null).rows,[[],expected]);
+ assert.equal(JSON.stringify(match.state),before);
+});
+test('default tribute arrivals follow sorted hand order while the upper shelf stays empty',()=>{
+ const before=layout.create('r',cards(['K','7','3']));
+ assert.deepEqual(layout.reconcile(before,'r',cards(['A','K','3'])).rows,[[],['A','K','3']]);
+});
 test('move single cards in either direction and move a selection across tiers without losing cards',()=>{
  const before=sample(),copy=structuredClone(before);
  assert.deepEqual(layout.move(before,['b'],0,3).rows,[['a','c','b'],['d','e','f']]);
@@ -32,6 +48,22 @@ test('reloading restores individual physical cards and keeps a deliberately empt
  assert.deepEqual(layout.load(store,'round-a',cards(['f','e','d','c','b','a'])),after);
  assert.equal(layout.load(store,'new-game',cards(['a'])).source,'default');
 });
+test('groups remain separate, contiguous and local to a shelf after splitting and partial play',()=>{
+ let saved={version:1,key:'r',source:'manual',rows:[['a','b','c','d','e','f'],['g','h']],groups:[{ids:['a','b','c','d'],label:'old'},{ids:['e','f'],label:'pair'}]};
+ saved=layout.move(saved,['g','h'],0,2);
+ assert.deepEqual(layout.segments(saved,0).map(segment=>segment.ids),[['a','b'],['g','h'],['c','d'],['e','f']]);
+ assert.deepEqual(saved.groups.map(group=>group.label),['','','pair','']);
+ const after=layout.reconcile(saved,'r',cards(['a','b','c','e','f','g','h']));
+ assert.deepEqual(layout.segments(after,0).map(segment=>segment.ids),[['a','b'],['g','h'],['c'],['e','f']]);
+ assert.equal(after.groups.some(group=>group.ids.includes('c')),false);
+ assert.deepEqual(layout.load({getItem:()=>JSON.stringify([after])},'r',cards(['a','b','c','e','f','g','h'])),after);
+});
+test('an in-place multi-card drop creates a group while existing groups keep their identity',()=>{
+ const before={...sample(),source:'manual'},after=layout.move(before,['a','b'],0,0);
+ assert.deepEqual(after.rows,before.rows);assert.deepEqual(after.groups,[{ids:['a','b'],label:''}]);
+ assert.equal(layout.move(after,['a','b'],0,2),after);
+ assert.deepEqual(layout.segments(after,0),[{ids:['a','b'],groupIndex:0},{ids:['c'],groupIndex:-1}]);
+});
 test('malformed layouts and duplicate or foreign IDs cannot corrupt the owned hand',()=>{
  const hand=cards(['a','b','c']);
  for(const bad of [null,{},[],{version:1,key:'r',rows:[]},{version:1,key:'r',rows:[null,[]]},
@@ -55,17 +87,4 @@ test('automatic plans and hundreds of manual moves conserve the deal and never c
   assert.deepEqual([...current.rows.flat()].sort(),hand.map(c=>c.id).sort());
  }
  assert.equal(JSON.stringify(match.state),state);assert.equal(JSON.stringify(match.observation(0)),observation);
-});
-test('both renderers share explicit tiers; 3D drop targets include empty shelves and reject the action bar',()=>{
- const round=new Match(),rows=[round.hand.slice(0,3).map(c=>c.id),round.hand.slice(3).map(c=>c.id)],hand=layout.ordered({rows},round.hand);
- const snapshot=view.project(round,{hand,rows,arranging:true});
- assert.equal(snapshot.arranging,true);assert.deepEqual(snapshot.hand.map(c=>c.row),[0,0,0,...Array(24).fill(1)]);
- for(const [width,height]of [[1280,650],[390,740],[844,340]]){
-  const fan=view.fanLayout(snapshot.hand,width,height);assert.deepEqual(fan.map(p=>p.tier),snapshot.hand.map(c=>c.row));
-  assert.equal(view.fanDropTarget(snapshot.hand,width,height,0,0),null);
-  assert.equal(view.fanDropTarget(snapshot.hand,width,height,width/2,height-10),null);
-  const lowerOnly=snapshot.hand.map(c=>({...c,row:1})),scale=view.gripScale(width,height);
-  const target=view.fanDropTarget(lowerOnly,width,height,width/2-35*scale,height-(80+(383-80)*scale)+25*scale);
-  assert.equal(target.row,0);assert.equal(target.index,0);
- }
 });

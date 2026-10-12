@@ -19,7 +19,14 @@ function perspective(match,seat,names){
   g.roundTrace=mapped(g.roundTrace);g.lastActions=Object.fromEntries(Object.entries(mapped(g.lastActions)).map(([k,v])=>[k,text(v)]));
   g.passedPlayers=g.passedPlayers.map(rot);g.finishOrder=g.finishOrder.map(rot);
   g.actionHistory=g.actionHistory.map(e=>({...e,seat:rot(e.seat),tableOwnerAfter:rot(e.tableOwnerAfter)}));
-  if(g.result){g.result.winnerTeam=(g.result.winnerTeam+seat)%2;g.result.summary=text(g.result.summary);}
+  if(g.result){
+    g.result.winnerTeam=(g.result.winnerTeam+seat)%2;
+    const places=[0,2].map(own=>g.finishOrder.indexOf(own)+1).sort((a,b)=>a-b);
+    const team=g.result.winnerTeam===0?'我方':'对方';
+    g.result.placementKey=places.join('');
+    g.result.badge=team+'升 '+g.result.levelDelta+' 级';
+    g.result.summary='你和队友分列 '+places.join('')+'，'+team+'升 '+g.result.levelDelta+' 级。';
+  }
   if(g.winnerTeam!=null)g.winnerTeam=(g.winnerTeam+seat)%2;
   g.message=text(g.message);
   if(seat%2){s.levels.reverse();s.wins.reverse();}
@@ -153,7 +160,7 @@ class Room {
     if(this.members.some(m=>m.id===this.seats[seat]))return;
     const version=this.version,id=this.match.id;this.busy=true;
     try{
-      if(this.match.phase!=='playing')this.change(()=>this.match.commit(seat,[this.match.tributeChoices[0].id],{automatic:true}));
+      if(this.match.phase!=='playing')this.change(()=>this.match.commit(seat,[this.match.chooseTribute().card.id],{automatic:true}));
       else{
         const response=await this.runModel({observation:this.match.observation(seat),provider:'danlm',book:true});
         if(this.closed||this.version!==version||this.match?.id!==id||this.paused||this.waiting.length)return;

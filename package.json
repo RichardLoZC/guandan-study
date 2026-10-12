@@ -1,7 +1,7 @@
 {
   "name": "guandan-study-offline",
-  "version": "1.8.0",
-  "description": "Guandan Study: offline DanLM, 2D/3D, Chinese/English and 2–4 player LAN games",
+  "version": "1.8.15",
+  "description": "Guandan Study: offline DanLM, flat/fan hands, Chinese/English and 2–4 player LAN games",
   "author": "Guandan Study",
   "main": "main.cjs",
   "private": true,

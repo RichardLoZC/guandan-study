@@ -1,0 +1,65 @@
+/* The final trick stays on the felt; reveal cards at their owner's seat. */
+html .is-round-over .hand-command-bar { grid-template-columns:180px minmax(0,1fr); height:auto; min-height:86px; padding:6px 0; }
+html .is-round-over .hand-command-bar > .actions,
+html .is-round-over .hand-feedback,
+html .is-round-over .arrangement-summary,
+html .is-round-over .hand-options,
+html .is-round-over .arrange-controls,
+html .is-round-over #hint-button,
+html .is-round-over .hand-tier-label { display:none; }
+html .is-round-over .round-end-banner { grid-area:1/2; position:relative; inset:auto; transform:none; min-width:0; max-width:none; width:100%; display:flex; align-items:center; justify-content:center; gap:28px; text-align:left; }
+html .is-round-over .round-end-banner h2 { font-size:24px; line-height:1.25; margin:0 0 5px; }
+html .is-round-over .round-end-banner p { font-size:16px; line-height:1.4; margin:0; color:var(--felt-muted); }
+html .is-round-over .end-result { min-width:0; }
+html .is-round-over .end-actions { flex:0 0 auto; flex-wrap:nowrap; gap:10px; }
+html .is-round-over .end-actions button { min-height:46px; padding:8px 16px; font-size:17px; }
+html .is-round-over .end-actions .secondary-button { color:var(--felt-muted); background:#102f2670; border-color:#dce9d44d; }
+html .is-round-over .round-end-banner > .toast { position:absolute; top:-48px; bottom:auto; left:50%; margin:0; transform:translateX(-50%); width:max-content; max-width:100%; }
+html .is-round-over .hand-scroll { height:calc(var(--hand-card-height) + var(--fan-rise) + 42px); --group-action-space:0px; }
+html .is-round-over .hand-scroll.empty-hand { height:40px; padding:4px 8px; }
+html .is-round-over .hand-tools { height:48px; }
+html .is-round-over .empty-hand-message { margin:0; padding:2px; line-height:28px; text-align:center; color:var(--felt-muted); }
+html .is-round-over .playing-card { cursor:default; }
+html .seat-remainder { --reveal-width:44px; --reveal-step:23px; width:max-content; max-width:32vw; margin-top:12px; padding:8px 10px 10px; border-top:1px solid color-mix(in srgb,var(--seat) 55%,transparent); border-radius:8px; background:#102f264a; }
+html .remainder-heading { display:flex; align-items:baseline; gap:6px; font-size:15px; color:var(--felt-muted); margin-bottom:6px; }
+html .remainder-heading b { font-size:17px; color:var(--on-felt); }
+html .remainder-row { display:flex; height:34px; }
+html .remainder-row:last-child { height:calc(var(--reveal-width) * 1.5); }
+html .remainder-row img { display:block; flex:0 0 var(--reveal-width); width:var(--reveal-width); height:calc(var(--reveal-width) * 1.5); border-radius:4px; box-shadow:0 1px 3px #0005; }
+html .remainder-row img:not(:last-child) { margin-right:calc(var(--reveal-step) - var(--reveal-width)); }
+@media(max-width:1150px) {
+  html .seat-remainder { --reveal-width:40px; --reveal-step:20px; padding:6px; }
+  html .is-round-over .round-end-banner { gap:14px; }
+  html .is-round-over .hand-command-bar { grid-template-columns:145px minmax(0,1fr); }
+}
+@media(max-width:850px) {
+  html .is-round-over .hand-command-bar { display:flex; align-items:center; gap:10px; }
+  html .is-round-over .hand-heading { flex:0 0 auto; }
+  html .is-round-over .round-end-banner { flex-wrap:wrap; gap:8px; justify-content:flex-end; }
+  html .is-round-over .end-result { text-align:right; }
+  html .is-round-over .round-end-banner h2 { font-size:20px; }
+  html .is-round-over .round-end-banner p { font-size:14px; }
+  html .is-round-over .end-actions button { min-height:44px; padding:7px 10px; font-size:15px; }
+  html .is-round-over .hand-tools { display:flex; height:48px; }
+  html .is-round-over .table-assistance { margin-left:auto; }
+  html .seat-remainder { --reveal-width:34px; --reveal-step:16px; max-width:43vw; }
+  html .remainder-row { height:26px; }
+}
+@media(max-width:600px) {
+  html .is-round-over .hand-heading .turn-pill { display:none; }
+  html .is-round-over .hand-command-bar { display:block; }
+  html .is-round-over .hand-heading { position:absolute; left:0; bottom:52px; }
+  html .is-round-over .round-end-banner { justify-content:space-between; }
+  html .is-round-over .end-result { text-align:left; }
+  html .is-round-over .round-end-banner p { max-width:180px; }
+  html .seat-remainder { --reveal-width:30px; --reveal-step:14px; }
+  html .remainder-heading { font-size:12px; gap:3px; }
+}
+@media(max-height:500px) and (orientation:landscape) {
+  html .is-round-over .hand-command-bar { min-height:52px; }
+  html .is-round-over .hand-heading .turn-pill { display:none; }
+  html .seat-remainder { --reveal-width:28px; --reveal-step:15px; margin-top:6px; padding:4px; }
+  html .remainder-row { height:19px; }
+  html .remainder-heading { font-size:11px; margin:0; }
+  html .remainder-heading b { font-size:12px; }
+}

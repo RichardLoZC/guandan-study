@@ -1,17 +1,22 @@
-掼蛋研习社 / Guandan Study 1.8.0
+掼蛋研习社 / Guandan Study 1.8.9
+
+手牌操作：不出、出牌位于手牌上方；看建议教学入口与出牌记录位于右下方。下方集中平铺／弧形、理牌方式、按大小、撤销理牌、取消选择。选择同花顺、炸弹、顺连或对子优先会立即理牌，再点“理牌”轮换组合；“按大小”恢复下排点数排序；“撤销理牌”撤回最近一次手动或自动调整。
 
 中文：牌桌顶部点 English 切换英文，再点“中文”切回。当前牌局和选牌保留。
 English: Use the English / 中文 button at the top. Language changes preserve your game and selection.
 
 Mac：解压应用后放入本机“应用程序”，打开“掼蛋研习社”。
+桌面窗口：小窗口自动等比例缩放完整牌桌。菜单“显示 → 恢复大小”可重新适应窗口；两种手牌布局与拖动选牌使用相同缩放比例。
 Windows: Extract the whole ZIP, then run GuandanStudy.exe.
 Android：安装 APK，手机和平板共用；支持横竖屏。需要 Android 8+ / WebView 120+。
 
-2D / 3D：顶部切换；默认 3D，图形不可用时返回 2D。
+手牌布局：顶部切换“平铺 / 弧形”；默认平铺，两种布局共用牌序和选牌。
 理牌 / Arrange：轮换展示不同组合。点击或空格选牌，再点“出牌 / Play”。
-自由理牌 / Free arrange：拖动单张或已选的多张牌，在上下两排自由换位；2D 和 3D 共用牌序。支持撤销；点“完成理牌”后继续出牌。2D 可点“放这里”把已选牌移到该排末尾，也可用 Alt / Option + 方向键移动。出牌保留其余牌序，重新打开同一副会恢复；窄屏可左右滚动。
-Free arrange: Drag cards or a selection between the two rows. Undo a move, then choose Done arranging to play. Layouts persist for the same round and are shared by both views.
+初始牌序：所有手牌按大小放在下排，上排留空；已理好的牌序继续保存。
+自由理牌 / Free arrange：点击选牌，按住拖动就立即理牌，无需等待，松手完成；单张或已选组合均可在上下两排换位，支持撤销。轻微抖动不会触发理牌；鼠标与触屏都使用点选、拖动换位。键盘可直接用 Alt / Option + 方向键移动聚焦牌或已选组合。平铺和弧形共用牌序；出牌保留其余牌序，重新打开同一副会恢复；窄屏可在手牌区空白处左右滚动。“理牌”按钮继续自动寻找组合。
+Free arrange: Tap to select; press and drag to move cards or a selection between rows immediately. No hold delay. Release to finish. Small movements are ignored to avoid accidental drags. Mouse and touch use the same gestures. Undo and Alt/Option + arrow keys remain available. Both views share the saved layout. Arrange cycles through suggested combinations.
 看建议 / Hint：DanLM 推荐，只选中建议，不会替你确认出牌。
+AI 还贡：独立比较合法候选，尽量保留可用组合；结构相近时优先还较低点数的牌。此策略只使用本人的手牌，不是 DanLM 推理。
 复盘 / Review：查看实际行动、最后出牌、终局明牌与逐手回放；可导出文本。
 设置 / Settings：主题、牌面、大字、发牌动画、暂停、备份和许可。
 

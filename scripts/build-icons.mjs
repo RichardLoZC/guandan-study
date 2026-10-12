@@ -22,7 +22,27 @@ try{
   exportPNG(256,path.join(root,'icon.png'));
   await fs.mkdir(path.join(root,'web/assets/brand'),{recursive:true});
   exportPNG(128,path.join(root,'web/assets/brand/app-icon.png'));
-  exportPNG(192,path.join(root,'android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png'));
-  const png=await fs.readFile(path.join(root,'icon.png')),header=Buffer.alloc(22);header.writeUInt16LE(1,2);header.writeUInt16LE(1,4);header.writeUInt16LE(1,10);header.writeUInt16LE(32,12);header.writeUInt32LE(png.length,14);header.writeUInt32LE(22,18);await fs.writeFile(path.join(root,'build/icon.ico'),Buffer.concat([header,png]));
+  for(const [density,size] of Object.entries({mdpi:48,hdpi:72,xhdpi:96,xxhdpi:144,xxxhdpi:192})){
+    const destination=path.join(root,`android/app/src/main/res/mipmap-${density}`);
+    await fs.mkdir(destination,{recursive:true});
+    exportPNG(size,path.join(destination,'ic_launcher.png'));
+  }
+  // Supply native Windows sizes instead of asking the shell to shrink one
+  // 256 px frame for every taskbar, Explorer and shortcut view.
+  const sizes=[16,24,32,48,64,128,256],frames=[];
+  for(const size of sizes){
+    const frame=path.join(scratch,`windows-${size}.png`);exportPNG(size,frame);
+    frames.push(await fs.readFile(frame));
+  }
+  const header=Buffer.alloc(6+16*sizes.length);header.writeUInt16LE(1,2);header.writeUInt16LE(sizes.length,4);
+  let offset=header.length;
+  sizes.forEach((size,index)=>{
+    const entry=6+index*16;
+    header[entry]=header[entry+1]=size===256?0:size;
+    header.writeUInt16LE(1,entry+4);header.writeUInt16LE(32,entry+6);
+    header.writeUInt32LE(frames[index].length,entry+8);header.writeUInt32LE(offset,entry+12);
+    offset+=frames[index].length;
+  });
+  await fs.writeFile(path.join(root,'build/icon.ico'),Buffer.concat([header,...frames]));
   console.log('Exported macOS, Windows, Android and table icons.');
 }finally{await fs.rm(scratch,{recursive:true,force:true});}

@@ -241,3 +241,32 @@ test('a delayed discovery cannot overwrite a manually entered address',async()=>
   scan.resolve({rooms:[{id:'room',address:'192.168.1.2:18765',name:'别人',count:1}]});await flush();
   assert.equal(h.node('lan-address').value,'192.168.1.9:18765');
 });
+test('a failed completed-round archive retries at the same room version and survives reconnect',async()=>{
+  const room=new Room(),host=room.host('Mac 房主'),guest=room.join({code:room.code,name:'Pad 玩家',protocol:PROTOCOL});
+  await room.request(host.token,{op:'start',version:room.version,requestId:'archive-start'});
+  let guard=2000;
+  while(!room.match.game.result&&guard--){
+    const seat=room.match.actingSeat,card=room.match.game.players[seat].hand.find(card=>room.match.selection([card.id],seat).play);
+    room.match.commit(seat,card?[card.id]:[]);
+  }
+  assert.ok(room.match.game.result);
+  class FailingStorage extends Map{
+    blocked=true;attempts=0;
+    set(key,value){
+      if(key===GuandanMatch.ARCHIVE_KEY){this.attempts++;if(this.blocked)throw new Error('QuotaExceededError');}
+      return super.set(key,value);
+    }
+  }
+  const saved=new FailingStorage(),stored={...guest,address:'127.0.0.1:18765',host:false,name:'Pad 玩家'};
+  const request=payload=>room.request(payload.token,payload.body),h=harness({stored,request,saved});
+  await flush();assert.equal(saved.attempts,1);assert.equal(h.notices.length,1);
+  await h.api.reconnect();assert.equal(saved.attempts,2);assert.equal(h.notices.length,1,'unchanged save failures do not flood toasts');
+  saved.blocked=false;await h.api.reconnect();assert.equal(saved.attempts,3);
+  const record=JSON.parse(saved.get(GuandanMatch.ARCHIVE_KEY))[0];assert.ok(record.state&&!record.events);
+  assert.equal(GuandanMatch.archives(h.context.localStorage)[0].source,'局域网实际对局');
+  await h.api.reconnect();assert.equal(saved.attempts,3,'a successful archive is not rewritten on every poll');
+  const reloaded=harness({stored,request,saved});await flush();
+  const reviews=GuandanMatch.archives(reloaded.context.localStorage);
+  assert.equal(reviews.length,1);assert.equal(reviews[0].id,room.match.id);
+  assert.deepEqual(reviews[0].names,JSON.parse(JSON.stringify(reloaded.context.liveRound.names)));
+});

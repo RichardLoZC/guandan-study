@@ -1,7 +1,7 @@
 'use strict';
 (() => {
   const KEY='guandan.lan.session.v1',PROTOCOL=1,dialog=byId('lan-dialog');
-  let session=null,room=null,offline=null,pollTimer=null,busy=false,connecting=false,pollingEpoch=null,online=false,generation=0,lastRender='',lastEnded=null;
+  let session=null,room=null,offline=null,pollTimer=null,busy=false,connecting=false,pollingEpoch=null,online=false,generation=0,lastRender='',lastEnded=null,lastArchiveWarning=null;
   let mode='solo',nearby=[],scanning=false,scanEpoch=0,memberSignature='';
   const pending=new Map();let seq=0;
   window.GuandanLanReply=(id,json)=>{const task=pending.get(id);if(!task)return;pending.delete(id);clearTimeout(task.timer);try{const r=JSON.parse(json);r.error?task.reject(new Error(r.error)):task.resolve(r);}catch(error){task.reject(error);}};
@@ -122,11 +122,12 @@
         renderGame();
         if(!started&&room.started&&!room.paused&&!room.waiting.length&&mode==='multi'&&dialog.open)closeDialog(dialog);
         if(oldId!==liveRound.id&&!liveRound.game.result)beginDealAnimation();
-        if(liveRound.game.result&&lastEnded!==liveRound.id){
-          lastEnded=liveRound.id;
-          try{const records=JSON.parse(localStorage.getItem(GuandanMatch.ARCHIVE_KEY)||'[]'),snapshot=liveRound.snapshot();snapshot.source='局域网实际对局';localStorage.setItem(GuandanMatch.ARCHIVE_KEY,JSON.stringify([snapshot,...records.filter(r=>r.id!==snapshot.id)].slice(0,8)));}catch{toast('联机复盘未保存，可在当前复盘面板导出。');}
-        }
       }else{liveRound=offline?.round||liveRound;paused=true;renderGame();}
+    }
+    // Retry a failed save on later polls even when the room version is unchanged.
+    if(data.round&&liveRound.game.result&&lastEnded!==liveRound.id){
+      try{GuandanMatch.archive(localStorage,liveRound,{source:'局域网实际对局'});lastEnded=liveRound.id;lastArchiveWarning=null;}
+      catch{if(lastArchiveWarning!==liveRound.id)toast('联机复盘未保存，可在当前复盘面板导出。');lastArchiveWarning=liveRound.id;}
     }
     controls();
   }

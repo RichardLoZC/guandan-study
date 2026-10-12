@@ -56,6 +56,9 @@ const messages={
   "看建议": "Hint",
   "不出": "Pass",
   "出牌": "Play",
+  "打出组合": "Play group",
+  "这些牌暂不能组成有效牌型": "Not a valid combination",
+  "当前不能打出组合": "Cannot play this group now",
   "开始出牌": "Start playing",
   "出牌记录": "History",
   "来一局掼蛋": "Play Guandan",
@@ -459,11 +462,26 @@ Object.assign(messages,{
   '把已选牌放到上排末尾':'Move selected cards to the end of the upper row','把已选牌放到下排末尾':'Move selected cards to the end of the lower row',
   '拖到上下两排任意位置 · 选中多张可一起拖动':'Drag between rows · Select several cards to move them together',
   '拖动单张或已选牌；完成后出牌':'Drag cards or a selection. Finish arranging to play.',
+  '按住拖动理牌':'Drag to arrange',
+  '松手放下 · 自动回到选牌':'Release to place · Then select cards as usual',
+  '点选牌面 · 按住拖动理牌':'Tap to select · Drag to arrange',
+  '扇形手牌；按住拖动理牌，Tab 逐张查看，空格选牌':'Card fan. Drag to arrange; Tab to browse; Space to select.',
+  '双层手牌；按住拖动理牌，空白处左右滚动':'Two hand rows. Drag to arrange; swipe empty space to scroll.',
+  '双层手牌；点击选牌，按住拖动理牌，空白处左右滚动':'Two hand rows. Tap to select, drag to arrange; swipe empty space to scroll.',
   '牌序已调整，但未能保存到本机。':'Cards arranged, but the layout could not be saved on this device.'
 });
+Object.assign(messages,{
+  '手牌布局':'Hand layout','平铺':'Flat','弧形':'Curved',
+  '手牌操控':'Hand tools','理牌优先方式':'Arrangement priority','综合找组合':'Find combinations',
+  '同花顺优先':'Straight flushes first','炸弹优先':'Bombs first','按大小':'Sort by rank','撤销理牌':'Undo arrange',
+  '未找到同花顺':'No straight flush found','未找到炸弹':'No bomb found','未找到顺连':'No straight or run found','未找到对子':'No pair found','组合 ':'Layout ',
+  '弧形双层手牌；点击选牌，按住拖动理牌，空白处左右滚动':'Two curved hand rows. Tap to select, drag to arrange; swipe empty space to scroll.'
+});
+Object.assign(messages,{'同花顺不能作为普通顺子打出':'A straight flush must be played as a straight flush.'});
 const escape=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 const keys=Object.keys(messages).sort((a,b)=>b.length-a.length);
 const matcher=new RegExp(keys.map(escape).join('|'),'g');
+Object.assign(messages,{"↔ 在这里左右滑动看牌":"↔ Swipe here to browse your hand"});
 function translate(source){
  const leading=source.match(/^\s*/)[0],trailing=source.match(/\s*$/)[0],trimmed=source.trim();
  if(Object.hasOwn(messages,trimmed))return leading+messages[trimmed]+trailing;

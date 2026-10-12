@@ -12,7 +12,7 @@ function harness(initial=[],key=null){
     return nodes.get(id);
   }
   const cards=Array.from({length:6},(_,i)=>{const card=node('card'+i);card.dataset.id=String(i);return card;});
-  const context={handEditor:{editing:false,cancel(){},setEditing(value){this.editing=value;}},GuandanI18n:require('../web/app/i18n.js'),selected:new Set(initial),playKey:key,liveRound:{revision:1,phase:'playing'},activeTask:null,workEpoch:0,fault:null,
+  const context={handEditor:{editing:false,active:false,cancel(){this.editing=false;this.active=false;}},GuandanI18n:require('../web/app/i18n.js'),selected:new Set(initial),playKey:key,liveRound:{revision:1,phase:'playing'},activeTask:null,workEpoch:0,fault:null,
     canPlay:()=>true,byId:node,clearToast(){},updateSelection(){},toast(){},downloadText(){},
     scheduleBots(){calls.scheduled++;},stopBots(){},stopReplay(){},renderGame(){},checkModel(){calls.health++;},closeDialog(dialog){dialog.open=false;},
     model:{ready:true,cancel(){calls.cancelled++;}},performance:{now:()=>100},dealMotion:{active:false,finish(){this.active=false;}},
@@ -28,37 +28,6 @@ function harness(initial=[],key=null){
   };
   return {context,calls,event};
 }
-test('Pad swipe selects every traversed card and suppresses the synthetic click',()=>{
-  const h=harness();h.event('pointerdown',10);h.event('pointermove',202);h.event('pointerup',202);
-  assert.deepEqual([...h.context.selected],['0','1','2','3','4']);
-  let prevented=false,stopped=false;
-  h.event('click',202,50,{detail:1,preventDefault(){prevented=true;},stopImmediatePropagation(){stopped=true;}});
-  assert.ok(prevented&&stopped);
-});
-test('Pad swipe can deselect a group without toggling cards twice',()=>{
-  const h=harness(['0','1','2','3','4']);h.event('pointerdown',10);h.event('pointermove',150);h.event('pointermove',30);h.event('pointerup',30);
-  assert.deepEqual([...h.context.selected],['4']);
-});
-test('cancelled Pad gestures restore both cards and the chosen straight-flush interpretation',()=>{
-  for(const end of ['pointercancel','resize','suspend']){
-    const h=harness(['0','1','2','3','4'],'straight-flush:spades');
-    h.event('pointerdown',10);h.event('pointermove',100);
-    if(end==='suspend')h.context.window.guandanPad.suspend();else h.event(end,100);
-    assert.deepEqual([...h.context.selected],['0','1','2','3','4']);
-    assert.equal(h.context.playKey,'straight-flush:spades');
-  }
-});
-test('Pad vertical scrolling and mouse movement do not select cards',()=>{
-  const vertical=harness();vertical.event('pointerdown',10);vertical.event('pointermove',13,85);vertical.event('pointerup',13,85);
-  assert.equal(vertical.context.selected.size,0);
-  const mouse=harness();mouse.event('pointerdown',10,50,{pointerType:'mouse'});mouse.event('pointermove',150,50,{pointerType:'mouse'});
-  assert.equal(mouse.context.selected.size,0);
-});
-test('gesture cancellation cannot restore selections from an older game revision',()=>{
-  const h=harness(['0']);h.event('pointerdown',10);h.event('pointermove',110);
-  h.context.liveRound.revision++;h.context.selected.clear();h.event('pointercancel',110);
-  assert.equal(h.context.selected.size,0);
-});
 test('backgrounding cancels teaching, blocks bot scheduling and resumes the model once',()=>{
   const h=harness();h.context.activeTask='teaching';h.context.model.ready=false;
   h.context.window.guandanPad.suspend();h.context.scheduleBots();
@@ -79,9 +48,16 @@ test('Pad background and back controls finish a dealing animation',()=>{
   h.context.dealMotion.active=true;h.context.window.guandanPad.suspend();assert.equal(h.context.dealMotion.active,false);
 });
 
-test('free arranging owns touch drags and system Back exits arranging before clearing cards',()=>{
- const h=harness(['0']);h.context.handEditor.editing=true;
- h.event('pointerdown',10);h.event('pointermove',200);h.event('pointerup',200);
- assert.deepEqual([...h.context.selected],['0']);
- assert.equal(h.context.window.guandanPad.back(),true);assert.equal(h.context.handEditor.editing,false);assert.deepEqual([...h.context.selected],['0']);
+test('system Back cancels a pending press or active drag before clearing selected cards',()=>{
+ for(const editing of [false,true]){
+  const h=harness(['0']);h.context.handEditor.editing=editing;h.context.handEditor.active=true;
+  assert.equal(h.context.window.guandanPad.back(),true);assert.equal(h.context.handEditor.editing,false);
+  assert.equal(h.context.handEditor.active,false);assert.deepEqual([...h.context.selected],['0']);
+ }
+});
+test('backgrounding cancels an active shared drag without changing the chosen cards',()=>{
+ const h=harness(['0','1'],'straight-flush:spades');h.context.handEditor.editing=true;h.context.handEditor.active=true;
+ h.context.window.guandanPad.suspend();
+ assert.equal(h.context.handEditor.editing,false);assert.equal(h.context.handEditor.active,false);
+ assert.deepEqual([...h.context.selected],['0','1']);assert.equal(h.context.playKey,'straight-flush:spades');
 });

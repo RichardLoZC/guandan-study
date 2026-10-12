@@ -5,7 +5,8 @@
 })(globalThis,function(core){
   'use strict';
   const ranks=['A','2','3','4','5','6','7','8','9','10','J','Q','K','A'];
-  function plans(hand,level){
+  const priorities=Object.freeze({balanced:'综合找组合',flush:'同花顺优先',bomb:'炸弹优先',runs:'顺连优先',pairs:'对子优先'});
+  function plans(hand,level,{priority='balanced'}={}){
     core.setLevel(level);
     const sorted=core.sortCards(hand),wild=sorted.filter(c=>c.isWild),natural=sorted.filter(c=>!c.isWild),candidates=new Map();
     const indexes=new Map(sorted.map((c,i)=>[c.id,i]));
@@ -40,6 +41,34 @@
     const groups=[...candidates.values()],triples=groups.filter(g=>g.cards.length===3),pairs=groups.filter(g=>g.cards.length===2);
     for(const a of triples)for(const b of pairs)if(!(a.mask&b.mask))add([...a.cards,...b.cards]);
     const all=[...candidates.values()],output=[],seen=new Set(),full=(1n<<BigInt(sorted.length))-1n;
+    // Explicit UI priorities are presentation-only. The original default
+    // partitions remain unchanged for return-tribute assessment and callers.
+    const preferred={flush:g=>g.type==='straight-flush',bomb:g=>g.bomb&&g.type!=='straight-flush',
+      runs:g=>['straight','straight-flush','pair-run','triple-run'].includes(g.type),pairs:g=>g.type==='pair'}[priority];
+    if(Object.hasOwn(priorities,priority)&&priority!=='balanced'&&typeof preferred==='function'){
+      const rank=g=>(g.cards.length-1)*10*(g.bomb?1.2:1)-g.wild*2;
+      const order=[...all].sort((a,b)=>Number(preferred(b))-Number(preferred(a))||rank(b)-rank(a)||a.key.localeCompare(b.key));
+      const targets=order.filter(preferred);
+      if(targets.length){
+        // Try alternate target combinations, then fill the rest without
+        // reusing any physical card. Bound both the seeds and result count.
+        for(const seed of targets.slice(0,32)){
+          let remaining=full^seed.mask;const chosen=[seed];
+          for(const group of order)if((remaining&group.mask)===group.mask){chosen.push(group);remaining^=group.mask;}
+          for(let i=0;i<sorted.length;i++)if(remaining&(1n<<BigInt(i)))chosen.push({cards:[sorted[i]],label:'单张'});
+          const signature=chosen.map(g=>g.cards.map(c=>c.suit+':'+c.rank).sort().join('|')).sort().join(';');
+          if(seen.has(signature))continue;seen.add(signature);
+          output.push({name:priorities[priority],priority,matches:chosen.filter(preferred).length,
+            groups:chosen.map(g=>({label:g.label,ids:g.cards.map(c=>c.id)})),ids:chosen.flatMap(g=>g.cards.map(c=>c.id)),
+            summary:chosen.filter(g=>g.cards.length>1).map(g=>g.label).join(' · ')});
+          if(output.length>=8)break;
+        }
+        return output;
+      }
+      // A missing target is reported explicitly by the UI; still offer useful
+      // balanced layouts rather than pretending that a target was found.
+      return plans(hand,level).map(plan=>({...plan,priority,matches:0}));
+    }
     const policies=[['组合均衡',1.2,1,1],['顺连优先',.65,2.1,.7],['三张带牌',.8,.7,1.8],['对子优先',1,.7,.6],['保留炸弹',2.8,.8,.7]];
     for(const [name,bombWeight,runWeight,fullWeight] of policies){
       function score(g){const n=g.cards.length,run=/straight|consecutive|serial|pair_run|triple_run/.test(g.type)||(!g.bomb&&n>=5&&g.type!=='full-house');
@@ -67,5 +96,5 @@
     }
     return output;
   }
-  return Object.freeze({plans});
+  return Object.freeze({plans,priorities});
 });

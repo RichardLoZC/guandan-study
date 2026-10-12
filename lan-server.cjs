@@ -16,8 +16,8 @@ async function request(address,body,token=''){
   const url=addressURL(address),data=JSON.stringify(body);if(data.length>32768)throw new Error('请求过大');
   return new Promise((resolve,reject)=>{
     const req=http.request(url,{method:'POST',headers:{'content-type':'application/json','content-length':Buffer.byteLength(data),'authorization':'Bearer '+token},timeout:100000},res=>{
-      let text='',size=0;res.on('data',part=>{size+=part.length;if(size>4000000){req.destroy(new Error('房间响应过大'));return;}text+=part;});
-      res.on('end',()=>{try{const result=JSON.parse(text);if(result.error)reject(new Error(result.error));else resolve(result);}catch(error){reject(error);}});
+      const chunks=[];let size=0;res.on('data',part=>{size+=part.length;if(size>4000000){req.destroy(new Error('房间响应过大'));return;}chunks.push(part);});
+      res.on('end',()=>{try{const result=JSON.parse(Buffer.concat(chunks).toString('utf8'));if(result.error)reject(new Error(result.error));else resolve(result);}catch(error){reject(error);}});
       res.on('error',reject);
     });req.on('error',()=>reject(new Error('无法连接房间，请确认同一 Wi-Fi、地址正确且房主应用已打开')));req.on('timeout',()=>req.destroy(new Error('房间响应超时')));req.end(data);
   });
@@ -37,9 +37,9 @@ async function start({savePath,runModel,port=18765,webRoot=null,room:existingRoo
         const bytes=await fs.promises.readFile(file);res.writeHead(200,{'content-type':mime[path.extname(file)]||'application/octet-stream'});return res.end(bytes);
       }
       if(req.url!=='/api'||req.method!=='POST'||!String(req.headers['content-type']).startsWith('application/json'))return reply(405,{error:'请求格式不正确'});
-      let data='',length=0;
-      for await(const part of req){length+=part.length;if(length>32768)return reply(413,{error:'请求过大'});data+=part;}
-      const body=JSON.parse(data);if(!body||Array.isArray(body)||typeof body!=='object')throw new Error('请求无效');
+      const chunks=[];let length=0;
+      for await(const part of req){length+=part.length;if(length>32768)return reply(413,{error:'请求过大'});chunks.push(part);}
+      const body=JSON.parse(Buffer.concat(chunks).toString('utf8'));if(!body||Array.isArray(body)||typeof body!=='object')throw new Error('请求无效');
       if(body.op==='join'){
         const ip=req.socket.remoteAddress,now=Date.now(),prior=attempts.get(ip),entry=prior&&now-prior.start<60000?prior:{start:now,count:0};
         attempts.set(ip,entry);if(++entry.count>12)return reply(429,{error:'尝试过于频繁，请一分钟后再试'});

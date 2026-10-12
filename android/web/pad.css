@@ -41,10 +41,8 @@ button:not(.playing-card), select, summary { min-height: 48px; }
 .setting-check input, .mine-filter input { width: 24px; height: 24px; }
 #replay-range { min-height: 48px; }
 .hand-heading h1 .pad-touch-note { font-size: 16px; color: var(--felt-muted); font-weight: 400; }
-.view-3d .pad-touch-note { display: none; }
 #error-banner { position: relative; inset: auto; margin: 8px 16px; flex-wrap: wrap; }
 #error-message { flex-basis: 60%; }
-.play-zone.is-round-over { padding-bottom: 24px; }
 
 @media (max-width: 1150px) {
   .app-top { padding-inline: 14px; gap: 10px; }

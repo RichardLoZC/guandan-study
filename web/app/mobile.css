@@ -3,6 +3,7 @@ html[lang=en] .joker-label { writing-mode:vertical-rl; text-orientation:upright;
 html[lang=en] .joker-label span { display:inline; }
 html[lang=en] .player-info > strong { overflow-wrap:anywhere; }
 html[lang=en] .table-caption strong { line-height:1.25; }
+html[lang=en] .player.is-turn .player-info > strong::after { content:'Turn'; }
 .language-toggle { white-space:nowrap; }
 @media (max-width:720px), (max-height:500px) {
   html body { -webkit-text-size-adjust:100%; }
@@ -43,7 +44,6 @@ html[lang=en] .table-caption strong { line-height:1.25; }
   html .settings-appearance { flex-wrap:wrap; }
   html .round-end-banner h2 { font-size:29px; }
   html .end-actions button { padding:10px 14px; font-size:17px; }
-  html .play-zone.is-round-over { padding:65px 14px 20px; }
   html .tribute-panel { padding:12px; margin:60px 10px 0; }
   html .tribute-panel h2 { font-size:22px; }
   html .tribute-panel p { font-size:16px; }
@@ -64,8 +64,10 @@ html[lang=en] .table-caption strong { line-height:1.25; }
   html .remaining { font-size:13px; }
   html .remaining b { font-size:29px; }
   html .seat-bubble { font-size:14px; padding:3px 7px; margin-top:3px; }
-  html .play-zone:not(.is-tribute) .teammate, html.view-3d .play-zone:not(.is-tribute) .teammate { top:53px; }
-  html .play-zone:not(.is-tribute) .opponent-left, html .play-zone:not(.is-tribute) .opponent-right { top:180px; }
+  html .play-zone:not(.is-tribute) .teammate { top:53px; }
+  /* Combination labels and two curved rows can raise the hand heading. Move
+     the side seats up with that boundary, keeping room for their latest play. */
+  html .play-zone:not(.is-tribute) .opponent-left, html .play-zone:not(.is-tribute) .opponent-right { top:clamp(124px,calc(100% - var(--hand-pane-height,340px) - 220px),180px); }
   html .opponent-left { left:12px; } html .opponent-right { right:12px; }
   html .opponent-left .seat-anchor { left:0; top:calc(100% + 6px); }
   html .opponent-right .seat-anchor { right:0; top:calc(100% + 6px); }
@@ -88,14 +90,6 @@ html[lang=en] .table-caption strong { line-height:1.25; }
   html .actions { grid-area:2/1/3/3; display:flex; gap:8px; }
   html .actions > button { flex:1; min-width:0; min-height:48px; padding:8px 10px; font-size:18px; }
   html .actions select { flex-basis:100%; max-width:100%; min-width:0; }
-  html.view-3d .hand-pane { inset:0; }
-  html.view-3d .action-bar { left:6px; right:6px; bottom:4px; }
-  html.view-3d .hand-heading { display:contents; }
-  html.view-3d .hand-heading h1 { left:12px; bottom:calc(var(--grip-height,300px) + 10px); }
-  html.view-3d .hand-options { right:10px; bottom:calc(var(--grip-height,300px) + 2px); }
-  html.view-3d .turn-pill { position:absolute; left:12px; bottom:117px; font-size:17px; }
-  html.view-3d .hand-scroll { max-height:none; }
-  html.view-3d .self-play-anchor { top:48%; left:90%; max-width:150px; }
 }
 @media (max-height:500px) and (orientation:landscape) {
   html { --hand-card-width:64px; --hand-card-height:96px; --hand-step:28px; --hand-row-step:40px; }
@@ -110,7 +104,7 @@ html[lang=en] .table-caption strong { line-height:1.25; }
   html .player .relation { display:none; }
   html .remaining { font-size:12px; } html .remaining b { font-size:24px; }
   html .seat-bubble { font-size:13px; padding:2px 5px; margin-top:2px; }
-  html .play-zone:not(.is-tribute) .teammate,html.view-3d .play-zone:not(.is-tribute) .teammate { top:6px; }
+  html .play-zone:not(.is-tribute) .teammate { top:6px; }
   html .play-zone:not(.is-tribute) .teammate .player-info { display:flex; align-items:center; gap:8px; }
   html .play-zone:not(.is-tribute) .opponent-left, html .play-zone:not(.is-tribute) .opponent-right { top:60px; }
   html .opponent-left { left:16px; } html .opponent-right { right:16px; }
@@ -125,12 +119,6 @@ html[lang=en] .table-caption strong { line-height:1.25; }
   html .actions { flex-wrap:nowrap; gap:8px; }
   html .actions > button { min-height:44px; min-width:65px; padding:5px 12px; font-size:17px; }
   html .table-history { min-height:44px; font-size:13px; }
-  html.view-3d .hand-pane { inset:0; }
-  html.view-3d .hand-scroll { max-height:none; padding:0; }
-  html.view-3d .action-bar { bottom:3px; left:8px; right:8px; }
-  html.view-3d .hand-heading h1 { left:15px; bottom:96px; }
-  html.view-3d .turn-pill { bottom:68px; left:15px; }
-  html.view-3d .hand-options { bottom:59px; right:12px; }
   html .table-caption { font-size:12px; } html .table-caption strong { font-size:15px; }
   html .table-play { padding:2px 6px; }
   html .opponent-left .seat-anchor { left:0; top:calc(100% + 5px); }

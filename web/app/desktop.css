@@ -18,6 +18,16 @@
   .compact-table .long-play .table-caption{font-size:14px;line-height:1.2}.compact-table .long-play .table-caption strong{font-size:17px}
 }
 
+/* Keep neighboring play captions apart in narrow desktop windows. */
+@media(min-width:800px) and (max-width:1150px) {
+  .compact-table .long-play .table-caption {
+    display:block;
+    max-width:180px;
+    white-space:normal;
+    line-height:1.35;
+  }
+}
+
 /* Dialog content varies with the model response. Keep controls at their
    readable size and wrap the layout before squeezing their text. */
 .analysis-dialog {
@@ -67,24 +77,6 @@
   .app-frame { min-height: 0; }
 }
 
-.play-zone.is-round-over {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-  overflow-y: auto;
-  padding: 80px 28px 28px;
-  background: radial-gradient(ellipse at 50% 30%, var(--felt), var(--felt-deep) 88%);
-}
-.is-round-over > .player, .is-round-over > .felt { display: none; }
-.is-round-over .round-end-banner {
-  position: static;
-  transform: none;
-  flex: 0 0 auto;
-  min-width: 0;
-  width: 100%;
-  max-width: 900px;
-}
 .end-actions { flex-wrap: wrap; }
 .round-reveal, .round-final-play { flex: 0 0 auto; width: 100%; max-width: 1120px; margin: 0 auto; }
 .round-final-play > h3 { font-size: 23px; margin-bottom: 12px; }
@@ -142,14 +134,6 @@
 .play-zone > .round-reveal .revealed-hand { background: #0d302580; border-color: #c6d7bf66; border-left-color: var(--seat); }
 .play-zone > .round-reveal .revealed-heading strong { color: var(--seat); }
 #review-reveal { margin: 24px 0; }
-@media(max-height:740px) {
-  .play-zone.is-round-over { padding: 58px 22px 20px; gap: 16px; }
-  .is-round-over .round-end-banner > span { display: none; }
-  .is-round-over .round-end-banner h2 { font-size: 34px; line-height: 1.2; margin: 4px 0 8px; }
-  .is-round-over .round-end-banner p { font-size: 18px; line-height: 1.4; margin-bottom: 14px; }
-  .play-zone > .round-reveal .revealed-hand { padding: 12px; }
-  .play-zone > .round-reveal .revealed-cards img { flex-basis: 48px; width: 48px; height: 72px; }
-}
 @media(max-width:600px) {
   .revealed-hand, .final-play-content { grid-template-columns: minmax(0, 1fr); }
   .revealed-heading { width: max-content; max-width: 100%; }
@@ -303,4 +287,19 @@ html[data-theme=night] .identity-3 { --seat-ink:#ee9d8c; }
 @media(max-height:740px) {
   .large-type.tuo3-mode .is-tribute .hand-scroll { max-height:104px; }
   .large-type.tuo3-mode .tribute-panel { top:164px; max-height:calc(100% - var(--hand-pane-height,220px) - 182px); }
+}
+
+/* Keep personal names inside their seat without hiding the card count. */
+.player-info { min-width:0; }
+.player-info > strong { max-width:340px; }
+.player-name { min-width:0; max-width:240px; white-space:normal; overflow-wrap:anywhere; }
+.player-info .relation { flex:0 0 auto; }
+@media(max-width:850px) {
+  .player-info > strong { max-width:210px; }
+  .player-name { max-width:150px; }
+}
+@media(max-width:600px) {
+  .player-info > strong { max-width:130px; }
+  .player-name { max-width:120px; }
+  .table-caption { display:block; white-space:normal; }
 }

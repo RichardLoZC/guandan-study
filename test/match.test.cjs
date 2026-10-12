@@ -58,6 +58,62 @@ test('corrupted save is reported and never replaced',()=>{
   const store=new MemoryStorage();store.setItem(SAVE_KEY,'{broken');assert.throws(()=>read(store));assert.equal(store.getItem(SAVE_KEY),'{broken');
   const m=new Match();m.state.game.players[1].hand[0]=m.state.game.players[0].hand[0];assert.throws(()=>validate(m.state));
 });
+test('restore rejects contradictory finish flags, premature results and missing pass state without overwriting the save',()=>{
+  const corruptions=[
+    state=>{state.game.finishOrder=[0,2];},
+    state=>{state.game.players[1].finished=true;},
+    state=>{state.game.finishOrder=[0,0];},
+    state=>{delete state.game.passedPlayers;},
+    state=>{state.game.passedPlayers=[1];},
+    state=>{state.game.starter=8;},
+    state=>{state.game.result={winnerTeam:0,levelDelta:3};},
+  ];
+  for(const corrupt of corruptions){
+    const state=core.newMatch();corrupt(state);const store=new MemoryStorage(),raw=JSON.stringify(state);store.setItem(SAVE_KEY,raw);
+    assert.throws(()=>read(store),/无法恢复牌局/);assert.equal(store.getItem(SAVE_KEY),raw);
+    assert.equal(store.getItem(SAVE_KEY+'-before-1.1'),null);
+  }
+  const m=new Match();act(m);delete m.state.game.passedPlayers;
+  assert.throws(()=>new Match(m.state),/不出记录/);
+});
+test('physical card ids and referenced table metadata must agree with actual cards',()=>{
+  for(const corrupt of [card=>{card.id='not-a-real-card';},card=>{card.rank=card.rank==='3'?'4':'3';},card=>{card.deck=9;},card=>{card.isWild=!card.isWild;}]){
+    const state=core.newMatch();corrupt(state.game.players[0].hand[0]);assert.throws(()=>validate(state),/实体牌/);
+  }
+  const nullCard=core.newMatch();nullCard.game.players[0].hand[0]=null;assert.throws(()=>validate(nullCard),/实体牌/);
+  const m=new Match();act(m);m.state.game.tablePlay.play.primaryValue=100;
+  assert.throws(()=>new Match(m.state),/桌面牌型/);
+});
+test('tribute progress, physical references and public anti-tribute cards are checked on restore',()=>{
+  const giving=tributeMatch();giving.state.phase='playing';assert.throws(()=>new Match(giving.state),/贡牌尚未收齐/);
+  const returning=tributeMatch();while(returning.phase==='give')returning.commit(returning.actingSeat,[returning.tributeChoices[0].id]);
+  for(const corrupt of [
+    state=>{state.returnIndex=99;},
+    state=>{state.exchanges[0].to=state.exchanges[0].from;},
+    state=>{state.exchanges[0].given.id='missing';},
+    state=>{state.tribute.offers.pop();},
+    state=>{state.phase='playing';},
+  ]){const state=structuredClone(returning.state);corrupt(state);assert.throws(()=>new Match(state));}
+  const anti=core.newMatch();anti.antiTribute=[{seat:0,cardId:'missing'},{seat:1,cardId:'1-joker-BJ'}];
+  assert.throws(()=>new Match(anti),/抗贡明牌/);
+  const known=core.newMatch();known.known=[{seat:0,card:{...known.game.players[0].hand[0],id:'missing'}}];
+  assert.throws(()=>new Match(known),/公开贡还牌/);
+});
+test('strict restore retains legacy cards, legal double-up results and all rotated tribute stages',()=>{
+  const legacy=core.newMatch();delete legacy.study;
+  legacy.game.players.forEach(player=>player.hand.forEach(card=>delete card.deck));
+  assert.doesNotThrow(()=>new Match(legacy));
+  const {perspective}=require('../lan-room.cjs'),names=['甲','乙','丙','丁'],m=tributeMatch();
+  for(;;){
+    for(let seat=0;seat<4;seat++)assert.doesNotThrow(()=>perspective(m,seat,names));
+    if(m.phase==='playing')break;
+    m.commit(m.actingSeat,[m.tributeChoices[0].id]);
+  }
+  for(const seed of [1,4]){
+    const end=complete(seededMatch(seed));assert.doesNotThrow(()=>new Match(end.state));
+    for(let seat=0;seat<4;seat++)assert.doesNotThrow(()=>perspective(end,seat,names));
+  }
+});
 test('migration backup quota failure does not prevent reading a valid old save',()=>{
   const store=new MemoryStorage(),state=core.newMatch();store.setItem(SAVE_KEY,JSON.stringify(state));store.limit=0;
   const restored=read(store);assert.equal(restored.id,state.id);assert.ok(restored.loadWarning);assert.deepEqual(JSON.parse(store.getItem(SAVE_KEY)),state);

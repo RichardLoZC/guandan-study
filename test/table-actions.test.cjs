@@ -2,6 +2,7 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const core=require('../web/app/core.js'),{Match}=require('../web/app/match.js');
 const view=require('../web/app/presentation.js'),{perspective}=require('../lan-room.cjs');
+const projected=match=>({tableActions:view.tableActions(match.game,match.state.level)});
 function orderedMatch(){
  const match=new Match(),deck=match.game.players.flatMap(p=>p.hand);
  const chosen=[['3','7'],['4','8'],['5','9'],['6','10']].map(ranks=>ranks.map(rank=>deck.splice(deck.findIndex(c=>c.rank===rank),1)[0]));
@@ -10,31 +11,40 @@ function orderedMatch(){
 }
 function play(m,rank){const seat=m.actingSeat;const card=m.game.players[seat].hand.find(c=>c.rank===rank);m.commit(seat,[card.id]);return card.id;}
 function pass(m){m.commit(m.actingSeat,[]);}
+test('exactly the latest actual play stays emphasized across PASS, closed tricks and new leads',()=>{
+ const m=orderedMatch(),latest=()=>projected(m).tableActions.filter(a=>a?.latest).map(a=>a.owner);
+ play(m,'3');assert.deepEqual(latest(),[0]);
+ play(m,'4');assert.deepEqual(latest(),[1]);pass(m);assert.deepEqual(latest(),[1]);
+ play(m,'6');assert.deepEqual(latest(),[3]);play(m,'7');assert.deepEqual(latest(),[0]);
+ pass(m);pass(m);pass(m);assert.equal(m.game.tablePlay,null);assert.deepEqual(latest(),[0]);
+ m.commit(0,[m.hand[0].id]);assert.deepEqual(latest(),[0]);
+ assert.equal(projected(m).tableActions.filter(Boolean).length,1);
+});
 test('each seat keeps its last play or PASS, and revisiting a seat changes only that seat',()=>{
  const m=orderedMatch();const a=play(m,'3'),b=play(m,'4');pass(m);const d=play(m,'6');
- assert.deepEqual(view.project(m).tableActions.map(a=>a.type),['play','play','pass','play']);
- assert.deepEqual(view.tableCards(view.project(m)).map(c=>c.id),[a,b,d]);
- const e=play(m,'7');assert.deepEqual(view.project(m).tableActions.map(a=>a.ids),[[e],[b],[],[d]]);
- pass(m);assert.equal(view.project(m).tableActions[1].label,'PASS');assert.deepEqual(view.project(m).tableActions[1].cards,[]);
+ assert.deepEqual(projected(m).tableActions.map(a=>a.type),['play','play','pass','play']);
+ assert.deepEqual(view.tableCards(projected(m)).map(c=>c.id),[a,b,d]);
+ const e=play(m,'7');assert.deepEqual(projected(m).tableActions.map(a=>a.ids),[[e],[b],[],[d]]);
+ pass(m);assert.equal(projected(m).tableActions[1].label,'PASS');assert.deepEqual(projected(m).tableActions[1].cards,[]);
 });
 test('the closing PASS remains visible, then a new lead clears the previous trick for every seat',()=>{
  const m=orderedMatch();play(m,'3');play(m,'4');pass(m);play(m,'6');play(m,'7');pass(m);pass(m);pass(m);
- assert.equal(m.game.tablePlay,null);assert.deepEqual(view.project(m).tableActions.map(a=>a.type),['play','pass','pass','pass']);
- const id=m.hand[0].id;m.commit(0,[id]);assert.deepEqual(view.project(m).tableActions.map(a=>a?.ids||null),[[id],null,null,null]);
+ assert.equal(m.game.tablePlay,null);assert.deepEqual(projected(m).tableActions.map(a=>a.type),['play','pass','pass','pass']);
+ const id=m.hand[0].id;m.commit(0,[id]);assert.deepEqual(projected(m).tableActions.map(a=>a?.ids||null),[[id],null,null,null]);
 });
 test('saved games reconstruct the same table without adding private cards or changing state',()=>{
  const m=orderedMatch();play(m,'3');play(m,'4');pass(m);play(m,'6');
  const before=JSON.stringify(m.state),restored=new Match(JSON.parse(before));
- assert.deepEqual(view.project(restored).tableActions,view.project(m).tableActions);
- const actions=view.project(m).tableActions;actions[0].cards[0].rank='bad';actions[1].ids.length=0;
+ assert.deepEqual(projected(restored).tableActions,projected(m).tableActions);
+ const actions=projected(m).tableActions;actions[0].cards[0].rank='bad';actions[1].ids.length=0;
  assert.equal(JSON.stringify(m.state),before);
- const ids=new Set(view.tableCards(view.project(m)).map(c=>c.id));
+ const ids=new Set(view.tableCards(projected(m)).map(c=>c.id));
  for(const p of m.game.players)for(const c of p.hand)assert.equal(ids.has(c.id),false);
 });
 test('LAN perspectives rotate all four actions including PASS and preserve trick boundaries',()=>{
  const m=orderedMatch();play(m,'3');play(m,'4');pass(m);play(m,'6');
  for(const viewer of [0,1,2,3]){
-   const p=perspective(m,viewer,['Mac','Pad','知秋','墨白']);const remote=view.tableActions(p.state.game,p.state.level),local=view.project(m).tableActions;
+   const p=perspective(m,viewer,['Mac','Pad','知秋','墨白']);const remote=view.tableActions(p.state.game,p.state.level),local=projected(m).tableActions;
    for(let seat=0;seat<4;seat++)assert.deepEqual(remote[(seat-viewer+4)%4],{...local[seat],owner:(seat-viewer+4)%4});
  }
  play(m,'7');pass(m);pass(m);pass(m);m.commit(0,[m.hand[0].id]);

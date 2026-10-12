@@ -76,12 +76,7 @@
 }
 .arrangement-summary { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; padding:5px; font-size:14px; color:#f9f3db; }
 .arrangement-summary span { border-bottom:3px solid var(--group-color); padding:2px 5px; background:#123528e8; border-radius:4px; white-space:nowrap; }
-:root:not(.view-3d) .playing-card.arranged { border-bottom:5px solid var(--group-color); }
-.view-3d .arrangement-summary { position:absolute; bottom:calc(var(--grip-height,400px) + 42px); left:25%; right:25%; pointer-events:none; }
-.view-3d .hand-options { right:28px; bottom:108px; display:flex; gap:8px; background:#103327d9; border-radius:10px; padding:2px 8px; }
-.view-3d .is-tribute .tribute-panel { max-height:calc(100% - var(--grip-height,400px) - 75px); overflow:auto; }
-.view-3d .is-tribute .hand-heading h1,.view-3d .is-tribute .turn-pill { bottom:calc(var(--grip-height,400px) - 2px); }
-@media(max-width:1100px){.top-controls{flex-wrap:wrap;justify-content:flex-end;}.brand{min-width:140px;}.view-3d .hand-options{bottom:106px;right:12px;} .view-3d .arrangement-summary{left:15%;right:15%;}}
+@media(max-width:1100px){.top-controls{flex-wrap:wrap;justify-content:flex-end;}.brand{min-width:140px;}}
 [hidden] { display:none !important; }
 
 @media(min-width:651px) and (max-height:850px) {

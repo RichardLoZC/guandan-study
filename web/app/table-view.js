@@ -1,52 +1,56 @@
-/* A view switch owns graphics only; it never starts/cancels AI or commits moves. */
+/* Flat and curved hands share the same DOM, game state and pointer editor. */
 'use strict';
 (() => {
-  const bridge=window.GuandanTable,root=document.documentElement,zone=document.querySelector('.play-zone');
-  const host=document.getElementById('three-stage'),flat=document.getElementById('view-2d'),spatial=document.getElementById('view-3d'),status=document.getElementById('view-status');
-  let renderer=null,loadingController=null,generation=0,desired='2d',loading=false,disposed=false;
-  function controls(){
-    const active=Boolean(renderer);
-    root.classList.toggle('view-3d',active);
-    flat.setAttribute('aria-pressed',String(desired==='2d'));spatial.setAttribute('aria-pressed',String(desired==='3d'));
-    spatial.textContent=loading?'载入 3D…':'3D 握牌';spatial.setAttribute('aria-busy',String(loading));
-    host.hidden=!active;status.hidden=!active;status.textContent='点选牌面 · 理牌可轮换组合';
-    document.getElementById('hand-scroll').setAttribute('aria-label',active?'扇形手牌；Tab 逐张查看，空格选牌':'双层手牌；自由理牌可拖动换位，窄屏可左右滚动');
-  }
-  function resetButtons(){for(const button of bridge.buttons().values())button.style.removeProperty('--hit-x'),button.style.removeProperty('--hit-y'),button.style.removeProperty('--hit-w'),button.style.removeProperty('--hit-h');}
-  function clear(){renderer?.dispose();renderer=null;host.replaceChildren();resetButtons();controls();bridge.layout();}
-  function fallback(error){if(disposed)return;generation++;desired='2d';loading=false;clear();bridge.notice('3D 暂不可用，已返回 2D：'+(error?.message||'图形环境中断'));console.warn('3D view fallback',error?.message);}
+  const bridge=window.GuandanTable,root=document.documentElement;
+  const flat=document.getElementById('hand-flat'),fan=document.getElementById('hand-fan');
+  const scroll=document.getElementById('hand-scroll'),container=document.getElementById('hand-cards');
+  const properties=['--fan-x','--fan-y','--fan-angle','--fan-order'];
   function sync(){
-    const snapshot=bridge.snapshot();
-    if(renderer&&(!snapshot||!snapshot.classic)){desired='2d';generation++;clear();return;}
-    if(renderer){try{renderer.setState(snapshot,{buttons:bridge.buttons()});}catch(error){fallback(error);}}
+    const curved=root.dataset.handStyle==='fan';
+    for(const row of container.querySelectorAll('.card-row')){
+      const buttons=[...row.querySelectorAll('.playing-card')];
+      if(!curved){
+        for(const button of buttons)for(const property of properties)button.style.removeProperty(property);
+        for(const cluster of row.querySelectorAll('.saved-group')){
+          cluster.style.removeProperty('--group-left');cluster.style.removeProperty('--group-width');
+        }
+        continue;
+      }
+      const styles=getComputedStyle(scroll),number=name=>parseFloat(styles.getPropertyValue(name));
+      const breaks=buttons.map((button,index)=>button.dataset.clusterStart==='true'?index:0).filter(Boolean);
+      const positions=GuandanHandFan.layout(buttons.length,{width:row.clientWidth,cardWidth:number('--hand-card-width'),cardHeight:number('--hand-card-height'),step:number('--hand-step'),breaks,gap:number('--hand-group-gap')||18});
+      buttons.forEach((button,index)=>{
+        const p=positions[index];button.style.setProperty('--fan-x',p.x+'px');button.style.setProperty('--fan-y',p.y+'px');
+        button.style.setProperty('--fan-angle',p.angle+'deg');button.style.setProperty('--fan-order',index);
+      });
+      for(const cluster of row.querySelectorAll('.saved-group')){
+        const cards=[...cluster.querySelectorAll('.playing-card')],first=positions[buttons.indexOf(cards[0])],last=positions[buttons.indexOf(cards.at(-1))];
+        cluster.style.setProperty('--group-left',first.x+'px');
+        cluster.style.setProperty('--group-width',(last.x-first.x+number('--hand-card-width'))+'px');
+      }
+    }
   }
-  async function choose(mode){
-    if(mode==='3d'&&desired==='3d'&&(loading||renderer))return;
-    bridge.cancelDrag();
-    desired=mode;const token=++generation;loadingController?.abort();loadingController=null;
-    if(mode==='2d'){loading=false;clear();return;}
-    if(renderer){controls();return;}
-    if(!bridge.snapshot()?.classic){desired='2d';controls();bridge.notice('旧拖 3 存档继续使用 2D；新经典掼蛋可体验 3D。');return;}
-    loading=true;loadingController=new AbortController();const signal=loadingController.signal;controls();
-    let candidate=null;
-    try{
-      const module=await import('./table3d.js');
-      if(token!==generation||disposed)return;
-      candidate=await module.createTableView({host,zone,signal,onSelect:id=>bridge.select(id),onArrangeStart:(event,id)=>bridge.arrangeStart(event,id),onFailure:error=>{if(token===generation&&desired==='3d'&&candidate&&renderer===candidate)fallback(error);}});
-      if(token!==generation||disposed){candidate.dispose();return;}
-      renderer=candidate;loading=false;
-      controls();bridge.layout();sync();renderer?.resize();
-    }catch(error){candidate?.dispose();if(token===generation)fallback(error);}
+  function choose(style,persist=true){
+    bridge.cancelDrag();style=style==='fan'?'fan':'flat';
+    if(persist)bridge.setHandStyle(style);
+    root.dataset.handStyle=style;
+    flat.setAttribute('aria-pressed',String(style==='flat'));fan.setAttribute('aria-pressed',String(style==='fan'));
+    scroll.setAttribute('aria-label',style==='fan'?'弧形双层手牌；点击选牌，按住拖动理牌，空白处左右滚动':'双层手牌；点击选牌，按住拖动理牌，空白处左右滚动');
+    bridge.layout();sync();
   }
-  flat.addEventListener('click',()=>choose('2d'));spatial.addEventListener('click',()=>choose('3d'));
-  document.getElementById('hand-cards').addEventListener('pointerover',event=>renderer?.hover(event.target.closest('.playing-card')?.dataset.id||null));
-  document.getElementById('hand-cards').addEventListener('pointerleave',()=>renderer?.hover(null));
-  document.getElementById('hand-cards').addEventListener('focusin',event=>renderer?.hover(event.target.closest('.playing-card')?.dataset.id||null));
-  document.getElementById('hand-cards').addEventListener('focusout',()=>renderer?.hover(null));
-  const observer=new ResizeObserver(()=>{if(renderer){renderer.resize();sync();}});observer.observe(zone);
-  document.getElementById('large-type').addEventListener('click',()=>{sync();});
-  document.addEventListener('visibilitychange',()=>renderer?.setVisible(!document.hidden));
-  window.addEventListener('beforeunload',()=>{disposed=true;generation++;loadingController?.abort();observer.disconnect();renderer?.dispose();});
-  window.tableView=Object.freeze({sync,dropTarget:(x,y)=>renderer?.dropTarget(x,y)});controls();
-  if(new URLSearchParams(location.search).get('view')!=='2d')choose('3d');
+  function dropTarget(x,y){
+    if(root.dataset.handStyle!=='fan')return null;
+    const rows=[...container.querySelectorAll('.card-row')].map(row=>({bounds:row.getBoundingClientRect(),cards:[...row.querySelectorAll('.playing-card')].map(button=>{
+      const styles=getComputedStyle(button),matrix=styles.transform?.match(/^matrix(?:3d)?\(([^)]+)\)$/)?.[1].split(',').map(Number);
+      const angle=matrix?Math.atan2(matrix[1],matrix[0])*180/Math.PI:parseFloat(styles.getPropertyValue('--fan-angle'))||0;
+      const width=button.offsetWidth,height=button.offsetHeight;
+      return {...GuandanHandFan.topCorner(button.getBoundingClientRect(),width,height,angle),width,height,angle};
+    })}));
+    return GuandanHandFan.dropTarget(rows,scroll.getBoundingClientRect(),x,y);
+  }
+  flat.addEventListener('click',()=>choose('flat'));fan.addEventListener('click',()=>choose('fan'));
+  const observer=new ResizeObserver(sync);observer.observe(scroll);observer.observe(container);
+  window.addEventListener('beforeunload',()=>observer.disconnect());
+  window.tableView=Object.freeze({sync,dropTarget});
+  choose(bridge.handStyle(),false);
 })();

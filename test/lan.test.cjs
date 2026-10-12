@@ -13,6 +13,20 @@ test('four perspectives expose only own cards and public history, including repl
     assert.equal(view.actingSeat,(r.match.actingSeat-seat+4)%4);
   }
 });
+test('all seats see their own final places, winner and settlement text after rotation',()=>{
+  const match=new Match();complete(match);const before=JSON.stringify(match.state);
+  for(let seat=0;seat<4;seat++){
+    const view=perspective(match,seat,['Mac','Pad 甲','Pad 乙','Windows']),game=view.state.game;
+    const places=[0,2].map(own=>game.finishOrder.indexOf(own)+1).sort((a,b)=>a-b).join('');
+    const winner=game.finishOrder[0]%2,team=winner===0?'我方':'对方';
+    assert.equal(game.result.winnerTeam,winner);
+    assert.equal(game.result.placementKey,places);
+    assert.equal(game.result.badge,team+'升 '+game.result.levelDelta+' 级');
+    assert.equal(game.result.summary,'你和队友分列 '+places+'，'+team+'升 '+game.result.levelDelta+' 级。');
+    assert.equal(new Match(view.state).snapshot().placement,places);
+  }
+  assert.equal(JSON.stringify(match.state),before,'projection never modifies the authoritative result');
+});
 test('a human can only act at their seat; stale and duplicate submissions conserve cards',async()=>{
   const {r,host,pad}=await setup(),id=r.match.game.players[0].hand[0].id;
   await assert.rejects(command(r,host.token,'play',{ids:[id]}),/此玩家/);
@@ -51,6 +65,20 @@ test('tribute choices are private, and every connected player acknowledges the p
   while(r.match.phase!=='playing')r.match.commit(r.match.actingSeat,[r.match.tributeChoices[0].id]);
   assert.ok(r.match.needsTributeConfirmation);await command(r,host.token,'ack');assert.ok(r.match.needsTributeConfirmation);await command(r,pad.token,'ack');assert.equal(r.match.needsTributeConfirmation,false);
 });
+test('a LAN bot returns tribute through the same hand-structure decision as a local Match',async()=>{
+  let modelCalls=0;const {r}=await setup({runModel:async()=>{modelCalls++;throw new Error('tribute must not invoke play inference');}});
+  r.match.state.phase='give';r.match.state.tribute={donors:[3],winners:[2],offers:[]};
+  r.match.commit(3,[r.match.tributeChoices[0].id]);
+  assert.equal(r.match.phase,'return');assert.equal(r.match.actingSeat,2);
+  assert.ok(!r.members.some(member=>member.id===r.seats[2]),'recipient is a bot');
+  const local=new Match(r.match.state),expected=local.chooseTribute();local.commit(2,[expected.card.id],{automatic:true});
+  const choose=r.match.chooseTribute.bind(r.match);let strategyCalls=0;
+  r.match.chooseTribute=()=>{strategyCalls++;return choose();};
+  await r.tick();
+  assert.equal(strategyCalls,1);assert.equal(modelCalls,0);assert.equal(r.error,null);
+  assert.equal(r.match.state.exchanges[0].returned.id,expected.card.id);
+  assert.deepEqual(r.match.state,local.state,'LAN and local commits have identical game state');
+});
 test('durable room restore preserves sessions; failed persistence rolls back the deal',async()=>{
   const dir=fs.mkdtempSync(path.join(os.tmpdir(),'guandan-lan-test-')),file=path.join(dir,'room.json');
   try{const {r,host}=await setup({savePath:file});const state=JSON.stringify(r.match.state),id=r.id;
@@ -66,6 +94,30 @@ test('HTTP endpoint authenticates, rejects cross-origin access and refuses publi
     const response=await fetch('http://'+service.address+'/api',{method:'POST',headers:{origin:'https://example.com','content-type':'application/json'},body:JSON.stringify({op:'poll'})});assert.equal(response.status,403);
     for(const address of ['8.8.8.8:18765','127.0.0.1:22','example.com:18765','192.168.1.1:65536'])assert.throws(()=>net.addressURL(address));
   }finally{service.close();}
+});
+test('native LAN transport preserves Chinese text split across HTTP response chunks',async()=>{
+  const http=require('node:http'),payload={name:'墨白',label:'进贡 大王'},bytes=Buffer.from(JSON.stringify(payload));
+  const split=bytes.indexOf(Buffer.from('墨'))+1;
+  const server=http.createServer((_req,res)=>{
+    res.writeHead(200,{'content-type':'application/json; charset=utf-8'});res.write(bytes.subarray(0,split));
+    setImmediate(()=>res.end(bytes.subarray(split)));
+  });
+  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+  try{assert.deepEqual(await net.request('127.0.0.1:'+server.address().port,{op:'poll'}),payload);}
+  finally{await new Promise(resolve=>server.close(resolve));}
+});
+test('LAN server preserves a Chinese player name split inside an incoming UTF-8 character',async()=>{
+  const http=require('node:http'),service=await net.start({port:0});
+  try{
+    const bytes=Buffer.from(JSON.stringify({op:'join',name:'墨白',code:service.room.code,protocol:PROTOCOL}));
+    const split=bytes.indexOf(Buffer.from('墨'))+1;
+    const joined=await new Promise((resolve,reject)=>{
+      const req=http.request('http://'+service.address+'/api',{method:'POST',headers:{'content-type':'application/json'}},res=>{
+        const chunks=[];res.on('data',part=>chunks.push(part));res.on('end',()=>resolve(JSON.parse(Buffer.concat(chunks).toString('utf8'))));res.on('error',reject);
+      });req.on('error',reject);req.write(bytes.subarray(0,split));setImmediate(()=>req.end(bytes.subarray(split)));
+    });
+    assert.ok(joined.token);assert.equal(service.room.members.at(-1).name,'墨白');
+  }finally{await service.close();}
 });
 
 test('four humans complete a deal over HTTP, keep private hands, and never trigger an AI turn',async()=>{

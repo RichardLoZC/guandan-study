@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const lan = require('./lan-server.cjs');
 const { prepareDataPath, migrateLegacyStorage } = require('./storage.cjs');
+const { fitDesktopWindow } = require('./desktop-fit.cjs');
 
 const ORIGIN = 'guandan://app';
 const APP_NAME = '掼蛋研习社';
@@ -115,7 +116,7 @@ function focusTable() {
 
 function configureOfflineSession() {
   const mime = {
-    '.glb': 'model/gltf-binary', '.gltf': 'model/gltf+json', '.webp': 'image/webp',
+    '.webp': 'image/webp',
     '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript',
     '.css': 'text/css', '.wasm': 'application/wasm', '.onnx': 'application/octet-stream',
     '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg',
@@ -168,12 +169,13 @@ async function createWindow() {
     },
   });
   win = table;
+  table.fitToWindow = fitDesktopWindow(table);
   table.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   table.webContents.on('will-navigate', (event, url) => {
     event.preventDefault();
     try {
       const u = new URL(url);
-      const allowed = new Set(['/mobile/DanLM-LICENSE.txt', '/mobile/ONNX-Runtime-LICENSE.txt', '/mobile/React-LICENSE.txt', '/mobile/LICENSE', '/card-sources/SVGCards-README-license.txt', '/assets/3d/CREDITS.txt', '/vendor/three/LICENSE']);
+      const allowed = new Set(['/mobile/DanLM-LICENSE.txt', '/mobile/ONNX-Runtime-LICENSE.txt', '/mobile/React-LICENSE.txt', '/mobile/LICENSE', '/card-sources/SVGCards-README-license.txt']);
       const filename = path.basename(u.pathname);
       if (u.protocol === 'guandan:' && u.hostname === 'app' && allowed.has(u.pathname)) {
         dialog.showMessageBox(table, {
@@ -186,11 +188,17 @@ async function createWindow() {
   table.webContents.on('console-message', details => log(`renderer ${details.level}: ${details.message}`));
   table.webContents.on('render-process-gone', (_event, details) => {
     log('renderer stopped ' + details.reason);
-    dialog.showMessageBox(table, {type:'error',title:'牌桌已停止',message:'可以用 2D 重新打开牌桌',detail:'将恢复最近成功保存的进度。尚未出手的选牌需要重新选择。',buttons:['以 2D 恢复','退出'],defaultId:0,cancelId:1}).then(({response})=>{if(response===0&&!table.isDestroyed())table.loadURL(ORIGIN+'/index.html?view=2d');else app.quit();});
+    dialog.showMessageBox(table, {type:'error',title:uiLanguage==='en'?'Table stopped':'牌桌已停止',message:uiLanguage==='en'?'Reopen the saved table':'重新打开已保存的牌桌',detail:uiLanguage==='en'?'Your last saved progress will be restored. Select any unplayed cards again.':'将恢复最近成功保存的进度。尚未出手的选牌需要重新选择。',buttons:uiLanguage==='en'?['Restore table','Quit']:['恢复牌桌','退出'],defaultId:0,cancelId:1}).then(({response})=>{if(response===0&&!table.isDestroyed())table.loadURL(ORIGIN+'/index.html');else app.quit();});
   });
   table.webContents.on('did-fail-load', (_event, code, description) => log(`load failed ${code}: ${description}`));
   table.on('close', () => session.defaultSession.flushStorageData());
-  table.on('closed', () => { if (win === table) win = null; });
+  table.on('closed', () => {
+    if (win !== table) return;
+    win = null;
+    // The hidden LAN engine is also a BrowserWindow, so it can keep
+    // window-all-closed from firing after the last visible window closes.
+    if (!isMac) app.quit();
+  });
   table.once('ready-to-show', () => table.show());
   await table.loadURL(ORIGIN + '/index.html');
 }
@@ -223,7 +231,7 @@ function setMenus() {
       { role: 'paste', label: '粘贴' }, { role: 'selectAll', label: '全选' },
     ] },
     { label: '显示', submenu: [
-      { role: 'resetZoom', label: '恢复大小' }, { role: 'zoomIn', label: '放大' },
+      { label: '恢复大小', accelerator: 'CommandOrControl+0', click: () => win?.fitToWindow() }, { role: 'zoomIn', label: '放大' },
       { role: 'zoomOut', label: '缩小' }, { type: 'separator' },
       { role: 'togglefullscreen', label: '全屏', accelerator: isMac ? 'Control+Command+F' : 'F11' },
     ] },

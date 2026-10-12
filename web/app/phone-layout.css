@@ -1,0 +1,153 @@
+/* Android phones share the card engine and physical card dimensions. Keep
+   the public table, complete hand shelves and primary actions in separate cells. */
+.hand-pan-note { display:none; }
+@media (max-width:720px), (max-height:500px) {
+  html[data-platform=pad] { --hand-card-width:48px; --hand-card-height:72px; --hand-step:28px; }
+  html[data-platform=pad] .app-frame { height:100dvh; min-height:0; }
+  html[data-platform=pad] .app-top { flex:0 0 44px; min-height:44px; height:44px; padding:0 6px; }
+  html[data-platform=pad] .brand { display:none; }
+  html[data-platform=pad] .top-controls { width:100%; justify-content:space-between; gap:3px; }
+  html[data-platform=pad] .top-controls > button { min-height:40px; padding:5px 8px; font-size:14px; }
+  html[data-platform=pad] .arena-layout { min-height:0; }
+  html[data-platform=pad] .arena-layout > .play-zone { display:grid; grid-template-columns:minmax(0,1fr); grid-template-rows:28px minmax(70px,1fr) auto; flex:1 1 0; min-height:0; padding:0 8px; overflow:hidden; gap:0; }
+  html[data-platform=pad] .play-zone > .match-strip { grid-area:1/1; min-width:0; height:28px; font-size:12px; gap:4px; }
+  html[data-platform=pad] .score-pair,html[data-platform=pad] .level-label { font-size:12px; gap:5px; }
+  html[data-platform=pad] .score-pair b,html[data-platform=pad] .level-label b { font-size:19px; }
+  html[data-platform=pad] .wild-reference { display:none; }
+  html[data-platform=pad] .table-seats { grid-area:2/1; grid-template-columns:repeat(3,minmax(0,1fr)); grid-template-rows:auto auto; min-height:0; align-content:start; align-items:start; gap:10px 5px; padding:8px 1px; overflow:auto; overscroll-behavior:contain; }
+  html[data-platform=pad] .table-seats > .player { display:grid; grid-template-columns:28px minmax(0,1fr); grid-template-rows:auto auto; position:relative; inset:auto; transform:none; align-self:start; align-items:center; justify-self:stretch; width:100%; gap:5px; text-align:left; }
+  html[data-platform=pad] .table-seats > .teammate { grid-area:1/2; }
+  html[data-platform=pad] .table-seats > .opponent-left { grid-area:1/1; }
+  html[data-platform=pad] .table-seats > .opponent-right { grid-area:1/3; }
+  html[data-platform=pad] .table-seats .player .avatar { width:28px; height:28px; border-width:2px; box-shadow:0 0 0 2px color-mix(in srgb,var(--seat) 25%,transparent); }
+  html[data-platform=pad] .table-seats .player .player-info { display:block; text-align:left; }
+  html[data-platform=pad] .table-seats .player .player-info > strong { justify-content:flex-start; font-size:15px; line-height:1.25; white-space:nowrap; overflow-wrap:normal; }
+  html[data-platform=pad] .table-seats .player-name { max-width:100%; overflow:hidden; text-overflow:ellipsis; }
+  html[data-platform=pad] .table-seats .relation { display:none; }
+  html[data-platform=pad] .table-seats .remaining { font-size:10px; line-height:1.2; white-space:nowrap; }
+  html[data-platform=pad] .table-seats .remaining-prefix { display:none; }
+  html[data-platform=pad] .table-seats .remaining b { font-size:23px; }
+  html[data-platform=pad] .table-seats .seat-bubble { position:static; padding:0; font-size:11px; line-height:1.2; background:none; }
+  html[data-platform=pad] .table-seats .seat-anchor { width:100%; max-width:100%; }
+  html[data-platform=pad] .table-seats .self-play-anchor { grid-area:2/1/3/4; max-width:100%; align-self:start; }
+  html[data-platform=pad] .table-seats .table-play { flex-direction:column; flex-wrap:nowrap; gap:3px; padding:4px; width:100%; }
+  html[data-platform=pad] .table-seats .self-play-anchor .table-play { flex-direction:row; width:auto; max-width:100%; gap:8px; }
+  html[data-platform=pad] .table-seats .table-cards { flex:0 0 auto; }
+  html[data-platform=pad] .table-seats .table-caption { font-size:11px; width:100%; }
+  html[data-platform=pad] .table-seats .table-caption strong { font-size:13px; line-height:1.3; margin:1px 0 0; }
+  html[data-platform=pad] .table-seats .player .table-caption { font-size:0; }
+  html[data-platform=pad] .table-seats .is-pass .table-caption strong { font-size:19px; }
+  html[data-platform=pad] .table-seats .self-play-anchor .table-caption { width:auto; }
+  /* Long public combinations wrap instead of squeezing ten ranks into 40 px. */
+  html[data-platform=pad] .table-seats .long-play .table-cards { display:flex; flex-wrap:wrap; width:100%; max-width:100%; padding-right:calc(var(--hand-card-width) - 16px); gap:4px 0; }
+  html[data-platform=pad] .table-seats .long-play .table-cards img { flex:0 0 var(--hand-card-width); margin-right:calc(16px - var(--hand-card-width)); }
+  html[data-platform=pad] .table-seats .self-play-anchor .long-play .table-cards { width:160px; }
+  html[data-platform=pad] .play-zone > .hand-pane { grid-area:3/1; padding-top:2px; min-height:0; width:100%; overflow:hidden; }
+  html[data-platform=pad] .hand-command-bar { display:flex; flex-wrap:wrap; gap:2px; min-height:30px; padding:2px 0; }
+  html[data-platform=pad] .hand-command-bar .hand-heading { min-height:26px; width:100%; gap:6px; flex-direction:row; justify-content:space-between; }
+  html[data-platform=pad] .hand-command-bar .hand-heading h1 { font-size:13px; }
+  html[data-platform=pad] .hand-command-bar .hand-heading h1 span { font-size:18px; line-height:1.2; }
+  html[data-platform=pad] .hand-command-bar .turn-pill { font-size:14px; margin:0; }
+  html[data-platform=pad] .hand-command-bar .hand-feedback { width:100%; font-size:12px; }
+  html[data-platform=pad] .hand-command-bar .selection-status { font-size:12px; line-height:1.3; }
+  html[data-platform=pad] .hand-command-bar .selection-status span { display:none; }
+  html[data-platform=pad] .hand-pane:has(.playing-card.selected) .selection-status span { display:inline; margin-left:6px; font-size:12px; }
+  html[data-platform=pad] #play-kind { min-height:32px; max-width:100%; font-size:13px; }
+  html[data-platform=pad] .hand-scroll { --group-action-space:30px; --hand-group-gap:14px; height:calc(var(--hand-shelf-height) * 2 + 40px); max-height:none; padding:8px; overflow:auto; touch-action:pan-x; scrollbar-width:none; }
+  html[data-platform=pad] .hand-scroll::-webkit-scrollbar { display:none; }
+  html[data-platform=pad] .hand-scroll:has(.card-row.is-empty) { height:calc(var(--hand-shelf-height) + 80px); }
+  html[data-platform=pad] .card-row { padding-inline:28px; }
+  html[data-platform=pad] .card-row.is-empty { height:40px; }
+  html[data-platform=pad] .card-row.is-empty .hand-tier-label { top:8px; }
+  html[data-platform=pad] .hand-tier-label { left:0; font-size:11px; }
+  html[data-platform=pad] .group-action { height:26px; min-height:26px; padding:1px 3px; gap:3px; font-size:11px; }
+  html[data-platform=pad] .group-verb { font-size:10px; }
+  html[data-platform=pad] .hand-pan-note { display:block; position:sticky; left:0; bottom:0; height:24px; line-height:24px; margin-top:0; text-align:center; border-top:1px solid #dce9d429; border-radius:5px; background:var(--felt-deep); color:var(--felt-muted); font-size:11px; touch-action:pan-x; }
+  html[data-platform=pad] .hand-tools { grid-template-columns:1fr auto; grid-template-rows:44px 42px; min-height:96px; height:96px; padding:4px 6px; gap:2px 5px; }
+  html[data-platform=pad] .hand-tools > .actions { grid-area:1/1; justify-content:flex-start; gap:6px; }
+  html[data-platform=pad] .hand-tools > .actions button { min-width:70px; height:42px; min-height:42px; padding:5px 10px; font-size:18px; }
+  html[data-platform=pad] .hand-tools #play-button,html[data-platform=pad] .hand-tools #confirm-tribute { min-width:88px; }
+  html[data-platform=pad] .hand-tools .table-assistance { grid-area:1/2; gap:3px; }
+  html[data-platform=pad] .hand-tools .table-assistance button { min-width:0; font-size:12px; min-height:40px; padding:4px; }
+  html[data-platform=pad] .hand-management { grid-area:2/1/3/3; display:flex; flex-wrap:nowrap; gap:4px; overflow-x:auto; overflow-y:hidden; min-width:0; scrollbar-width:thin; }
+  html[data-platform=pad] .hand-management > * { flex-shrink:0; }
+  html[data-platform=pad] .hand-management .view-picker { padding:1px; }
+  html[data-platform=pad] .hand-management .view-picker button { min-height:36px; padding:4px 7px; font-size:13px; }
+  html[data-platform=pad] .hand-management .arrange-controls { flex:0 0 auto; max-width:none; }
+  html[data-platform=pad] .hand-management .arrange-controls select { width:104px; min-height:38px; height:38px; font-size:12px; }
+  html[data-platform=pad] .hand-management .arrange-controls button { min-width:64px; min-height:38px; height:38px; font-size:14px; }
+  html[data-platform=pad] .hand-management .text-action { font-size:12px; min-height:38px; }
+  html[data-platform=pad] .hand-management .hand-options { width:auto; padding:0; }
+  html[data-platform=pad][lang=en] .hand-management .arrange-controls select { width:130px; }
+  html[data-platform=pad][lang=en] .hand-management .arrange-controls button { min-width:90px; }
+  html[data-platform=pad] .tribute-receipt { flex:0 0 auto; display:flex; flex-direction:row; flex-wrap:nowrap; align-items:center; gap:8px; padding:3px 8px; height:48px; overflow:auto; scrollbar-width:none; }
+  html[data-platform=pad] .tribute-receipt::-webkit-scrollbar { display:none; }
+  html[data-platform=pad] .tribute-receipt-heading { flex:0 0 auto; flex-direction:column; font-size:11px; white-space:nowrap; }
+  html[data-platform=pad] .tribute-receipt-cards { flex:0 0 auto; display:flex; flex-wrap:nowrap; gap:12px; }
+  html[data-platform=pad] .tribute-receipt .tribute-transfer { flex:0 0 auto; gap:4px; padding-left:5px; }
+  html[data-platform=pad] .tribute-receipt .tribute-route,html[data-platform=pad] .tribute-receipt .tribute-copy > b { font-size:12px; white-space:nowrap; }
+  html[data-platform=pad] .tribute-receipt .tribute-card { width:22px; height:33px; flex-basis:22px; }
+  html[data-platform=pad] .is-tribute .table-seats { grid-template-rows:auto auto; }
+  html[data-platform=pad] .table-seats > .tribute-panel { padding:8px; }
+  html[data-platform=pad] .tribute-panel h2 { font-size:18px; }
+  html[data-platform=pad] .tribute-panel p { font-size:14px; }
+  html[data-platform=pad] .is-round-over .hand-command-bar { min-height:0; display:flex; }
+  html[data-platform=pad] .is-round-over .hand-heading { position:static; inset:auto; width:100%; }
+  html[data-platform=pad] .is-round-over .hand-scroll { height:calc(var(--hand-shelf-height) + 40px); }
+  html[data-platform=pad] .is-round-over .hand-scroll.empty-hand { height:30px; }
+  html[data-platform=pad] .is-round-over .hand-pan-note { display:none; }
+  html[data-platform=pad] .round-end-banner { min-width:0; padding:4px; gap:5px; }
+  html[data-platform=pad] .round-end-banner h2 { font-size:21px; }
+  html[data-platform=pad] .round-end-banner p { font-size:13px; }
+  html[data-platform=pad] .end-actions { gap:4px; }
+  html[data-platform=pad] .end-actions button { min-height:38px; padding:4px 8px; font-size:13px; }
+  html[data-platform=pad] .is-round-over .hand-tools { grid-template-columns:minmax(0,1fr) auto; grid-template-rows:42px; min-height:50px; height:50px; }
+  html[data-platform=pad] .is-round-over .hand-management { grid-area:1/1; }
+  html[data-platform=pad] .is-round-over .table-assistance { grid-area:1/2; }
+  html[data-platform=pad] .table-seats .seat-remainder { grid-column:1/-1; width:100%; max-width:100%; padding:4px; --reveal-width:28px; --reveal-step:14px; }
+  html[data-platform=pad] .remainder-row,html[data-platform=pad] .remainder-row:last-child { height:auto; min-height:42px; flex-wrap:wrap; padding-right:14px; row-gap:5px; }
+  html[data-platform=pad] .remainder-row img { margin-right:-14px; }
+  html[data-platform=pad] .remainder-heading { flex-wrap:wrap; gap:2px; font-size:10px; line-height:1.3; }
+  html[data-platform=pad] .remainder-heading b { font-size:13px; }
+  html[data-platform=pad] #lan-status { min-height:28px; font-size:12px; padding:2px 8px; }
+  html[data-platform=pad] #lan-status button { min-height:28px; font-size:12px; }
+  html[data-platform=pad] #error-banner { max-height:90px; overflow:auto; margin:0; font-size:13px; }
+  html[data-platform=pad] .analysis-dialog { width:calc(100vw - 16px); max-height:calc(100dvh - 16px); padding:14px; }
+  html[data-platform=pad] .dialog-bottom { gap:8px; flex-wrap:wrap; }
+  html[data-platform=pad] .skin-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+}
+@media (max-height:500px) and (orientation:landscape) {
+  html[data-platform=pad] { --hand-card-width:40px; --hand-card-height:60px; --hand-step:24px; }
+  html[data-platform=pad] .app-top { flex-basis:36px; height:36px; min-height:36px; }
+  html[data-platform=pad] .top-controls > button { min-height:34px; font-size:13px; }
+  html[data-platform=pad] .top-controls { justify-content:flex-end; }
+  html[data-platform=pad] .top-controls .mode-entry { margin-right:auto; }
+  html[data-platform=pad] .arena-layout { position:relative; }
+  html[data-platform=pad] .arena-layout > .play-zone { grid-template-columns:minmax(240px,.38fr) minmax(0,.62fr); grid-template-rows:24px minmax(0,1fr); gap:0 10px; padding:0 6px; }
+  html[data-platform=pad] .play-zone > .match-strip { height:24px; }
+  html[data-platform=pad] .table-seats { grid-area:2/1; gap:8px 4px; padding-top:4px; }
+  html[data-platform=pad] .table-seats > .player { grid-template-columns:22px minmax(0,1fr); gap:4px; }
+  html[data-platform=pad] .table-seats .player .avatar { width:22px; height:22px; }
+  html[data-platform=pad] .table-seats .player .player-info > strong { font-size:13px; }
+  html[data-platform=pad] .table-seats .remaining b { font-size:20px; }
+  html[data-platform=pad] .table-seats .table-caption strong { font-size:12px; }
+  html[data-platform=pad] .table-seats .table-play { padding:3px; }
+  html[data-platform=pad] .play-zone > .hand-pane { grid-area:1/2/3/3; border-top:0; border-left:1px solid #dce9d429; padding:0 0 0 6px; align-self:stretch; display:flex; flex-direction:column; }
+  html[data-platform=pad] .hand-command-bar { flex:0 0 auto; min-height:25px; }
+  html[data-platform=pad] .hand-command-bar .hand-heading { min-height:22px; }
+  html[data-platform=pad] .hand-command-bar .hand-feedback { min-height:16px; }
+  html[data-platform=pad] .hand-command-bar { padding-block:0; }
+  html[data-platform=pad] .hand-scroll { --group-action-space:28px; flex:1 1 auto; min-height:0; height:auto; padding:4px 8px; }
+  html[data-platform=pad] .hand-scroll:has(.card-row.is-empty) { height:auto; }
+  html[data-platform=pad] .hand-pan-note { height:20px; line-height:20px; font-size:10px; }
+  html[data-platform=pad] .hand-tools { grid-template-columns:minmax(0,1fr) auto auto; grid-template-rows:44px; height:52px; min-height:52px; padding:3px 6px; gap:4px 8px; }
+  html[data-platform=pad] .hand-management { grid-area:1/1; }
+  html[data-platform=pad] .hand-tools > .actions { grid-area:1/2; }
+  html[data-platform=pad] .hand-tools .table-assistance { grid-area:1/3; }
+  html[data-platform=pad] .tribute-receipt { position:absolute; z-index:6; left:6px; top:24px; width:calc((100% - 22px) * .38); height:38px; padding-inline:3px; background:var(--felt-deep); }
+  html[data-platform=pad] .arena-layout:has(> .tribute-receipt:not([hidden])) .table-seats { padding-top:44px; }
+  html[data-platform=pad] .tribute-receipt .tribute-card { width:18px; height:27px; flex-basis:18px; }
+  html[data-platform=pad] .is-round-over .hand-scroll { min-height:0; height:auto; }
+  html[data-platform=pad] .round-end-banner { flex-wrap:wrap; }
+  html[data-platform=pad] .round-end-banner .end-actions { flex-direction:row; }
+}

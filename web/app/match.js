@@ -1,8 +1,8 @@
 'use strict';
 (function(root,factory){
-  if(typeof module==='object'&&module.exports)module.exports=factory(require('./core.js'),require('./tuo3.js'));
-  else root.GuandanMatch=factory(root.GuandanCore,root.Tuo3Rules);
-})(typeof globalThis==='object'?globalThis:this,function(core,tuo3){
+  if(typeof module==='object'&&module.exports)module.exports=factory(require('./core.js'),require('./tuo3.js'),require('./tribute-strategy.js'));
+  else root.GuandanMatch=factory(root.GuandanCore,root.Tuo3Rules,root.GuandanTributeStrategy);
+})(typeof globalThis==='object'?globalThis:this,function(core,tuo3,tributeStrategy){
   const SAVE_KEY='guandan-trainer-v2', ARCHIVE_KEY='guandan-study-reviews-v1';
   const clone=value=>structuredClone(value);
   const ranks=new Set(['2','3','4','5','6','7','8','9','10','J','Q','K','A','SJ','BJ']);
@@ -19,27 +19,100 @@
     return {index,seat:event.seat,label:play.label,cards:play.cards.map(decorate),place:finishOrder.indexOf(event.seat)+1||null};
   }
   function validate(state){
+    const seat=value=>Number.isInteger(value)&&value>=0&&value<4;
+    const seats=value=>Array.isArray(value)&&value.every(seat)&&new Set(value).size===value.length;
+    const record=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
+    const fail=message=>{throw new Error(message+'，已保留原始数据。');};
     if(state?.version!==2||!ranks.has(state.level)||state.level==='SJ'||state.level==='BJ'||
       !Array.isArray(state.game?.players)||state.game.players.length!==4||
       !['playing','give','return'].includes(state.phase)||!Array.isArray(state.game.actionHistory)||
       !Array.isArray(state.levels)||state.levels.length!==2||!state.levels.every(rank=>ranks.has(rank)&&!['SJ','BJ'].includes(rank))||
-      !Array.isArray(state.exchanges)||!Number.isInteger(state.game.currentPlayer)||state.game.currentPlayer<0||state.game.currentPlayer>3)
+      !Array.isArray(state.wins)||state.wins.length!==2||!state.wins.every(value=>Number.isSafeInteger(value)&&value>=0)||
+      !Number.isSafeInteger(state.round)||state.round<1||typeof state.id!=='string'||!state.id||
+      !Array.isArray(state.exchanges)||!seat(state.game.currentPlayer)||!seat(state.game.starter))
       throw new Error('存档结构不完整，已保留原始数据。请导出后再重开。');
+    const game=state.game,owners=new Map();
     const held=state.game.players.flatMap((player,seat)=>{
-      if(player.seat!==seat||!Array.isArray(player.hand))throw new Error('存档座位不完整');
+      if(!player||player.seat!==seat||!Array.isArray(player.hand)||player.team!==seat%2||
+        typeof player.finished!=='boolean'||player.finished!==(player.hand.length===0))fail('存档座位或出完标记无效');
+      for(const card of player.hand)if(card)owners.set(card.id,seat);
       return player.hand;
     });
     const played=state.game.actionHistory.flatMap(event=>{
-      if(!Number.isInteger(event.seat)||event.seat<0||event.seat>3)throw new Error('存档行动者无效');
+      if(!event||!seat(event.seat)||(event.play!=null&&(!Array.isArray(event.play.cards)||!event.play.cards.length)))fail('存档行动记录无效');
+      for(const card of event.play?.cards||[])if(card)owners.set(card.id,event.seat);
       return event.play?.cards||[];
     });
     const cards=[...held,...played];
-    if(cards.length!==108||new Set(cards.map(card=>card.id)).size!==108||cards.some(card=>
-      !card||typeof card.id!=='string'||!ranks.has(card.rank)||!suits.has(card.suit)||
-      (card.suit==='joker')!==['SJ','BJ'].includes(card.rank)||card.isWild!==(card.suit==='hearts'&&card.rank===state.level)))
-      throw new Error('存档中的实体牌不完整或重复，已保留原始数据。');
-    if(state.phase==='give'&&(!state.tribute?.donors?.length||!Array.isArray(state.tribute.offers)))throw new Error('贡牌存档不完整');
-    if(state.phase==='return'&&!state.exchanges[state.returnIndex])throw new Error('还贡存档不完整');
+    const validCard=card=>Boolean(card&&typeof card.id==='string'&&ranks.has(card.rank)&&suits.has(card.suit)&&
+      (card.suit==='joker')===['SJ','BJ'].includes(card.rank)&&card.isWild===(card.suit==='hearts'&&card.rank===state.level)&&
+      [1,2].some(deck=>card.id===deck+'-'+card.suit+'-'+card.rank&&(card.deck===undefined||card.deck===deck)));
+    if(cards.length!==108||cards.some(card=>!validCard(card))||new Set(cards.map(card=>card.id)).size!==108)
+      fail('存档中的实体牌不完整、重复或牌面与编号不符');
+    const cardById=new Map(cards.map(card=>[card.id,card]));
+    const reference=card=>validCard(card)&&cardById.has(card.id);
+    const finished=game.players.filter(player=>player.finished).map(player=>player.seat),order=game.finishOrder;
+    if(!seats(order)||!seats(game.passedPlayers)||game.passedPlayers.some(value=>game.players[value].finished))fail('存档名次或不出记录无效');
+    if(game.result==null){
+      if(order.length!==finished.length||order.some(value=>!game.players[value].finished)||order.length>2||
+        (order.length===2&&order[0]%2===order[1]%2)||
+        (state.phase==='playing'&&game.players[game.currentPlayer].finished))fail('存档名次与剩余手牌不一致');
+    }else{
+      const count=finished.length,winner=order[0]%2,partnerPlace=order.indexOf((order[0]+2)%4)+1;
+      if(!record(game.result)||order.length!==4||![2,3].includes(count)||
+        !order.slice(0,count).every(value=>game.players[value].finished)||
+        (count===2&&order[0]%2!==order[1]%2)||(count===3&&order[0]%2===order[1]%2)||
+        game.result.winnerTeam!==winner||game.result.levelDelta!==(state.ruleMode==='tuo3'?0:5-partnerPlace))
+        fail('存档终局结果与名次不一致');
+    }
+    if(game.winnerTeam!=null&&game.winnerTeam!==game.result?.winnerTeam)fail('存档胜方记录不一致');
+    if(game.tablePlay!=null){
+      const table=game.tablePlay,play=table.play;
+      if(!seat(table.owner)||!play||!Array.isArray(play.cards)||!play.cards.length||
+        play.cards.some(card=>!reference(card)||owners.get(card.id)!==table.owner||held.some(heldCard=>heldCard.id===card.id))||
+        game.passedPlayers.includes(table.owner)||(game.result==null&&table.owner===game.currentPlayer))fail('存档桌面牌引用无效');
+      core.setLevel(state.level);
+      if(!core.recognizeRecorded(play.cards).some(legal=>legal.key===play.key&&legal.type===play.type&&legal.primaryValue===play.primaryValue&&legal.size===play.size))
+        fail('存档桌面牌型与牌面不一致');
+    }else if(game.passedPlayers.length)fail('存档无桌面牌但仍有不出记录');
+    if(!Number.isInteger(state.returnIndex)||state.returnIndex<0||state.returnIndex>state.exchanges.length||state.exchanges.length>2)
+      fail('还贡进度无效');
+    const tribute=state.tribute;
+    if(tribute){
+      if(!seats(tribute.donors)||![1,2].includes(tribute.donors.length)||!seats(tribute.winners)||
+        tribute.winners.length!==tribute.donors.length||tribute.donors.some(value=>tribute.winners.includes(value))||
+        !Array.isArray(tribute.offers)||tribute.offers.length>tribute.donors.length||
+        tribute.offers.some((offer,index)=>!offer||(state.phase==='give'&&offer.from!==tribute.donors[index])||!tribute.donors.includes(offer.from)||!reference(offer.card))||
+        new Set(tribute.offers.map(offer=>offer.from)).size!==tribute.offers.length)fail('贡牌记录不完整或引用无效');
+    }
+    if(state.phase==='give'){
+      if(!tribute||tribute.offers.length>=tribute.donors.length||state.exchanges.length||
+        tribute.offers.some(offer=>owners.get(offer.card.id)!==offer.from))fail('待进贡记录无效');
+    }else if(tribute&&(tribute.offers.length!==tribute.donors.length||state.exchanges.length!==tribute.donors.length||
+      tribute.offers.some(offer=>!state.exchanges.some(exchange=>exchange?.from===offer.from&&exchange.given?.id===offer.card.id)))){
+      fail('贡牌尚未收齐却已进入下一阶段');
+    }
+    const from=new Set(),to=new Set();
+    for(const [index,exchange] of state.exchanges.entries()){
+      if(!exchange||!seat(exchange.from)||!seat(exchange.to)||exchange.from===exchange.to||from.has(exchange.from)||to.has(exchange.to)||
+        !reference(exchange.given)||(exchange.returned!=null&&!reference(exchange.returned))||
+        Boolean(exchange.returned)!==(index<state.returnIndex)||
+        (tribute&&(!tribute.donors.includes(exchange.from)||!tribute.winners.includes(exchange.to))))fail('贡还交换记录无效');
+      from.add(exchange.from);to.add(exchange.to);
+      const givenOwner=exchange.returned?.id===exchange.given.id?exchange.from:exchange.to;
+      if(owners.get(exchange.given.id)!==givenOwner||exchange.returned&&owners.get(exchange.returned.id)!==exchange.from)
+        fail('贡还牌持有人与交换记录不一致');
+    }
+    if(state.phase==='return'&&(!state.exchanges[state.returnIndex]||!tribute||tribute.offers.length!==state.exchanges.length))fail('还贡存档不完整');
+    if(state.phase==='playing'&&state.returnIndex!==state.exchanges.length)fail('贡还未完成却已进入出牌阶段');
+    if(state.phase!=='playing'&&(game.actionHistory.length||game.result||game.tablePlay||order.length))fail('贡还阶段混入出牌记录');
+    if(state.antiTribute!=null){
+      if(!Array.isArray(state.antiTribute)||state.antiTribute.length!==2||state.phase!=='playing'||state.exchanges.length||tribute||
+        new Set(state.antiTribute.map(item=>item?.cardId)).size!==2||state.antiTribute.some(item=>!item||!seat(item.seat)||
+          cardById.get(item.cardId)?.rank!=='BJ'||owners.get(item.cardId)!==item.seat))fail('抗贡明牌引用无效');
+    }
+    if(!Array.isArray(state.known)||state.known.some(item=>!item||!seat(item.seat)||!reference(item.card)))fail('公开贡还牌记录无效');
+    if(state.study!=null&&(!record(state.study)||(state.study.choices!=null&&!record(state.study.choices))))fail('复盘记录结构无效');
     if(state.ruleMode&&!['classic','tuo3'].includes(state.ruleMode))throw new Error('不支持此存档的玩法');
     tuo3.validate(state);
     return state;
@@ -81,6 +154,12 @@
     }
     get canAct(){return !this.game.result&&!this.needsTributeConfirmation&&this.actingSeat===0;}
     get tributeChoices(){return (this.phase==='give'?core.giveChoices(this.state):this.phase==='return'?core.returnChoices(this.state):[]).map(decorate);}
+    chooseTribute(){
+      const choices=this.tributeChoices;
+      if(!choices.length)throw new Error('当前没有合法的贡还牌');
+      if(this.phase==='give')return {card:choices[0],reason:'按规则进贡最大的非逢人配牌。',assessment:null,candidates:choices.map(card=>({card})),method:'maximum-tribute'};
+      return tributeStrategy.choose({hand:this.game.players[this.actingSeat].hand,level:this.level,choices});
+    }
     get tributeDisplay(){
       const state=this.state;
       const complete=this.phase==='playing',awaitingConfirmation=this.needsTributeConfirmation;
@@ -244,14 +323,24 @@
     }
   }
   function archiveRecords(storage){const raw=storage.getItem(ARCHIVE_KEY);if(!raw)return[];const list=JSON.parse(raw);if(!Array.isArray(list))throw new Error('历史复盘数据损坏，请先导出存档');return list;}
-  function archives(storage){return archiveRecords(storage).map(record=>record.state?new Match(record.state).snapshot():{
-    ...record,finalPlay:record.completed?endingPlay(record.events||[],record.finishOrder||[]):null
+  function archives(storage){return archiveRecords(storage).map(record=>{
+    if(!record.state)return {...record,finalPlay:record.completed?endingPlay(record.events||[],record.finishOrder||[]):null};
+    const match=new Match(record.state);
+    // LAN seats are relative to this device; restore the names and identities
+    // alongside the compact state instead of falling back to the solo bots.
+    for(const key of ['names','playerIds'])if(Array.isArray(record[key])&&record[key].length===4)
+      Object.defineProperty(match,key,{value:clone(record[key])});
+    const snapshot=match.snapshot();
+    if(typeof record.source==='string')snapshot.source=record.source;
+    return snapshot;
   });}
-  function archive(storage,match){
+  function archive(storage,match,{source}={}){
     if(!match.game.result)return;
     // Store each actual card and action once. Replay snapshots are reconstructed on read.
     // Evict the oldest archived rounds before allowing quota pressure to block the next deal.
-    const list=[{id:match.id,state:clone(match.state)},...archiveRecords(storage).filter(item=>item.id!==match.id)].slice(0,8);
+    const record={id:match.id,state:clone(match.state),names:[...match.names],playerIds:[...match.playerIds]};
+    if(typeof source==='string')record.source=source;
+    const list=[record,...archiveRecords(storage).filter(item=>item.id!==match.id)].slice(0,8);
     while(list.length>1&&JSON.stringify(list).length>1000000)list.pop();
     for(;;){try{storage.setItem(ARCHIVE_KEY,JSON.stringify(list));return;}catch(error){if(list.length<=1)throw error;list.pop();}}
   }

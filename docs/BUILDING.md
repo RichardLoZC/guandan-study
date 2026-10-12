@@ -35,11 +35,11 @@ Default SDK/JDK lookup paths suit a Homebrew macOS setup. Windows developers sho
 
 The helper creates a personal release key under `~/.local/share/guandan-study` if no key is provided. Keep this directory backed up privately. A new key cannot update an existing APK signed with a different key. For controlled releases, provide `GUANDAN_STORE_FILE` and `GUANDAN_STORE_PASSWORD`; the key alias is `guandan`. Never commit these values or the key. The public repository contains no release signing credentials.
 
-Android shares `web/`, then adds `android/web/pad.css` and `pad.js`. `mobile.css` supplies phone portrait and landscape layouts. The package ID remains `com.guandan.study` for update compatibility. The app handles system bars and display cutouts in its native window insets.
+Android shares `web/`, then adds `android/web/pad.css` and `pad.js`. `phone-layout.css` supplies the final phone portrait and landscape layouts, scoped to Android small screens. The package ID remains `com.guandan.study` for update compatibility. The app handles system bars and display cutouts in its native window insets.
 
 ## Assets
 
-Runtime models and artwork are included in the repository under their individual licenses. `scripts/build-icons.mjs` regenerates platform icons on macOS. The hand converter requires Blender and reads the included CC0 source under `artwork/3d-research/anatomical-hand/`.
+Runtime models and artwork are included in the repository under their individual licenses. `scripts/build-icons.mjs` regenerates platform icons on macOS. The approved 对家 master is `artwork/app-icon.png`; the icon script only resizes and packages it as ICNS, multi-size ICO, Android density PNGs and the in-app icon. See `artwork/图标设计说明.md` for its generation record.
 
 ## Isolated development data
 

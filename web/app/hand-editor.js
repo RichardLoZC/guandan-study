@@ -1,34 +1,40 @@
-/* Pointer/keyboard editing shared by flat cards and the 3D ray picker. */
+/* Pointer and keyboard editing for the shared flat/curved DOM hand. */
 'use strict';
 window.createHandEditor=function(options){
-  const {root,container,scroll,toggle,undoButton,help,getLayout,getHand,getSelected,canEdit,commit,select,onModeChange,spatial,imageFor}=options;
+  const {root,container,scroll,undoButton,getLayout,getHand,getSelected,canEdit,commit,onModeChange,onArrange,curvedTarget,imageFor}=options;
   const marker=document.createElement('div'),ghost=document.createElement('div');
   marker.className='hand-drop-marker';ghost.className='hand-drag-ghost';
   marker.hidden=ghost.hidden=true;marker.setAttribute('aria-hidden','true');ghost.setAttribute('aria-hidden','true');document.body.append(marker,ghost);
-  let editing=false,gesture=null,suppressUntil=0,undo=null,signature='',roundKey='',scrollFrame=0;
+  const MOVE_SLOP=6;
+  let editing=false,gesture=null,suppressUntil=0,undo=null,signature='',scrollFrame=0;
   const handSignature=()=>getLayout().key+'|'+getHand().map(card=>card.id).sort().join('|');
-  function cancel(){
+  function controls(){
+    root.classList.toggle('hand-editing',editing);
+    undoButton.hidden=false;undoButton.disabled=!undo||!canEdit();
+  }
+  function cancel(suppressClick=true){
     const old=gesture;gesture=null;cancelAnimationFrame(scrollFrame);scrollFrame=0;marker.hidden=ghost.hidden=true;
     root.classList.remove('hand-dragging');container.querySelectorAll('.drag-source,.drop-row').forEach(node=>node.classList.remove('drag-source','drop-row'));
-    if(old?.dragging)suppressUntil=performance.now()+600;
-    if(old?.capture?.hasPointerCapture(old.pointer))old.capture.releasePointerCapture(old.pointer);
-  }
-  function setEditing(value){
-    cancel();editing=Boolean(value&&canEdit());root.classList.toggle('hand-editing',editing);
-    toggle.setAttribute('aria-pressed',String(editing));toggle.textContent=editing?'完成理牌':'自由理牌';
-    help.hidden=!editing;undoButton.hidden=!editing;undoButton.disabled=!undo;
-    onModeChange(editing);
+    if(old&&suppressClick)suppressUntil=performance.now()+600;
+    if(old?.capture?.hasPointerCapture?.(old.pointer))old.capture.releasePointerCapture(old.pointer);
+    if(editing){editing=false;controls();onModeChange(false);}
   }
   function reconcile(){
-    const next=handSignature(),nextKey=getLayout().key,changedRound=roundKey&&roundKey!==nextKey;roundKey=nextKey;
-    if(signature!==next){cancel();undo=null;undoButton.disabled=true;signature=next;}
-    if(editing&&(!canEdit()||changedRound))setEditing(false);
-    toggle.disabled=!canEdit();
+    const next=handSignature();
+    if(signature!==next){signature=next;undo=null;cancel();}
+    if(!canEdit())cancel();
+    controls();
+  }
+  function replace(after,movedIds){
+    if(!canEdit())return false;
+    const before=getLayout();
+    if(after===before||JSON.stringify(after)===JSON.stringify(before))return false;
+    cancel();undo=before;if(movedIds)onArrange?.(movedIds);commit(after);controls();return true;
   }
   function apply(ids,row,index){
-    const before=getLayout(),after=GuandanHandLayout.move(before,ids,row,index);
-    if(after===before)return;
-    undo=before;commit(after);undoButton.disabled=false;
+    const changed=replace(GuandanHandLayout.move(getLayout(),ids,row,index),ids);
+    // Dropping an existing group back in place still finishes arranging it.
+    if(!changed&&canEdit()){onArrange?.(ids);onModeChange(false);}
   }
   function flatTarget(x,y){
     const box=scroll.getBoundingClientRect();if(x<box.left||x>box.right||y<box.top||y>box.bottom)return null;
@@ -42,13 +48,13 @@ window.createHandEditor=function(options){
     return {row,index,x:next?next.left-3:last?last.right-3:bounds.left+bounds.width/2,y:bounds.top+3,height:Math.min(bounds.height,95)};
   }
   function targetAt(x,y){
-    if(document.elementFromPoint?.(x,y)?.closest('.hand-options,.action-bar,dialog,.app-top'))return null;
-    return root.classList.contains('view-3d')?spatial()?.dropTarget(x,y):flatTarget(x,y);
+    if(document.elementFromPoint?.(x,y)?.closest('.group-action,.hand-tools,.hand-options,.action-bar,dialog,.app-top'))return null;
+    return root.dataset.handStyle==='fan'?curvedTarget(x,y):flatTarget(x,y);
   }
   function position(event){
     if(!gesture)return;
     gesture.lastPoint={clientX:event.clientX,clientY:event.clientY};
-    if(!root.classList.contains('view-3d')){
+    {
       const box=scroll.getBoundingClientRect(),before=scroll.scrollLeft;
       if(event.clientY>=box.top&&event.clientY<=box.bottom){
         if(event.clientX<box.left+35)scroll.scrollLeft-=12;else if(event.clientX>box.right-35)scroll.scrollLeft+=12;
@@ -57,44 +63,59 @@ window.createHandEditor=function(options){
     }
     const target=targetAt(event.clientX,event.clientY);gesture.target=target;
     marker.hidden=!target;
-    if(target){marker.style.left=target.x+'px';marker.style.top=target.y+'px';marker.style.height=target.height+'px';}
+    if(target){marker.style.left=target.x+'px';marker.style.top=target.y+'px';marker.style.height=target.height+'px';marker.style.transform='rotate('+(target.angle||0)+'deg)';}
     container.querySelectorAll('.card-row').forEach((node,row)=>node.classList.toggle('drop-row',row===target?.row));
     ghost.style.left=Math.min(innerWidth-105,Math.max(4,event.clientX+14))+'px';ghost.style.top=Math.max(4,Math.min(innerHeight-125,event.clientY-75))+'px';
   }
-  function start(event,id,isSpatial=false){
-    if(!editing||!canEdit()||gesture||event.button!==0||!event.isPrimary)return false;
+  function beginDrag(){
+    if(!gesture)return;
+    gesture.dragging=true;root.classList.add('hand-dragging');
+    const card=getHand().find(card=>card.id===gesture.id);ghost.replaceChildren(imageFor(card.face));
+    if(gesture.ids.length>1){const count=document.createElement('b');count.textContent=String(gesture.ids.length);ghost.append(count);}
+    ghost.hidden=false;for(const id of gesture.ids)container.querySelector('[data-id="'+CSS.escape(id)+'"]')?.classList.add('drag-source');
+  }
+  function start(event,id){
+    if(!canEdit()||gesture||event.button!==0||!event.isPrimary)return false;
     if(!getHand().some(card=>card.id===id))return false;
     const selected=getSelected(),ids=getLayout().rows.flat().filter(held=>selected.has(id)?selected.has(held):held===id);
-    const capture=isSpatial?event.currentTarget:scroll;
-    gesture={pointer:event.pointerId,id,ids,x:event.clientX,y:event.clientY,signature:handSignature(),capture,isSpatial,dragging:false,target:null};
-    capture.setPointerCapture?.(event.pointerId);return true;
+    const capture=scroll;
+    gesture={pointer:event.pointerId,id,ids,x:event.clientX,y:event.clientY,signature:handSignature(),capture,dragging:false,target:null};
+    // A fresh physical press must not inherit the previous drag's click guard.
+    suppressUntil=0;
+    return true;
   }
   container.addEventListener('pointerdown',event=>{const card=event.target.closest('.playing-card');if(card)start(event,card.dataset.id);});
+  container.addEventListener('contextmenu',event=>{if(canEdit()&&event.target.closest('.playing-card'))event.preventDefault();});
   window.addEventListener('pointermove',event=>{
     if(!gesture||event.pointerId!==gesture.pointer)return;
-    if(!editing||!canEdit()||gesture.signature!==handSignature()){cancel();return;}
+    if(!canEdit()||document.hidden||gesture.signature!==handSignature()){cancel();return;}
+    const distance=Math.hypot(event.clientX-gesture.x,event.clientY-gesture.y);
     if(!gesture.dragging){
-      if(Math.hypot(event.clientX-gesture.x,event.clientY-gesture.y)<7)return;
-      gesture.dragging=true;root.classList.add('hand-dragging');
-      const card=getHand().find(card=>card.id===gesture.id);ghost.replaceChildren(imageFor(card.face));
-      if(gesture.ids.length>1){const count=document.createElement('b');count.textContent=String(gesture.ids.length);ghost.append(count);}
-      ghost.hidden=false;for(const id of gesture.ids)container.querySelector('[data-id="'+CSS.escape(id)+'"]')?.classList.add('drag-source');
+      if(distance<MOVE_SLOP)return;
+      // Claim a drag immediately after a small movement tolerance. There is
+      // no hold delay; stationary presses and tiny jitters remain clicks.
+      const current=gesture;editing=true;controls();onModeChange(true);
+      if(gesture!==current)return;
+      current.capture.setPointerCapture?.(current.pointer);beginDrag();
     }
     event.preventDefault();position(event);
-  },{passive:false});
+  },{passive:false,capture:true});
   window.addEventListener('pointerup',event=>{
     if(!gesture||event.pointerId!==gesture.pointer)return;
     const old=gesture;if(old.dragging)position(event);const target=old.target;
-    cancel();suppressUntil=performance.now()+600;
-    if(old.signature!==handSignature()||!canEdit()||!editing)return;
-    if(old.dragging){if(target)apply(old.ids,target.row,target.index);}else select(old.id);
+    cancel(old.dragging);
+    if(old.signature!==handSignature()||!canEdit())return;
+    if(!old.dragging)return; // The native card button owns click selection.
+    if(old.dragging&&target)apply(old.ids,target.row,target.index);
   });
-  window.addEventListener('pointercancel',cancel);
-  window.addEventListener('lostpointercapture',event=>{if(gesture?.pointer===event.pointerId)cancel();});
-  scroll.addEventListener('lostpointercapture',()=>{if(gesture&&!gesture.isSpatial)cancel();});
+  window.addEventListener('pointercancel',event=>{if(event.pointerId===gesture?.pointer)cancel();});
+  window.addEventListener('pointerdown',event=>{if(gesture&&!event.isPrimary)cancel();});
+  // Touch starts with implicit capture on the card. Transferring it to the
+  // scroll area emits a loss on the old owner, but must not cancel the drag.
+  window.addEventListener('lostpointercapture',event=>{if(gesture?.pointer===event.pointerId&&!gesture.capture?.hasPointerCapture?.(event.pointerId))cancel();});
   container.addEventListener('click',event=>{if(event.detail&&performance.now()<suppressUntil){event.preventDefault();event.stopImmediatePropagation();}},true);
   container.addEventListener('keydown',event=>{
-    const card=event.target.closest('.playing-card');if(!editing||!card||!event.altKey||!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key))return;
+    const card=event.target.closest('.playing-card');if(!canEdit()||!card||!event.altKey||!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key))return;
     event.preventDefault();cancel();const layout=getLayout(),id=card.dataset.id,row=layout.rows.findIndex(list=>list.includes(id)),index=layout.rows[row].indexOf(id);
     const ids=getSelected().has(id)?layout.rows.flat().filter(id=>getSelected().has(id)):[id];
     if(event.key==='ArrowUp'||event.key==='ArrowDown'){
@@ -105,10 +126,9 @@ window.createHandEditor=function(options){
     }
     container.querySelector('[data-id="'+CSS.escape(id)+'"]')?.focus({preventScroll:true});
   });
-  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&editing&&!document.querySelector('dialog[open]')){event.preventDefault();if(gesture)cancel();else setEditing(false);}});
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&gesture&&!document.querySelector('dialog[open]')){event.preventDefault();cancel();}});
   window.addEventListener('resize',cancel);window.addEventListener('blur',cancel);
   document.addEventListener('visibilitychange',()=>{if(document.hidden)cancel();});
-  toggle.addEventListener('click',()=>setEditing(!editing));
-  undoButton.addEventListener('click',()=>{if(!undo||!editing)return;cancel();const before=undo;undo=null;commit(GuandanHandLayout.reconcile(before,getLayout().key,getHand()));undoButton.disabled=true;});
-  return {get editing(){return editing;},start,cancel,setEditing,reconcile,forgetUndo(){undo=null;undoButton.disabled=true;},moveSelected(row){if(editing&&canEdit())apply([...getSelected()],row,getLayout().rows[row].length);}};
+  undoButton.addEventListener('click',()=>{if(!undo||!canEdit())return;cancel();const before=undo;undo=null;commit(GuandanHandLayout.reconcile(before,getLayout().key,getHand()));controls();});
+  return {get editing(){return editing;},get active(){return Boolean(gesture);},start,cancel,reconcile,replace,forgetUndo(){undo=null;controls();}};
 };
