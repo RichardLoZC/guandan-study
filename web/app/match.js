@@ -1,8 +1,8 @@
 'use strict';
 (function(root,factory){
-  if(typeof module==='object'&&module.exports)module.exports=factory(require('./core.js'),require('./tuo3.js'),require('./tribute-strategy.js'));
-  else root.GuandanMatch=factory(root.GuandanCore,root.Tuo3Rules,root.GuandanTributeStrategy);
-})(typeof globalThis==='object'?globalThis:this,function(core,tuo3,tributeStrategy){
+  if(typeof module==='object'&&module.exports)module.exports=factory(require('./core.js'),require('./tuo3.js'),require('./tribute-strategy.js'),require('./play-choices.js'));
+  else root.GuandanMatch=factory(root.GuandanCore,root.Tuo3Rules,root.GuandanTributeStrategy,root.GuandanPlayChoices);
+})(typeof globalThis==='object'?globalThis:this,function(core,tuo3,tributeStrategy,playChoices){
   const SAVE_KEY='guandan-trainer-v2', ARCHIVE_KEY='guandan-study-reviews-v1';
   const clone=value=>structuredClone(value);
   const ranks=new Set(['2','3','4','5','6','7','8','9','10','J','Q','K','A','SJ','BJ']);
@@ -224,7 +224,7 @@
       }
       core.setLevel(this.level);
       const recognized=core.recognize(cards),beating=core.filterPlays(recognized,this.game.tablePlay?.play);
-      const plays=this.isTuo3?beating.filter(play=>!tuo3.restriction(this.state,play,seat)):beating;
+      const plays=playChoices.strongestFirst(this.isTuo3?beating.filter(play=>!tuo3.restriction(this.state,play,seat)):beating);
       if(beating.length&&!plays.length)return {error:tuo3.restriction(this.state,beating[0],seat)};
       if(!plays.length)return {error:recognized.length?'所选牌压不过桌面上的'+this.game.tablePlay.play.label:'这些牌不能组成合法牌型'};
       const play=key?plays.find(play=>play.key===key):plays[0];
@@ -236,7 +236,10 @@
       if(this.game.result||seat!==this.actingSeat)throw new Error('现在不能由此玩家行动');
       core.setLevel(this.level);
       let checked;
-      if(ids.length){checked=this.selection(ids,seat,key);if(checked.error)throw new Error(checked.error);}
+      if(ids.length){
+        checked=this.selection(ids,seat,key);if(checked.error)throw new Error(checked.error);
+        if(checked.plays?.length>1&&!key)throw new Error('这组牌有多种解释，请先声明牌型');
+      }
       let next;
       if(this.phase==='give'||this.phase==='return'){
         if(!checked?.tribute)throw new Error('请选择一张贡还牌');

@@ -1,0 +1,36 @@
+/* A temporary sheet beside the bottom play controls, without using table space. */
+html .declare-dialog {
+  position:fixed; inset:auto 0 12px; margin:0 auto; width:min(600px,calc(100vw - 24px));
+  max-height:calc(100dvh - 24px); padding:20px; overflow:hidden; scrollbar-gutter:auto;
+}
+.declare-dialog[open] { display:flex; flex-direction:column; gap:12px; }
+.declare-dialog > :not(.declare-options) { flex-shrink:0; }
+.declare-dialog .dialog-header h2 { font-size:24px; }
+#declare-note { font-size:16px; line-height:1.45; color:var(--muted); }
+.declare-cards { display:flex; gap:6px; overflow:auto; padding:2px; }
+.declare-card { display:block; position:relative; flex:none; }
+.declare-card:first-child { margin-left:auto; }
+.declare-card:last-child { margin-right:auto; }
+.declare-card img { display:block; width:clamp(36px,12vw,52px); height:clamp(54px,18vw,78px); border-radius:5px; }
+.declare-card b { position:absolute; inset:auto 0 3px; text-align:center; font-size:12px; background:#e4c887; color:#26392a; border-radius:3px; }
+.declare-options { border:0; padding:0; margin:0; min-width:0; min-height:54px; overflow:auto; overscroll-behavior:contain; }
+.declare-options-heading { font-size:16px; font-weight:650; margin-bottom:8px; }
+.declare-option { display:flex; align-items:center; gap:12px; padding:12px; margin-bottom:8px; border:2px solid var(--line); border-radius:12px; cursor:pointer; }
+.declare-option:last-child { margin-bottom:0; }
+.declare-option:has(input:checked) { border-color:var(--primary); background:var(--subtle); }
+.declare-option:focus-within { outline:3px solid #cf9d39; outline-offset:-4px; }
+.declare-option input { width:20px; height:20px; flex:0 0 20px; accent-color:var(--primary); }
+.declare-option > span { min-width:0; }
+.declare-option strong { font-size:20px; line-height:1.4; }
+.declare-option em { display:inline-block; margin-left:10px; color:var(--muted); font-size:13px; font-style:normal; }
+.declare-option small { display:block; margin-top:4px; font-size:16px; color:var(--text); line-height:1.45; }
+.declare-dialog .dialog-bottom { margin-top:0; gap:12px; flex-wrap:nowrap; }
+.declare-dialog .dialog-bottom button { flex:1; min-width:0; }
+#declare-error { color:var(--text); background:var(--subtle); font-size:16px; line-height:1.4; padding:8px; border-radius:8px; }
+@media(max-height:540px) {
+  html .declare-dialog { bottom:8px; padding:12px; max-height:calc(100dvh - 16px); gap:6px; }
+  .declare-dialog .dialog-header h2 { font-size:21px; }
+  .declare-dialog .close-button { height:32px; width:32px; }
+  .declare-cards { display:none; }
+  .declare-option { padding:8px 10px; }
+}

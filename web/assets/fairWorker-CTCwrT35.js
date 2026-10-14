@@ -1,4 +1,4 @@
-import "../app/play-rules.js?v=200";
+import "../app/play-rules.js?v=201";
 /*!
  * ONNX Runtime Web v1.30.0
  * Copyright (c) Microsoft Corporation. All rights reserved.

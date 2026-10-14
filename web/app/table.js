@@ -13,7 +13,7 @@ prefs.handStyle=prefs.handStyle==='fan'?'fan':'flat';root.dataset.handStyle=pref
 if(!Object.hasOwn(GuandanArrange.priorities,prefs.arrangePriority))prefs.arrangePriority='balanced';
 let liveRound=null,loadError=null,initialDeal=false;
 try{initialDeal=!localStorage.getItem(GuandanMatch.SAVE_KEY);liveRound=GuandanMatch.read(localStorage);}catch(error){loadError=error;}
-let selected=new Set(),toastTimer,botTimer,botWait=null,hintSnapshot=null,playKey=null,handLayout=null,handEditor=null,handMarquee=null,handSelection=null,renderedHandKey='';
+let selected=new Set(),toastTimer,botTimer,botWait=null,hintSnapshot=null,playKey=null,pendingDeclaration=null,handLayout=null,handEditor=null,handMarquee=null,handSelection=null,renderedHandKey='';
 let paused=Boolean(prefs.paused),fault=null,faultKind=null,workEpoch=0,activeTask=null,confirmMode='restart';
 const model=new DanLMClient(),cardNodes=new Map(),dialogFocus=new WeakMap();
 const dealView=new DealAnimation.TableView({stage:byId('deal-stage'),table:document.querySelector('.play-zone'),receipt:byId('tribute-receipt'),hand:byId('hand-cards')});
@@ -171,8 +171,8 @@ function renderHand(){
     for(const segment of GuandanHandLayout.segments(layout,tier)){
       const cluster=document.createElement('div');cluster.className='hand-cluster';row.append(cluster);
       if(segment.groupIndex>=0){
-        const plays=GuandanCore.recognize(segment.ids.map(id=>hand.find(card=>card.id===id)));
-        const play=plays.find(play=>play.label===layout.groups[segment.groupIndex].label)||plays[0],style=GuandanPresentation.combinationStyle(play);
+        const plays=GuandanPlayChoices.strongestFirst(GuandanCore.recognize(segment.ids.map(id=>hand.find(card=>card.id===id))));
+        const play=plays[0],style=GuandanPresentation.combinationStyle(play);
         cluster.classList.add('saved-group');cluster.classList.toggle('small-group',segment.ids.length<=3);cluster.style.setProperty('--group-color',style.color);cluster.dataset.rarity=style.rarity;
         const marker=document.createElement('span');marker.className='group-marker';marker.setAttribute('aria-hidden','true');cluster.append(marker);
         const action=document.createElement('button');action.type='button';action.className='group-action';
@@ -180,7 +180,7 @@ function renderHand(){
         const groupVerb=document.createElement('span');groupVerb.className='group-verb';groupVerb.textContent='打出组合';
         action.append(groupLabel,groupVerb);
         action.dataset.ids=JSON.stringify(segment.ids);action.dataset.layoutKey=layout.key;
-        action.addEventListener('click',()=>playGroup(segment.ids,layout.key));cluster.append(action);
+        action.addEventListener('click',()=>playGroup(segment.ids,layout.key,action));cluster.append(action);
       }
     for(const id of segment.ids){
       const card=hand.find(card=>card.id===id);if(!card)continue;
@@ -235,14 +235,12 @@ function groupPlaySelection(ids,key){
   if(!group)return null;
   const result=liveRound.selection(ids,0);
   if(!result.play)return null;
-  const play=result.plays.find(play=>play.label===group.label)||result.play;
-  return {ids:[...ids],key:play.key};
+  return {ids:[...ids],key:result.play.key};
 }
-function playGroup(ids,key){
+function playGroup(ids,key,trigger){
   // Recheck membership, turn and legality at click time, including LAN updates.
   const choice=groupPlaySelection(ids,key);if(!choice)return;
-  if(liveRound.remote)window.GuandanLan.command('play',choice).catch(()=>{});
-  else saveAction(()=>liveRound.commit(0,choice.ids,{key:choice.key}));
+  requestPlay(choice.ids,trigger||byId('play-button'));
 }
 function updateGroupActions(){
   if(!liveRound)return;
@@ -251,7 +249,7 @@ function updateGroupActions(){
     const ids=JSON.parse(button.dataset.ids),choice=groupPlaySelection(ids,button.dataset.layoutKey);
     button.disabled=!choice;
     const cards=ids.map(id=>liveRound.hand.find(card=>card.id===id)).filter(Boolean);
-    const plays=GuandanCore.recognize(cards),play=plays.find(play=>play.key===choice?.key)||plays[0];
+    const plays=GuandanPlayChoices.strongestFirst(GuandanCore.recognize(cards)),play=plays.find(play=>play.key===choice?.key)||plays[0];
     const note=play?.label||'这些牌暂不能组成有效牌型';
     button.title=choice?note:note+' · 当前不能打出组合';
     button.setAttribute('aria-label','打出组合 · '+note);
@@ -422,6 +420,73 @@ function openDialog(dialog,trigger){
   if(dialog.open)return;handEditor?.cancel();handMarquee?.cancel();dealMotion.finish();stopBots();dialogFocus.set(dialog,trigger);dialog.showModal();renderGame();
 }
 function closeDialog(dialog,focusTarget){if(focusTarget)dialogFocus.set(dialog,focusTarget);dialog.close();}
+function declarationIsCurrent(pending){
+  return Boolean(pending&&pending.round===liveRound&&pending.revision===liveRound.revision&&canPlay()&&liveRound.phase==='playing'&&liveRound.selection(pending.ids,0,pending.key).play);
+}
+function syncDeclaration(){
+  if(!pendingDeclaration||!byId('declare-dialog').open)return;
+  const pending=pendingDeclaration,valid=pending.sending||declarationIsCurrent(pending);
+  byId('confirm-declaration').disabled=pending.sending||!valid;
+  byId('confirm-declaration').textContent=pending.sending?'正在出牌…':'确认出牌';
+  byId('declare-options').querySelectorAll('input').forEach(radio=>{radio.disabled=pending.sending||!valid;});
+  if(!valid){byId('declare-error').hidden=false;byId('declare-error').textContent='牌局或连接已变化，请返回牌桌重新声明。';}
+}
+function submitPlay(ids,key,round,revision){
+  if(!canPlay()||liveRound!==round||liveRound.revision!==revision)return false;
+  const checked=liveRound.selection(ids,0,key);if(checked.error)return false;
+  if(liveRound.remote)return window.GuandanLan.command('play',{ids,key}).then(result=>Boolean(result));
+  const teaching=hintSnapshot?.roundId===liveRound.id&&hintSnapshot.revision===revision?hintSnapshot:null;
+  return saveAction(()=>liveRound.commit(0,ids,{key,expectedRevision:revision,teaching}));
+}
+function requestPlay(ids,trigger){
+  if(!canPlay()||hasOpenDialog())return;
+  const checked=liveRound.selection(ids,0);if(checked.error)return;
+  const round=liveRound,revision=round.revision;
+  if(!(checked.plays?.length>1)){
+    Promise.resolve(submitPlay(ids,checked.play?.key,round,revision)).catch(()=>{});return;
+  }
+  // Opening the chooser is preparation only. Every ambiguous route, including
+  // saved groups and adopted advice, requires a separate explicit confirmation.
+  pendingDeclaration={round,revision,ids:[...ids],key:checked.play.key,sending:false};
+  byId('declare-error').hidden=true;
+  const strongest=GuandanPlayChoices.hasStrongest(checked.plays);
+  byId('declare-note').textContent=strongest?'默认选中牌力较大的解释，确认后才出牌。':'不同牌型不能互相比较；同牌型按牌力排列。请确认本次打法。';
+  const cards=byId('declare-cards');cards.replaceChildren();
+  for(const card of ids.map(id=>ownHand().find(card=>card.id===id))){
+    const item=document.createElement('span');item.className='declare-card';item.append(imageFor(card.face,card.label));
+    if(card.isWild){const badge=document.createElement('b');badge.textContent='逢人配';item.append(badge);}cards.append(item);
+  }
+  const options=byId('declare-options');options.replaceChildren();
+  const heading=document.createElement('p');heading.className='declare-options-heading';heading.textContent='声明牌型';options.append(heading);
+  checked.plays.forEach((play,index)=>{
+    const label=document.createElement('label');label.className='declare-option';
+    const radio=document.createElement('input');radio.type='radio';radio.name='declared-play';radio.value=play.key;radio.checked=index===0;
+    const copy=document.createElement('span'),heading=document.createElement('strong');heading.textContent=play.label;copy.append(heading);
+    const sameType=checked.plays.filter(candidate=>candidate.type===play.type);
+    if(index===0&&strongest||!strongest&&sameType.length>1&&sameType[0]===play){const badge=document.createElement('em');badge.textContent=strongest?'牌力较大':'同型较大';copy.append(badge);}
+    const detail=document.createElement('small');detail.textContent=GuandanPlayChoices.describe(play);copy.append(detail);
+    radio.addEventListener('change',()=>{if(pendingDeclaration&&!pendingDeclaration.sending){pendingDeclaration.key=play.key;syncDeclaration();}});
+    label.append(radio,copy);options.append(label);
+  });
+  openDialog(byId('declare-dialog'),trigger);
+  options.querySelector('input:checked').focus({preventScroll:true});
+}
+async function confirmDeclaration(){
+  const pending=pendingDeclaration;
+  if(!pending||pending.sending||!declarationIsCurrent(pending)){syncDeclaration();return;}
+  pending.sending=true;syncDeclaration();
+  try{
+    const sent=await submitPlay(pending.ids,pending.key,pending.round,pending.revision);
+    if(pendingDeclaration!==pending||!byId('declare-dialog').open)return;
+    if(sent){closeDialog(byId('declare-dialog'));return;}
+    byId('declare-error').textContent='未能出牌，请检查牌局状态后重试。';
+  }catch(error){
+    if(pendingDeclaration!==pending||!byId('declare-dialog').open)return;
+    byId('declare-error').textContent=error.message||'未能出牌，请检查牌局状态后重试。';
+  }
+  finally{pending.sending=false;}
+  byId('declare-error').hidden=false;syncDeclaration();
+}
 function updateSelection(){
   const held=new Set(ownHand().map(card=>card.id));selected=new Set([...selected].filter(id=>held.has(id)));
   const result=selected.size&&liveRound?.canAct?liveRound.selection([...selected],0,playKey):null;
@@ -434,12 +499,13 @@ function updateSelection(){
   else if(!selected.size&&canArrange()&&!isTribute)note.textContent=canPlay()?'按住拖动理牌':'可先选牌、理牌，轮到你再出牌';
   else if(selected.size&&!liveRound?.canAct&&!isTribute){
     GuandanCore.setLevel(liveRound.level);
-    const preview=GuandanCore.recognize(ownHand().filter(card=>selected.has(card.id)));
+    const preview=GuandanPlayChoices.strongestFirst(GuandanCore.recognize(ownHand().filter(card=>selected.has(card.id))));
     note.textContent=preview[0]?.label||'已选手牌，按住拖动理牌';
   }
   byId('selection-status').replaceChildren(document.createTextNode(handEditor?.editing&&!selected.size?'自由理牌中':title),note);
   byId('play-button').disabled=!canPlay()||!(result?.play||result?.tribute);
-  byId('play-button').textContent=isTribute?(liveRound.phase==='give'?'确认进贡':'确认还贡'):'出牌 ↗';
+  byId('play-button').textContent=isTribute?(liveRound.phase==='give'?'确认进贡':'确认还贡'):result?.plays?.length>1?'声明出牌':'出牌 ↗';
+  byId('play-button').title=result?.plays?.length>1?'这组牌有多种解释，点击后声明牌型':'';
   byId('pass-button').disabled=!canPlay()||isTribute||!liveRound?.game.tablePlay;
   byId('hint-button').disabled=!canPlay()||isTribute||Boolean(activeTask);
   byId('clear-selection').disabled=selected.size===0;
@@ -449,11 +515,7 @@ function updateSelection(){
     button.disabled=!canArrange();
     button.classList.toggle('unavailable',Boolean(!handEditor?.editing&&allowed&&!allowed.has(id)));button.classList.toggle('playable-tribute',Boolean(!handEditor?.editing&&allowed?.has(id)));
   });
-  const picker=byId('play-kind'),choices=handEditor?.editing||handMarquee?.active?[]:result?.plays||[];
-  picker.hidden=choices.length<2;picker.replaceChildren();
-  for(const play of choices){const option=document.createElement('option');option.value=play.key;option.textContent=play.label;picker.append(option);}
-  if(result?.play)picker.value=result.play.key;
-  updateGroupActions();
+  updateGroupActions();syncDeclaration();
   window.tableView?.sync();
 }
 function renderGame(){
@@ -483,15 +545,16 @@ function renderGame(){
   resizeHand();renderHand();window.GuandanLan?.controls();
 }
 function saveAction(action){
-  stopBots();if(!liveRound)return;clearToast();
+  stopBots();if(!liveRound)return false;clearToast();
   const oldState=liveRound.state,oldRevision=liveRound.revision,actor=liveRound.actingSeat;
   try{
     action();liveRound.persist(localStorage);
-  }catch(error){liveRound.state=oldState;liveRound.revision=oldRevision;reportError(error,'save');return;}
+  }catch(error){liveRound.state=oldState;liveRound.revision=oldRevision;reportError(error,'save');return false;}
   if(actor===0)selected.clear();playKey=null;hintSnapshot=null;clearError();renderGame();
   if(liveRound.game.result){
     try{GuandanMatch.archive(localStorage,liveRound);}catch{toast('本局已保存，历史复盘暂未保存。请导出备份后再继续。');}
   }else scheduleBots();
+  return true;
 }
 function scheduleBots(){
   clearTimeout(botTimer);botTimer=null;
@@ -592,7 +655,7 @@ window.addEventListener('guandan-language-change',()=>{if(byId('analysis-dialog'
 
 function adoptAdvice(){
   if(!hintSnapshot||hintSnapshot.roundId!==liveRound.id||hintSnapshot.revision!==liveRound.revision||!canPlay())return;
-  selected=new Set(hintSnapshot.ids);playKey=hintSnapshot.key;updateSelection();
+  selected=new Set(hintSnapshot.ids);playKey=null;updateSelection();
   closeDialog(byId('analysis-dialog'),cardNodes.get(hintSnapshot.ids[0])||byId('pass-button'));
   toast(selected.size?'已选中推荐，请确认出牌。':'请点击「不出」确认。');
 }
@@ -621,8 +684,8 @@ byId('confirm-tribute').addEventListener('click',()=>{
   if(!liveRound.needsTributeConfirmation)byId('hand-scroll').focus({preventScroll:true});
 });
 byId('clear-selection').addEventListener('click',()=>handSelection.clear());
-byId('play-kind').addEventListener('change',event=>{clearToast();playKey=event.target.value;updateSelection();});
-byId('play-button').addEventListener('click',()=>{if(canPlay()){const ids=[...selected],key=playKey,teaching=hintSnapshot?.revision===liveRound.revision?hintSnapshot:null;if(liveRound.remote)window.GuandanLan.command('play',{ids,key}).catch(()=>{});else saveAction(()=>liveRound.commit(0,ids,{key,teaching}));}});
+byId('play-button').addEventListener('click',event=>requestPlay([...selected],event.currentTarget));
+byId('confirm-declaration').addEventListener('click',confirmDeclaration);
 byId('pass-button').addEventListener('click',()=>{if(canPlay()&&liveRound.phase==='playing'&&liveRound.game.tablePlay){const teaching=hintSnapshot?.revision===liveRound.revision?hintSnapshot:null;if(liveRound.remote)window.GuandanLan.command('play',{ids:[]}).catch(()=>{});else saveAction(()=>liveRound.commit(0,[],{teaching}));}});
 byId('hint-button').addEventListener('click',event=>openAdvice(event.currentTarget));
 byId('adopt-from-dialog').addEventListener('click',adoptAdvice);
@@ -684,8 +747,9 @@ byId('confirm-new').addEventListener('click',()=>{
 });
 document.querySelectorAll('dialog').forEach(dialog=>{
   dialog.addEventListener('close',()=>{
+    if(dialog.id==='declare-dialog')pendingDeclaration=null;
     if(dialog.id==='analysis-dialog'&&activeTask==='teaching'){workEpoch++;activeTask=null;model.cancel();}
-    const target=dialogFocus.get(dialog);if(!hasOpenDialog()&&target?.isConnected&&!target.disabled)target.focus({preventScroll:true});renderGame();scheduleBots();
+    renderGame();const target=dialogFocus.get(dialog);if(!hasOpenDialog()&&target?.isConnected&&!target.disabled)target.focus({preventScroll:true});scheduleBots();
   });
   dialog.addEventListener('click',event=>{if(event.target!==dialog)return;const box=dialog.getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)closeDialog(dialog);});
 });

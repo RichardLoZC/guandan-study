@@ -56,7 +56,6 @@
   html[data-platform=pad] .hand-command-bar .selection-status { font-size:12px; line-height:1.3; }
   html[data-platform=pad] .hand-command-bar .selection-status span { display:none; }
   html[data-platform=pad] .hand-pane:has(.playing-card.selected) .selection-status span { display:inline; margin-left:6px; font-size:12px; }
-  html[data-platform=pad] #play-kind { min-height:32px; max-width:100%; font-size:13px; }
   html[data-platform=pad] .hand-scroll { --group-action-space:30px; --hand-group-gap:14px; height:calc(var(--hand-shelf-height) * 2 + 40px); max-height:none; padding:8px; overflow:auto; touch-action:pan-x; scrollbar-width:none; }
   html[data-platform=pad] .hand-scroll::-webkit-scrollbar { display:none; }
   html[data-platform=pad] .card-row { padding-inline:28px; }

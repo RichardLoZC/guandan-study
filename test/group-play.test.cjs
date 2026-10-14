@@ -2,20 +2,21 @@
 const test=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
 const {Match}=require('../web/app/match.js'),layout=require('../web/app/hand-layout.js');
 const source=fs.readFileSync(require.resolve('../web/app/table.js'),'utf8');
-function fixture(){
- const match=new Match(),deck=match.game.players.flatMap(player=>player.hand),ids=['5','6','7','8','9'].map(rank=>'1-clubs-'+rank);
+function fixture(ids=['5','6','7','8','9'].map(rank=>'1-clubs-'+rank)){
+ const match=new Match(),deck=match.game.players.flatMap(player=>player.hand);
  const cards=ids.map(id=>deck.splice(deck.findIndex(card=>card.id===id),1)[0]);
  match.game.players[0].hand=[...cards,...deck.splice(0,22)];
  for(let seat=1;seat<4;seat++)match.game.players[seat].hand=deck.splice(0,27);
  match.game.currentPlayer=match.game.starter=0;
  return {match,ids};
 }
-function harness(){
- const {match,ids}=fixture(),key='solo:'+match.id;let current=layout.move(layout.create(key,match.hand),ids,0,0),enabled=true,dialog=false;
+function harness(wanted){
+ const {match,ids}=fixture(wanted),key='solo:'+match.id;let current=layout.move(layout.create(key,match.hand),ids,0,0),enabled=true,dialog=false;
  const commands=[];
  const context={liveRound:match,canPlay:()=>enabled&&match.canAct,hasOpenDialog:()=>dialog,layoutKey:()=>key,currentLayout:()=>current,
-  saveAction:action=>action(),window:{GuandanLan:{command:async(...args)=>commands.push(args)}}};
+  saveAction:action=>{action();return true;},window:{GuandanLan:{command:async(...args)=>{commands.push(args);return {};}}}};
  vm.createContext(context);vm.runInContext(source.slice(source.indexOf('function groupPlaySelection('),source.indexOf('function updateGroupActions(')),context);
+ require('./helpers/play-ui.cjs').install(context);
  return {match,ids,key,context,commands,choose:()=>context.groupPlaySelection(ids,key),play:()=>context.playGroup(ids,key),setEnabled:v=>enabled=v,setDialog:v=>dialog=v,setLayout:v=>current=v,get current(){return current;}};
 }
 test('playing a saved group submits exactly its physical cards and keeps a straight flush as a straight flush',()=>{
@@ -43,4 +44,10 @@ test('LAN uses the existing play command, with group IDs rather than any current
  const h=harness();h.match.remote=true;const before=JSON.stringify(h.match.state);h.play();assert.equal(h.commands.length,1);
  assert.equal(h.commands[0][0],'play');assert.deepEqual([...h.commands[0][1].ids],h.ids);assert.ok(h.commands[0][1].key);
  assert.equal(JSON.stringify(h.match.state),before,'only the host changes game state');
+});
+test('saved ambiguous groups also require declaration and ignore a weaker old grouping label',async()=>{
+ const h=harness(['1-clubs-5','1-spades-6','1-clubs-7','1-clubs-8','1-hearts-2']);
+ h.current.groups[0].label='顺子 4-5-6-7-8';
+ h.play();assert.equal(h.match.hand.length,27);assert.equal(h.context.pendingDeclaration.key,'straight:9:0:none');
+ await h.context.confirmDeclaration();assert.equal(h.match.hand.length,22);assert.equal(h.match.game.tablePlay.play.primaryValue,9);
 });

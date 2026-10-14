@@ -501,6 +501,20 @@ Object.assign(messages,{
   '弧形双层手牌；点击选牌，按住拖动理牌，空白处左右滚动':'Two curved hand rows. Tap to select, drag to arrange; swipe empty space to scroll.'
 });
 Object.assign(messages,{'同花顺不能作为普通顺子打出':'A straight flush must be played as a straight flush.'});
+Object.assign(messages,{
+ '这组牌按什么出？':'How will you play these cards?',
+ '默认选中牌力较大的解释，确认后才出牌。':'The stronger interpretation is selected. Confirm before playing.',
+ '本次选择的实体牌':'Selected physical cards',
+ '声明牌型':'Declare the combination', '声明出牌':'Declare',
+ '取消声明':'Cancel declaration', '返回选牌':'Back to hand', '确认出牌':'Confirm play',
+ '正在出牌…':'Playing…', '牌力较大':'Stronger', '附带对子':'Kicker pair',
+ '同型较大':'Stronger of this type',
+ '不同牌型不能互相比较；同牌型按牌力排列。请确认本次打法。':'These combination types cannot beat one another. Each type is ordered by strength. Confirm your choice.',
+ '这组牌有多种解释，请先声明牌型':'These cards have multiple interpretations. Declare one before playing.',
+ '这组牌有多种解释，点击后声明牌型':'These cards have multiple interpretations. Click to declare one.',
+ '牌局或连接已变化，请返回牌桌重新声明。':'The game or connection changed. Return to the table and declare again.',
+ '未能出牌，请检查牌局状态后重试。':'Could not play. Check the game state and try again.'
+});
 const escape=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 const keys=Object.keys(messages).sort((a,b)=>b.length-a.length);
 const matcher=new RegExp(keys.map(escape).join('|'),'g');

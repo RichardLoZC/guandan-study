@@ -7,8 +7,8 @@ android {
         applicationId 'com.guandan.study'
         minSdk 26
         targetSdk 36
-        versionCode 200
-        versionName '1.8.20'
+        versionCode 201
+        versionName '1.8.21'
     }
     signingConfigs {
         release {
@@ -39,8 +39,8 @@ def prepareWeb = tasks.register('prepareWeb', Sync) {
         page.setText(page.getText('UTF-8')
             .replace('<html lang="zh-CN"', '<html lang="zh-CN" data-platform="pad"')
             .replace('<title>掼蛋研习社</title>', '<title>掼蛋研习社 · Android</title>')
-            .replace('</head>', '<link rel="stylesheet" href="/pad/pad.css"><link rel="stylesheet" href="/app/mobile.css?v=200"><link rel="stylesheet" href="/app/hand-layout.css?v=200"><link rel="stylesheet" href="/app/round-table.css?v=200"><link rel="stylesheet" href="/app/table-layout.css?v=200"><link rel="stylesheet" href="/app/phone-layout.css?v=200"><script src="/pad/pad.js" defer></script></head>')
-            .replace('Desktop 1.8.20 · 离线单机与局域网联机', 'Android 1.8.20 · 离线单机与局域网联机')
+            .replace('</head>', '<link rel="stylesheet" href="/pad/pad.css"><link rel="stylesheet" href="/app/mobile.css?v=201"><link rel="stylesheet" href="/app/hand-layout.css?v=201"><link rel="stylesheet" href="/app/round-table.css?v=201"><link rel="stylesheet" href="/app/table-layout.css?v=201"><link rel="stylesheet" href="/app/phone-layout.css?v=201"><script src="/pad/pad.js" defer></script></head>')
+            .replace('Desktop 1.8.21 · 离线单机与局域网联机', 'Android 1.8.21 · 离线单机与局域网联机')
             .replace('关闭窗口会保留应用。⌘Q退出，Control+⌘F全屏；⌘+与⌘−调整界面大小。', '点击选牌，按住拖动即可自由理牌。横竖屏和分屏均可使用；系统返回先关闭面板，再返回桌面。每一步自动保存，下次打开继续。'), 'UTF-8')
     }
 }
