@@ -36,7 +36,7 @@
     root.dataset.handStyle=style;
     flat.setAttribute('aria-pressed',String(style==='flat'));fan.setAttribute('aria-pressed',String(style==='fan'));
     scroll.setAttribute('aria-label',style==='fan'?'弧形双层手牌；点击选牌，按住拖动理牌，空白处左右滚动':'双层手牌；点击选牌，按住拖动理牌，空白处左右滚动');
-    scroll.setAttribute('title','鼠标从空白处拖动框选：向右全包，向左相交；Shift 追加，Esc 取消。');
+    scroll.setAttribute('title','点击选牌，Shift 点击连续选牌；轻点空白处或 Esc 取消选择。空白处拖动框选：向右全包，向左相交；Shift 追加。');
     bridge.layout();sync();
   }
   function dropTarget(x,y){

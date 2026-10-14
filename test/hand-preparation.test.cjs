@@ -5,10 +5,13 @@ const source=fs.readFileSync(require.resolve('../web/app/table.js'),'utf8');
 function fixture(){
   const round=new Match();round.game.currentPlayer=round.game.starter=1;
   const context={liveRound:round,selected:new Set(),handEditor:{editing:false},handMarquee:null,paused:false,fault:null,dealMotion:{active:false},window:{},
-    ownHand:()=>round.hand,clearToast(){},updateSelection(){},playKey:null};
+    ownHand:()=>round.hand,clearToast(){},updateSelection(){},playKey:null,hintSnapshot:null,
+    document:{addEventListener(){}},getComputedStyle(){}};
+  context.window.addEventListener=()=>{};
   vm.createContext(context);
-  vm.runInContext(source.slice(source.indexOf('const canPlay='),source.indexOf('const hasOpenDialog='))+
-    '\nchecks={canPlay,canArrange,canSelect};\n'+source.slice(source.indexOf('function selectCard('),source.indexOf('function renderHand(')),context);
+  vm.runInContext(fs.readFileSync(require.resolve('../web/app/hand-selection.js'),'utf8')+'\n'+source.slice(source.indexOf('const canPlay='),source.indexOf('const hasOpenDialog='))+
+    '\nchecks={canPlay,canArrange,canSelect};\n'+source.slice(source.indexOf('function setSelection('),source.indexOf('function renderHand('))+
+    '\nhandSelection=GuandanHandSelection.create({table:{addEventListener(){}},getOrder:()=>ownHand().map(card=>card.id),getSelected:()=>selected,getSignature:()=>liveRound.id,canSelect,hasDialog:()=>false,cancelGesture:()=>false,onSelect:setSelection});',context);
   return {round,context};
 }
 test('off-turn, paused, failed inference and disconnected LAN permit local selection and arrangement, never play',()=>{

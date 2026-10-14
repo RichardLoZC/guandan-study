@@ -37,19 +37,19 @@ function harness(){
   const root=node('root'),scroll=node('scroll'),container=node('cards'),doc=node('document'),win=node('window');
   doc.body=node('body');doc.createElement=()=>{const el=node('made');made.push(el);return el;};
   Object.assign(scroll,{offsetWidth:500,offsetHeight:300,clientWidth:500,clientHeight:300,clientLeft:0,clientTop:0});
-  let captured=null,signature='round:1|abcd',allowed=true,selection=new Set(['d']);
+  let captured=null,signature='round:1|abcd',allowed=true,selection=new Set(['d']),now=1000;
   scroll.setPointerCapture=id=>captured=id;scroll.hasPointerCapture=id=>captured===id;scroll.releasePointerCapture=()=>captured=null;
   const cards=['a','b','c','d'].map((id,i)=>{
     const el=node(id);el.dataset.id=id;const img=node('img'),x=50+(i%2)*40,y=i<2?40:180;
     img.getBoundingClientRect=()=>box(x,y,x+80,y+100);img.offsetWidth=80;img.offsetHeight=100;el.querySelector=()=>img;return el;
   });
   container.querySelectorAll=selector=>selector==='.marquee-hit'?cards.filter(el=>el.classList.contains('marquee-hit')):cards;
-  const context={globalThis:{},document:doc,window:win,innerWidth:500,innerHeight:300,performance:{now:()=>1000},getComputedStyle:()=>({overflowX:'visible',overflowY:'visible',transform:'none'})};
+  const context={globalThis:{},document:doc,window:win,innerWidth:500,innerHeight:300,performance:{now:()=>now},getComputedStyle:()=>({overflowX:'visible',overflowY:'visible',transform:'none'})};
   vm.runInNewContext(fs.readFileSync(require.resolve('../web/app/hand-marquee.js'),'utf8'),context);
   const api=context.globalThis.GuandanHandMarquee.create({root,scroll,container,canSelect:()=>allowed,getSignature:()=>signature,getSelected:()=>selection,
     onSelect:ids=>{commits.push([...ids]);selection=new Set(ids);},onModeChange:value=>modes.push(value)});
   const fire=(scope,type,extra={})=>{const event={button:0,isPrimary:true,pointerType:'mouse',pointerId:1,clientX:20,clientY:20,target:scroll,detail:1,preventDefault(){},stopImmediatePropagation(){},...extra};for(const fn of listeners.get(scope+':'+type)||[])fn(event);};
-  return {api,root,scroll,doc,cards,made,commits,modes,fire,get selected(){return [...selection];},changeHand:()=>signature='round:2|abcd',disable:()=>allowed=false};
+  return {api,root,scroll,doc,cards,made,commits,modes,fire,advance:ms=>now+=ms,get selected(){return [...selection];},changeHand:()=>signature='round:2|abcd',disable:()=>allowed=false};
 }
 test('mouse boxes preview without changing selection, commit once, and Shift adds to the original selection',()=>{
   for(const shiftKey of [false,true]){
@@ -106,4 +106,10 @@ test('a fresh touch or pen press is not swallowed by the preceding mouse box cli
     h.fire('scroll','pointerdown',{pointerType,target:{closest:()=>({})}});let blocked=0;
     h.fire('scroll','click',{pointerType,preventDefault(){blocked++;}});assert.equal(blocked,0,pointerType);
   }
+});
+test('a cancelled box still suppresses its release click after a long hold, and a fresh blank tap is allowed',()=>{
+  const h=harness();h.fire('scroll','pointerdown');h.fire('window','pointermove',{clientX:180,clientY:150});
+  h.fire('document','keydown',{key:'Escape'});h.advance(5000);h.fire('window','pointerup',{clientX:180,clientY:150});
+  let blocked=0;h.fire('scroll','click',{preventDefault(){blocked++;}});assert.equal(blocked,1);assert.deepEqual(h.selected,['d']);
+  h.fire('window','pointerdown');h.fire('scroll','click',{preventDefault(){blocked++;}});assert.equal(blocked,1);
 });

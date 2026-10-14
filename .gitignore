@@ -20,6 +20,7 @@ android/local.properties
 /docs/*
 !/docs/BUILDING.md
 !/docs/TESTING.md
+!/docs/HAND_INTERACTIONS.md
 !/docs/screenshots/
 /artwork/3d-research/*
 !/artwork/3d-research/anatomical-hand/

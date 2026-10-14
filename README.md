@@ -59,6 +59,8 @@ Automatic arrangement uses a bounded search over complete hand partitions. It co
 
 Drag the mouse from empty hand space to box-select cards. Drag right for a blue window that fully encloses visible card faces; drag left for a green crossing box that selects touched faces. Hold **Shift** to add to your selection, or **Esc** to cancel the box. Flat and curved layouts use visible face geometry across both rows. Dragging a card still rearranges it; touch gestures on empty space still scroll.
 
+Tap empty table or hand space to clear the selection. Scrolling and drag releases do not clear it. **Shift-click** adds a range from the last selected card in displayed order: upper row left to right, then lower row. **Esc** cancels an active drag or box while preserving the original selection; press it again to clear. An open dialog owns Escape. Switching layouts preserves selection; rearranging cards resets the next Shift-click anchor.
+
 Layouts stay on your device. Switching between flat and fan layouts preserves selected cards and both rows. Played cards disappear without re-sorting the rest; a new round starts with a fresh arrangement. Auto arrangement remains available. Neither manual nor automatic display arrangements change game rules or DanLM inputs.
 
 ## Develop

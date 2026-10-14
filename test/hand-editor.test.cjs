@@ -146,3 +146,13 @@ test('an automatic arrangement undo expires when cards depart or a new round sta
   assert.equal(h.undoButton.disabled,true);h.undo();assert.equal(h.commits.length,1);
  }
 });
+test('Escape protects the eventual release click even after a long hold, until the next physical press',()=>{
+ for(const pointerType of ['mouse','touch','pen']){
+  const h=harness();h.selected.add('a').add('b');h.editor.start(h.event({pointerType}),'a');
+  h.fire('pointermove',{clientX:100});h.fireDocument('keydown',{key:'Escape'});h.advance(5000);h.fire('pointerup');
+  let blocked=0;h.fireCard('click',{detail:1,preventDefault(){blocked++;},stopImmediatePropagation(){}});
+  assert.equal(blocked,1);assert.deepEqual([...h.selected],['a','b']);assert.equal(h.commits.length,0);
+  h.fire('pointerdown',{pointerType});h.fireCard('click',{detail:1,preventDefault(){blocked++;},stopImmediatePropagation(){}});
+  assert.equal(blocked,1,'a new press on either a card or blank hand space resets suppression');
+ }
+});

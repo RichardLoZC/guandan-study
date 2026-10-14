@@ -13,7 +13,7 @@ prefs.handStyle=prefs.handStyle==='fan'?'fan':'flat';root.dataset.handStyle=pref
 if(!Object.hasOwn(GuandanArrange.priorities,prefs.arrangePriority))prefs.arrangePriority='balanced';
 let liveRound=null,loadError=null,initialDeal=false;
 try{initialDeal=!localStorage.getItem(GuandanMatch.SAVE_KEY);liveRound=GuandanMatch.read(localStorage);}catch(error){loadError=error;}
-let selected=new Set(),toastTimer,botTimer,botWait=null,hintSnapshot=null,playKey=null,handLayout=null,handEditor=null,handMarquee=null,renderedHandKey='';
+let selected=new Set(),toastTimer,botTimer,botWait=null,hintSnapshot=null,playKey=null,handLayout=null,handEditor=null,handMarquee=null,handSelection=null,renderedHandKey='';
 let paused=Boolean(prefs.paused),fault=null,faultKind=null,workEpoch=0,activeTask=null,confirmMode='restart';
 const model=new DanLMClient(),cardNodes=new Map(),dialogFocus=new WeakMap();
 const dealView=new DealAnimation.TableView({stage:byId('deal-stage'),table:document.querySelector('.play-zone'),receipt:byId('tribute-receipt'),hand:byId('hand-cards')});
@@ -141,11 +141,13 @@ function buildSkinOptions(){
     button.append(preview,title,note,check);button.addEventListener('click',()=>selectSkinOption(key));byId('skin-options').append(button);
   }
 }
-function selectCard(id){
-  if(!canSelect()||!ownHand().some(held=>held.id===id))return;
-  clearToast();
-  selected.has(id)?selected.delete(id):selected.add(id);
-  playKey=null;updateSelection();
+function setSelection(ids){
+  const held=new Set(ownHand().map(card=>card.id));
+  selected=new Set(ids.filter(id=>held.has(id)));
+  playKey=null;hintSnapshot=null;clearToast();updateSelection();
+}
+function selectCard(id,event){
+  handSelection.choose(id,event);
 }
 function renderHand(){
   const hand=ownHand(),container=byId('hand-cards'),layout=displayLayout();
@@ -195,7 +197,7 @@ function renderHand(){
           label.dataset.joker=card.rank;for(const character of (GuandanI18n.locale==='en'?'JOKER':card.label)){const line=document.createElement('span');line.textContent=character;label.append(line);}button.append(label);
         }
         if(card.isWild){const wild=document.createElement('span');wild.className='wild-label';wild.textContent='百搭';wild.setAttribute('aria-hidden','true');button.append(wild);}
-        button.addEventListener('click',()=>selectCard(card.id));
+        button.addEventListener('click',event=>selectCard(card.id,event));
         cardNodes.set(card.id,button);
       }
       button.setAttribute('aria-label',card.label+(card.isWild?' 逢人配':'')+(duplicates.get(card.face)>1?' 第'+ordinal+'张':''));
@@ -428,7 +430,7 @@ function updateSelection(){
   const title=selected.size?'已选 '+selected.size+' 张':!liveRound?'存档待恢复':waitingTribute?(liveRound.isTuo3?'请确认翻牌与搭档':'请确认桌面贡还结果'):isTribute?(liveRound.canAct?(liveRound.phase==='give'?'请选择进贡牌':'请选择还贡牌'):'等待'+playerAt(liveRound.actingSeat).name+(liveRound.phase==='give'?'进贡':'还贡')):canPlay()?'请选择手牌':ownHand().length?'请等待':'你的手牌已出完';
   const note=document.createElement('span');note.textContent=result?.error||result?.play?.label||(paused?'对局已暂停':fault?'请先处理上方提示':waitingTribute?'看清后点击「开始出牌」':isTribute?(liveRound.canAct?'合法贡还牌已标记':'你暂时无需操作'):canPlay()?'或点击「看建议」':activeTask==='npc'?'模型正在思考':'可查看本局记录');
   if(handMarquee?.active)note.textContent='松手完成框选 · Esc 取消';
-  else if(handEditor?.editing)note.textContent='松手放下 · 自动回到选牌';
+  else if(handEditor?.editing)note.textContent='松手放下 · Esc 取消移动';
   else if(!selected.size&&canArrange()&&!isTribute)note.textContent=canPlay()?'按住拖动理牌':'可先选牌、理牌，轮到你再出牌';
   else if(selected.size&&!liveRound?.canAct&&!isTribute){
     GuandanCore.setLevel(liveRound.level);
@@ -618,7 +620,7 @@ byId('confirm-tribute').addEventListener('click',()=>{
   saveAction(()=>liveRound.acknowledgeTribute());
   if(!liveRound.needsTributeConfirmation)byId('hand-scroll').focus({preventScroll:true});
 });
-byId('clear-selection').addEventListener('click',()=>{clearToast();selected.clear();playKey=null;updateSelection();});
+byId('clear-selection').addEventListener('click',()=>handSelection.clear());
 byId('play-kind').addEventListener('change',event=>{clearToast();playKey=event.target.value;updateSelection();});
 byId('play-button').addEventListener('click',()=>{if(canPlay()){const ids=[...selected],key=playKey,teaching=hintSnapshot?.revision===liveRound.revision?hintSnapshot:null;if(liveRound.remote)window.GuandanLan.command('play',{ids,key}).catch(()=>{});else saveAction(()=>liveRound.commit(0,ids,{key,teaching}));}});
 byId('pass-button').addEventListener('click',()=>{if(canPlay()&&liveRound.phase==='playing'&&liveRound.game.tablePlay){const teaching=hintSnapshot?.revision===liveRound.revision?hintSnapshot:null;if(liveRound.remote)window.GuandanLan.command('play',{ids:[]}).catch(()=>{});else saveAction(()=>liveRound.commit(0,[],{teaching}));}});
@@ -717,8 +719,17 @@ handEditor=createHandEditor({root,container:byId('hand-cards'),scroll:byId('hand
 handMarquee=GuandanHandMarquee.create({root,scroll:byId('hand-scroll'),container:byId('hand-cards'),
   canSelect:()=>canArrange()&&!handEditor?.active&&!hasOpenDialog(),
   getSignature:()=>JSON.stringify(displayLayout()),getSelected:()=>selected,
-  onSelect(ids){selected=new Set(ids.filter(id=>ownHand().some(card=>card.id===id)));playKey=null;hintSnapshot=null;clearToast();updateSelection();},
+  onSelect:setSelection,
   onModeChange:()=>updateSelection(),translate:text=>GuandanI18n.t(text)
+});
+handSelection=GuandanHandSelection.create({table:document.querySelector('.play-zone'),
+  getOrder:()=>ownHand().map(card=>card.id),getSelected:()=>selected,getSignature:()=>JSON.stringify(displayLayout()),
+  canSelect,hasDialog:hasOpenDialog,onSelect:setSelection,
+  cancelGesture(){
+    const active=handEditor?.active||handMarquee?.pending;
+    if(active){handEditor?.cancel();handMarquee?.cancel();}
+    return active;
+  }
 });
 byId('arrange-hand').addEventListener('click',cycleArrangement);
 byId('arrange-priority').value=prefs.arrangePriority;

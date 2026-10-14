@@ -62,7 +62,7 @@
   function create({root,scroll,container,canSelect,getSignature,getSelected,onSelect,onModeChange,translate=s=>s}){
     const overlay=document.createElement('div'),label=document.createElement('span');
     overlay.className='hand-marquee';overlay.hidden=true;overlay.setAttribute('aria-hidden','true');overlay.append(label);document.body.append(overlay);
-    let gesture=null,suppressUntil=0;
+    let gesture=null,blockTrailingClick=false;
     const blockedTarget='.playing-card,.group-action,button,input,select,a,dialog';
     function viewport(){
       let bounds={left:0,top:0,right:innerWidth,bottom:innerHeight};
@@ -89,7 +89,7 @@
     function cancel(suppress=true){
       const old=gesture;gesture=null;overlay.hidden=true;root.classList.remove('hand-box-selecting');
       container.querySelectorAll('.marquee-hit').forEach(button=>button.classList.remove('marquee-hit'));
-      if(old?.dragging&&suppress)suppressUntil=performance.now()+600;
+      if(old?.dragging&&suppress)blockTrailingClick=true;
       if(old&&scroll.hasPointerCapture?.(old.pointer))scroll.releasePointerCapture(old.pointer);
       if(old?.dragging)onModeChange(false);
     }
@@ -105,7 +105,7 @@
       container.querySelectorAll('.playing-card').forEach(button=>button.classList.toggle('marquee-hit',g.result.has(button.dataset.id)));
     }
     scroll.addEventListener('pointerdown',event=>{
-      if(event.isPrimary&&event.button===0)suppressUntil=0;
+      if(event.isPrimary&&event.button===0)blockTrailingClick=false;
       if(event.pointerType!=='mouse'||!event.isPrimary||event.button!==0||gesture||!canSelect()||event.target.closest(blockedTarget))return;
       const bounds=viewport(),x=event.clientX,y=event.clientY;
       if(x<bounds.left||x>bounds.right||y<bounds.top||y>bounds.bottom)return;
@@ -141,8 +141,9 @@
     window.addEventListener('scroll',()=>{if(gesture)cancel();},true);
     document.addEventListener('visibilitychange',()=>{if(document.hidden)cancel();});
     document.addEventListener('keydown',event=>{if(event.key==='Escape'&&gesture){event.preventDefault();cancel();}});
-    scroll.addEventListener('click',event=>{if(event.detail&&performance.now()<suppressUntil){event.preventDefault();event.stopImmediatePropagation();}},true);
-    return {get active(){return Boolean(gesture?.dragging);},cancel,reconcile};
+    window.addEventListener('pointerdown',event=>{if(event.isPrimary&&event.button===0)blockTrailingClick=false;},true);
+    scroll.addEventListener('click',event=>{if(event.detail&&blockTrailingClick){event.preventDefault();event.stopImmediatePropagation();}},true);
+    return {get active(){return Boolean(gesture?.dragging);},get pending(){return Boolean(gesture);},cancel,reconcile};
   }
   return {facePolygon,visibleFaces,hitIds,create};
 });

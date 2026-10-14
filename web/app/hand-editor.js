@@ -6,7 +6,7 @@ window.createHandEditor=function(options){
   marker.className='hand-drop-marker';ghost.className='hand-drag-ghost';
   marker.hidden=ghost.hidden=true;marker.setAttribute('aria-hidden','true');ghost.setAttribute('aria-hidden','true');document.body.append(marker,ghost);
   const MOVE_SLOP=6;
-  let editing=false,gesture=null,suppressUntil=0,undo=null,signature='',scrollFrame=0;
+  let editing=false,gesture=null,blockTrailingClick=false,undo=null,signature='',scrollFrame=0;
   const handSignature=()=>getLayout().key+'|'+getHand().map(card=>card.id).sort().join('|');
   function controls(){
     root.classList.toggle('hand-editing',editing);
@@ -15,7 +15,7 @@ window.createHandEditor=function(options){
   function cancel(suppressClick=true){
     const old=gesture;gesture=null;cancelAnimationFrame(scrollFrame);scrollFrame=0;marker.hidden=ghost.hidden=true;
     root.classList.remove('hand-dragging');container.querySelectorAll('.drag-source,.drop-row').forEach(node=>node.classList.remove('drag-source','drop-row'));
-    if(old&&suppressClick)suppressUntil=performance.now()+600;
+    if(old&&suppressClick)blockTrailingClick=true;
     if(old?.capture?.hasPointerCapture?.(old.pointer))old.capture.releasePointerCapture(old.pointer);
     if(editing){editing=false;controls();onModeChange(false);}
   }
@@ -81,7 +81,7 @@ window.createHandEditor=function(options){
     const capture=scroll;
     gesture={pointer:event.pointerId,id,ids,x:event.clientX,y:event.clientY,signature:handSignature(),capture,dragging:false,target:null};
     // A fresh physical press must not inherit the previous drag's click guard.
-    suppressUntil=0;
+    blockTrailingClick=false;
     return true;
   }
   container.addEventListener('pointerdown',event=>{const card=event.target.closest('.playing-card');if(card)start(event,card.dataset.id);});
@@ -113,7 +113,10 @@ window.createHandEditor=function(options){
   // Touch starts with implicit capture on the card. Transferring it to the
   // scroll area emits a loss on the old owner, but must not cancel the drag.
   window.addEventListener('lostpointercapture',event=>{if(gesture?.pointer===event.pointerId&&!gesture.capture?.hasPointerCapture?.(event.pointerId))cancel();});
-  container.addEventListener('click',event=>{if(event.detail&&performance.now()<suppressUntil){event.preventDefault();event.stopImmediatePropagation();}},true);
+  // Escape may cancel while the pointer stays held for seconds. The old
+  // gesture owns its eventual click until a new physical press begins.
+  window.addEventListener('pointerdown',event=>{if(event.isPrimary&&event.button===0)blockTrailingClick=false;},true);
+  container.addEventListener('click',event=>{if(event.detail&&blockTrailingClick){event.preventDefault();event.stopImmediatePropagation();}},true);
   container.addEventListener('keydown',event=>{
     const card=event.target.closest('.playing-card');if(!canEdit()||!card||!event.altKey||!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key))return;
     event.preventDefault();cancel();const layout=getLayout(),id=card.dataset.id,row=layout.rows.findIndex(list=>list.includes(id)),index=layout.rows[row].indexOf(id);
