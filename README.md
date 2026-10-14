@@ -23,7 +23,7 @@ Play Guandan offline against DanLM, or share a table with friends on your local 
 - A 2D table with flat or curved fan hand layouts, using the same card controls.
 - Three card styles, day/night themes and larger text.
 - Smaller desktop windows scale the whole table proportionally, including players, cards and controls. View → Actual Size restores automatic fitting.
-- One-click hand arrangements that cycle through different possible combinations.
+- One-click hand arrangements that search complete partitions, including alternative suits and wild-card allocation, and cycle through different combinations.
 - Free arrangement in both views: drag single cards or a selection between two rows, keep combinations together and undo a move. Layouts survive plays and reopening the same round.
 - DanLM suggestions, a teaching layer, round reviews, replay and text exports.
 - Independent strategy-book switches for AI players and hints in Settings. AI choices persist locally; LAN rooms share the host’s setting.
@@ -52,6 +52,10 @@ For multiplayer, connect devices to the same trusted Wi-Fi. Choose **Solo practi
 Each round starts with all cards in descending rank order on the lower row; the upper row is empty for your combinations. Tap to select a card, or press and drag to arrange it immediately. There is no hold delay; a small movement tolerance prevents accidental drags. Release to finish. Select several cards first, then drag any selected card to move the group. The gold marker shows the insertion point; **Undo arrange** reverses the last manual or automatic arrangement. Mouse, touch and pen share this behavior; dragging across cards moves them. Tap cards individually to select a group.
 
 Keyboard users can focus a card and use Alt/Option + arrow keys directly. Swipe empty space in narrow 2D rows to scroll sideways. Pass and Play stay prominent in the bottom dock. Layout and arrangement tools sit together, with Hint and History at the bottom right. Choose straight flushes, bombs, runs or pairs as a priority, then click **Arrange** to cycle alternatives. **Sort by rank** restores the lower row; **Undo arrange** reverses that change.
+
+Select and arrange while opponents are acting, while paused or while a LAN response is pending. Only a legal move on your turn can be submitted. Dealing animations and finished rounds disable hand preparation. Both shelves reserve the same space when empty or occupied, so moving cards does not resize the hand area or displace the table and dock.
+
+Automatic arrangement uses a bounded search over complete hand partitions. It compares competing uses of natural cards and wild cards, including preserving one bomb while completing a straight flush. Priority modes offer alternatives; this is not a guarantee of a globally optimal partition.
 
 Layouts stay on your device. Switching between flat and fan layouts preserves selected cards and both rows. Played cards disappear without re-sorting the rest; a new round starts with a fresh arrangement. Auto arrangement remains available. Neither manual nor automatic display arrangements change game rules or DanLM inputs.
 

@@ -477,6 +477,8 @@ Object.assign(messages,{
   '拖到上下两排任意位置 · 选中多张可一起拖动':'Drag between rows · Select several cards to move them together',
   '拖动单张或已选牌；完成后出牌':'Drag cards or a selection. Finish arranging to play.',
   '按住拖动理牌':'Drag to arrange',
+  '可先选牌、理牌，轮到你再出牌':'Select and arrange now; play on your turn',
+  '已选手牌，按住拖动理牌':'Cards selected · Drag to arrange',
   '松手放下 · 自动回到选牌':'Release to place · Then select cards as usual',
   '点选牌面 · 按住拖动理牌':'Tap to select · Drag to arrange',
   '扇形手牌；按住拖动理牌，Tab 逐张查看，空格选牌':'Card fan. Drag to arrange; Tab to browse; Space to select.',

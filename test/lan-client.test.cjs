@@ -306,3 +306,30 @@ test('a failed completed-round archive retries at the same room version and surv
   assert.equal(reviews.length,1);assert.equal(reviews[0].id,room.match.id);
   assert.deepEqual(reviews[0].names,JSON.parse(JSON.stringify(reloaded.context.liveRound.names)));
 });
+
+test('a delayed play response keeps cards selected while the request was in flight',async()=>{
+  const reply=deferred();
+  const h=harness({request:payload=>payload.body?.op==='play'?reply.promise:Promise.resolve(snapshot())});await flush();
+  h.context.selected.add('submitted');
+  const waiting=h.api.command('play',{ids:['submitted']});
+  h.context.selected.add('prepared-next');
+  reply.resolve(snapshot('room',2));await waiting;
+  assert.deepEqual([...h.context.selected],['prepared-next']);
+});
+test('unchanged selection clears after a successful PASS; rejected requests retain it',async()=>{
+  for(const failed of [false,true]){
+    const reply=deferred(),h=harness({request:payload=>payload.body?.op==='play'?reply.promise:Promise.resolve(snapshot())});await flush();
+    h.context.selected.add('keep');const waiting=h.api.command('play',{ids:[]});
+    if(failed){reply.reject(new Error('stale turn'));await assert.rejects(waiting,/stale turn/);}else{reply.resolve(snapshot('room',2));await waiting;}
+    assert.deepEqual([...h.context.selected],failed?['keep']:[]);
+  }
+});
+
+test('a previous round play response cannot clear a new round selection with reused physical card ids',async()=>{
+  const reply=deferred(),h=harness({request:payload=>payload.body?.op==='play'?reply.promise:Promise.resolve(snapshot())});await flush();
+  h.context.selected.add('1-clubs-3');const waiting=h.api.command('play',{ids:['1-clubs-3']});
+  h.context.liveRound=GuandanMatch.create();h.context.selected=new Set(['1-clubs-3','2-spades-7']);
+  h.context.playKey='new-combination';h.context.hintSnapshot={roundId:h.context.liveRound.id};
+  reply.resolve(snapshot('room',1));await waiting;
+  assert.deepEqual([...h.context.selected],['1-clubs-3','2-spades-7']);assert.equal(h.context.playKey,'new-combination');assert.equal(h.context.hintSnapshot.roundId,h.context.liveRound.id);
+});

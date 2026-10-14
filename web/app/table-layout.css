@@ -70,11 +70,8 @@ html .table-seats > .tribute-panel { position:relative; inset:auto; transform:no
 html .tribute-panel h2 { font-size:22px; }
 html .tribute-panel p { font-size:16px; }
 
-/* An unused shelf remains an explicit drop target without separating Play
-   from the cards by the height of a full empty hand. Footer tools stay put. */
-html .hand-scroll:has(.card-row.is-empty) { height:calc(var(--hand-shelf-height,204px) + 80px); }
-html .card-row.is-empty { height:64px; }
-html .card-row.is-empty .hand-tier-label { top:14px; }
+/* Both shelves reserve their full height even before the first card is moved.
+   Moving a group never resizes the hand area or displaces the public table. */
 html.large-type .table-seats .player-info > strong { font-size:25px; }
 html.large-type .table-seats .remaining b { font-size:40px; }
 html[data-platform=pad] .hand-scroll { --group-action-space:40px; }

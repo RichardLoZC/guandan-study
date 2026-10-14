@@ -59,10 +59,7 @@
   html[data-platform=pad] #play-kind { min-height:32px; max-width:100%; font-size:13px; }
   html[data-platform=pad] .hand-scroll { --group-action-space:30px; --hand-group-gap:14px; height:calc(var(--hand-shelf-height) * 2 + 40px); max-height:none; padding:8px; overflow:auto; touch-action:pan-x; scrollbar-width:none; }
   html[data-platform=pad] .hand-scroll::-webkit-scrollbar { display:none; }
-  html[data-platform=pad] .hand-scroll:has(.card-row.is-empty) { height:calc(var(--hand-shelf-height) + 80px); }
   html[data-platform=pad] .card-row { padding-inline:28px; }
-  html[data-platform=pad] .card-row.is-empty { height:40px; }
-  html[data-platform=pad] .card-row.is-empty .hand-tier-label { top:8px; }
   html[data-platform=pad] .hand-tier-label { left:0; font-size:11px; }
   html[data-platform=pad] .group-action { height:26px; min-height:26px; padding:1px 3px; gap:3px; font-size:11px; }
   html[data-platform=pad] .group-verb { font-size:10px; }
@@ -142,7 +139,6 @@
   html[data-platform=pad] .hand-command-bar .hand-feedback { min-height:16px; }
   html[data-platform=pad] .hand-command-bar { padding-block:0; }
   html[data-platform=pad] .hand-scroll { --group-action-space:28px; flex:1 1 auto; min-height:0; height:auto; padding:4px 8px; }
-  html[data-platform=pad] .hand-scroll:has(.card-row.is-empty) { height:auto; }
   html[data-platform=pad] .hand-pan-note { height:20px; line-height:20px; font-size:10px; }
   html[data-platform=pad] .hand-tools { grid-template-columns:minmax(0,1fr) auto auto; grid-template-rows:44px; height:52px; min-height:52px; padding:3px 6px; gap:4px 8px; }
   html[data-platform=pad] .hand-management { grid-area:1/1; }

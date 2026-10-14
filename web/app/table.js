@@ -13,7 +13,7 @@ prefs.handStyle=prefs.handStyle==='fan'?'fan':'flat';root.dataset.handStyle=pref
 if(!Object.hasOwn(GuandanArrange.priorities,prefs.arrangePriority))prefs.arrangePriority='balanced';
 let liveRound=null,loadError=null,initialDeal=false;
 try{initialDeal=!localStorage.getItem(GuandanMatch.SAVE_KEY);liveRound=GuandanMatch.read(localStorage);}catch(error){loadError=error;}
-let selected=new Set(),toastTimer,botTimer,botWait=null,hintSnapshot=null,playKey=null,handLayout=null,handEditor=null;
+let selected=new Set(),toastTimer,botTimer,botWait=null,hintSnapshot=null,playKey=null,handLayout=null,handEditor=null,renderedHandKey='';
 let paused=Boolean(prefs.paused),fault=null,faultKind=null,workEpoch=0,activeTask=null,confirmMode='restart';
 const model=new DanLMClient(),cardNodes=new Map(),dialogFocus=new WeakMap();
 const dealView=new DealAnimation.TableView({stage:byId('deal-stage'),table:document.querySelector('.play-zone'),receipt:byId('tribute-receipt'),hand:byId('hand-cards')});
@@ -57,7 +57,7 @@ function ownHand(){
 function cycleArrangement(){
   if(!canArrange())return;
   ownHand(); // Invalidate cached plans after cards, round or priority change.
-  if(!arrangement.plans.length)arrangement.plans=GuandanArrange.plans(liveRound.hand,liveRound.level,{priority:prefs.arrangePriority});
+  if(!arrangement.plans.length)arrangement.plans=GuandanArrangeSearch.plans(liveRound.hand,liveRound.level,{priority:prefs.arrangePriority});
   if(!arrangement.plans.length)return;
   const index=(arrangement.index+1)%arrangement.plans.length;
   handEditor.replace(GuandanHandLayout.fromPlan(layoutKey(),liveRound.hand,arrangement.plans[index]));
@@ -82,6 +82,9 @@ function renderArrangement(){
 }
 const canPlay=()=>Boolean(liveRound?.canAct&&!handEditor?.editing&&!paused&&!fault&&!dealMotion.active&&(!liveRound.remote||window.GuandanLan?.ready));
 const canArrange=()=>Boolean(liveRound?.hand.length&&!liveRound.game.result&&!dealMotion.active);
+// Choosing and arranging are private preparation, independent of whose turn
+// it is, model availability, pause state or a pending LAN response.
+const canSelect=()=>canArrange()&&!handEditor?.editing;
 const hasOpenDialog=()=>Boolean(document.querySelector('dialog[open]'));
 function beginDealAnimation(){
   stopBots();
@@ -139,15 +142,20 @@ function buildSkinOptions(){
   }
 }
 function selectCard(id){
-  if(!(handEditor?.editing?canArrange():canPlay())||cardNodes.get(id)?.disabled||!ownHand().some(held=>held.id===id))return;
+  if(!canSelect()||!ownHand().some(held=>held.id===id))return;
   clearToast();
-  if(!handEditor?.editing&&liveRound.phase!=='playing')selected=new Set([id]);else selected.has(id)?selected.delete(id):selected.add(id);
+  selected.has(id)?selected.delete(id):selected.add(id);
   playKey=null;updateSelection();
 }
 function renderHand(){
   const hand=ownHand(),container=byId('hand-cards'),layout=displayLayout();
   GuandanCore.setLevel(liveRound?.level||'2');
   handEditor?.reconcile();
+  const key=JSON.stringify([layout,liveRound?.level,Boolean(liveRound?.game.result)]);
+  // Opponent turns must not detach the pressed card or steal touch capture.
+  // The public table updates freely while the unchanged hand keeps its nodes.
+  if(key===renderedHandKey&&cardNodes.size===hand.length&&hand.every(card=>cardNodes.has(card.id))){renderArrangement();updateSelection();return;}
+  renderedHandKey=key;
   const previousFocus=document.activeElement?.closest('.playing-card')?.dataset.id;
   const previousPosition=[...container.querySelectorAll('.playing-card')].findIndex(button=>button.dataset.id===previousFocus);
   const liveIds=new Set(hand.map(card=>card.id));
@@ -198,7 +206,7 @@ function renderHand(){
   }
   if(!hand.length){rows.length=0;const empty=document.createElement('p');empty.className='empty-hand-message';empty.textContent=liveRound?.game.result?'手牌已出完。':'手牌已出完，等待本局结束。';rows.push(empty);}
   container.replaceChildren(...rows);renderArrangement();byId('hand-count').textContent=hand.length;byId('hand-scroll').classList.toggle('empty-hand',!hand.length);updateSelection();
-  if(previousFocus&&(canPlay()||handEditor?.editing)){
+  if(previousFocus&&canArrange()){
     const target=cardNodes.get(previousFocus)||cardNodes.get(hand[Math.min(Math.max(previousPosition,0),hand.length-1)]?.id);
     target?.focus({preventScroll:true});
   }
@@ -419,17 +427,22 @@ function updateSelection(){
   const title=selected.size?'已选 '+selected.size+' 张':!liveRound?'存档待恢复':waitingTribute?(liveRound.isTuo3?'请确认翻牌与搭档':'请确认桌面贡还结果'):isTribute?(liveRound.canAct?(liveRound.phase==='give'?'请选择进贡牌':'请选择还贡牌'):'等待'+playerAt(liveRound.actingSeat).name+(liveRound.phase==='give'?'进贡':'还贡')):canPlay()?'请选择手牌':ownHand().length?'请等待':'你的手牌已出完';
   const note=document.createElement('span');note.textContent=result?.error||result?.play?.label||(paused?'对局已暂停':fault?'请先处理上方提示':waitingTribute?'看清后点击「开始出牌」':isTribute?(liveRound.canAct?'合法贡还牌已标记':'你暂时无需操作'):canPlay()?'或点击「看建议」':activeTask==='npc'?'模型正在思考':'可查看本局记录');
   if(handEditor?.editing)note.textContent='松手放下 · 自动回到选牌';
-  else if(!selected.size&&canPlay()&&!isTribute)note.textContent='按住拖动理牌';
+  else if(!selected.size&&canArrange()&&!isTribute)note.textContent=canPlay()?'按住拖动理牌':'可先选牌、理牌，轮到你再出牌';
+  else if(selected.size&&!liveRound?.canAct&&!isTribute){
+    GuandanCore.setLevel(liveRound.level);
+    const preview=GuandanCore.recognize(ownHand().filter(card=>selected.has(card.id)));
+    note.textContent=preview[0]?.label||'已选手牌，按住拖动理牌';
+  }
   byId('selection-status').replaceChildren(document.createTextNode(handEditor?.editing&&!selected.size?'自由理牌中':title),note);
   byId('play-button').disabled=!canPlay()||!(result?.play||result?.tribute);
   byId('play-button').textContent=isTribute?(liveRound.phase==='give'?'确认进贡':'确认还贡'):'出牌 ↗';
   byId('pass-button').disabled=!canPlay()||isTribute||!liveRound?.game.tablePlay;
   byId('hint-button').disabled=!canPlay()||isTribute||Boolean(activeTask);
   byId('clear-selection').disabled=selected.size===0;
-  const allowed=isTribute?new Set(liveRound.canAct?liveRound.tributeChoices.map(card=>card.id):[]):null;
+  const allowed=isTribute&&liveRound.canAct?new Set(liveRound.tributeChoices.map(card=>card.id)):null;
   cardNodes.forEach((button,id)=>{
     const on=selected.has(id);button.classList.toggle('selected',on);button.setAttribute('aria-pressed',String(on));
-    button.disabled=handEditor?.editing?!canArrange():!canPlay()||(allowed&&!allowed.has(id));
+    button.disabled=!canArrange();
     button.classList.toggle('unavailable',Boolean(!handEditor?.editing&&allowed&&!allowed.has(id)));button.classList.toggle('playable-tribute',Boolean(!handEditor?.editing&&allowed?.has(id)));
   });
   const picker=byId('play-kind'),choices=handEditor?.editing?[]:result?.plays||[];
@@ -467,11 +480,11 @@ function renderGame(){
 }
 function saveAction(action){
   stopBots();if(!liveRound)return;clearToast();
-  const oldState=liveRound.state,oldRevision=liveRound.revision;
+  const oldState=liveRound.state,oldRevision=liveRound.revision,actor=liveRound.actingSeat;
   try{
     action();liveRound.persist(localStorage);
   }catch(error){liveRound.state=oldState;liveRound.revision=oldRevision;reportError(error,'save');return;}
-  if(!handEditor?.editing)selected.clear();playKey=null;hintSnapshot=null;clearError();renderGame();
+  if(actor===0)selected.clear();playKey=null;hintSnapshot=null;clearError();renderGame();
   if(liveRound.game.result){
     try{GuandanMatch.archive(localStorage,liveRound);}catch{toast('本局已保存，历史复盘暂未保存。请导出备份后再继续。');}
   }else scheduleBots();

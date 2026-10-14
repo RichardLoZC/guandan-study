@@ -145,14 +145,20 @@
     finally{if(pollingEpoch===epoch)pollingEpoch=null;if(session&&epoch===generation){clearTimeout(pollTimer);pollTimer=setTimeout(poll,online?400:1200);}}
   }
   async function command(op,details={}){
-    if(!session||!room||busy)return;busy=true;const epoch=generation;
+    if(!session||!room||busy)return;busy=true;const epoch=generation,roundAtSend=liveRound?.id,selectionAtSend=[...selected].sort().join('|');
     controls();updateSelection();
     try{
       const result=await transport({action:'request',address:session.address,token:session.token,body:{op,version:room.version,requestId:crypto.randomUUID(),...details}});
       if(epoch!==generation)return;
       if(result.advice)return result.advice;
       if(result.left)return result;
-      if(op==='play'){selected.clear();playKey=null;hintSnapshot=null;}
+      if(op==='play'&&liveRound?.id===roundAtSend){
+        // A player can prepare the next selection while this request is in
+        // flight. Only clear the submitted selection or departed cards.
+        if([...selected].sort().join('|')===selectionAtSend)selected.clear();
+        else for(const id of details.ids||[])selected.delete(id);
+        playKey=null;hintSnapshot=null;
+      }
       apply(result);message();return result;
     }catch(error){if(epoch===generation){toast(error.message);await poll();message(error.message);}throw error;}
     finally{if(epoch===generation){busy=false;controls();updateSelection();}}
