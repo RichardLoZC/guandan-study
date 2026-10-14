@@ -40,6 +40,14 @@ html .saved-group[data-rarity=crown] .group-marker::after { animation-duration:3
 .hand-drop-marker { position:fixed; z-index:999; pointer-events:none; width:4px; border-radius:4px; background:#ffde8a; box-shadow:0 0 0 2px #183e2f,0 0 16px #f3d490; transform-origin:top center; }
 .hand-drop-marker::before { content:''; position:absolute; left:-4px; top:-5px; width:12px; height:5px; border-radius:3px; background:#ffde8a; }
 .drag-source { opacity:.5; }
+.hand-marquee { position:fixed; z-index:998; pointer-events:none; border:1.5px solid #8fc9ff; background:#74b9ff24; box-shadow:0 0 0 1px #132f3444; }
+.hand-marquee[data-crossing=true] { border-color:#88dfaa; border-style:dashed; background:#69d99b24; }
+.hand-marquee span { position:absolute; top:3px; left:3px; padding:2px 6px; border-radius:4px; white-space:nowrap; color:#fffbed; background:#153b32e8; font-size:13px; line-height:20px; }
+.hand-box-selecting,.hand-box-selecting .playing-card { cursor:crosshair!important; user-select:none; }
+.hand-box-selecting .playing-card.selected > img { box-shadow:0 3px 6px #071e1666; }
+.hand-box-selecting .playing-card .selected-mark { display:none; }
+.hand-box-selecting .playing-card.marquee-hit > img { box-shadow:0 0 0 3px #f4d38a,0 4px 8px #071e1666; }
+.hand-box-selecting .playing-card.marquee-hit .selected-mark { display:block; }
 
 html[data-hand-style=fan] .card-row { isolation:isolate; }
 html[data-hand-style=fan] .hand-cluster { position:static; }

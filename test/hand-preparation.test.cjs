@@ -4,7 +4,7 @@ const {Match}=require('../web/app/match.js');
 const source=fs.readFileSync(require.resolve('../web/app/table.js'),'utf8');
 function fixture(){
   const round=new Match();round.game.currentPlayer=round.game.starter=1;
-  const context={liveRound:round,selected:new Set(),handEditor:{editing:false},paused:false,fault:null,dealMotion:{active:false},window:{},
+  const context={liveRound:round,selected:new Set(),handEditor:{editing:false},handMarquee:null,paused:false,fault:null,dealMotion:{active:false},window:{},
     ownHand:()=>round.hand,clearToast(){},updateSelection(){},playKey:null};
   vm.createContext(context);
   vm.runInContext(source.slice(source.indexOf('const canPlay='),source.indexOf('const hasOpenDialog='))+
@@ -45,6 +45,12 @@ test('selection cannot target foreign cards, finished hands or the hidden dealin
   c.dealMotion.active=true;assert.equal(c.checks.canSelect(),false);c.selectCard(round.hand[0].id);assert.equal(c.selected.size,0);
   c.dealMotion.active=false;round.game.result={};assert.equal(c.checks.canSelect(),false);assert.equal(c.checks.canArrange(),false);
 });
+test('an active selection box cannot submit a move or receive a trailing card click',()=>{
+  const {round,context:c}=fixture();round.game.currentPlayer=round.game.starter=0;c.handMarquee={active:true};
+  assert.equal(c.checks.canArrange(),true);assert.equal(c.checks.canPlay(),false);assert.equal(c.checks.canSelect(),false);
+  c.selectCard(round.hand[0].id);assert.equal(c.selected.size,0);
+  c.handMarquee.active=false;assert.equal(c.checks.canPlay(),true);
+});
 
 test('public turn updates keep pressed card nodes, while a cleared cache on lobby exit rebuilds them',()=>{
   const core=require('../web/app/core.js'),layout=require('../web/app/hand-layout.js');core.setLevel('2');
@@ -55,7 +61,7 @@ test('public turn updates keep pressed card nodes, while a cleared cache on lobb
   const container=node(),nodes=new Map([['hand-cards',container]]),cardNodes=new Map();let replacements=0;
   container.replaceChildren=(...items)=>{container.children=items;replacements++;};
   const c={document:{activeElement:null,createElement:node},GuandanCore:core,GuandanHandLayout:layout,GuandanI18n:{locale:'zh-CN'},window:{},
-    liveRound:{level:'2',game:{}},renderedHandKey:'',cardNodes,handEditor:{reconcile(){}},ownHand:()=>hand,displayLayout:()=>layout.create('same-round',hand),
+    liveRound:{level:'2',game:{}},renderedHandKey:'',cardNodes,handEditor:{reconcile(){}},handMarquee:null,ownHand:()=>hand,displayLayout:()=>layout.create('same-round',hand),
     byId:id=>{if(!nodes.has(id))nodes.set(id,node());return nodes.get(id);},imageFor:node,selectCard(){},renderArrangement(){},updateSelection(){},canArrange:()=>true};
   vm.createContext(c);vm.runInContext(source.slice(source.indexOf('function renderHand('),source.indexOf('function resizeHand(')),c);
   c.renderHand();const original=cardNodes.get(hand[0].id);assert.equal(replacements,1);

@@ -4,42 +4,43 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>掼蛋研习社</title>
-  <link rel="icon" type="image/png" href="/assets/brand/app-icon.png?v=198">
-  <link rel="stylesheet" href="/app/table.css?v=198">
-  <link rel="stylesheet" href="/app/desktop.css?v=198">
-  <link rel="stylesheet" href="/app/deal-animation.css?v=198">
-  <link rel="stylesheet" href="/app/lan.css?v=198">
-  <link rel="stylesheet" href="/app/mobile.css?v=198">
-  <link rel="stylesheet" href="/app/hand-layout.css?v=198">
-  <link rel="stylesheet" href="/app/round-table.css?v=198">
-  <link rel="stylesheet" href="/app/table-layout.css?v=198">
-  <link rel="stylesheet" href="/app/phone-layout.css?v=198">
-  <script src="/app/locales/en.js?v=198" defer></script>
-  <script src="/app/i18n.js?v=198" defer></script>
-  <script src="/app/play-rules.js?v=198" defer></script>
-  <script src="/app/core.js?v=198" defer></script>
-  <script src="/app/tuo3.js?v=198" defer></script>
-  <script src="/app/arrange.js?v=198" defer></script>
-  <script src="/app/arrange-search.js?v=198" defer></script>
-  <script src="/app/tribute-strategy.js?v=198" defer></script>
-  <script src="/app/match.js?v=198" defer></script>
-  <script src="/app/model-client.js?v=198" defer></script>
-  <script src="/app/deal-animation.js?v=198" defer></script>
-  <script src="/app/presentation.js?v=198" defer></script>
-  <script src="/app/hand-fan.js?v=198" defer></script>
-  <script src="/app/hand-layout.js?v=198" defer></script>
-  <script src="/app/hand-editor.js?v=198" defer></script>
-  <script src="/app/turn-timing.js?v=198" defer></script>
-  <script src="/app/table.js?v=198" defer></script>
-  <script src="/app/lan-client.js?v=198" defer></script>
-  <script src="/app/table-view.js?v=198" defer></script>
-  <script src="/app/review.js?v=198" defer></script>
+  <link rel="icon" type="image/png" href="/assets/brand/app-icon.png?v=199">
+  <link rel="stylesheet" href="/app/table.css?v=199">
+  <link rel="stylesheet" href="/app/desktop.css?v=199">
+  <link rel="stylesheet" href="/app/deal-animation.css?v=199">
+  <link rel="stylesheet" href="/app/lan.css?v=199">
+  <link rel="stylesheet" href="/app/mobile.css?v=199">
+  <link rel="stylesheet" href="/app/hand-layout.css?v=199">
+  <link rel="stylesheet" href="/app/round-table.css?v=199">
+  <link rel="stylesheet" href="/app/table-layout.css?v=199">
+  <link rel="stylesheet" href="/app/phone-layout.css?v=199">
+  <script src="/app/locales/en.js?v=199" defer></script>
+  <script src="/app/i18n.js?v=199" defer></script>
+  <script src="/app/play-rules.js?v=199" defer></script>
+  <script src="/app/core.js?v=199" defer></script>
+  <script src="/app/tuo3.js?v=199" defer></script>
+  <script src="/app/arrange.js?v=199" defer></script>
+  <script src="/app/arrange-search.js?v=199" defer></script>
+  <script src="/app/tribute-strategy.js?v=199" defer></script>
+  <script src="/app/match.js?v=199" defer></script>
+  <script src="/app/model-client.js?v=199" defer></script>
+  <script src="/app/deal-animation.js?v=199" defer></script>
+  <script src="/app/presentation.js?v=199" defer></script>
+  <script src="/app/hand-fan.js?v=199" defer></script>
+  <script src="/app/hand-layout.js?v=199" defer></script>
+  <script src="/app/hand-editor.js?v=199" defer></script>
+  <script src="/app/hand-marquee.js?v=199" defer></script>
+  <script src="/app/turn-timing.js?v=199" defer></script>
+  <script src="/app/table.js?v=199" defer></script>
+  <script src="/app/lan-client.js?v=199" defer></script>
+  <script src="/app/table-view.js?v=199" defer></script>
+  <script src="/app/review.js?v=199" defer></script>
 </head>
 <body>
   <main id="preview" class="view active-view">
     <div class="app-frame">
       <header class="app-top">
-        <div class="brand"><img class="brand-icon" src="/assets/brand/app-icon.png?v=198" alt="" width="44" height="44"><div><strong>掼蛋研习社</strong><span id="engine-indicator" role="status">正在加载离线模型…</span></div></div>
+        <div class="brand"><img class="brand-icon" src="/assets/brand/app-icon.png?v=199" alt="" width="44" height="44"><div><strong>掼蛋研习社</strong><span id="engine-indicator" role="status">正在加载离线模型…</span></div></div>
         <div class="top-controls">
           <button class="text-action language-toggle" id="language-toggle" translate="no" aria-label="切换到英文">English</button>
           <button class="mode-entry" id="open-lan">单人练习 <span aria-hidden="true">⌄</span></button>
@@ -192,7 +193,7 @@
     <details class="settings-section"><summary>模型与教学</summary><p id="model-status">正在检查模型…</p><label class="setting-check"><input type="checkbox" id="book-enabled" checked>看建议时使用秘籍</label><p>教学建议独立设置。DanLM 只使用行动者的手牌、公开出牌和贡还记录。</p><button id="recheck-model" class="secondary-button">重新检查模型</button></details>
     <details class="settings-section"><summary>存档与备份</summary><p id="save-status">每一步自动保存在本机，关窗或退出后可继续。最多保留最近8局完整复盘。</p><button id="export-save" class="secondary-button">导出存档备份</button></details>
     <details><summary>规则与说明</summary><p>两副牌、四人对坐搭档。从2升级至A；红桃级牌为逢人配。支持单张、对子、三张、三带二、顺子、连对、钢板、炸弹、同花顺和四王炸。下一副按实际名次进贡、还贡或抗贡。</p><p>中文说明由教学层根据牌局和候选生成，并非模型内部思考。模型评分和未见牌采样不代表胜率。</p><p>关闭窗口会保留应用。⌘Q退出，Control+⌘F全屏；⌘+与⌘−调整界面大小。</p><p><a href="/mobile/DanLM-LICENSE.txt">DanLM许可（含非商业条件）</a> · <a href="/mobile/ONNX-Runtime-LICENSE.txt">ONNX Runtime许可</a> · <a href="/card-sources/SVGCards-README-license.txt">纸牌素材来源</a></p></details>
-    <div class="dialog-bottom"><button class="primary-button" data-close-dialog="settings-dialog">回到牌桌</button><span>Desktop 1.8.18 · 离线单机与局域网联机</span></div>
+    <div class="dialog-bottom"><button class="primary-button" data-close-dialog="settings-dialog">回到牌桌</button><span>Desktop 1.8.19 · 离线单机与局域网联机</span></div>
   </dialog>
   <dialog id="confirm-dialog" class="analysis-dialog" aria-labelledby="confirm-title">
     <header class="dialog-header"><h2 id="confirm-title">开始全新的游戏</h2><button class="close-button" data-close-dialog="confirm-dialog" aria-label="取消重开">×</button></header>

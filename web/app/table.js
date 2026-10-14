@@ -13,7 +13,7 @@ prefs.handStyle=prefs.handStyle==='fan'?'fan':'flat';root.dataset.handStyle=pref
 if(!Object.hasOwn(GuandanArrange.priorities,prefs.arrangePriority))prefs.arrangePriority='balanced';
 let liveRound=null,loadError=null,initialDeal=false;
 try{initialDeal=!localStorage.getItem(GuandanMatch.SAVE_KEY);liveRound=GuandanMatch.read(localStorage);}catch(error){loadError=error;}
-let selected=new Set(),toastTimer,botTimer,botWait=null,hintSnapshot=null,playKey=null,handLayout=null,handEditor=null,renderedHandKey='';
+let selected=new Set(),toastTimer,botTimer,botWait=null,hintSnapshot=null,playKey=null,handLayout=null,handEditor=null,handMarquee=null,renderedHandKey='';
 let paused=Boolean(prefs.paused),fault=null,faultKind=null,workEpoch=0,activeTask=null,confirmMode='restart';
 const model=new DanLMClient(),cardNodes=new Map(),dialogFocus=new WeakMap();
 const dealView=new DealAnimation.TableView({stage:byId('deal-stage'),table:document.querySelector('.play-zone'),receipt:byId('tribute-receipt'),hand:byId('hand-cards')});
@@ -80,11 +80,11 @@ function renderArrangement(){
     summary.append(status);
   }
 }
-const canPlay=()=>Boolean(liveRound?.canAct&&!handEditor?.editing&&!paused&&!fault&&!dealMotion.active&&(!liveRound.remote||window.GuandanLan?.ready));
+const canPlay=()=>Boolean(liveRound?.canAct&&!handEditor?.editing&&!handMarquee?.active&&!paused&&!fault&&!dealMotion.active&&(!liveRound.remote||window.GuandanLan?.ready));
 const canArrange=()=>Boolean(liveRound?.hand.length&&!liveRound.game.result&&!dealMotion.active);
 // Choosing and arranging are private preparation, independent of whose turn
 // it is, model availability, pause state or a pending LAN response.
-const canSelect=()=>canArrange()&&!handEditor?.editing;
+const canSelect=()=>canArrange()&&!handEditor?.editing&&!handMarquee?.active;
 const hasOpenDialog=()=>Boolean(document.querySelector('dialog[open]'));
 function beginDealAnimation(){
   stopBots();
@@ -151,6 +151,7 @@ function renderHand(){
   const hand=ownHand(),container=byId('hand-cards'),layout=displayLayout();
   GuandanCore.setLevel(liveRound?.level||'2');
   handEditor?.reconcile();
+  handMarquee?.reconcile();
   const key=JSON.stringify([layout,liveRound?.level,Boolean(liveRound?.game.result)]);
   // Opponent turns must not detach the pressed card or steal touch capture.
   // The public table updates freely while the unchanged hand keeps its nodes.
@@ -416,7 +417,7 @@ function stopBots(){
   if(activeTask==='npc'){workEpoch++;activeTask=null;model.cancel();}
 }
 function openDialog(dialog,trigger){
-  if(dialog.open)return;handEditor?.cancel();dealMotion.finish();stopBots();dialogFocus.set(dialog,trigger);dialog.showModal();renderGame();
+  if(dialog.open)return;handEditor?.cancel();handMarquee?.cancel();dealMotion.finish();stopBots();dialogFocus.set(dialog,trigger);dialog.showModal();renderGame();
 }
 function closeDialog(dialog,focusTarget){if(focusTarget)dialogFocus.set(dialog,focusTarget);dialog.close();}
 function updateSelection(){
@@ -426,7 +427,8 @@ function updateSelection(){
   const waitingTribute=liveRound?.needsTributeConfirmation;
   const title=selected.size?'已选 '+selected.size+' 张':!liveRound?'存档待恢复':waitingTribute?(liveRound.isTuo3?'请确认翻牌与搭档':'请确认桌面贡还结果'):isTribute?(liveRound.canAct?(liveRound.phase==='give'?'请选择进贡牌':'请选择还贡牌'):'等待'+playerAt(liveRound.actingSeat).name+(liveRound.phase==='give'?'进贡':'还贡')):canPlay()?'请选择手牌':ownHand().length?'请等待':'你的手牌已出完';
   const note=document.createElement('span');note.textContent=result?.error||result?.play?.label||(paused?'对局已暂停':fault?'请先处理上方提示':waitingTribute?'看清后点击「开始出牌」':isTribute?(liveRound.canAct?'合法贡还牌已标记':'你暂时无需操作'):canPlay()?'或点击「看建议」':activeTask==='npc'?'模型正在思考':'可查看本局记录');
-  if(handEditor?.editing)note.textContent='松手放下 · 自动回到选牌';
+  if(handMarquee?.active)note.textContent='松手完成框选 · Esc 取消';
+  else if(handEditor?.editing)note.textContent='松手放下 · 自动回到选牌';
   else if(!selected.size&&canArrange()&&!isTribute)note.textContent=canPlay()?'按住拖动理牌':'可先选牌、理牌，轮到你再出牌';
   else if(selected.size&&!liveRound?.canAct&&!isTribute){
     GuandanCore.setLevel(liveRound.level);
@@ -445,7 +447,7 @@ function updateSelection(){
     button.disabled=!canArrange();
     button.classList.toggle('unavailable',Boolean(!handEditor?.editing&&allowed&&!allowed.has(id)));button.classList.toggle('playable-tribute',Boolean(!handEditor?.editing&&allowed?.has(id)));
   });
-  const picker=byId('play-kind'),choices=handEditor?.editing?[]:result?.plays||[];
+  const picker=byId('play-kind'),choices=handEditor?.editing||handMarquee?.active?[]:result?.plays||[];
   picker.hidden=choices.length<2;picker.replaceChildren();
   for(const play of choices){const option=document.createElement('option');option.value=play.key;option.textContent=play.label;picker.append(option);}
   if(result?.play)picker.value=result.play.key;
@@ -703,7 +705,7 @@ tableObserver.observe(document.querySelector('.hand-pane'));tableObserver.observ
 window.GuandanTable=Object.freeze({
   handStyle:()=>prefs.handStyle,
   setHandStyle(style){prefs.handStyle=style==='fan'?'fan':'flat';savePrefs();},
-  cancelDrag:()=>handEditor?.cancel(),
+  cancelDrag(){handEditor?.cancel();handMarquee?.cancel();},
   layout(){resizeHand();renderHand();},
 });
 
@@ -711,6 +713,12 @@ handEditor=createHandEditor({root,container:byId('hand-cards'),scroll:byId('hand
   getLayout:currentLayout,getHand:()=>liveRound?.hand||[],getSelected:()=>selected,canEdit:canArrange,commit:commitLayout,imageFor,
   onArrange(ids){for(const id of ids)selected.delete(id);playKey=null;hintSnapshot=null;clearToast();},
   curvedTarget:(x,y)=>window.tableView?.dropTarget(x,y),onModeChange:()=>updateSelection()
+});
+handMarquee=GuandanHandMarquee.create({root,scroll:byId('hand-scroll'),container:byId('hand-cards'),
+  canSelect:()=>canArrange()&&!handEditor?.active&&!hasOpenDialog(),
+  getSignature:()=>JSON.stringify(displayLayout()),getSelected:()=>selected,
+  onSelect(ids){selected=new Set(ids.filter(id=>ownHand().some(card=>card.id===id)));playKey=null;hintSnapshot=null;clearToast();updateSelection();},
+  onModeChange:()=>updateSelection(),translate:text=>GuandanI18n.t(text)
 });
 byId('arrange-hand').addEventListener('click',cycleArrangement);
 byId('arrange-priority').value=prefs.arrangePriority;

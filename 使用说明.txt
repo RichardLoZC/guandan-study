@@ -1,4 +1,4 @@
-掼蛋研习社 / Guandan Study 1.8.18
+掼蛋研习社 / Guandan Study 1.8.19
 
 手牌操作：不出、出牌固定在底栏醒目位置；看建议教学入口与出牌记录位于右下方。下方集中平铺／弧形、理牌方式、按大小、撤销理牌、取消选择。选择同花顺、炸弹、顺连或对子优先会立即理牌，再点“理牌”轮换组合；“按大小”恢复下排点数排序；“撤销理牌”撤回最近一次手动或自动调整。
 
@@ -15,6 +15,7 @@ Android：安装 APK，手机和平板共用；支持横竖屏。需要 Android 
 预选与理牌：对手或 AI 出牌、暂停、等待联机回包时，都可先选牌和理牌。轮到自己且合法时才可确认出牌。发牌动画和本副结束时停止手牌操作。
 双层高度：上排即使为空也保留完整空间，移动牌不会改变手牌区、牌桌或底栏的位置。
 初始牌序：所有手牌按大小放在下排，上排留空；已理好的牌序继续保存。
+鼠标框选：在手牌区空白处按住鼠标左键拖动。向右拖动蓝色选框，只选择完整框住的可见牌面；向左拖动绿色虚线框，碰到可见牌面即可选中。按住 Shift 追加选择，Esc 取消本次框选。松手完成，可接着拖动选中的牌理牌。触屏在空白处仍用于滚动。
 自由理牌 / Free arrange：点击选牌，按住拖动就立即理牌，无需等待，松手完成；单张或已选组合均可在上下两排换位，支持撤销。轻微抖动不会触发理牌；鼠标与触屏都使用点选、拖动换位。键盘可直接用 Alt / Option + 方向键移动聚焦牌或已选组合。平铺和弧形共用牌序；出牌保留其余牌序，重新打开同一副会恢复；窄屏可在手牌区空白处左右滚动。“理牌”按钮继续自动寻找组合。
 Free arrange: Tap to select; press and drag to move cards or a selection between rows immediately. No hold delay. Release to finish. Small movements are ignored to avoid accidental drags. Mouse and touch use the same gestures. Undo and Alt/Option + arrow keys remain available. Both views share the saved layout. Arrange cycles through suggested combinations.
 看建议 / Hint：DanLM 推荐，只选中建议，不会替你确认出牌。

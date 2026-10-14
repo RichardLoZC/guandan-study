@@ -57,6 +57,8 @@ Select and arrange while opponents are acting, while paused or while a LAN respo
 
 Automatic arrangement uses a bounded search over complete hand partitions. It compares competing uses of natural cards and wild cards, including preserving one bomb while completing a straight flush. Priority modes offer alternatives; this is not a guarantee of a globally optimal partition.
 
+Drag the mouse from empty hand space to box-select cards. Drag right for a blue window that fully encloses visible card faces; drag left for a green crossing box that selects touched faces. Hold **Shift** to add to your selection, or **Esc** to cancel the box. Flat and curved layouts use visible face geometry across both rows. Dragging a card still rearranges it; touch gestures on empty space still scroll.
+
 Layouts stay on your device. Switching between flat and fan layouts preserves selected cards and both rows. Played cards disappear without re-sorting the rest; a new round starts with a fresh arrangement. Auto arrangement remains available. Neither manual nor automatic display arrangements change game rules or DanLM inputs.
 
 ## Develop
