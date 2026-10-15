@@ -3,7 +3,7 @@ class DanLMClient{
   constructor(){this.worker=null;this.pending=null;this.sequence=0;this.ready=false;}
   request(payload,{timeout=90000}={}){
     if(this.pending)return Promise.reject(new Error('模型正在计算，请稍候'));
-    if(!this.worker)this.worker=new Worker('/assets/fairWorker-CTCwrT35.js?v=201',{type:'module'});
+    if(!this.worker)this.worker=new Worker('/assets/fairWorker-CTCwrT35.js?v=202',{type:'module'});
     const id=++this.sequence;
     return new Promise((resolve,reject)=>{
       const timer=setTimeout(()=>this.cancel('模型计算超时，请重试'),timeout);

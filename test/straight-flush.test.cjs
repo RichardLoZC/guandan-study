@@ -12,15 +12,8 @@ function fixture(ids=flushIds){
   state.game.currentPlayer=state.game.starter=0;
   return new Match(state);
 }
-function worker(){
-  // Execute the shipped worker's recognition, enumeration and policy payload
-  // functions. Only its module bootstrap is adapted for this Node VM.
-  const source=fs.readFileSync(require.resolve('../web/assets/fairWorker-CTCwrT35.js'),'utf8')
-    .replace(/^import "\.\.\/app\/play-rules\.js\?v=\d+";\n/,'')
-    .replaceAll('import.meta.url','"http://localhost/assets/fairWorker-CTCwrT35.js"');
-  const context={self:{},performance,TextEncoder,TextDecoder,GuandanPlayRules:rules};
-  vm.createContext(context);vm.runInContext(source,context);return context;
-}
+const worker=require('./helpers/strategy-worker.cjs');
+
 test('all suits, sequence ends, levels and wild substitutions classify only as straight flushes',()=>{
   const ai=worker(),sequence=['A','2','3','4','5','6','7','8','9','10','J','Q','K','A'];
   for(const level of ['2','7','A'])for(const suit of ['clubs','diamonds','hearts','spades'])for(let start=0;start<10;start++){

@@ -1,7 +1,7 @@
 /* One cancellable presentation delay shared by solo and hosted AI turns. */
 (function(scope){
   'use strict';
-  const MIN_MS=1600,MAX_MS=2600;
+  const MIN_MS=1120,MAX_MS=1820; // 30% shorter; inference runs concurrently.
   function begin({random=Math.random,setTimer=setTimeout,clearTimer=clearTimeout}={}){
     const ms=MIN_MS+Math.floor(Math.max(0,Math.min(1,random()))*(MAX_MS-MIN_MS));
     let timer=null,settle;

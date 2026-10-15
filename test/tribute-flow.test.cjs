@@ -73,3 +73,10 @@ test('a model reply arriving during dealing cannot commit a play',async()=>{
   h.context.scheduleBots();const pending=h.timers[0]();h.context.dealMotion.active=true;resolve({});await pending;
   assert.equal(h.calls.commits,0);
 });
+test('an impossible human response is skipped without model or thinking and stale timers do nothing',async()=>{
+  const h=scheduling(()=>assert.fail('forced pass must not wait'));
+  Object.assign(h.context.liveRound,{needsTributeConfirmation:false,actingSeat:0,mustPass:true,passForced(){h.calls.commits++;this.mustPass=false;}});
+  h.context.scheduleBots();await h.timers[0]();assert.equal(h.calls.commits,1);assert.equal(h.calls.requests,0);
+  h.context.liveRound.mustPass=true;h.context.scheduleBots();h.context.liveRound.revision++;
+  await h.timers[1]();assert.equal(h.calls.commits,1);
+});

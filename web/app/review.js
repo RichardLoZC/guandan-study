@@ -177,6 +177,8 @@ function reviewText(){
   for(const event of round.events){
     lines.push((event.index+1)+'. '+round.names[event.seat]+'：'+event.label+(event.engine?'（'+event.engine+'）':'')+'；余牌 '+event.remaining.map((count,seat)=>round.names[seat]+count).join(' / '));
     if(event.cards.length)lines.push('   牌面：'+event.cards.map(card=>card.label).join('、'));
+    if(event.strategy)lines.push('   当时策略 '+event.strategy.version+'：参考此前 '+event.strategy.historyLength+' 次行动；模型原选 '+event.strategy.original+' → 实际 '+event.strategy.chosen,
+      ...event.strategy.reasons.map(reason=>'   '+reason));
     if(event.seat===0)lines.push('   行动前手牌：'+event.ownBefore.map(card=>card.label).join('、'),'   行动后手牌：'+(event.ownAfter.map(card=>card.label).join('、')||'已出完'));
   }
   return lines.join('\n');

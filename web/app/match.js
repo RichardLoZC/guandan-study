@@ -152,7 +152,18 @@
       this.state={...this.state,study:{...this.state.study,tributeAcknowledged:true}};
       this.revision++;
     }
-    get canAct(){return !this.game.result&&!this.needsTributeConfirmation&&this.actingSeat===0;}
+    get mustPass(){
+      if(this.game.result||this.phase!=='playing'||this.needsTributeConfirmation||!this.game.tablePlay)return false;
+      const count=this.game.players[this.actingSeat].hand.length;
+      // At most three cards cannot form any bomb. Only public card counts are
+      // needed, so the same rule applies to humans and bots without peeking.
+      return count>0&&count<=3&&this.game.tablePlay.play.size>count;
+    }
+    passForced(expectedRevision=this.revision){
+      if(!this.mustPass)throw new Error('当前不能按张数自动不出');
+      this.commit(this.actingSeat,[],{expectedRevision,automatic:true,engine:'规则自动不出'});
+    }
+    get canAct(){return !this.game.result&&!this.needsTributeConfirmation&&!this.mustPass&&this.actingSeat===0;}
     get tributeChoices(){return (this.phase==='give'?core.giveChoices(this.state):this.phase==='return'?core.returnChoices(this.state):[]).map(decorate);}
     chooseTribute(){
       const choices=this.tributeChoices;
@@ -230,7 +241,7 @@
       const play=key?plays.find(play=>play.key===key):plays[0];
       return play?{play,plays}:{error:'所选牌型已失效，请重新选择'};
     }
-    commit(seat,ids,{expectedRevision=this.revision,key,engine=null,teaching=null,automatic=false}={}){
+    commit(seat,ids,{expectedRevision=this.revision,key,engine=null,teaching=null,strategy=null,automatic=false}={}){
       if(expectedRevision!==this.revision)throw new Error('牌局已变化，请重新选择');
       if(this.needsTributeConfirmation)throw new Error(this.isTuo3?'请先看清翻牌与搭档，再点击「开始出牌」':'请先看清贡还结果，再点击「开始出牌」');
       if(this.game.result||seat!==this.actingSeat)throw new Error('现在不能由此玩家行动');
@@ -248,7 +259,7 @@
         if(!ids.length&&!this.game.tablePlay)throw new Error('领出时不能不出');
         const game=ids.length?core.applyPlay(this.game,seat,checked.play):core.applyPass(this.game,seat);
         const study=clone(this.state.study);
-        study.choices[this.game.actionHistory.length]={automatic,engine,teaching:seat===0?clone(teaching):null};
+        study.choices[this.game.actionHistory.length]={automatic,engine,teaching:seat===0?clone(teaching):null,...(strategy?{strategy:clone(strategy)}:{})};
         next=this.isTuo3?(ids.length?tuo3.afterPlay(this.state,game,seat,checked.play):tuo3.afterPass(this.state,game)):{...this.state,game};
         next.study=study;
       }
@@ -257,8 +268,11 @@
     commitModel(response,revision,seat){
       const candidate=response?.result?.candidates?.[0];
       if(!candidate||!['pass','play'].includes(candidate.type))throw new Error('模型未返回有效打法，请重试');
+      const book=response.result.book;
+      const strategy=book?{version:book.version,original:book.original,chosen:book.chosen,changed:book.changed,
+        historyLength:this.game.actionHistory.length,reasons:(book.rows?.[0]?.evidence||[]).filter(e=>e.delta!==0).map(e=>e.reason)}:null;
       this.commit(seat,candidate.type==='play'?candidate.play.cards.map(card=>card.id):[],{
-        expectedRevision:revision,key:candidate.play?.key,engine:response.result.engine,automatic:true});
+        expectedRevision:revision,key:candidate.play?.key,engine:response.result.engine,strategy,automatic:true});
     }
     adaptModel(response,seat=this.actingSeat){
       if(!this.isTuo3)return response;
@@ -302,6 +316,7 @@
         const event={index,seat:entry.seat,label:entry.play?.label||'不出',cards,kind:entry.play?(core.isBomb(entry.play)?'bomb':entry.play.type):'pass',
           remainingBefore,remaining:[...counts],ownBefore:before,ownAfter:clone(own),tableBefore,tableAfter:clone(table),
           automatic:metadata.automatic??entry.seat!==0,engine:metadata.engine||null,teaching:metadata.teaching||null,
+          strategy:this.game.result?clone(metadata.strategy||null):null,
           previousOwner:tableBefore?.owner??null,finished:counts[entry.seat]===0,trick};
         if(!table)trick++;return event;
       });

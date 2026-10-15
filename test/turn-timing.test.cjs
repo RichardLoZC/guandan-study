@@ -1,7 +1,7 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const timing=require('../web/app/turn-timing.js');
-test('thinking time varies within 1.6–2.6 seconds and settles only on expiry',async()=>{
- for(const [random,expected] of [[0,1600],[.37,1970],[1,2600]]){
+test('thinking time varies within 1.12–1.82 seconds and settles only on expiry',async()=>{
+ for(const [random,expected] of [[0,1120],[.37,1379],[1,1820]]){
   let fire,elapsed,settled=false;
   const wait=timing.begin({random:()=>random,setTimer:(fn,ms)=>{fire=fn;elapsed=ms;return 1;},clearTimer(){assert.fail('completed timer should not be cleared');}});
   wait.promise.then(()=>settled=true);await Promise.resolve();assert.equal(settled,false);assert.equal(elapsed,expected);

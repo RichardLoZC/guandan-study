@@ -544,13 +544,13 @@ function renderGame(){
   byId('engine-indicator').textContent=fault?'需要处理提示':activeTask==='health'?'正在加载离线模型…':model.ready?'DanLM · 离线就绪':'模型等待加载';
   resizeHand();renderHand();window.GuandanLan?.controls();
 }
-function saveAction(action){
+function saveAction(action,{preserveSelection=false}={}){
   stopBots();if(!liveRound)return false;clearToast();
   const oldState=liveRound.state,oldRevision=liveRound.revision,actor=liveRound.actingSeat;
   try{
     action();liveRound.persist(localStorage);
   }catch(error){liveRound.state=oldState;liveRound.revision=oldRevision;reportError(error,'save');return false;}
-  if(actor===0)selected.clear();playKey=null;hintSnapshot=null;clearError();renderGame();
+  if(actor===0&&!preserveSelection)selected.clear();playKey=null;hintSnapshot=null;clearError();renderGame();
   if(liveRound.game.result){
     try{GuandanMatch.archive(localStorage,liveRound);}catch{toast('本局已保存，历史复盘暂未保存。请导出备份后再继续。');}
   }else scheduleBots();
@@ -558,10 +558,13 @@ function saveAction(action){
 }
 function scheduleBots(){
   clearTimeout(botTimer);botTimer=null;
-  if(!liveRound||liveRound.remote||liveRound.game.result||liveRound.needsTributeConfirmation||paused||fault||dealMotion.active||hasOpenDialog()||document.hidden||liveRound.actingSeat===0||activeTask)return;
+  if(!liveRound||liveRound.remote||liveRound.game.result||liveRound.needsTributeConfirmation||paused||fault||dealMotion.active||hasOpenDialog()||document.hidden||(liveRound.actingSeat===0&&!liveRound.mustPass)||activeTask)return;
   const id=liveRound.id,revision=liveRound.revision,seat=liveRound.actingSeat;
   botTimer=setTimeout(async()=>{
     botTimer=null;if(!liveRound||liveRound.remote||id!==liveRound.id||revision!==liveRound.revision||liveRound.actingSeat!==seat||liveRound.needsTributeConfirmation||paused||fault||dealMotion.active||hasOpenDialog()||document.hidden||activeTask)return;
+    if(liveRound.mustPass){
+      saveAction(()=>{for(let i=0;i<3&&liveRound.mustPass;i++)liveRound.passForced();},{preserveSelection:true});return;
+    }
     const epoch=++workEpoch,wait=GuandanTurnTiming.begin();botWait=wait;activeTask='npc';renderGame();
     try{
       const decision=liveRound.phase!=='playing'?liveRound.chooseTribute():null;

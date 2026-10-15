@@ -37,7 +37,7 @@ function perspective(match,seat,names){
   if(s.antiTribute)s.antiTribute=s.antiTribute.map(e=>({...e,seat:rot(e.seat)}));
   s.known=(s.known||[]).map(e=>({...e,seat:rot(e.seat)}));
   // Private teaching text from another player's analysis is never public.
-  s.study.choices=Object.fromEntries(Object.entries(s.study.choices||{}).map(([k,v])=>[k,{automatic:v.automatic,engine:v.engine,teaching:null}]));
+  s.study.choices=Object.fromEntries(Object.entries(s.study.choices||{}).map(([k,v])=>[k,{automatic:v.automatic,engine:v.engine,teaching:null,...(g.result&&v.strategy?{strategy:v.strategy}:{})}]));
   const view=new Match(s);Object.defineProperty(view,'names',{value:[0,1,2,3].map(i=>names[(i+seat)%4])});
   const tributeDisplay=view.tributeDisplay,tributeChoices=view.actingSeat===0?view.tributeChoices:[];
   for(const p of s.game.players)if(p.seat!==0&&!s.game.result)p.hand=Array(p.hand.length).fill(null);
@@ -101,7 +101,7 @@ class Room {
     round.humanSeats=this.members.map(m=>(this.seats.indexOf(m.id)-seat+4)%4);
     round.needsTributeConfirmation=needs;
     if(round.tributeDisplay)round.tributeDisplay.awaitingConfirmation=needs;
-    round.canAct=!this.paused&&!waiting.length&&!this.error&&!this.match.needsTributeConfirmation&&!this.match.game.result&&this.match.actingSeat===seat;
+    round.canAct=!this.paused&&!waiting.length&&!this.error&&!this.match.needsTributeConfirmation&&!this.match.game.result&&!this.match.mustPass&&this.match.actingSeat===seat;
     round.confirmWaiting=this.match.needsTributeConfirmation&&!needs;
     return {room:info,round};
   }
@@ -165,6 +165,11 @@ class Room {
       return;
     }
     const seat=this.match.actingSeat;
+    if(this.match.mustPass){
+      try{this.change(()=>{for(let i=0;i<3&&this.match.mustPass;i++)this.match.passForced();});}
+      catch(error){this.error='自动不出未能保存：'+error.message;this.version++;}
+      return;
+    }
     if(this.members.some(m=>m.id===this.seats[seat]))return;
     const version=this.version,id=this.match.id,phase=this.match.phase,wait=this.startThinking();this.busy=true;this.botWait=wait;
     try{
