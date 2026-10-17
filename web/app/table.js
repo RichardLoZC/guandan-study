@@ -9,7 +9,7 @@ try{const previous=JSON.parse(localStorage.getItem('guandan-engine-choices')||'n
 // Existing solo games used one switch for bots and advice. Preserve that choice
 // on upgrade, then store the two preferences independently.
 if(typeof prefs.aiBook!=='boolean')prefs.aiBook=prefs.book!==false;
-prefs.handStyle=prefs.handStyle==='fan'?'fan':'flat';root.dataset.handStyle=prefs.handStyle;
+prefs.handStyle=prefs.handStyle==='fan'?'fan':'flat';root.dataset.handStyle=root.dataset.phone==='true'?'stack':prefs.handStyle;
 if(!Object.hasOwn(GuandanArrange.priorities,prefs.arrangePriority))prefs.arrangePriority='balanced';
 let liveRound=null,loadError=null,initialDeal=false;
 try{initialDeal=!localStorage.getItem(GuandanMatch.SAVE_KEY);liveRound=GuandanMatch.read(localStorage);}catch(error){loadError=error;}
@@ -36,11 +36,13 @@ const TUO3_RULES=[
   '拖三时每张红桃 3、红桃 2 各计 2 分，其他 3 各计 1 分。结束时所有未出完者的这些分牌按同值扣分。每项加减都由本副两名搭档共同承担，另一队反向加减；四人总积分之和保持为 0。'
 ];
 let arrangement={key:'',plans:[],index:-1};
-function arrangementKey(){return liveRound?.id+'|'+liveRound?.level+'|'+prefs.arrangePriority+'|'+(liveRound?.hand||[]).map(c=>c.id).sort().join(',');}
+function arrangementHand(){const lower=new Set(currentLayout().rows[1]);return (liveRound?.hand||[]).filter(card=>lower.has(card.id));}
+function arrangementKey(){return layoutKey()+'|'+liveRound?.level+'|'+prefs.arrangePriority+'|'+arrangementHand().map(c=>c.id).sort().join(',');}
 function layoutKey(){return (liveRound?.remote?'lan:':'solo:')+liveRound?.id+'|'+(liveRound?.playerIds?.[0]??0);}
 function currentLayout(){
   const key=layoutKey(),hand=liveRound?.hand||[];
   handLayout=handLayout?.key===key?GuandanHandLayout.reconcile(handLayout,key,hand):GuandanHandLayout.load(localStorage,key,hand);
+  if(window.GuandanPhone?.active)handLayout=GuandanHandStack.singleRow(handLayout);
   return handLayout;
 }
 function storeLayout(next){
@@ -55,24 +57,31 @@ function ownHand(){
   return GuandanHandLayout.ordered(displayLayout(),hand);
 }
 function cycleArrangement(){
-  if(!canArrange())return;
-  ownHand(); // Invalidate cached plans after cards, round or priority change.
-  if(!arrangement.plans.length)arrangement.plans=GuandanArrangeSearch.plans(liveRound.hand,liveRound.level,{priority:prefs.arrangePriority});
+  if(!canAutoArrange())return;
+  ownHand(); // A change in either shelf's membership invalidates lower-shelf plans.
+  if(!arrangement.plans.length)arrangement.plans=GuandanArrangeSearch.plans(arrangementHand(),liveRound.level,{priority:prefs.arrangePriority});
   if(!arrangement.plans.length)return;
   const index=(arrangement.index+1)%arrangement.plans.length;
-  handEditor.replace(GuandanHandLayout.fromPlan(layoutKey(),liveRound.hand,arrangement.plans[index]));
+  handEditor.replace(GuandanHandLayout.fromPlan(layoutKey(),liveRound.hand,arrangement.plans[index],currentLayout()));
   arrangement.index=index;renderArrangement();
+}
+function sortLowerHand(){
+  if(canAutoArrange())handEditor.replace(GuandanHandLayout.fromPlan(layoutKey(),liveRound.hand,null,currentLayout()));
 }
 function renderArrangement(){
   ownHand();
   const plan=arrangement.plans[arrangement.index],summary=byId('arrangement-summary');
   summary.replaceChildren();
-  const arrangeLabel=document.createElement('span');arrangeLabel.textContent='理牌';
+  const phone=window.GuandanPhone?.active;
+  const arrangeLabel=document.createElement('span');arrangeLabel.textContent=phone?'理牌':'理下排';
+  byId('arrange-hand').title=byId('arrange-priority').title=phone?'整理整手牌，轮换组合方案':'仅整理下排，上排保留组合不变';
+  byId('arrange-priority').setAttribute('aria-label',phone?'理牌优先方式':'下排理牌优先方式');
+  byId('sort-hand').title=phone?'整手牌按大小排序':'仅按大小排序下排，上排保持不变';
   const arrangeCount=document.createElement('span');arrangeCount.className='arrange-cycle';arrangeCount.setAttribute('aria-hidden','true');
   arrangeCount.textContent=plan?(arrangement.index+1)+'/'+arrangement.plans.length:'';
   byId('arrange-hand').replaceChildren(arrangeLabel,arrangeCount);
   if(liveRound?.game.result)return;
-  for(const id of ['arrange-hand','arrange-priority','sort-hand'])byId(id).disabled=!canArrange();
+  for(const id of ['arrange-hand','arrange-priority','sort-hand'])byId(id).disabled=!canAutoArrange();
   if(plan){
     const status=document.createElement('strong');status.className='arrangement-status';
     const missing={flush:'未找到同花顺',bomb:'未找到炸弹',runs:'未找到顺连',pairs:'未找到对子'};
@@ -80,8 +89,9 @@ function renderArrangement(){
     summary.append(status);
   }
 }
-const canPlay=()=>Boolean(liveRound?.canAct&&!handEditor?.editing&&!handMarquee?.active&&!paused&&!fault&&!dealMotion.active&&(!liveRound.remote||window.GuandanLan?.ready));
+const canPlay=()=>Boolean(!window.GuandanPhone?.blocked()&&liveRound?.canAct&&!handEditor?.editing&&!handMarquee?.active&&!paused&&!fault&&!dealMotion.active&&(!liveRound.remote||window.GuandanLan?.ready));
 const canArrange=()=>Boolean(liveRound?.hand.length&&!liveRound.game.result&&!dealMotion.active);
+const canAutoArrange=()=>canArrange()&&currentLayout().rows[1].length>0;
 // Choosing and arranging are private preparation, independent of whose turn
 // it is, model availability, pause state or a pending LAN response.
 const canSelect=()=>canArrange()&&!handEditor?.editing&&!handMarquee?.active;
@@ -107,17 +117,18 @@ function toast(message){
 }
 function clearToast(){clearTimeout(toastTimer);byId('toast').classList.remove('visible');}
 function loadCardImage(img,skin,face){
+  const pathFor=key=>GuandanCardArt.path(key,face,img.dataset.levelCard==='true');
   const version=String(Number(img.dataset.imageVersion||0)+1);img.dataset.imageVersion=version;let attempts=0;
   img.onerror=()=>{
     if(img.dataset.imageVersion!==version)return;
-    if(attempts++>=2){img.onerror=null;img.src='assets/minimal/'+face+'.svg';return;}
-    requestAnimationFrame(()=>{if(img.dataset.imageVersion===version)img.src='assets/'+skin+'/'+face+'.svg?v=110&r='+attempts;});
+    if(attempts++>=2){img.onerror=null;img.src=pathFor('minimal');return;}
+    requestAnimationFrame(()=>{if(img.dataset.imageVersion===version)img.src=pathFor(skin)+'?v=205&r='+attempts;});
   };
-  img.src='assets/'+skin+'/'+face+'.svg?v=110';
+  img.src=pathFor(skin)+'?v=205';
 }
-function imageFor(face,label='',lockedSkin){
-  const img=document.createElement('img');img.dataset.cardFace=face;
-  if(lockedSkin)img.dataset.fixedSkin=lockedSkin;img.alt=label;img.draggable=false;
+function imageFor(face,label='',lockedSkin,level=liveRound?.level){
+  const img=document.createElement('img');img.dataset.cardFace=face;img.dataset.levelCard=String(GuandanCardArt.isLevel(face,level));
+  if(lockedSkin)img.dataset.fixedSkin=lockedSkin;img.alt=label+(label&&img.dataset.levelCard==='true'?' 级牌':'');img.draggable=false;
   loadCardImage(img,lockedSkin||currentSkin,face);return img;
 }
 function setCardSkin(skin){
@@ -134,7 +145,7 @@ function buildSkinOptions(){
   for(const [key,skin] of Object.entries(SKINS)){
     const button=document.createElement('button');button.type='button';button.className='skin-option';button.dataset.skinOption=key;button.setAttribute('aria-pressed',String(key===currentSkin));
     const preview=document.createElement('span');preview.className='skin-card-preview';
-    for(const face of ['spadeAce','heartKing','clubQueen'])preview.append(imageFor(face,'',key));
+    for(const face of ['spadeAce','heartKing','clubQueen'])preview.append(imageFor(face,'',key,null));
     const title=document.createElement('strong');title.textContent=skin.name;
     const note=document.createElement('span');note.className='skin-note';note.textContent=skin.note;
     const check=document.createElement('span');check.className='skin-check';check.textContent='✓';check.setAttribute('aria-hidden','true');
@@ -154,7 +165,8 @@ function renderHand(){
   GuandanCore.setLevel(liveRound?.level||'2');
   handEditor?.reconcile();
   handMarquee?.reconcile();
-  const key=JSON.stringify([layout,liveRound?.level,Boolean(liveRound?.game.result)]);
+  const phone=window.GuandanPhone?.active;
+  const key=JSON.stringify([layout,liveRound?.level,Boolean(liveRound?.game.result),phone]);
   // Opponent turns must not detach the pressed card or steal touch capture.
   // The public table updates freely while the unchanged hand keeps its nodes.
   if(key===renderedHandKey&&cardNodes.size===hand.length&&hand.every(card=>cardNodes.has(card.id))){renderArrangement();updateSelection();return;}
@@ -165,11 +177,17 @@ function renderHand(){
   for(const [id] of cardNodes)if(!liveIds.has(id))cardNodes.delete(id);
   const duplicates=new Map(),ordinals=new Map(),rows=[];
   hand.forEach(card=>duplicates.set(card.face,(duplicates.get(card.face)||0)+1));
-  for(const tier of liveRound?.game.result?[1]:[0,1]){
-    const row=document.createElement('div');row.className='card-row'+(!layout.rows[tier].length?' is-empty':'');row.dataset.row=tier;row.setAttribute('role','group');row.setAttribute('aria-label',tier===0?'上排手牌':'下排手牌');rows.push(row);
+  for(const tier of liveRound?.game.result||phone?[1]:[0,1]){
+    const row=document.createElement('div');row.className='card-row'+(!layout.rows[tier].length?' is-empty':'');row.dataset.row=tier;row.setAttribute('role','group');row.setAttribute('aria-label',phone?'叠放手牌':tier===0?'上排手牌':'下排手牌');rows.push(row);
     const label=document.createElement('span');label.className='hand-tier-label';label.textContent=tier===0?'上排':'下排';row.append(label);
+    label.title=tier===0?'上排保留：自动理牌不会移动这里的牌':'下排试排：理牌与按大小只调整这里';
     for(const segment of GuandanHandLayout.segments(layout,tier)){
       const cluster=document.createElement('div');cluster.className='hand-cluster';row.append(cluster);
+      const destinations=new Map();
+      if(phone)for(const ids of GuandanHandStack.columns(segment.ids,hand)){
+        const column=document.createElement('div');column.className='stack-column';cluster.append(column);
+        ids.forEach((id,index)=>destinations.set(id,{column,index,count:ids.length}));
+      }
       if(segment.groupIndex>=0){
         const plays=GuandanPlayChoices.strongestFirst(GuandanCore.recognize(segment.ids.map(id=>hand.find(card=>card.id===id))));
         const play=plays[0],style=GuandanPresentation.combinationStyle(play);
@@ -200,10 +218,22 @@ function renderHand(){
         button.addEventListener('click',event=>selectCard(card.id,event));
         cardNodes.set(card.id,button);
       }
-      button.setAttribute('aria-label',card.label+(card.isWild?' 逢人配':'')+(duplicates.get(card.face)>1?' 第'+ordinal+'张':''));
+      const face=button.querySelector('img[data-card-face]'),isLevel=GuandanCardArt.isLevel(card.face,liveRound.level);
+      if(face.dataset.levelCard!==String(isLevel)){face.dataset.levelCard=String(isLevel);loadCardImage(face,currentSkin,card.face);}
+      if(phone){
+        let index=button.querySelector('.stack-card-index');
+        if(!index){index=document.createElement('span');index.className='stack-card-index';index.setAttribute('aria-hidden','true');index.setAttribute('translate','no');button.append(index);}
+        index.replaceChildren();index.dataset.suit=card.suit;index.dataset.wild=String(Boolean(card.isWild));index.dataset.joker=card.rank==='BJ'?'big':card.rank==='SJ'?'small':'';
+        const rank=document.createElement('b');rank.textContent=card.suit==='joker'?(GuandanI18n.locale==='en'?'JOKER':card.rank==='BJ'?'大王':'小王'):card.rank;
+        const suit=document.createElement('span');suit.className='stack-suit';suit.textContent=card.isWild?(GuandanI18n.locale==='en'?'W':'配'):({hearts:'♥',diamonds:'♦',clubs:'♣',spades:'♠'}[card.suit]||'');
+        index.append(rank,suit);
+        if(isLevel){const star=document.createElement('span');star.className='stack-star';star.textContent='★';index.append(star);}
+        const spot=destinations.get(id);button.style.setProperty('--stack-slot',3-spot.count+spot.index);button.style.setProperty('--stack-order',spot.index);
+      }
+      button.setAttribute('aria-label',card.label+(isLevel?' 级牌':'')+(card.isWild?' 逢人配':'')+(duplicates.get(card.face)>1?' 第'+ordinal+'张':''));
       const groupIndex=segment.groupIndex;button.classList.toggle('arranged',groupIndex>=0);button.style.removeProperty('--group-color');
       button.dataset.clusterStart=String(id===segment.ids[0]);
-      cluster.append(button);
+      (phone?destinations.get(id).column:cluster).append(button);
     }
     }
   }
@@ -220,14 +250,23 @@ function resizeHand(){
   const layout=displayLayout(),counts=layout.rows.map((row,tier)=>({cards:row.length,clusters:GuandanHandLayout.segments(layout,tier).length}));
   const stylesHand=getComputedStyle(byId('hand-scroll')),gap=parseFloat(stylesHand.getPropertyValue('--hand-group-gap'))||18;
   const cardHeight=parseFloat(styles.getPropertyValue('--hand-card-height'));
+  if(window.GuandanPhone?.active){
+    const metrics=GuandanHandStack.metrics(GuandanHandLayout.segments(layout,1),liveRound.hand,{width:Math.max(0,width-12),cardWidth,gap,minStep:38});
+    byId('hand-cards').style.setProperty('--stack-step',metrics.step+'px');
+    byId('hand-cards').style.setProperty('--stack-width',metrics.width+'px');
+    byId('hand-scroll').classList.toggle('has-overflow',metrics.width>width-12);
+    byId('hand-scroll').style.setProperty('--hand-rows',1);return;
+  }
   const header=parseFloat(stylesHand.getPropertyValue('--group-action-space'))||0;
   byId('hand-scroll').style.setProperty('--hand-shelf-height',GuandanHandFan.shelfHeight(cardWidth,cardHeight,header)+'px');
-  const widthFor=(count,step)=>94+count.clusters*cardWidth+Math.max(0,count.cards-count.clusters)*step+Math.max(0,count.clusters-1)*gap;
-  const fittedStep=Math.min(...counts.filter(count=>count.cards>count.clusters).map(count=>(width-widthFor(count,0))/(count.cards-count.clusters)));
-  const step=Math.max(Math.min(baseStep,30),Math.min(baseStep,Math.floor(fittedStep*100)/100));
-  byId('hand-scroll').style.setProperty('--hand-step',step+'px');
+  // Each shelf fits independently, so trying lower-shelf combinations cannot
+  // compress or recenter the player's reserved upper combinations.
+  counts.forEach((count,tier)=>{
+    const metrics=GuandanHandFan.rowMetrics(count,{width,cardWidth,step:baseStep,gap,minStep:root.dataset.phone==='true'?18:30}),name=tier===0?'upper':'lower';
+    byId('hand-cards').style.setProperty('--'+name+'-hand-step',metrics.step+'px');
+    byId('hand-cards').style.setProperty('--'+name+'-row-width',metrics.width+'px');
+  });
   byId('hand-scroll').style.setProperty('--hand-rows',2);
-  byId('hand-cards').style.setProperty('--row-width',Math.max(0,...counts.map(count=>widthFor(count,step)))+'px');
 }
 function groupPlaySelection(ids,key){
   if(!canPlay()||hasOpenDialog()||liveRound.phase!=='playing'||key!==layoutKey()||ids.length<2)return null;
@@ -267,6 +306,8 @@ function renderTable(){
     if(!play){play=document.createElement('div');play.dataset.playSeat=seat;play.innerHTML='<div class="table-cards"></div><div class="table-caption"></div>';anchor.append(play);}
     play.hidden=!action||liveRound.phase!=='playing';
     play.className='table-play '+seatStyle(seat)+(action?.cards.length>4?' long-play':'')+(action?.type==='pass'?' is-pass':'')+(action?.latest?' is-latest':'')+(table?.owner===seat?' is-leading':'');
+    play.tabIndex=root.dataset.phone==='true'&&action?.type==='play'?0:-1;
+    if(root.dataset.phone==='true'&&action?.type==='play')play.setAttribute('role','button');else play.removeAttribute('role');
     if(!action)continue;
     const cards=play.querySelector('.table-cards');cards.hidden=action.type==='pass';cards.style.setProperty('--played-count',action.cards.length);
     cards.replaceChildren(...action.cards.map(card=>imageFor(card.face,card.label)));cards.setAttribute('aria-label',playerAt(seat).name+'出的'+action.label);
@@ -302,6 +343,8 @@ function renderSeatRemainders(){
     reveal.replaceChildren();reveal.hidden=!hand;
     if(!hand)continue;
     reveal.setAttribute('aria-label',playerAt(seat).name+'的剩余手牌');
+    reveal.tabIndex=root.dataset.phone==='true'?0:-1;
+    if(root.dataset.phone==='true')reveal.setAttribute('role','button');else reveal.removeAttribute('role');
     const heading=document.createElement('div');heading.className='remainder-heading';heading.textContent='余牌';
     const count=document.createElement('b');count.textContent=hand.cards.length;heading.append(count,document.createTextNode('张'));reveal.append(heading);
     for(let index=0;index<hand.cards.length;index+=10){
@@ -360,7 +403,7 @@ function renderFinalPlay(section,play,round=liveRound){
   const label=document.createElement('b');label.className='final-play-label';label.textContent=play.label;
   const meta=document.createElement('div');meta.className='final-play-meta';meta.append(heading,label);
   const cards=document.createElement('div');cards.className='final-play-cards';cards.setAttribute('aria-label',playerAt(play.seat,round).name+'最后打出的'+play.label);
-  cards.append(...play.cards.map(card=>imageFor(card.face,card.label+(card.isWild?' 逢人配':''))));
+  cards.append(...play.cards.map(card=>imageFor(card.face,card.label+(card.isWild?' 逢人配':''),undefined,round.level)));
   group.append(meta,cards);
 }
 function renderRevealedHands(section,hands,round=liveRound){
@@ -373,7 +416,7 @@ function renderRevealedHands(section,hands,round=liveRound){
     const name=document.createElement('strong');name.textContent=playerAt(seat,round).name;
     const count=document.createElement('span');count.textContent='剩 '+cards.length+' 张';heading.append(avatar,name,count);
     const row=document.createElement('div');row.className='revealed-cards';row.setAttribute('aria-label',playerAt(seat,round).name+'的剩余手牌');
-    row.append(...cards.map(card=>imageFor(card.face,card.label+(card.isWild?' 逢人配':''))));
+    row.append(...cards.map(card=>imageFor(card.face,card.label+(card.isWild?' 逢人配':''),undefined,round.level)));
     group.append(heading,row);list.append(group);
   }
 }
@@ -558,10 +601,11 @@ function saveAction(action,{preserveSelection=false}={}){
 }
 function scheduleBots(){
   clearTimeout(botTimer);botTimer=null;
+  if(window.GuandanPhone?.blocked())return;
   if(!liveRound||liveRound.remote||liveRound.game.result||liveRound.needsTributeConfirmation||paused||fault||dealMotion.active||hasOpenDialog()||document.hidden||(liveRound.actingSeat===0&&!liveRound.mustPass)||activeTask)return;
   const id=liveRound.id,revision=liveRound.revision,seat=liveRound.actingSeat;
   botTimer=setTimeout(async()=>{
-    botTimer=null;if(!liveRound||liveRound.remote||id!==liveRound.id||revision!==liveRound.revision||liveRound.actingSeat!==seat||liveRound.needsTributeConfirmation||paused||fault||dealMotion.active||hasOpenDialog()||document.hidden||activeTask)return;
+    botTimer=null;if(window.GuandanPhone?.blocked()||!liveRound||liveRound.remote||id!==liveRound.id||revision!==liveRound.revision||liveRound.actingSeat!==seat||liveRound.needsTributeConfirmation||paused||fault||dealMotion.active||hasOpenDialog()||document.hidden||activeTask)return;
     if(liveRound.mustPass){
       saveAction(()=>{for(let i=0;i<3&&liveRound.mustPass;i++)liveRound.passForced();},{preserveSelection:true});return;
     }
@@ -571,7 +615,7 @@ function scheduleBots(){
       const [rawResponse,ready]=await Promise.all([
         decision?null:model.request({observation:liveRound.observation(seat),provider:'danlm',book:prefs.aiBook,variant:liveRound.state.ruleMode}),wait.promise
       ]);
-      if(!ready||epoch!==workEpoch||!liveRound||liveRound.remote||id!==liveRound.id||revision!==liveRound.revision||liveRound.actingSeat!==seat||liveRound.needsTributeConfirmation||paused||fault||dealMotion.active||hasOpenDialog()||document.hidden)return;
+      if(window.GuandanPhone?.blocked()||!ready||epoch!==workEpoch||!liveRound||liveRound.remote||id!==liveRound.id||revision!==liveRound.revision||liveRound.actingSeat!==seat||liveRound.needsTributeConfirmation||paused||fault||dealMotion.active||hasOpenDialog()||document.hidden)return;
       activeTask=null;
       if(decision)saveAction(()=>liveRound.commit(seat,[decision.card.id],{expectedRevision:revision,automatic:true}));
       else{const response=liveRound.adaptModel(rawResponse,seat);saveAction(()=>liveRound.commitModel(response,revision,seat));}
@@ -779,7 +823,7 @@ window.GuandanTable=Object.freeze({
 });
 
 handEditor=createHandEditor({root,container:byId('hand-cards'),scroll:byId('hand-scroll'),undoButton:byId('undo-arrange'),
-  getLayout:currentLayout,getHand:()=>liveRound?.hand||[],getSelected:()=>selected,canEdit:canArrange,commit:commitLayout,imageFor,
+  getLayout:currentLayout,getHand:()=>liveRound?.hand||[],getLevel:()=>liveRound?.level,getSelected:()=>selected,canEdit:canArrange,commit:commitLayout,imageFor,
   onArrange(ids){for(const id of ids)selected.delete(id);playKey=null;hintSnapshot=null;clearToast();},
   curvedTarget:(x,y)=>window.tableView?.dropTarget(x,y),onModeChange:()=>updateSelection()
 });
@@ -801,11 +845,15 @@ handSelection=GuandanHandSelection.create({table:document.querySelector('.play-z
 byId('arrange-hand').addEventListener('click',cycleArrangement);
 byId('arrange-priority').value=prefs.arrangePriority;
 byId('arrange-priority').addEventListener('change',event=>{prefs.arrangePriority=event.target.value;savePrefs();cycleArrangement();});
-byId('sort-hand').addEventListener('click',()=>{if(canArrange())handEditor.replace(GuandanHandLayout.create(layoutKey(),liveRound.hand));});
+byId('sort-hand').addEventListener('click',sortLowerHand);
 buildSkinOptions();setCardSkin(currentSkin);setTheme(prefs.theme==='night'?'night':'day');
 root.classList.toggle('large-type',Boolean(prefs.large));byId('large-type').setAttribute('aria-pressed',String(Boolean(prefs.large)));
 
 window.addEventListener('guandan-language-change',()=>{
+  document.querySelectorAll('.stack-card-index').forEach(index=>{
+    if(index.dataset.suit==='joker')index.querySelector('b').textContent=GuandanI18n.locale==='en'?'JOKER':index.dataset.joker==='big'?'大王':'小王';
+    if(index.dataset.wild==='true')index.querySelector('.stack-suit').textContent=GuandanI18n.locale==='en'?'W':'配';
+  });
   document.querySelectorAll('.joker-label').forEach(label=>{const text=GuandanI18n.locale==='en'?'JOKER':label.dataset.joker==='BJ'?'大王':'小王';label.replaceChildren(...Array.from(text,ch=>{const span=document.createElement('span');span.textContent=ch;return span;}));});
   window.tableView?.sync();resizeHand();
 });

@@ -60,10 +60,10 @@ test('public turn updates keep pressed card nodes, while a cleared cache on lobb
   const hand=core.deck().filter(card=>['1-clubs-3','1-spades-3'].includes(card.id)).map(card=>({...card,face:'face',label:core.cardLabel(card)}));
   function node(){return {children:[],dataset:{},className:'',style:{setProperty(){},removeProperty(){}},classList:{toggle(){},add(){}},
     setAttribute(){},addEventListener(){},append(...items){this.children.push(...items);},replaceChildren(...items){this.children=items;},
-    querySelectorAll(){return this.children.flatMap(child=>[...(child.className==='playing-card'?[child]:[]),...child.querySelectorAll()]);}};}
+    querySelector(){return this.children[0];},querySelectorAll(){return this.children.flatMap(child=>[...(child.className==='playing-card'?[child]:[]),...child.querySelectorAll()]);}};}
   const container=node(),nodes=new Map([['hand-cards',container]]),cardNodes=new Map();let replacements=0;
   container.replaceChildren=(...items)=>{container.children=items;replacements++;};
-  const c={document:{activeElement:null,createElement:node},GuandanCore:core,GuandanHandLayout:layout,GuandanI18n:{locale:'zh-CN'},window:{},
+  const c={document:{activeElement:null,createElement:node},GuandanCardArt:require('../web/app/card-art.js'),loadCardImage(img){img.dataset.levelCard='false';},currentSkin:'jumbo',GuandanCore:core,GuandanHandLayout:layout,GuandanI18n:{locale:'zh-CN'},window:{},
     liveRound:{level:'2',game:{}},renderedHandKey:'',cardNodes,handEditor:{reconcile(){}},handMarquee:null,ownHand:()=>hand,displayLayout:()=>layout.create('same-round',hand),
     byId:id=>{if(!nodes.has(id))nodes.set(id,node());return nodes.get(id);},imageFor:node,selectCard(){},renderArrangement(){},updateSelection(){},canArrange:()=>true};
   vm.createContext(c);vm.runInContext(source.slice(source.indexOf('function renderHand('),source.indexOf('function resizeHand(')),c);

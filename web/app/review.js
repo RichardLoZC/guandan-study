@@ -107,7 +107,7 @@ function renderReplay(){
   const round=reviewRound,event=round.events[replayIndex],before=byId('replay-moment').value==='before';
   if(!event){
     byId('replay-counter').textContent='暂无行动';byId('replay-felt').replaceChildren(el('p','','本局还没有行动记录。'));
-    byId('replay-hand-title').textContent='初始手牌';byId('replay-hand-cards').replaceChildren(...round.initialOwnHand.map(card=>imageFor(card.face,card.label)));
+    byId('replay-hand-title').textContent='初始手牌';byId('replay-hand-cards').replaceChildren(...round.initialOwnHand.map(card=>imageFor(card.face,card.label,undefined,round.level)));
     for(const id of ['replay-first','replay-prev','replay-next','replay-last','replay-auto','replay-range'])byId(id).disabled=true;
     return;
   }
@@ -126,7 +126,7 @@ function renderReplay(){
     const panel=el('section','replay-seat '+seatStyle(seat,round)+(event.seat===seat?' is-acting':''));panel.setAttribute('aria-label',round.names[seat]+'的区域');
     const meta=el('div','replay-seat-meta'),copy=el('div');copy.append(el('strong','',round.names[seat]),el('span','','剩 '+counts[seat]+' 张'));meta.append(avatarFor(seat),copy);panel.append(meta);
     if(table?.owner===seat){
-      const cards=el('div','replay-played');for(const card of table.play.cards)cards.append(imageFor(card.face,card.label));
+      const cards=el('div','replay-played');for(const card of table.play.cards)cards.append(imageFor(card.face,card.label,undefined,round.level));
       panel.append(cards,el('span','replay-last-action','桌面 · '+table.play.label));
     }else{
       const latest=history.findLast(item=>item.seat===seat);
@@ -136,7 +136,7 @@ function renderReplay(){
     felt.append(panel);
   }
   byId('replay-hand-title').textContent='行动'+(before?'前':'后')+'的我的手牌 · '+hand.length+'张';
-  byId('replay-hand-cards').replaceChildren(...hand.map(card=>imageFor(card.face,card.label)));
+  byId('replay-hand-cards').replaceChildren(...hand.map(card=>imageFor(card.face,card.label,undefined,round.level)));
   if(!hand.length)byId('replay-hand-cards').append(el('p','','手牌已出完。'));
   syncTimeline();
 }

@@ -1,152 +1,222 @@
-/* Android phones share the card engine and physical card dimensions. Keep
-   the public table, complete hand shelves and primary actions in separate cells. */
-.hand-pan-note { display:none; }
-@media (max-width:720px), (max-height:500px) {
-  html[data-platform=pad] { --hand-card-width:48px; --hand-card-height:72px; --hand-step:28px; }
-  html[data-platform=pad] .app-frame { height:100dvh; min-height:0; }
-  html[data-platform=pad] .app-top { flex:0 0 44px; min-height:44px; height:44px; padding:0 6px; }
-  html[data-platform=pad] .brand { display:none; }
-  html[data-platform=pad] .top-controls { width:100%; justify-content:space-between; gap:3px; }
-  html[data-platform=pad] .top-controls > button { min-height:40px; padding:5px 8px; font-size:14px; }
-  html[data-platform=pad] .arena-layout { min-height:0; }
-  html[data-platform=pad] .arena-layout > .play-zone { display:grid; grid-template-columns:minmax(0,1fr); grid-template-rows:28px minmax(70px,1fr) auto; flex:1 1 0; min-height:0; padding:0 8px; overflow:hidden; gap:0; }
-  html[data-platform=pad] .play-zone > .match-strip { grid-area:1/1; min-width:0; height:28px; font-size:12px; gap:4px; }
-  html[data-platform=pad] .score-pair,html[data-platform=pad] .level-label { font-size:12px; gap:5px; }
-  html[data-platform=pad] .score-pair b,html[data-platform=pad] .level-label b { font-size:19px; }
-  html[data-platform=pad] .wild-reference { display:none; }
-  html[data-platform=pad] .table-seats { grid-area:2/1; grid-template-columns:repeat(3,minmax(0,1fr)); grid-template-rows:auto auto; min-height:0; align-content:start; align-items:start; gap:10px 5px; padding:8px 1px; overflow:auto; overscroll-behavior:contain; }
-  html[data-platform=pad] .table-seats > .player { display:grid; grid-template-columns:28px minmax(0,1fr); grid-template-rows:auto auto; position:relative; inset:auto; transform:none; align-self:start; align-items:center; justify-self:stretch; width:100%; gap:5px; text-align:left; }
-  html[data-platform=pad] .table-seats > .teammate { grid-area:1/2; }
-  html[data-platform=pad] .table-seats > .opponent-left { grid-area:1/1; }
-  html[data-platform=pad] .table-seats > .opponent-right { grid-area:1/3; }
-  html[data-platform=pad] .table-seats .player .avatar { width:28px; height:28px; border-width:2px; box-shadow:0 0 0 2px color-mix(in srgb,var(--seat) 25%,transparent); }
-  html[data-platform=pad] .table-seats .player .player-info { display:block; text-align:left; }
-  html[data-platform=pad] .table-seats .player .player-info > strong { justify-content:flex-start; font-size:15px; line-height:1.25; white-space:nowrap; overflow-wrap:normal; }
-  html[data-platform=pad] .table-seats .player-name { max-width:100%; overflow:hidden; text-overflow:ellipsis; }
-  html[data-platform=pad] .table-seats .relation { display:none; }
-  html[data-platform=pad] .table-seats .remaining { font-size:10px; line-height:1.2; white-space:nowrap; }
-  html[data-platform=pad] .table-seats .remaining-prefix { display:none; }
-  html[data-platform=pad] .table-seats .remaining b { font-size:23px; }
-  html[data-platform=pad] .table-seats .player .player-info { position:relative; padding-bottom:23px; }
-  html[data-platform=pad] .table-seats .player .seat-bubble { position:absolute; top:auto; bottom:0; left:0; right:auto; padding:2px 4px; font-size:11px; line-height:1.2; background:none; }
-  html[data-platform=pad] .table-seats .player.is-turn .seat-bubble { font-size:12px; background:var(--seat); }
-  html[data-platform=pad] .table-seats .player.is-turn .seat-bubble::before { width:5px; height:5px; margin-right:3px; vertical-align:1px; }
-  html[data-platform=pad] .table-seats .player.is-turn .avatar { outline-width:2px; outline-offset:2px; animation:none; }
-  html[data-platform=pad] .table-seats .seat-anchor { width:100%; max-width:100%; }
-  html[data-platform=pad] .table-seats .self-play-anchor { grid-area:2/1/3/4; max-width:100%; align-self:start; }
-  html[data-platform=pad] .table-seats .table-play { flex-direction:column; flex-wrap:nowrap; gap:3px; padding:4px; width:100%; }
-  html[data-platform=pad] .table-seats .self-play-anchor .table-play { flex-direction:row; width:auto; max-width:100%; gap:8px; }
-  html[data-platform=pad] .table-seats .table-cards { flex:0 0 auto; }
-  html[data-platform=pad] .table-seats .table-caption { font-size:11px; width:100%; }
-  html[data-platform=pad] .table-seats .table-caption strong { font-size:13px; line-height:1.3; margin:1px 0 0; }
-  html[data-platform=pad] .table-seats .player .table-caption { font-size:0; }
-  html[data-platform=pad] .table-seats .is-pass .table-caption strong { font-size:19px; }
-  html[data-platform=pad] .table-seats .self-play-anchor .table-caption { width:auto; }
-  /* Long public combinations wrap instead of squeezing ten ranks into 40 px. */
-  html[data-platform=pad] .table-seats .long-play .table-cards { display:flex; flex-wrap:wrap; width:100%; max-width:100%; padding-right:calc(var(--hand-card-width) - 16px); gap:4px 0; }
-  html[data-platform=pad] .table-seats .long-play .table-cards img { flex:0 0 var(--hand-card-width); margin-right:calc(16px - var(--hand-card-width)); }
-  html[data-platform=pad] .table-seats .self-play-anchor .long-play .table-cards { width:160px; }
-  html[data-platform=pad] .play-zone > .hand-pane { grid-area:3/1; padding-top:2px; min-height:0; width:100%; overflow:hidden; }
-  html[data-platform=pad] .hand-command-bar { display:flex; flex-wrap:wrap; gap:2px; min-height:30px; padding:2px 0; }
-  html[data-platform=pad] .hand-command-bar .hand-heading { min-height:26px; width:100%; gap:6px; flex-direction:row; justify-content:space-between; }
-  html[data-platform=pad] .hand-command-bar .hand-heading h1 { font-size:13px; }
-  html[data-platform=pad] .hand-command-bar .hand-heading h1 span { font-size:18px; line-height:1.2; }
-  html[data-platform=pad] .hand-command-bar .turn-pill { font-size:14px; margin:0; }
-  html[data-platform=pad] .hand-command-bar .hand-feedback { width:100%; font-size:12px; }
-  html[data-platform=pad] .hand-command-bar .selection-status { font-size:12px; line-height:1.3; }
-  html[data-platform=pad] .hand-command-bar .selection-status span { display:none; }
-  html[data-platform=pad] .hand-pane:has(.playing-card.selected) .selection-status span { display:inline; margin-left:6px; font-size:12px; }
-  html[data-platform=pad] .hand-scroll { --group-action-space:30px; --hand-group-gap:14px; height:calc(var(--hand-shelf-height) * 2 + 40px); max-height:none; padding:8px; overflow:auto; touch-action:pan-x; scrollbar-width:none; }
-  html[data-platform=pad] .hand-scroll::-webkit-scrollbar { display:none; }
-  html[data-platform=pad] .card-row { padding-inline:28px; }
-  html[data-platform=pad] .hand-tier-label { left:0; font-size:11px; }
-  html[data-platform=pad] .group-action { height:26px; min-height:26px; padding:1px 3px; gap:3px; font-size:11px; }
-  html[data-platform=pad] .group-verb { font-size:10px; }
-  html[data-platform=pad] .hand-pan-note { display:block; position:sticky; left:0; bottom:0; height:24px; line-height:24px; margin-top:0; text-align:center; border-top:1px solid #dce9d429; border-radius:5px; background:var(--felt-deep); color:var(--felt-muted); font-size:11px; touch-action:pan-x; }
-  html[data-platform=pad] .hand-tools { grid-template-columns:1fr auto; grid-template-rows:44px 42px; min-height:96px; height:96px; padding:4px 6px; gap:2px 5px; }
-  html[data-platform=pad] .hand-tools > .actions { grid-area:1/1; justify-content:flex-start; gap:6px; }
-  html[data-platform=pad] .hand-tools > .actions button { min-width:70px; height:42px; min-height:42px; padding:5px 10px; font-size:18px; }
-  html[data-platform=pad] .hand-tools #play-button,html[data-platform=pad] .hand-tools #confirm-tribute { min-width:88px; }
-  html[data-platform=pad] .hand-tools .table-assistance { grid-area:1/2; gap:3px; }
-  html[data-platform=pad] .hand-tools .table-assistance button { min-width:0; font-size:12px; min-height:40px; padding:4px; }
-  html[data-platform=pad] .hand-management { grid-area:2/1/3/3; display:flex; flex-wrap:nowrap; gap:4px; overflow-x:auto; overflow-y:hidden; min-width:0; scrollbar-width:thin; }
-  html[data-platform=pad] .hand-management > * { flex-shrink:0; }
-  html[data-platform=pad] .hand-management .view-picker { padding:1px; }
-  html[data-platform=pad] .hand-management .view-picker button { min-height:36px; padding:4px 7px; font-size:13px; }
-  html[data-platform=pad] .hand-management .arrange-controls { flex:0 0 auto; max-width:none; }
-  html[data-platform=pad] .hand-management .arrange-controls select { width:104px; min-height:38px; height:38px; font-size:12px; }
-  html[data-platform=pad] .hand-management .arrange-controls button { min-width:64px; min-height:38px; height:38px; font-size:14px; }
-  html[data-platform=pad] .hand-management .text-action { font-size:12px; min-height:38px; }
-  html[data-platform=pad] .hand-management .hand-options { width:auto; padding:0; }
-  html[data-platform=pad][lang=en] .hand-management .arrange-controls select { width:130px; }
-  html[data-platform=pad][lang=en] .hand-management .arrange-controls button { min-width:90px; }
-  html[data-platform=pad] .tribute-receipt { flex:0 0 auto; display:flex; flex-direction:row; flex-wrap:nowrap; align-items:center; gap:8px; padding:3px 8px; height:48px; overflow:auto; scrollbar-width:none; }
-  html[data-platform=pad] .tribute-receipt::-webkit-scrollbar { display:none; }
-  html[data-platform=pad] .tribute-receipt-heading { flex:0 0 auto; flex-direction:column; font-size:11px; white-space:nowrap; }
-  html[data-platform=pad] .tribute-receipt-cards { flex:0 0 auto; display:flex; flex-wrap:nowrap; gap:12px; }
-  html[data-platform=pad] .tribute-receipt .tribute-transfer { flex:0 0 auto; gap:4px; padding-left:5px; }
-  html[data-platform=pad] .tribute-receipt .tribute-route,html[data-platform=pad] .tribute-receipt .tribute-copy > b { font-size:12px; white-space:nowrap; }
-  html[data-platform=pad] .tribute-receipt .tribute-card { width:22px; height:33px; flex-basis:22px; }
-  html[data-platform=pad] .is-tribute .table-seats { grid-template-rows:auto auto; }
-  html[data-platform=pad] .table-seats > .tribute-panel { padding:8px; }
-  html[data-platform=pad] .tribute-panel h2 { font-size:18px; }
-  html[data-platform=pad] .tribute-panel p { font-size:14px; }
-  html[data-platform=pad] .is-round-over .hand-command-bar { min-height:0; display:flex; }
-  html[data-platform=pad] .is-round-over .hand-heading { position:static; inset:auto; width:100%; }
-  html[data-platform=pad] .is-round-over .hand-scroll { height:calc(var(--hand-shelf-height) + 40px); }
-  html[data-platform=pad] .is-round-over .hand-scroll.empty-hand { height:30px; }
-  html[data-platform=pad] .is-round-over .hand-pan-note { display:none; }
-  html[data-platform=pad] .round-end-banner { min-width:0; padding:4px; gap:5px; }
-  html[data-platform=pad] .round-end-banner h2 { font-size:21px; }
-  html[data-platform=pad] .round-end-banner p { font-size:13px; }
-  html[data-platform=pad] .end-actions { gap:4px; }
-  html[data-platform=pad] .end-actions button { min-height:38px; padding:4px 8px; font-size:13px; }
-  html[data-platform=pad] .is-round-over .hand-tools { grid-template-columns:minmax(0,1fr) auto; grid-template-rows:42px; min-height:50px; height:50px; }
-  html[data-platform=pad] .is-round-over .hand-management { grid-area:1/1; }
-  html[data-platform=pad] .is-round-over .table-assistance { grid-area:1/2; }
-  html[data-platform=pad] .table-seats .seat-remainder { grid-column:1/-1; width:100%; max-width:100%; padding:4px; --reveal-width:28px; --reveal-step:14px; }
-  html[data-platform=pad] .remainder-row,html[data-platform=pad] .remainder-row:last-child { height:auto; min-height:42px; flex-wrap:wrap; padding-right:14px; row-gap:5px; }
-  html[data-platform=pad] .remainder-row img { margin-right:-14px; }
-  html[data-platform=pad] .remainder-heading { flex-wrap:wrap; gap:2px; font-size:10px; line-height:1.3; }
-  html[data-platform=pad] .remainder-heading b { font-size:13px; }
-  html[data-platform=pad] #lan-status { min-height:28px; font-size:12px; padding:2px 8px; }
-  html[data-platform=pad] #lan-status button { min-height:28px; font-size:12px; }
-  html[data-platform=pad] #error-banner { max-height:90px; overflow:auto; margin:0; font-size:13px; }
-  html[data-platform=pad] .analysis-dialog { width:calc(100vw - 16px); max-height:calc(100dvh - 16px); padding:14px; }
-  html[data-platform=pad] .dialog-bottom { gap:8px; flex-wrap:wrap; }
-  html[data-platform=pad] .skin-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
-}
-@media (max-height:500px) and (orientation:landscape) {
-  html[data-platform=pad] { --hand-card-width:40px; --hand-card-height:60px; --hand-step:24px; }
-  html[data-platform=pad] .app-top { flex-basis:36px; height:36px; min-height:36px; }
-  html[data-platform=pad] .top-controls > button { min-height:34px; font-size:13px; }
-  html[data-platform=pad] .top-controls { justify-content:flex-end; }
-  html[data-platform=pad] .top-controls .mode-entry { margin-right:auto; }
-  html[data-platform=pad] .arena-layout { position:relative; }
-  html[data-platform=pad] .arena-layout > .play-zone { grid-template-columns:minmax(240px,.38fr) minmax(0,.62fr); grid-template-rows:24px minmax(0,1fr); gap:0 10px; padding:0 6px; }
-  html[data-platform=pad] .play-zone > .match-strip { height:24px; }
-  html[data-platform=pad] .table-seats { grid-area:2/1; gap:8px 4px; padding-top:4px; }
-  html[data-platform=pad] .table-seats > .player { grid-template-columns:22px minmax(0,1fr); gap:4px; }
-  html[data-platform=pad] .table-seats .player .avatar { width:22px; height:22px; }
-  html[data-platform=pad] .table-seats .player .player-info > strong { font-size:13px; }
-  html[data-platform=pad] .table-seats .remaining b { font-size:20px; }
-  html[data-platform=pad] .table-seats .table-caption strong { font-size:12px; }
-  html[data-platform=pad] .table-seats .table-play { padding:3px; }
-  html[data-platform=pad] .play-zone > .hand-pane { grid-area:1/2/3/3; border-top:0; border-left:1px solid #dce9d429; padding:0 0 0 6px; align-self:stretch; display:flex; flex-direction:column; }
-  html[data-platform=pad] .hand-command-bar { flex:0 0 auto; min-height:25px; }
-  html[data-platform=pad] .hand-command-bar .hand-heading { min-height:22px; }
-  html[data-platform=pad] .hand-command-bar .hand-feedback { min-height:16px; }
-  html[data-platform=pad] .hand-command-bar { padding-block:0; }
-  html[data-platform=pad] .hand-scroll { --group-action-space:28px; flex:1 1 auto; min-height:0; height:auto; padding:4px 8px; }
-  html[data-platform=pad] .hand-pan-note { height:20px; line-height:20px; font-size:10px; }
-  html[data-platform=pad] .hand-tools { grid-template-columns:minmax(0,1fr) auto auto; grid-template-rows:44px; height:52px; min-height:52px; padding:3px 6px; gap:4px 8px; }
-  html[data-platform=pad] .hand-management { grid-area:1/1; }
-  html[data-platform=pad] .hand-tools > .actions { grid-area:1/2; }
-  html[data-platform=pad] .hand-tools .table-assistance { grid-area:1/3; }
-  html[data-platform=pad] .tribute-receipt { position:absolute; z-index:6; left:6px; top:24px; width:calc((100% - 22px) * .38); height:38px; padding-inline:3px; background:var(--felt-deep); }
-  html[data-platform=pad] .arena-layout:has(> .tribute-receipt:not([hidden])) .table-seats { padding-top:44px; }
-  html[data-platform=pad] .tribute-receipt .tribute-card { width:18px; height:27px; flex-basis:18px; }
-  html[data-platform=pad] .is-round-over .hand-scroll { min-height:0; height:auto; }
-  html[data-platform=pad] .round-end-banner { flex-wrap:wrap; }
-  html[data-platform=pad] .round-end-banner .end-actions { flex-direction:row; }
+/* A fixed landscape table for phones. Tablet and desktop retain their layout. */
+.phone-only { display:none!important; }
+.stack-card-index { display:none; }
+#phone-rotate[hidden] { display:none; }
+#phone-rotate { position:fixed; inset:0; z-index:2000; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:28px; text-align:center; color:#fff9e8; background:#173f32; }
+#phone-rotate h1 { font-size:26px; margin:0; }
+#phone-rotate p { max-width:320px; margin:0; line-height:1.6; font-size:16px; color:#dce8dc; }
+.rotate-device { display:grid; place-items:center; width:112px; height:62px; border:3px solid #ead18d; border-radius:14px; color:#ead18d; font-size:42px; }
+html[data-phone=true] { --hand-card-width:54px; --hand-card-height:81px; --hand-step:28px; --stack-rise:24px; --phone-header:36px; --phone-dock:44px; -webkit-text-size-adjust:100%; }
+html[data-phone=true] body { overflow:hidden; }
+html[data-phone=true] #preview { padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); max-width:none; height:100dvh; }
+html[data-phone=true] .app-frame { height:100%; min-height:0; border:0; border-radius:0; overflow:hidden; }
+html[data-phone=true] .phone-only { display:block!important; }
+html[data-phone=true] .app-top { display:grid; grid-template-columns:auto minmax(0,1fr) 52px; flex:0 0 var(--phone-header); height:var(--phone-header); min-height:0; gap:12px; padding:0 8px; }
+html[data-phone=true] .brand { display:none; }
+html[data-phone=true] .top-controls { display:contents; }
+html[data-phone=true] #open-lan { grid-area:1/1; font-size:13px; max-width:138px; min-height:32px; padding:5px 8px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+html[data-phone=true] #phone-menu-toggle { grid-area:1/3; min-height:34px; padding:2px 6px; border:0; border-radius:6px; font-size:14px; background:#244b3510; }
+html[data-phone=true] .app-top > .match-strip { position:static; grid-area:1/2; height:auto; display:flex; align-items:center; justify-content:center; gap:16px; font-size:13px; color:var(--text); white-space:nowrap; }
+html[data-phone=true] .score-pair,html[data-phone=true] .level-label { font-size:13px; gap:6px; }
+html[data-phone=true] .score-pair b,html[data-phone=true] .level-label b { font-size:19px; }
+html[data-phone=true] .wild-reference { color:var(--gold-ink); font-size:12px; padding-left:7px; border-left:1px solid var(--line); }
+html[data-phone=true] #round-label { display:none; }
+html[data-phone=true] .arena-layout { flex:1 1 0; min-height:0; position:relative; }
+html[data-phone=true] .arena-layout > .play-zone { display:flex; flex-direction:column; flex:1 1 0; min-height:0; padding:0 8px; overflow:hidden; gap:0; }
+html[data-phone=true] .table-seats { --phone-play-width:calc((100vw - 220px) / 4); flex:1 0 auto; min-height:calc(var(--hand-card-height) + 56px); display:block; padding:0; overflow:visible; }
+html[data-phone=true] .table-seats > .player { position:absolute; display:grid; grid-template-columns:1fr; grid-template-rows:36px auto; width:68px; max-width:68px; gap:3px; text-align:center; justify-items:center; transform:none; align-self:auto; }
+html[data-phone=true] .table-seats > .opponent-left { inset:30px auto auto 1px; }
+html[data-phone=true] .table-seats > .opponent-right { inset:30px 1px auto auto; }
+html[data-phone=true] .table-seats .player .avatar { grid-area:1/1; width:36px; height:36px; border-width:2px; box-shadow:0 0 0 2px color-mix(in srgb,var(--seat) 25%,transparent); }
+html[data-phone=true] .table-seats .player .player-info { display:block; grid-area:2/1; position:static; padding:0; text-align:center; }
+html[data-phone=true] .table-seats .player-info > strong { font-size:14px; line-height:17px; white-space:nowrap; justify-content:center; gap:0; }
+html[data-phone=true] .table-seats .player-name { max-width:68px; overflow:hidden; text-overflow:ellipsis; }
+html[data-phone=true] .table-seats .relation,html[data-phone=true] .remaining-prefix { display:none; }
+html[data-phone=true] .remaining { font-size:10px; line-height:21px; white-space:nowrap; }
+html[data-phone=true] .remaining b { font-size:23px; }
+html[data-phone=true] .table-seats .player .seat-bubble { position:absolute; inset:auto 50% calc(100% + 3px) auto; transform:translateX(50%); margin:0; padding:2px 5px; border:0; font-size:11px; line-height:14px; white-space:nowrap; background:#173c30; }
+html[data-phone=true] .table-seats .player.is-turn .seat-bubble { color:#163a2d; background:var(--seat); font-weight:800; }
+html[data-phone=true] .table-seats .player.is-turn .seat-bubble::before { width:5px; height:5px; margin-right:3px; vertical-align:1px; }
+html[data-phone=true] .table-seats .player.is-turn .avatar { outline-width:2px; outline-offset:2px; }
+html[data-phone=true] .table-seats > .teammate { display:contents; position:static; }
+html[data-phone=true] .table-seats > .teammate .avatar { position:absolute; top:2px; left:calc(50% - 90px); width:26px; height:26px; }
+html[data-phone=true] .table-seats > .teammate .player-info { position:absolute; top:2px; left:calc(50% - 56px); display:flex; align-items:center; gap:7px; height:26px; }
+html[data-phone=true] .table-seats > .teammate .remaining b { font-size:22px; }
+html[data-phone=true] .table-seats > .teammate .seat-bubble { position:static; transform:none; font-size:11px; }
+html[data-phone=true] .table-seats .seat-anchor { position:absolute; grid-area:auto; inset:auto; transform:none; width:var(--phone-play-width); max-width:none; }
+html[data-phone=true] .table-seats .opponent-left .seat-anchor { left:74px; top:-4px; }
+html[data-phone=true] .table-seats .opponent-right .seat-anchor { right:74px; top:-4px; }
+html[data-phone=true] .table-seats .teammate .seat-anchor { right:calc(50% + 10px); top:32px; }
+html[data-phone=true] .table-seats .self-play-anchor { position:absolute; inset:36px auto auto calc(50% + 10px); transform:none; width:var(--phone-play-width); max-width:none; }
+html[data-phone=true] .table-seats .table-play { display:flex; flex-direction:column; flex-wrap:nowrap; align-items:center; justify-content:flex-start; width:100%; max-width:100%; min-height:0; padding:3px 4px; gap:2px; border-radius:6px; border-left-width:2px; }
+html[data-phone=true] .table-seats .table-cards { --table-step:calc(var(--hand-card-width) * .43); display:grid; width:calc(var(--hand-card-width) + (var(--played-count,1) - 1) * var(--table-step)); max-width:100%; padding:0; gap:0; }
+html[data-phone=true] .table-seats .table-cards img { width:var(--hand-card-width); height:var(--hand-card-height); margin:0; }
+html[data-phone=true] .table-seats .table-caption { display:flex; align-items:center; justify-content:center; width:100%; height:14px; font-size:0; line-height:0; text-align:center; white-space:nowrap; }
+html[data-phone=true] .table-seats .table-caption > span { display:none; }
+html[data-phone=true] .table-seats .table-caption strong { display:block; max-width:100%; margin:0; font-size:11px; line-height:14px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+html[data-phone=true] .self-play-anchor .table-caption::before { content:'你'; font-size:11px; color:var(--seat); margin-right:4px; }
+html[data-phone=true] .self-play-anchor .table-caption strong { display:inline; }
+html[data-phone=true][lang=en] .self-play-anchor .table-caption::before { content:'You'; }
+html[data-phone=true] .table-seats .is-pass { min-height:42px; justify-content:center; margin-top:12px; }
+html[data-phone=true] .table-seats .is-pass .table-caption strong { font-size:20px; line-height:28px; }
+html[data-phone=true] .table-play[role=button],html[data-phone=true] .seat-remainder[role=button] { cursor:pointer; touch-action:manipulation; }
+html[data-phone=true] .table-play:focus-visible { outline:2px solid #f2cf86; outline-offset:2px; }
+html[data-phone=true] .play-zone > .hand-pane { position:relative; inset:auto; display:flex; flex-direction:column; flex:0 1 auto; padding:0; width:100%; min-height:0; border:0; overflow:hidden; }
+html[data-phone=true] .hand-command-bar { display:flex; height:20px; min-height:20px; padding:0 4px; gap:10px; }
+html[data-phone=true] .hand-command-bar .hand-heading { flex-direction:row; align-items:center; justify-content:flex-start; min-height:0; gap:10px; }
+html[data-phone=true] .hand-heading h1,html[data-phone=true] .hand-heading h1 span { font-size:12px; line-height:18px; }
+html[data-phone=true] .pad-touch-note { display:none; }
+html[data-phone=true] .hand-command-bar .turn-pill { font-size:12px; line-height:18px; padding:0 6px; }
+html[data-phone=true] .hand-feedback { margin-left:auto; max-width:50%; max-height:20px; overflow:hidden; }
+html[data-phone=true] .selection-status { font-size:12px; line-height:18px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
+html[data-phone=true] .selection-status span { display:none; }
+html[data-phone=true] .hand-command-bar > .toast { position:absolute; z-index:90; right:4px; bottom:100%; max-width:70%; padding:6px 10px; font-size:13px; }
+html[data-phone=true] .hand-scroll { --group-action-space:28px; --hand-group-gap:12px; height:calc(var(--stack-rise) * 2 + var(--hand-card-height) + var(--group-action-space) + 8px); flex:0 1 auto; min-height:0; max-height:none; padding:4px 6px; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; scrollbar-gutter:auto; touch-action:pan-x; }
+html[data-phone=true] .hand-scroll::-webkit-scrollbar { display:none; }
+html[data-phone=true] .card-row,html[data-phone=true] .card-row:last-child { height:calc(var(--stack-rise) * 2 + var(--hand-card-height) + var(--group-action-space)); min-width:var(--stack-width,100%); padding:var(--group-action-space) 0 0; justify-content:center; pointer-events:none; }
+html[data-phone=true] .hand-cluster { position:relative; height:calc(var(--stack-rise) * 2 + var(--hand-card-height)); display:flex; gap:0; }
+html[data-phone=true] .stack-column { position:relative; flex:0 0 var(--stack-step,54px); width:var(--stack-step,54px); height:100%; isolation:isolate; }
+html[data-phone=true] .stack-column:last-of-type { flex-basis:var(--hand-card-width); width:var(--hand-card-width); }
+html[data-phone=true] .stack-column .playing-card { position:absolute; top:calc(var(--stack-slot,2) * var(--stack-rise)); left:0; width:var(--hand-card-width); height:var(--hand-card-height); margin:0; z-index:var(--stack-order,0); transform-origin:center; touch-action:none; }
+html[data-phone=true] .stack-card-index { position:absolute; inset:0 0 auto; display:flex; align-items:center; gap:0; height:var(--stack-rise); padding:1px; color:#18221d; background:#fffff7; border-radius:5px 5px 0 0; font-size:clamp(14px,calc(var(--stack-step,54px) * .35),19px); line-height:22px; white-space:nowrap; pointer-events:none; box-shadow:inset 0 -1px #192c1b18; }
+html[data-phone=true] .stack-card-index b { font-weight:750; }
+html[data-phone=true] .stack-suit { font-size:clamp(11px,calc(var(--stack-step,54px) * .3),16px); line-height:20px; }
+html[data-phone=true] .stack-card-index[data-suit=hearts],html[data-phone=true] .stack-card-index[data-suit=diamonds],html[data-phone=true] .stack-card-index[data-joker=big] { color:#c91427; }
+html[data-phone=true][data-card-skin=accessible] .stack-card-index[data-suit=clubs] { color:#147345; }
+html[data-phone=true][data-card-skin=accessible] .stack-card-index[data-suit=diamonds] { color:#1869c5; }
+html[data-phone=true] .stack-card-index[data-suit=joker] { font-size:12px; }
+html[data-phone=true][lang=en] .stack-card-index[data-suit=joker] { font-size:9px; }
+html[data-phone=true] .stack-star { color:#b78013; font-size:clamp(7px,calc(var(--stack-step,54px) * .18),10px); line-height:12px; }
+html[data-phone=true] .stack-column .selected .stack-card-index { background:#fff0b7; }
+html[data-phone=true] .stack-column .joker-label { display:none; }
+html[data-phone=true] .playing-card,html[data-phone=true] .group-action { pointer-events:auto; }
+html[data-phone=true] .hand-tier-label { display:none; }
+html[data-phone=true] .group-action { height:24px; min-height:24px; padding:0 2px; gap:2px; font-size:11px; line-height:12px; }
+html[data-phone=true] .group-verb { font-size:10px; }
+html[data-phone=true] .small-group .group-action { flex-direction:column; line-height:12px; }
+html[data-phone=true] .small-group .group-label { text-align:center; }
+html[data-phone=true] .small-group .group-verb { display:block; }
+html[data-phone=true] .group-marker { top:-3px; height:2px!important; }
+html[data-phone=true][data-hand-style=fan] .group-marker { top:calc(var(--group-action-space) - 3px); }
+html[data-phone=true] .wild-label { top:51%; left:1px; font-size:9px; line-height:11px; padding:0 1px; }
+html[data-phone=true] .joker-label { width:20px; height:42px; font-size:13px; padding:2px; }
+html[data-phone=true][lang=en] .joker-label { width:15px; height:44px; font-size:7px; padding:2px; }
+html[data-phone=true] .selected-mark { top:70%; width:13px; height:13px; font-size:11px; line-height:13px; }
+html[data-phone=true] .hand-pan-note { display:none; }
+html[data-phone=true] .hand-pane:has(.has-overflow) .hand-heading h1::after { content:' ↔'; color:var(--felt-muted); font-size:15px; }
+html[data-phone=true] .hand-tools { display:flex; flex:0 0 var(--phone-dock); align-items:center; height:var(--phone-dock); min-height:var(--phone-dock); gap:8px; padding:2px 10px; border-top:1px solid #dce9d43d; background:#143b2ff2; }
+html[data-phone=true] .hand-management { display:flex; gap:6px; overflow:visible; flex:1; min-width:0; }
+html[data-phone=true] #phone-tools-toggle { min-height:36px; height:36px; padding:3px 12px; font-size:13px; border-radius:7px; white-space:nowrap; }
+html[data-phone=true] .arrange-controls { max-width:none; border-radius:7px; }
+html[data-phone=true] .arrange-controls button { min-width:96px; height:36px; min-height:36px; padding:3px 10px; border:0; font-size:14px; }
+html[data-phone=true] .arrangement-summary { display:none!important; }
+html[data-phone=true] .hand-tools > .actions { display:flex; flex-wrap:nowrap; gap:8px; margin-left:auto; }
+html[data-phone=true] .hand-tools > .actions button { height:38px; min-height:38px; min-width:82px; padding:3px 16px; border-radius:8px; font-size:18px; }
+html[data-phone=true] .hand-tools #play-button,html[data-phone=true] .hand-tools #confirm-tribute { min-width:108px; }
+html[data-phone=true] .hand-tools #confirm-tribute { height:38px; min-height:38px; margin-left:auto; padding:3px 16px; border-radius:8px; font-size:18px; }
+html[data-phone=true] .hand-tools > .table-assistance { display:none; }
+html[data-phone=true] .tribute-receipt { display:flex; flex:0 0 28px; height:28px; max-height:28px; flex-direction:row; align-items:center; gap:10px; padding:1px 8px; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; }
+html[data-phone=true] .tribute-receipt-heading { display:flex; flex:0 0 auto; gap:4px; font-size:11px; white-space:nowrap; }
+html[data-phone=true] .tribute-receipt-heading span { font-size:10px; }
+html[data-phone=true] .tribute-receipt-cards { display:flex; flex-wrap:nowrap; gap:12px; }
+html[data-phone=true] .tribute-receipt .tribute-transfer { flex:0 0 auto; padding-left:5px; gap:4px; }
+html[data-phone=true] .tribute-receipt .tribute-card { width:16px; height:24px; flex-basis:16px; }
+html[data-phone=true] .tribute-receipt .tribute-copy { display:flex; gap:4px; align-items:center; }
+html[data-phone=true] .tribute-receipt .tribute-route,html[data-phone=true] .tribute-receipt .tribute-copy > b { font-size:10px; white-space:nowrap; }
+html[data-phone=true] .tribute-receipt .tribute-copy > span { display:none; }
+html[data-phone=true] .is-tribute .table-seats { min-height:0; }
+html[data-phone=true] .is-tribute .table-seats > .player { display:none; }
+html[data-phone=true] .is-tribute .table-seats > .tribute-panel { position:absolute; inset:4px 0; width:auto; max-height:none; margin:0; padding:5px 10px; overflow:auto; background:#143b2fc9; }
+html[data-phone=true] .tribute-panel header { display:flex; align-items:baseline; flex-wrap:wrap; gap:2px 10px; }
+html[data-phone=true] .tribute-panel h2 { font-size:16px; margin:0; }
+html[data-phone=true] .tribute-panel p { font-size:12px; margin:0; line-height:1.35; }
+html[data-phone=true] .tribute-transfers { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin-top:5px; }
+html[data-phone=true] .tribute-transfers .tribute-transfer { padding:4px 6px; gap:6px; }
+html[data-phone=true] .tribute-transfers .tribute-card { width:30px; height:45px; flex-basis:30px; }
+html[data-phone=true] .tribute-transfers .tribute-route,html[data-phone=true] .tribute-transfers .tribute-copy b { font-size:12px; line-height:16px; }
+html[data-phone=true] .tribute-transfers .tribute-copy span { font-size:10px; line-height:14px; }
+html[data-phone=true] #lan-status { min-height:24px; max-height:44px; overflow:auto; padding:2px 8px; font-size:12px; line-height:20px; }
+html[data-phone=true] #lan-status button { min-height:24px; padding:0 6px; font-size:12px; }
+html[data-phone=true] #error-banner { margin:0; max-height:64px; overflow:auto; padding:4px 8px; font-size:12px; }
+html[data-phone=true] .lan-waiting-table { inset:0; width:100%; padding:12px; min-height:0; overflow:auto; }
+html[data-phone=true] .analysis-dialog { width:min(760px,calc(100vw - 24px)); max-height:calc(100dvh - 16px); padding:14px 18px; overflow:auto; }
+html[data-phone=true] .dialog-header { position:sticky; top:-14px; z-index:20; background:var(--panel); margin:-14px -18px 8px; padding:6px 12px; }
+html[data-phone=true] .analysis-dialog h2 { font-size:22px; }
+html[data-phone=true] .analysis-dialog h3 { font-size:18px; }
+html[data-phone=true] .analysis-dialog p { font-size:14px; line-height:1.5; }
+html[data-phone=true] .analysis-dialog button,html[data-phone=true] .analysis-dialog select { min-height:40px; font-size:15px; }
+html[data-phone=true] .analysis-dialog .close-button { min-width:42px; min-height:42px; padding:3px; }
+html[data-phone=true] .dialog-bottom { position:sticky; bottom:-14px; display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; padding:8px 0; background:var(--panel); z-index:10; }
+html[data-phone=true] .phone-sheet { width:min(480px,calc(100vw - 24px)); }
+html[data-phone=true] #phone-menu-items { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+html[data-phone=true] #phone-menu-items > button { margin:0; padding:10px; min-height:46px; color:var(--text); background:var(--subtle); border:1px solid var(--line); border-radius:8px; text-decoration:none; }
+html[data-phone=true] #phone-hand-options { display:grid; grid-template-columns:1fr 1fr; gap:10px; align-items:center; }
+html[data-phone=true] #phone-hand-options .view-picker { display:none; }
+html[data-phone=true] #phone-hand-options .view-picker button { min-height:42px; padding:5px 16px; }
+html[data-phone=true] #phone-hand-options > select { grid-column:1/-1; min-width:0; width:100%; max-width:none; font-size:14px; padding:6px; color:var(--text); background:var(--surface); border:1px solid var(--line); border-radius:8px; }
+html[data-phone=true] #phone-hand-options .hand-options { grid-column:1/-1; display:flex; width:100%; gap:8px; padding:0; }
+html[data-phone=true] #phone-hand-options .hand-options button { flex:1; color:var(--text); background:var(--subtle); border-radius:8px; padding:7px; }
+html[data-phone=true] #phone-hand-options button:disabled { opacity:.4; }
+html[data-phone=true] #phone-card-images { display:flex; flex-wrap:wrap; gap:8px; }
+html[data-phone=true] #phone-card-images img { width:58px; height:87px; border-radius:5px; }
+html[data-phone=true] .declare-dialog { inset:auto 8px 6px; margin:0 auto; max-height:calc(100dvh - 12px); }
+html[data-phone=true] .declare-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; flex:1 1 auto; padding-bottom:4px; }
+html[data-phone=true] .declare-options-heading { grid-column:1/-1; margin:0; }
+html[data-phone=true] .declare-option { margin:0; padding:8px; }
+html[data-phone=true] .declare-option strong { font-size:16px; }
+html[data-phone=true] .declare-option small { font-size:14px; }
+html[data-phone=true] .declare-dialog .dialog-bottom { position:static; padding:4px 0 0; }
+html[data-phone=true] .is-round-over .table-seats { flex:1 1 0; min-height:0; overflow:auto; }
+html[data-phone=true] .is-round-over .table-play { margin:0; }
+html[data-phone=true] .is-round-over .seat-remainder { --reveal-width:26px; --reveal-step:12px; width:100%; max-width:100%; margin-top:4px; padding:4px 2px; }
+html[data-phone=true] .remainder-row { height:17px; }
+html[data-phone=true] .remainder-row:last-child { height:39px; }
+html[data-phone=true] .remainder-heading { font-size:10px; margin:0 0 2px; gap:3px; }
+html[data-phone=true] .remainder-heading b { font-size:12px; }
+html[data-phone=true] .is-round-over .hand-command-bar { height:auto; min-height:42px; }
+html[data-phone=true] .is-round-over .hand-heading { display:none; }
+html[data-phone=true] .is-round-over .round-end-banner { display:flex; flex-wrap:nowrap; justify-content:space-between; width:100%; gap:10px; padding:3px; }
+html[data-phone=true] .round-end-banner h2 { font-size:18px; margin:0; }
+html[data-phone=true] .round-end-banner p { font-size:12px; margin:0; max-width:none; }
+html[data-phone=true] .end-actions button { min-height:36px; padding:4px 10px; font-size:13px; }
+html[data-phone=true] .is-round-over .hand-scroll { --group-action-space:0px; }
+html[data-phone=true] .is-round-over .hand-scroll.empty-hand { height:0; padding:0; }
+html[data-phone=true] .is-round-over .card-row:last-child { padding-top:0; }
+html[data-phone=true] .is-round-over .hand-tools { display:none; }
+html[data-phone=true] .skin-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+html[data-phone=true] .settings-appearance { flex-wrap:wrap; }
+html[data-phone=true] .replay-layout { grid-template-columns:minmax(0,1fr) 220px; }
+html[data-phone=true] .replay-felt { min-height:220px; }
+html[data-phone=true] .review-tabs { top:44px; }
+@media(max-height:370px) { html[data-phone=true] { --phone-row-step:28px; } html[data-phone=true] .table-seats .teammate .seat-anchor { top:26px; } html[data-phone=true] .table-seats .self-play-anchor { top:26px; } html[data-phone=true] .table-seats > .opponent-left,html[data-phone=true] .table-seats > .opponent-right { top:26px; } }
+@media(max-width:740px) { html[data-phone=true] .wild-reference { display:none; } html[data-phone=true] .app-top { gap:5px; } html[data-phone=true] .app-top > .match-strip { gap:10px; } html[data-phone=true] .table-seats { --phone-play-width:calc((100vw - 196px) / 4); } html[data-phone=true] .table-seats .opponent-left .seat-anchor { left:64px; } html[data-phone=true] .table-seats .opponent-right .seat-anchor { right:64px; } }
+
+html[data-phone=true] .app-top .score-pair b,html[data-phone=true] .app-top .level-label b { color:var(--text); }
+html[data-phone=true] #phone-tools-toggle { color:var(--text); background:var(--panel); }
+@media(max-height:370px) { html[data-phone=true] { --hand-card-width:44px; --hand-card-height:66px; --stack-rise:20px; } html[data-phone=true] .stack-card-index { line-height:18px; } }
+@media(min-height:450px) { html[data-phone=true] { --hand-card-width:60px; --hand-card-height:90px; --stack-rise:26px; } }
+
+html[data-phone=true] .wild-reference { display:inline; }
+html[data-phone=true] .table-seats .player:not(.is-turn) .seat-bubble { display:none; }
+html[data-phone=true] .is-round-over .table-seats .player .seat-bubble { display:block; }
+html[data-phone=true] .hand-tier-label { writing-mode:horizontal-tb; white-space:nowrap; top:7px; font-size:10px; }
+html[data-phone=true] .table-seats > .teammate .relation { display:inline; font-size:10px; padding:0 3px; margin-left:4px; }
+@media(max-width:740px) { html[data-phone=true] .wild-reference { display:none; } }
+
+@media(max-height:350px) {
+  html[data-phone=true] { --hand-card-width:40px; --hand-card-height:60px; --stack-rise:20px; --phone-header:28px; --phone-dock:38px; }
+  html[data-phone=true] .hand-scroll { --group-action-space:24px; }
+  html[data-phone=true] .stack-card-index { line-height:18px; }
+  html[data-phone=true] .hand-command-bar { height:18px; min-height:18px; }
+  html[data-phone=true] .table-seats > .player { grid-template-rows:30px auto; gap:1px; }
+  html[data-phone=true] .table-seats .player .avatar { width:30px; height:30px; }
+  html[data-phone=true] .table-seats .player-info > strong { font-size:12px; line-height:15px; }
+  html[data-phone=true] .table-seats .remaining b { font-size:20px; }
+  html[data-phone=true] .table-seats .remaining { line-height:20px; }
+  html[data-phone=true] .table-seats .table-play { padding-block:2px; }
+  html[data-phone=true] .table-seats .teammate .seat-anchor,html[data-phone=true] .table-seats .self-play-anchor { top:22px; }
+  html[data-phone=true] .table-seats > .opponent-left,html[data-phone=true] .table-seats > .opponent-right { top:22px; }
+  html[data-phone=true] .hand-tools > .actions button { height:34px; min-height:34px; }
+  html[data-phone=true] .hand-tools #confirm-tribute { height:34px; min-height:34px; }
+  html[data-phone=true] #phone-tools-toggle,html[data-phone=true] .arrange-controls button { height:32px; min-height:32px; }
 }

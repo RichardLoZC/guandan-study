@@ -3,6 +3,8 @@ package com.guandan.study;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Insets;
 import android.net.Uri;
@@ -41,6 +43,7 @@ public final class MainActivity extends Activity {
     private static WeakReference<MainActivity> current = new WeakReference<>(null);
     private static final ArrayDeque<String> unclaimedNotices = new ArrayDeque<>();
     private WebView web;
+    private volatile boolean phoneDevice;
     private boolean exportPending;
     private boolean pickerOpen;
     private boolean pageReady;
@@ -51,6 +54,7 @@ public final class MainActivity extends Activity {
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
+        applyDeviceLayout();
         android.content.pm.PackageInfo provider = WebView.getCurrentWebViewPackage();
         int webVersion = 0;
         try { webVersion = Integer.parseInt(provider.versionName.split("\\.")[0]); } catch (Exception ignored) { }
@@ -77,7 +81,8 @@ public final class MainActivity extends Activity {
             getWindow().setDecorFitsSystemWindows(false);
             frame.setOnApplyWindowInsetsListener((view, insets) -> {
                 Insets safe = insets.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout());
-                view.setPadding(safe.left, safe.top, safe.right, safe.bottom);
+                Insets keyboard = insets.getInsets(WindowInsets.Type.ime());
+                view.setPadding(safe.left, safe.top, safe.right, Math.max(safe.bottom, keyboard.bottom));
                 return insets;
             });
         }
@@ -132,6 +137,30 @@ public final class MainActivity extends Activity {
         immersive();
     }
 
+    private void applyDeviceLayout() {
+        // Physical display space, not the current window or keyboard height:
+        // a tablet in split screen must not suddenly become a locked phone.
+        float density = getResources().getDisplayMetrics().density;
+        int shortSide;
+        if (Build.VERSION.SDK_INT >= 30) {
+            android.graphics.Rect bounds = getWindowManager().getMaximumWindowMetrics().getBounds();
+            shortSide = Math.min(bounds.width(), bounds.height());
+        } else {
+            android.util.DisplayMetrics display = new android.util.DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getRealMetrics(display);
+            shortSide = Math.min(display.widthPixels, display.heightPixels);
+        }
+        phoneDevice = shortSide / density < 600;
+        int orientation = phoneDevice ? ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+        if (getRequestedOrientation() != orientation) setRequestedOrientation(orientation);
+    }
+    @Override public void onConfigurationChanged(Configuration configuration) {
+        super.onConfigurationChanged(configuration);
+        applyDeviceLayout();
+        if (web != null) web.evaluateJavascript("window.GuandanPhone?.refresh()", null);
+        immersive();
+    }
+
     private void immersive() {
         if (Build.VERSION.SDK_INT >= 30) {
             WindowInsetsController controller = getWindow().getInsetsController();
@@ -179,6 +208,8 @@ public final class MainActivity extends Activity {
         web.evaluateJavascript("window.guandanPad?.notice(" + JSONObject.quote(message) + ")", null);
     }
     public final class ExportBridge {
+        @JavascriptInterface public String deviceKind() { return phoneDevice ? "phone" : "tablet"; }
+
         @JavascriptInterface public void lanRequest(int requestId, String raw) {
             if (raw == null || raw.length() > 32768 || network.isShutdown()) return;
             network.execute(() -> {

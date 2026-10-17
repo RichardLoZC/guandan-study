@@ -8,7 +8,7 @@ function scheduling(begin=()=>({promise:Promise.resolve(true),cancel(){}})){
   const context={botTimer:null,botWait:null,GuandanTurnTiming:{begin},paused:false,fault:null,activeTask:null,workEpoch:0,dealMotion:{active:false},
     liveRound:{state:{},adaptModel:response=>response,id:'test',revision:0,actingSeat:1,game:{result:null},phase:'playing',needsTributeConfirmation:true,
       observation:()=>({}),commitModel(){calls.commits++;}},
-    document:{hidden:false},hasOpenDialog:()=>false,
+    window:{},document:{hidden:false},hasOpenDialog:()=>false,
     clearTimeout(){},setTimeout(fn){timers.push(fn);return timers.length;},
     prefs:{book:true,aiBook:true},renderGame(){},reportError(error){throw error;},saveAction:fn=>fn(),
     model:{cancel(){},async request(){calls.requests++;return {};}}
@@ -80,3 +80,11 @@ test('an impossible human response is skipped without model or thinking and stal
   h.context.liveRound.mustPass=true;h.context.scheduleBots();h.context.liveRound.revision++;
   await h.timers[1]();assert.equal(h.calls.commits,1);
 });
+
+ test('portrait guard prevents new and queued solo moves, including a late inference reply',async()=>{
+   const h=scheduling();let blocked=true;h.context.window.GuandanPhone={blocked:()=>blocked};h.context.liveRound.needsTributeConfirmation=false;
+   h.context.scheduleBots();assert.equal(h.timers.length,0);
+   blocked=false;h.context.scheduleBots();blocked=true;await h.timers[0]();assert.equal(h.calls.requests,0);
+   blocked=false;let reply;h.context.model.request=()=>new Promise(done=>reply=done);
+   h.context.scheduleBots();const pending=h.timers[1]();blocked=true;reply({});await pending;assert.equal(h.calls.commits,0);
+ });

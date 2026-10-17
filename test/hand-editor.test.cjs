@@ -16,17 +16,17 @@ function harness(handStyle='fan'){
   querySelectorAll:()=>ids.map((id,index)=>({getBoundingClientRect:()=>({left:50+index*40,right:50+index*40+(index===ids.length-1?84:40),top:row*82,width:index===ids.length-1?84:40})}))
  })):[];
  let now=1000;const modes=[];
- const context={window:win,document:doc,GuandanHandLayout:layout,performance:{now:()=>now},innerWidth:1280,innerHeight:720,CSS:{escape:s=>s},getComputedStyle:()=>({getPropertyValue:()=> '40px'}),cancelAnimationFrame(){},requestAnimationFrame(){return 1;}};
+ const context={window:win,document:doc,GuandanHandLayout:layout,GuandanHandStack:require('../web/app/hand-stack.js'),performance:{now:()=>now},innerWidth:1280,innerHeight:720,CSS:{escape:s=>s},getComputedStyle:()=>({getPropertyValue:()=> '40px'}),cancelAnimationFrame(){},requestAnimationFrame(){return 1;}};
  vm.runInNewContext(fs.readFileSync(require.resolve('../web/app/hand-editor.js'),'utf8'),context);
  const editor=win.createHandEditor({root,container,scroll,undoButton,getLayout:()=>current,getHand:()=>hand,getSelected:()=>selected,
-  onArrange:ids=>ids.forEach(id=>selected.delete(id)),canEdit:()=>hand.length>0,commit:next=>{commits.push(next);current=next;},onModeChange:value=>modes.push(value),curvedTarget:()=>target,imageFor:()=>node('img')});
+  getLevel:()=> '2',onArrange:ids=>ids.forEach(id=>selected.delete(id)),canEdit:()=>hand.length>0,commit:next=>{commits.push(next);current=next;},onModeChange:value=>modes.push(value),curvedTarget:()=>target,imageFor:()=>node('img')});
  editor.reconcile();
  const event=(extra={})=>({button:0,isPrimary:true,pointerId:1,clientX:50,clientY:50,currentTarget:node('canvas'),preventDefault(){},...extra});
  const fire=(type,extra={})=>{const e=event(extra);for(const fn of listeners.get('window:'+type)||[])fn(e);};
  function advance(ms){now+=ms;}
  const fireDocument=(type,extra={})=>{for(const fn of listeners.get('document:'+type)||[])fn(event(extra));};
  const fireCard=(type,extra={})=>{const e=event(extra);for(const fn of listeners.get('cards:'+type)||[])fn(e);};
- return {editor,event,fire,advance,fireDocument,fireCard,modes,selected,selections,commits,root,scroll,undoButton,doc,undo:()=>listeners.get('undo:click')[0](),setHand:value=>hand=value,setLayout:value=>current=value,setTarget:value=>target=value,get current(){return current;}};
+ return {editor,event,fire,advance,fireDocument,fireCard,modes,selected,selections,commits,root,container,scroll,undoButton,doc,undo:()=>listeners.get('undo:click')[0](),setHand:value=>hand=value,setLayout:value=>current=value,setTarget:value=>target=value,get current(){return current;}};
 }
 test('taps remain native button clicks while a drag reorders the selected group without selecting',()=>{
  const h=harness();h.editor.start(h.event(),'a',true);h.fire('pointerup');assert.deepEqual(h.selections,[]);assert.equal(h.commits.length,0);
@@ -132,6 +132,17 @@ test('automatic arrangement and rank reset share undo without changing the selec
  h.editor.replace(automatic);const ranked=layout.create('r',[{id:'a'},{id:'b'},{id:'c'},{id:'d'}]);h.editor.replace(ranked);
  h.undo();assert.deepEqual(h.current.rows,automatic.rows);assert.deepEqual(h.current.groups,automatic.groups);
 });
+test('lower-row arrangement and sorting undo without moving reserved upper cards',()=>{
+ const h=harness(),hand=['a','b','c','d'].map(id=>({id}));
+ h.setLayout({...h.current,source:'manual',rows:[['b','a'],['d','c']],groups:[{ids:['b','a'],label:'reserved'}]});
+ const before=structuredClone(h.current);h.selected.add('b');
+ const plan={groups:[{ids:['c','d'],label:'lower pair'}]};
+ h.editor.replace(layout.fromPlan('r',hand,plan,h.current));
+ assert.deepEqual(h.current.rows,[['b','a'],['c','d']]);assert.deepEqual(h.current.groups[0],before.groups[0]);
+ const automatic=structuredClone(h.current);h.editor.replace(layout.fromPlan('r',hand,null,h.current));
+ assert.deepEqual(h.current.groups,before.groups);h.undo();assert.deepEqual(h.current,automatic);
+ assert.deepEqual([...h.selected],['b']);
+});
 test('a successful drop clears moved selection but not unrelated selected cards',()=>{
  const h=harness();h.selected.add('a').add('b');
  h.editor.start(h.event(),'c');h.fire('pointermove',{clientX:100});h.fire('pointerup',{clientX:100});
@@ -155,4 +166,28 @@ test('Escape protects the eventual release click even after a long hold, until t
   h.fire('pointerdown',{pointerType});h.fireCard('click',{detail:1,preventDefault(){blocked++;},stopImmediatePropagation(){}});
   assert.equal(blocked,1,'a new press on either a card or blank hand space resets suppression');
  }
+});
+test('dropping on a visible group face merges and sorts it even when the curved insertion marker picked the other shelf',()=>{
+ const h=harness(),ids=['a','b','c','d'];
+ h.setHand(ids.map((id,i)=>({id,face:'face',rank:'8',suit:['clubs','hearts','spades','diamonds'][i],isWild:false})));
+ const original={...h.current,rows:[['a','b','c'],['d']],groups:[{ids:['a','b','c'],label:'三张 8'}],source:'manual'};
+ h.setLayout(original);h.setTarget({row:1,index:0,x:100,y:110,height:60});
+ const card={dataset:{id:'c'}};h.doc.elementFromPoint=()=>({closest:selector=>selector==='.playing-card'?card:null});
+ h.selected.add('d');h.editor.start(h.event(),'d');h.fire('pointermove',{clientX:100});h.fire('pointerup',{clientX:100});
+ assert.equal(h.current.groups.length,1);assert.equal(h.current.groups[0].label,'4 张炸 8');
+ assert.equal(h.current.rows[0].length,4);assert.deepEqual(h.current.rows[1],[]);assert.equal(h.selected.size,0);
+ h.undo();assert.deepEqual(h.current,original);
+});
+
+test('phone stack dragging and undo never create an invisible upper row',()=>{
+ const h=harness('stack');h.root.dataset.phone='true';h.setLayout({...h.current,rows:[[],['a','b','c','d']]});
+ const oldQuery=h.container.querySelectorAll;
+ h.container.querySelectorAll=selector=>selector==='.stack-column'?[
+  {getBoundingClientRect:()=>({left:50,right:90}),querySelectorAll:()=>['a','b','c'].map((id,index)=>({dataset:{id},getBoundingClientRect:()=>({top:40+index*22,bottom:106+index*22})}))},
+  {getBoundingClientRect:()=>({left:100,right:140}),querySelectorAll:()=>[{dataset:{id:'d'},getBoundingClientRect:()=>({top:84,bottom:150})}]}
+ ]:oldQuery(selector);
+ h.editor.reconcile();h.selected.add('a').add('b');h.editor.start(h.event({clientY:45}),'a');h.fire('pointermove',{clientX:120,clientY:140});h.fire('pointerup',{clientX:120,clientY:140});
+ assert.deepEqual(h.current.rows,[[],['c','d','a','b']]);assert.equal(h.selected.size,0);h.undo();assert.deepEqual(h.current.rows,[[],['a','b','c','d']]);
+ h.fireCard('keydown',{key:'ArrowUp',altKey:true,target:{closest:()=>({dataset:{id:'a'}})}});
+ assert.deepEqual(h.current.rows,[[],['a','b','c','d']]);
 });

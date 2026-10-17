@@ -1,6 +1,14 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict');
 const fan=require('../web/app/hand-fan.js');
+test('row fitting keeps readable corners and accounts for every independent group on narrow screens',()=>{
+ for(const width of [320,680,1400])for(const cards of [0,1,7,20,27])for(const clusters of cards?[1,cards]:[0]){
+  const result=fan.rowMetrics({cards,clusters},{width,cardWidth:72,step:40,gap:18});
+  assert.ok(Number.isFinite(result.width));assert.ok(result.step>=30&&result.step<=40);
+  assert.equal(result.width,94+clusters*72+Math.max(0,cards-clusters)*result.step+Math.max(0,clusters-1)*18);
+  assert.ok(result.width<=width||result.step===30||clusters===cards,'overflow is reserved for readable minimum spacing');
+ }
+});
 function rendered(p,width,height,left=0,top=0,lift=0){
  const angle=p.angle*Math.PI/180,c=Math.cos(angle),s=Math.sin(angle);
  const points=[[0,0],[width,0],[width,height],[0,height]].map(([x,y])=>({

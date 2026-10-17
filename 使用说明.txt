@@ -1,6 +1,6 @@
-掼蛋研习社 / Guandan Study 1.8.22
+掼蛋研习社 / Guandan Study 1.8.25
 
-手牌操作：不出、出牌固定在底栏醒目位置；看建议教学入口与出牌记录位于右下方。下方集中平铺／弧形、理牌方式、按大小、撤销理牌、取消选择。选择同花顺、炸弹、顺连或对子优先会立即理牌，再点“理牌”轮换组合；“按大小”恢复下排点数排序；“撤销理牌”撤回最近一次手动或自动调整。
+手牌操作：不出、出牌固定在底栏醒目位置；看建议教学入口与出牌记录位于右下方。下方集中平铺／弧形、理牌方式、按大小、撤销理牌、取消选择。选择同花顺、炸弹、顺连或对子优先会立即理牌，再点“理下排”轮换下排组合；“按大小”只恢复下排点数排序，上排保持不变；“撤销理牌”撤回最近一次手动或自动调整。
 
 中文：牌桌顶部点 English 切换英文，再点“中文”切回。当前牌局和选牌保留。
 English: Use the English / 中文 button at the top. Language changes preserve your game and selection.
@@ -8,19 +8,29 @@ English: Use the English / 中文 button at the top. Language changes preserve y
 Mac：解压应用后放入本机“应用程序”，打开“掼蛋研习社”。
 桌面窗口：小窗口自动等比例缩放完整牌桌。菜单“显示 → 恢复大小”可重新适应窗口；两种手牌布局与拖动选牌使用相同缩放比例。
 Windows: Extract the whole ZIP, then run GuandanStudy.exe.
-Android：安装 APK，手机和平板共用；支持横竖屏。需要 Android 8+ / WebView 120+。
+Android：安装 APK，手机和平板共用。手机固定横屏（左右横握均可），平板继续支持横竖屏。需要 Android 8+ / WebView 120+。
 
+手机版：单区叠牌，同点数纵向叠放，每列最多 3 张；更多同点数牌拆为相邻列。点露出的牌头选择，拖动调整顺序，多选拖动可组成独立组合。“理牌”搜索整手牌并轮换组合；底栏“理牌工具”内选择同花顺、炸弹等优先方式，或按大小、撤销、取消选择。组合过多时从空白处左右滑动。旧存档上下排合并到同一区域，原组合保留。
+手机菜单：顶部“菜单”收纳语言、复盘、设置、出牌记录、教学建议。点桌面已出牌或终局明牌可放大查看。
+级牌：三套牌面均在当副级牌上显示金色星号；手机叠牌的露出牌头也显示星号，红桃级牌另标“配”。手牌、桌面、贡还和复盘均按对应副牌的级数标记。
+
+以下双排操作适用于 Mac、Windows 和 Pad。
 手牌布局：底栏切换“平铺 / 弧形”；默认平铺，两种布局共用牌序和选牌。
-理牌 / Arrange：搜索整手牌中可同时保留的组合，考虑不同花色和逢人配分配，轮换展示不同方案。点击或空格选牌，再点“出牌 / Play”。
+理下排 / Arrange lower：上排存放玩家保留的组合；只搜索下排中可同时保留的组合，考虑不同花色和逢人配分配，轮换展示不同方案。点击或空格选牌，再点“出牌 / Play”。
 预选与理牌：对手或 AI 出牌、暂停、等待联机回包时，都可先选牌和理牌。轮到自己且合法时才可确认出牌。发牌动画和本副结束时停止手牌操作。
 双层高度：上排即使为空也保留完整空间，移动牌不会改变手牌区、牌桌或底栏的位置。
 初始牌序：所有手牌按大小放在下排，上排留空；已理好的牌序继续保存。
 鼠标框选：在手牌区空白处按住鼠标左键拖动。向右拖动蓝色选框，只选择完整框住的可见牌面；向左拖动绿色虚线框，碰到可见牌面即可选中。按住 Shift 追加选择，Esc 取消本次框选。松手完成，可接着拖动选中的牌理牌。触屏在空白处仍用于滚动。
 选牌与取消：轻点牌桌或手牌区空白处取消选择，滑动或拖动松手不会误清空。Shift 点击按当前显示顺序追加连续一段牌，上排从左到右后接下排。Esc 先取消拖动／框选并保留原选择，再按一次取消选择；有弹窗时先关闭弹窗。切换平铺／弧形保留选择，理牌后重新确定连选起点。
-自由理牌 / Free arrange：点击选牌，按住拖动就立即理牌，无需等待，松手完成；单张或已选组合均可在上下两排换位，支持撤销。轻微抖动不会触发理牌；鼠标与触屏都使用点选、拖动换位。键盘可直接用 Alt / Option + 方向键移动聚焦牌或已选组合。平铺和弧形共用牌序；出牌保留其余牌序，重新打开同一副会恢复；窄屏可在手牌区空白处左右滚动。“理牌”按钮继续自动寻找组合。
-Free arrange: Tap to select; press and drag to move cards or a selection between rows immediately. No hold delay. Release to finish. Small movements are ignored to avoid accidental drags. Mouse and touch use the same gestures. Undo and Alt/Option + arrow keys remain available. Both views share the saved layout. Arrange cycles through suggested combinations.
+自由理牌 / Free arrange：点击选牌，按住拖动就立即理牌，无需等待，松手完成；单张或已选组合均可在上下两排换位，支持撤销。轻微抖动不会触发理牌；鼠标与触屏都使用点选、拖动换位。键盘可直接用 Alt / Option + 方向键移动聚焦牌或已选组合。平铺和弧形共用牌序；出牌保留其余牌序，重新打开同一副会恢复；窄屏可在手牌区空白处左右滚动。“理下排”按钮只用下排的牌寻找组合；上排的牌序、分组和位置保持不变。下排为空时停用理下排与按大小。
+Free arrange: Tap to select; press and drag to move cards or a selection between rows immediately. No hold delay. Release to finish. Small movements are ignored to avoid accidental drags. Mouse and touch use the same gestures. Undo and Alt/Option + arrow keys remain available. Both views share the saved layout. Arrange lower cycles through lower-row combinations. The upper row retains reserved cards, groups and positions; Sort by rank also affects only the lower row.
+组合整理：多选拖放成组后，组内自动按牌型理顺（顺子依次排列，三带二先三张后对子）；单张拖到已有组合的牌面上，出现“加入组合”后松手，会合并并重新识别名称。拖到组合外的空隙仍是独立牌。无效组合保留为待整理牌堆，取消旧名称；有歧义的逢人配仍需在出牌时声明。支持撤销，平铺和弧形通用。
+Group editing: A dragged selection is ordered by its combination. Drop a single card onto a group face to merge and rename it; gaps keep cards independent. Invalid piles retain their cards without an outdated name. Wildcard declarations remain explicit when playing. Undo works in both hand views.
 看建议 / Hint：DanLM 推荐，只选中建议，不会替你确认出牌。
 AI 还贡：独立比较合法候选，尽量保留可用组合；结构相近时优先还较低点数的牌。此策略只使用本人的手牌，不是 DanLM 推理。
+
+秘籍出牌：在设置中开启“秘籍影响 AI 出牌”后生效。开局有合适普通牌路线时优先保留同花顺等控制组合；余牌粗略拆分只作有限参考，普通闲牌跟对家与消耗炸弹接管分别判断。直接走完和紧迫残局仍需优先比较。关闭开关保留 DanLM 原始选择。模型权重没有修改，秘籍评分不等于胜率。
+Strategy guidance: enable “Use strategy-book guidance for AI players” in Settings. It conserves opening control combinations when a suitable ordinary route exists, limits the influence of approximate hand partitions, and distinguishes cheap partner responses from costly takeovers. Immediate finishes and urgent endgames remain relevant. Turning it off preserves raw DanLM choices. Model weights are unchanged; guidance scores are not win probabilities.
 复盘 / Review：查看实际行动、最后出牌、终局明牌与逐手回放；可导出文本。
 设置 / Settings：主题、牌面、大字、发牌动画、暂停、备份和许可。
 

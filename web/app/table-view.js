@@ -16,9 +16,9 @@
         }
         continue;
       }
-      const styles=getComputedStyle(scroll),number=name=>parseFloat(styles.getPropertyValue(name));
+      const styles=getComputedStyle(row),number=name=>parseFloat(styles.getPropertyValue(name));
       const breaks=buttons.map((button,index)=>button.dataset.clusterStart==='true'?index:0).filter(Boolean);
-      const positions=GuandanHandFan.layout(buttons.length,{width:row.clientWidth,cardWidth:number('--hand-card-width'),cardHeight:number('--hand-card-height'),step:number('--hand-step'),breaks,gap:number('--hand-group-gap')||18});
+      const positions=GuandanHandFan.layout(buttons.length,{width:row.clientWidth,cardWidth:number('--hand-card-width'),cardHeight:number('--hand-card-height'),step:number('--hand-step'),breaks,gap:number('--hand-group-gap')||18,minStep:root.dataset.phone==='true'?18:24});
       buttons.forEach((button,index)=>{
         const p=positions[index];button.style.setProperty('--fan-x',p.x+'px');button.style.setProperty('--fan-y',p.y+'px');
         button.style.setProperty('--fan-angle',p.angle+'deg');button.style.setProperty('--fan-order',index);
@@ -31,11 +31,11 @@
     }
   }
   function choose(style,persist=true){
-    bridge.cancelDrag();style=style==='fan'?'fan':'flat';
-    if(persist)bridge.setHandStyle(style);
+    bridge.cancelDrag();style=root.dataset.phone==='true'?'stack':style==='fan'?'fan':'flat';
+    if(persist&&style!=='stack')bridge.setHandStyle(style);
     root.dataset.handStyle=style;
     flat.setAttribute('aria-pressed',String(style==='flat'));fan.setAttribute('aria-pressed',String(style==='fan'));
-    scroll.setAttribute('aria-label',style==='fan'?'弧形双层手牌；点击选牌，按住拖动理牌，空白处左右滚动':'双层手牌；点击选牌，按住拖动理牌，空白处左右滚动');
+    scroll.setAttribute('aria-label',style==='stack'?'叠放手牌；点击露出的牌头选牌，拖动调整顺序':style==='fan'?'弧形双层手牌；点击选牌，按住拖动理牌，空白处左右滚动':'双层手牌；点击选牌，按住拖动理牌，空白处左右滚动');
     scroll.setAttribute('title','点击选牌，Shift 点击连续选牌；轻点空白处或 Esc 取消选择。空白处拖动框选：向右全包，向左相交；Shift 追加。');
     bridge.layout();sync();
   }

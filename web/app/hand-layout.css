@@ -2,9 +2,11 @@
 .view-picker { display:flex; gap:3px; padding:3px; border:1px solid var(--line); border-radius:10px; background:#203e3010; white-space:nowrap; }
 .view-picker button { min-height:38px; padding:5px 12px; color:var(--muted); border:0; border-radius:7px; background:transparent; font-size:16px; font-weight:650; }
 .view-picker button[aria-pressed=true] { background:var(--panel); color:var(--text); box-shadow:0 1px 5px #142b2522; }
-html .hand-scroll { --hand-group-gap:18px; --group-action-space:32px; --fan-rise:calc(var(--hand-card-height) * .18 + 12px); max-height:none; height:calc(var(--hand-shelf-height,204px) * 2 + 16px); padding:8px; touch-action:pan-x; }
+html .hand-scroll { --hand-group-gap:18px; --group-action-space:32px; --fan-rise:calc(var(--hand-card-height) * .18 + 12px); max-height:none; height:calc(var(--hand-shelf-height,204px) * 2 + 16px); padding:8px; touch-action:pan-x; scrollbar-gutter:stable; }
 html .hand-scroll.empty-hand { height:56px; }
-html #hand-cards { min-width:var(--row-width); }
+html #hand-cards { width:100%; min-width:0; }
+html .card-row[data-row="0"] { --hand-step:var(--upper-hand-step); min-width:var(--upper-row-width); }
+html .card-row[data-row="1"] { --hand-step:var(--lower-hand-step); min-width:var(--lower-row-width); }
 html .card-row,html .card-row:last-child { height:var(--hand-shelf-height,204px); align-items:flex-start; justify-content:center; gap:var(--hand-group-gap); padding:var(--group-action-space) 38px 0; border-radius:9px; }
 html .hand-cluster { display:flex; flex:0 0 auto; position:relative; }
 html .group-action { position:absolute; left:0; top:calc(-1 * var(--group-action-space)); z-index:50; display:flex; align-items:center; justify-content:space-between; gap:7px; width:100%; height:26px; min-height:26px; padding:2px 6px; border:0; border-radius:5px; color:#fff9e8; background:#12382c99; font-size:13px; font-weight:650; line-height:20px; white-space:nowrap; touch-action:manipulation; }
@@ -37,6 +39,9 @@ html .saved-group[data-rarity=crown] .group-marker::after { animation-duration:3
 .hand-drag-ghost { position:fixed; z-index:1000; pointer-events:none; width:78px; height:117px; transform:rotate(5deg); filter:drop-shadow(0 8px 12px #0008); }
 .hand-drag-ghost img { width:100%; height:100%; border-radius:5px; }
 .hand-drag-ghost b { position:absolute; right:-9px; top:-9px; padding:5px 9px; border-radius:18px; color:#173e2c; background:#f4d38a; font-size:17px; }
+.hand-merge-note { position:absolute; left:50%; bottom:-28px; transform:translateX(-50%); white-space:nowrap; padding:3px 9px; border-radius:6px; color:#173e2c; background:#f4d38a; font-size:14px; font-weight:650; }
+.hand-editing .drop-merge .playing-card > img { box-shadow:0 0 0 2px #ffde8a,0 0 10px #ffde8a88; }
+.hand-editing .drop-merge .group-marker { background:#ffde8a; height:5px; }
 .hand-drop-marker { position:fixed; z-index:999; pointer-events:none; width:4px; border-radius:4px; background:#ffde8a; box-shadow:0 0 0 2px #183e2f,0 0 16px #f3d490; transform-origin:top center; }
 .hand-drop-marker::before { content:''; position:absolute; left:-4px; top:-5px; width:12px; height:5px; border-radius:3px; background:#ffde8a; }
 .drag-source { opacity:.5; }
@@ -123,3 +128,7 @@ html[lang=en] .arrange-controls select { width:190px; }
   html:root { --hand-card-width:64px; --hand-card-height:96px; --hand-step:35px; }
 }
 html[lang=en] .joker-label { display:block; writing-mode:vertical-rl; text-orientation:upright; width:25px; height:66px; font-size:10px; padding:3px; line-height:1; }
+
+/* Keep the level star, wild label and selection indicator in separate bands. */
+html .selected-mark { top:70%; }
+html .wild-label { top:51%; }

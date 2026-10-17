@@ -129,3 +129,35 @@ test('new strategy evidence and the automatic-pass label have English text',()=>
   for(const text of ['规则自动不出',...rows.flatMap(r=>r.evidence.map(e=>e.reason))])
     assert.ok(!/[\u3400-\u9fff]/u.test(english.translate(text)),text);
 });
+test('a greedy partition without bombs must not claim there is no legal bomb left',()=>{
+  const ids=['1-joker-BJ','2-diamonds-5','2-spades-A','1-clubs-A','2-diamonds-A','2-spades-K','2-spades-Q','2-diamonds-J',
+    '2-hearts-10','1-clubs-10','2-diamonds-10','1-spades-9','2-diamonds-9','2-spades-8','2-diamonds-7',
+    '1-hearts-6','2-hearts-6','2-spades-6','2-diamonds-6','2-hearts-2','2-spades-2'];
+  const o=observation(ids,[21,20,20,26]);o.level='5';o.state.players[0].hand=cards(ids,'5');ai.mt('5');
+  const candidate=ai.be(o.state.players[0].hand).find(p=>p.type==='straight'&&p.primaryValue===13);
+  assert.ok(candidate);const used=new Set(candidate.cards.map(c=>c.id)),remaining=o.state.players[0].hand.filter(c=>!used.has(c.id));
+  assert.ok(ai.be(remaining).some(p=>p.type==='bomb'&&p.cards.every(c=>c.rank==='6')));
+  const row=assess(o,[candidate]).rows[0];
+  assert.ok(row.evidence.some(e=>e.rule==='route-unbacked'&&e.reason.includes('可能要花炸弹')));
+  assert.ok(row.evidence.every(e=>!e.reason.includes('没有保留的炸弹')));
+});
+test('a discontinuous greedy estimate alone cannot replace a cheaper model-preferred single',()=>{
+  const o=observation(['1-diamonds-Q','1-joker-SJ','1-clubs-3']);
+  const candidates=[{play:play(['1-diamonds-Q'])},{play:play(['1-joker-SJ'])}];
+  const id=c=>c.play.key+'|'+c.play.cards.map(c=>c.id).sort().join(',');
+  const rows=candidates.map((c,i)=>({id:id(c),score:(i?-5:5)+(i?-40:-80),evidence:[{rule:'shape',delta:i?-40:-80}]}));
+  policy.calibrate(o,candidates,rows,{original:candidates[0],isBomb:core.isBomb});
+  assert.ok(rows[0].score>rows[1].score);
+});
+test('a natural low-cost response is not rejected solely because the table owner is our partner',()=>{
+  const o=observation(['1-clubs-10','1-diamonds-3','1-spades-4','1-hearts-5','1-clubs-6','1-spades-7']);
+  o.state.tablePlay={owner:2,play:play(['1-diamonds-8'])};
+  const candidates=[{play:play(['1-clubs-10'])},{type:'pass',play:null}];
+  const id=c=>c.play?c.play.key+'|'+c.play.cards.map(c=>c.id).sort().join(','):'pass';
+  const rows=candidates.map((c,i)=>({id:id(c),score:i?-5-88+12:5-80-18,
+    evidence:[{rule:'shape',delta:i?-88:-80},{rule:'partner',delta:i?12:-18}]}));
+  policy.calibrate(o,candidates,rows,{original:candidates[0],isBomb:core.isBomb});
+  assert.ok(rows[0].score>rows[1].score);
+  const english=require('../web/app/locales/en.js');
+  for(const row of rows)for(const e of row.evidence)if(e.reason)assert.ok(!/[\u3400-\u9fff]/u.test(english.translate(e.reason)));
+});

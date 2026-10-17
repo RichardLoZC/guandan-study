@@ -37,3 +37,11 @@ test('flat view delegates to the ordinary editor and curved hits exclude control
  const h=harness();assert.equal(h.win.tableView.dropTarget(500,200),null);
  h.click('hand-fan');assert.equal(h.win.tableView.dropTarget(500,300),null);
 });
+test('curved rows use their own spacing rather than the other shelf or scroll container',()=>{
+ const h=harness('fan');h.rows[1].style.setProperty('--hand-step','30px');h.win.tableView.sync();
+ const before=h.cards.map(card=>card.style.getPropertyValue('--fan-x'));
+ h.el('hand-scroll').style.setProperty('--hand-step','36px');h.rows[0].style.setProperty('--hand-step','36px');h.win.tableView.sync();
+ assert.deepEqual(h.cards.map(card=>card.style.getPropertyValue('--fan-x')),before);
+ h.rows[1].style.setProperty('--hand-step','40px');h.win.tableView.sync();
+ assert.notDeepEqual(h.cards.map(card=>card.style.getPropertyValue('--fan-x')),before);
+});

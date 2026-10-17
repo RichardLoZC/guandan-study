@@ -11,7 +11,7 @@
   note.className = 'pad-touch-note';
   note.textContent = '点击牌面选牌';
   byId('hand-count').after(document.createTextNode(' '), note);
-  byId('hand-scroll').setAttribute('aria-label', '双层手牌；点击选牌，按住拖动理牌，空白处左右滚动');
+  byId('hand-scroll').setAttribute('aria-label', window.GuandanPhone?.active ? '叠放手牌；点击露出的牌头选牌，拖动调整顺序' : '双层手牌；点击选牌，按住拖动理牌，空白处左右滚动');
   // The shared editor handles mouse, touch and pen. A separate swipe-select
   // recognizer would compete with immediate dragging on the same cards.
   let suspended = false;

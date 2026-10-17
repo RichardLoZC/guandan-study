@@ -1,8 +1,9 @@
 /* Pointer and keyboard editing for the shared flat/curved DOM hand. */
 'use strict';
 window.createHandEditor=function(options){
-  const {root,container,scroll,undoButton,getLayout,getHand,getSelected,canEdit,commit,onModeChange,onArrange,curvedTarget,imageFor}=options;
-  const marker=document.createElement('div'),ghost=document.createElement('div');
+  const {root,container,scroll,undoButton,getLayout,getHand,getLevel,getSelected,canEdit,commit,onModeChange,onArrange,curvedTarget,imageFor}=options;
+  const marker=document.createElement('div'),ghost=document.createElement('div'),mergeNote=document.createElement('span');
+  mergeNote.className='hand-merge-note';mergeNote.textContent='加入组合';mergeNote.hidden=true;
   marker.className='hand-drop-marker';ghost.className='hand-drag-ghost';
   marker.hidden=ghost.hidden=true;marker.setAttribute('aria-hidden','true');ghost.setAttribute('aria-hidden','true');document.body.append(marker,ghost);
   const MOVE_SLOP=6;
@@ -14,7 +15,7 @@ window.createHandEditor=function(options){
   }
   function cancel(suppressClick=true){
     const old=gesture;gesture=null;cancelAnimationFrame(scrollFrame);scrollFrame=0;marker.hidden=ghost.hidden=true;
-    root.classList.remove('hand-dragging');container.querySelectorAll('.drag-source,.drop-row').forEach(node=>node.classList.remove('drag-source','drop-row'));
+    root.classList.remove('hand-dragging');container.querySelectorAll('.drag-source,.drop-row,.drop-merge').forEach(node=>node.classList.remove('drag-source','drop-row','drop-merge'));
     if(old&&suppressClick)blockTrailingClick=true;
     if(old?.capture?.hasPointerCapture?.(old.pointer))old.capture.releasePointerCapture(old.pointer);
     if(editing){editing=false;controls();onModeChange(false);}
@@ -31,8 +32,8 @@ window.createHandEditor=function(options){
     if(after===before||JSON.stringify(after)===JSON.stringify(before))return false;
     cancel();undo=before;if(movedIds)onArrange?.(movedIds);commit(after);controls();return true;
   }
-  function apply(ids,row,index){
-    const changed=replace(GuandanHandLayout.move(getLayout(),ids,row,index),ids);
+  function apply(ids,row,index,mergeId){
+    const changed=replace(GuandanHandLayout.move(getLayout(),ids,row,index,{hand:getHand(),level:getLevel?.(),mergeId}),ids);
     // Dropping an existing group back in place still finishes arranging it.
     if(!changed&&canEdit()){onArrange?.(ids);onModeChange(false);}
   }
@@ -42,14 +43,33 @@ window.createHandEditor=function(options){
     const row=rows.findLastIndex(node=>y>=node.getBoundingClientRect().top-8);
     if(row<0)return null;
     const node=rows[row],buttons=[...node.querySelectorAll('.playing-card')],bounds=node.getBoundingClientRect();
-    let index=buttons.findIndex(button=>{const b=button.getBoundingClientRect();return x<b.left+Math.min(b.width,parseFloat(getComputedStyle(scroll).getPropertyValue('--hand-step'))||40)/2;});
+    let index=buttons.findIndex(button=>{const b=button.getBoundingClientRect();return x<b.left+Math.min(b.width,parseFloat(getComputedStyle(node).getPropertyValue('--hand-step'))||40)/2;});
     if(index<0)index=buttons.length;
     const next=buttons[index]?.getBoundingClientRect(),last=buttons.at(-1)?.getBoundingClientRect();
-    return {row,index,x:next?next.left-3:last?last.right-3:bounds.left+bounds.width/2,y:bounds.top+3,height:Math.min(bounds.height,95)};
+    return {row:Number(node.dataset?.row??row),index,x:next?next.left-3:last?last.right-3:bounds.left+bounds.width/2,y:bounds.top+3,height:Math.min(bounds.height,95)};
+  }
+  function stackTarget(x,y){
+    const ids=getLayout().rows[1],columns=[...container.querySelectorAll('.stack-column')].map(column=>{
+      const box=column.getBoundingClientRect();
+      return {left:box.left,right:box.right,cards:[...column.querySelectorAll('.playing-card')].map(button=>{
+        const b=button.getBoundingClientRect();return {index:ids.indexOf(button.dataset.id),top:b.top,bottom:b.bottom};
+      })};
+    });
+    return GuandanHandStack.dropTarget(columns,scroll.getBoundingClientRect(),x,y);
   }
   function targetAt(x,y){
-    if(document.elementFromPoint?.(x,y)?.closest('.group-action,.hand-tools,.hand-options,.action-bar,dialog,.app-top'))return null;
-    return root.dataset.handStyle==='fan'?curvedTarget(x,y):flatTarget(x,y);
+    const hit=document.elementFromPoint?.(x,y);
+    if(hit?.closest('.group-action,.hand-tools,.hand-options,.action-bar,dialog,.app-top'))return null;
+    const target=root.dataset.handStyle==='stack'?stackTarget(x,y):root.dataset.handStyle==='fan'?curvedTarget(x,y):flatTarget(x,y);
+    if(!target||gesture?.ids.length!==1)return target;
+    const card=hit?.closest('.playing-card'),id=card?.dataset.id;
+    if(id&&getLayout().groups.some(group=>group.ids.includes(id))){
+      const row=getLayout().rows.findIndex(ids=>ids.includes(id));
+      // For a curved hand, the visible card face takes priority over the
+      // nearest insertion marker, which may otherwise be on the other shelf.
+      return {...target,row,index:getLayout().rows[row].indexOf(id),mergeId:id};
+    }
+    return target;
   }
   function position(event){
     if(!gesture)return;
@@ -62,15 +82,17 @@ window.createHandEditor=function(options){
       if(scroll.scrollLeft!==before&&!scrollFrame)scrollFrame=requestAnimationFrame(()=>{scrollFrame=0;if(gesture?.dragging)position(gesture.lastPoint);});
     }
     const target=targetAt(event.clientX,event.clientY);gesture.target=target;
-    marker.hidden=!target;
+    marker.hidden=!target||Boolean(target.mergeId);mergeNote.hidden=!target?.mergeId;
     if(target){marker.style.left=target.x+'px';marker.style.top=target.y+'px';marker.style.height=target.height+'px';marker.style.transform='rotate('+(target.angle||0)+'deg)';}
-    container.querySelectorAll('.card-row').forEach((node,row)=>node.classList.toggle('drop-row',row===target?.row));
+    container.querySelectorAll('.card-row').forEach((node,row)=>node.classList.toggle('drop-row',Number(node.dataset?.row??row)===target?.row));
+    container.querySelectorAll('.saved-group').forEach(node=>node.classList.toggle('drop-merge',Boolean(target?.mergeId&&node.querySelector('[data-id="'+CSS.escape(target.mergeId)+'"]'))));
     ghost.style.left=Math.min(innerWidth-105,Math.max(4,event.clientX+14))+'px';ghost.style.top=Math.max(4,Math.min(innerHeight-125,event.clientY-75))+'px';
   }
   function beginDrag(){
     if(!gesture)return;
     gesture.dragging=true;root.classList.add('hand-dragging');
     const card=getHand().find(card=>card.id===gesture.id);ghost.replaceChildren(imageFor(card.face));
+    ghost.append(mergeNote);
     if(gesture.ids.length>1){const count=document.createElement('b');count.textContent=String(gesture.ids.length);ghost.append(count);}
     ghost.hidden=false;for(const id of gesture.ids)container.querySelector('[data-id="'+CSS.escape(id)+'"]')?.classList.add('drag-source');
   }
@@ -106,7 +128,7 @@ window.createHandEditor=function(options){
     cancel(old.dragging);
     if(old.signature!==handSignature()||!canEdit())return;
     if(!old.dragging)return; // The native card button owns click selection.
-    if(old.dragging&&target)apply(old.ids,target.row,target.index);
+    if(old.dragging&&target)apply(old.ids,target.row,target.index,target.mergeId);
   });
   window.addEventListener('pointercancel',event=>{if(event.pointerId===gesture?.pointer)cancel();});
   window.addEventListener('pointerdown',event=>{if(gesture&&!event.isPrimary)cancel();});
@@ -122,6 +144,7 @@ window.createHandEditor=function(options){
     event.preventDefault();cancel();const layout=getLayout(),id=card.dataset.id,row=layout.rows.findIndex(list=>list.includes(id)),index=layout.rows[row].indexOf(id);
     const ids=getSelected().has(id)?layout.rows.flat().filter(id=>getSelected().has(id)):[id];
     if(event.key==='ArrowUp'||event.key==='ArrowDown'){
+      if(root.dataset.phone==='true')return;
       const target=event.key==='ArrowUp'?0:1;if(target!==row)apply(ids,target,Math.min(index,layout.rows[target].length));
     }else{
       const members=layout.rows[row].map((id,index)=>ids.includes(id)?index:-1).filter(index=>index>=0);

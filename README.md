@@ -20,15 +20,15 @@ Play Guandan offline against DanLM, or share a table with friends on your local 
 
 ## Features
 
-- A 2D table with flat or curved fan hand layouts, using the same card controls.
-- Three card styles, day/night themes and larger text.
+- A 2D table with flat or curved fan hand layouts on computers/tablets. Phones use a fixed landscape table with same-rank cards stacked vertically in one hand area.
+- Three card styles, day/night themes and larger text. Level cards carry a gold star in hands, table plays and replays.
 - Smaller desktop windows scale the whole table proportionally, including players, cards and controls. View → Actual Size restores automatic fitting.
 - One-click hand arrangements that search complete partitions, including alternative suits and wild-card allocation, and cycle through different combinations.
-- Free arrangement in both views: drag single cards or a selection between two rows, keep combinations together and undo a move. Layouts survive plays and reopening the same round.
+- Free arrangement: computers/tablets reserve an upper row for confirmed groups and rearrange only the lower row; phones arrange the entire hand in one area. Dragged groups sort their cards, recognize updated combinations and support undo. Layouts survive plays and reopening the same round.
 - DanLM suggestions, a teaching layer, round reviews, replay and text exports.
 - Independent strategy-book switches for AI players and hints in Settings. AI choices persist locally; LAN rooms share the host’s setting.
 - Visible tribute/return/exemption cards, each player's latest play or pass, and all remaining cards after a round.
-- AI turns have a randomized minimum display time of 1.6–2.6 seconds while inference runs. Highlighted avatars distinguish AI thinking from human turns.
+- AI turns have a randomized minimum display time of 1.12–1.82 seconds while inference runs. Highlighted avatars distinguish AI thinking from human turns.
 - Solo practice and LAN games with 2–4 human players. DanLM fills empty seats; four humans can play without bots.
 - Automatic room discovery and six-digit room codes. A Mac or Windows computer hosts; desktop and Android devices can join.
 - Local saves, offline assets, no account and no hosted inference service.
@@ -49,19 +49,19 @@ For multiplayer, connect devices to the same trusted Wi-Fi. Choose **Solo practi
 
 ## Arrange your hand
 
-Each round starts with all cards in descending rank order on the lower row; the upper row is empty for your combinations. Tap to select a card, or press and drag to arrange it immediately. There is no hold delay; a small movement tolerance prevents accidental drags. Release to finish. Select several cards first, then drag any selected card to move the group. The gold marker shows the insertion point; **Undo arrange** reverses the last manual or automatic arrangement. Mouse, touch and pen share this behavior; dragging across cards moves them. Tap cards individually to select a group.
+On computers and tablets, each round starts with all cards in descending rank order on the lower row; the upper row is empty for your combinations. Phones have one hand area, with adjacent same-rank cards stacked up to three per column. Tap to select a card, or press and drag to arrange it immediately. There is no hold delay; a small movement tolerance prevents accidental drags. Release to finish. Select several cards first, then drag any selected card to move the group. The gold marker shows the insertion point; **Undo arrange** reverses the last manual or automatic arrangement. Mouse, touch and pen share this behavior; dragging across cards moves them. Tap cards individually to select a group.
 
-Keyboard users can focus a card and use Alt/Option + arrow keys directly. Swipe empty space in narrow 2D rows to scroll sideways. Pass and Play stay prominent in the bottom dock. Layout and arrangement tools sit together, with Hint and History at the bottom right. Choose straight flushes, bombs, runs or pairs as a priority, then click **Arrange** to cycle alternatives. **Sort by rank** restores the lower row; **Undo arrange** reverses that change.
+Keyboard users can focus a card and use Alt/Option + arrow keys directly. Swipe empty space in narrow 2D rows to scroll sideways. Pass and Play stay prominent in the bottom dock. Layout and arrangement tools sit together, with Hint and History at the bottom right. Choose straight flushes, bombs, runs or pairs as a priority, then click **Arrange** to cycle alternatives. **Sort by rank** sorts the lower row while preserving the upper row; on phones it sorts the whole hand. **Undo arrange** reverses that change.
 
-Select and arrange while opponents are acting, while paused or while a LAN response is pending. Only a legal move on your turn can be submitted. Dealing animations and finished rounds disable hand preparation. Both shelves reserve the same space when empty or occupied, so moving cards does not resize the hand area or displace the table and dock.
+Select and arrange while opponents are acting, while paused or while a LAN response is pending. Only a legal move on your turn can be submitted. Dealing animations and finished rounds disable hand preparation. On computers/tablets, both shelves reserve the same space when empty or occupied, so moving cards does not resize the hand area or displace the table and dock.
 
-Automatic arrangement uses a bounded search over complete hand partitions. It compares competing uses of natural cards and wild cards, including preserving one bomb while completing a straight flush. Priority modes offer alternatives; this is not a guarantee of a globally optimal partition.
+Automatic arrangement uses a bounded search over complete partitions of the lower row on computers/tablets, or the whole hand on phones. Upper-row cards and groups remain untouched. It compares competing uses of natural cards and wild cards, including preserving one bomb while completing a straight flush. Priority modes offer alternatives; this is not a guarantee of a globally optimal partition.
 
 Drag the mouse from empty hand space to box-select cards. Drag right for a blue window that fully encloses visible card faces; drag left for a green crossing box that selects touched faces. Hold **Shift** to add to your selection, or **Esc** to cancel the box. Flat and curved layouts use visible face geometry across both rows. Dragging a card still rearranges it; touch gestures on empty space still scroll.
 
 Tap empty table or hand space to clear the selection. Scrolling and drag releases do not clear it. **Shift-click** adds a range from the last selected card in displayed order: upper row left to right, then lower row. **Esc** cancels an active drag or box while preserving the original selection; press it again to clear. An open dialog owns Escape. Switching layouts preserves selection; rearranging cards resets the next Shift-click anchor.
 
-Layouts stay on your device. Switching between flat and fan layouts preserves selected cards and both rows. Played cards disappear without re-sorting the rest; a new round starts with a fresh arrangement. Auto arrangement remains available. Neither manual nor automatic display arrangements change game rules or DanLM inputs.
+Layouts stay on your device. On computers/tablets, switching between flat and fan layouts preserves selected cards and both rows. The phone layout merges older two-row saves into a single area without losing cards or groups. Played cards disappear without re-sorting the rest; a new round starts with a fresh arrangement. Auto arrangement remains available. Neither manual nor automatic display arrangements change game rules or DanLM inputs.
 
 ## Develop
 

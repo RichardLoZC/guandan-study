@@ -1,6 +1,25 @@
 'use strict';
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.GuandanEnglish=factory();})(globalThis,function(){
 const messages={
+  "菜单": "Menu",
+  "游戏菜单": "Game menu",
+  "打开游戏菜单": "Open game menu",
+  "关闭游戏菜单": "Close game menu",
+  "理牌工具": "Hand tools",
+  "打开理牌工具": "Open hand tools",
+  "关闭理牌工具": "Close hand tools",
+  "同点数叠放，点击牌头选牌；拖动调整顺序，理牌寻找整手组合。": "Cards of the same rank stack together. Tap a card header to select, drag to reorder, or Arrange to find combinations across your hand.",
+  "手机固定横屏，同点数叠放；平板保留双排理牌。点击选牌，拖动调整顺序；系统返回先关闭面板，再返回桌面。每一步自动保存。": "Phones use landscape rank stacks; tablets keep two hand rows. Tap to select and drag to arrange. Back closes panels before leaving. Every move is saved.",
+  "叠放手牌": "Stacked hand",
+  "叠放手牌；点击露出的牌头选牌，拖动调整顺序": "Stacked hand. Tap exposed card headers to select; drag to reorder.",
+  "整理整手牌，轮换组合方案": "Arrange the whole hand; cycle through combinations.",
+  "整手牌按大小排序": "Sort the whole hand by rank.",
+  "桌面明牌": "Table cards",
+  "关闭明牌查看": "Close card view",
+  "请横屏继续": "Rotate to landscape",
+  "横握手机，手牌与四人的出牌区域会完整展开。": "Hold your phone sideways to see your hand and all four players clearly.",
+  "牌局和已整理的组合会保留。": "Your game and arranged groups are saved.",
+  "级牌": "Level card",
   "掼蛋研习社": "Guandan Study",
   "正在加载离线模型…": "Loading the offline model…",
   "模型等待加载": "Model not loaded",
@@ -57,6 +76,11 @@ const messages={
   "不出": "Pass",
   "出牌": "Play",
   "打出组合": "Play group",
+  "加入组合": "Add to group",
+  "对手已少牌或自己接近走完，优先比较兑现与封堵，不因队友牌权固定扣分。": "An opponent is short of cards or you are close to finishing. Compare finishing and blocking opportunities without a fixed penalty for overtaking your partner.",
+  "接管队友牌权会消耗控制牌或百搭，需比较走牌收益；对家临近走完时更倾向让牌。": "Taking over spends control cards or wild cards. Compare the gain in progress; favor passing when your partner is close to finishing.",
+  "普通跟牌可能减少散牌并抬高对手接牌成本；结合对家余牌判断是否接应。": "An ordinary response may shed loose cards and make opponents spend more to respond. Consider your partner's remaining cards.",
+  "选择不出可保留自己的接管牌；同时比较是否能用普通闲牌顺路跟出。": "Passing preserves takeover cards. Also compare shedding ordinary loose cards while following the trick.",
   "这些牌暂不能组成有效牌型": "Not a valid combination",
   "当前不能打出组合": "Cannot play this group now",
   "开始出牌": "Start playing",
@@ -517,6 +541,13 @@ Object.assign(messages,{
   '弧形双层手牌；点击选牌，按住拖动理牌，空白处左右滚动':'Two curved hand rows. Tap to select, drag to arrange; swipe empty space to scroll.'
 });
 Object.assign(messages,{'同花顺不能作为普通顺子打出':'A straight flush must be played as a straight flush.'});
+Object.assign(messages,{
+ '理下排':'Arrange lower','下排理牌优先方式':'Lower-row arrangement priority',
+ '仅整理下排，上排保留组合不变':'Arrange only the lower row; keep upper-row combinations unchanged.',
+ '仅按大小排序下排，上排保持不变':'Sort only the lower row by rank; keep the upper row unchanged.',
+ '上排保留：自动理牌不会移动这里的牌':'Reserved upper row: automatic arrangement keeps these cards in place.',
+ '下排试排：理牌与按大小只调整这里':'Working lower row: Arrange and Sort by rank change only these cards.'
+});
 Object.assign(messages,{
  '这组牌按什么出？':'How will you play these cards?',
  '默认选中牌力较大的解释，确认后才出牌。':'The stronger interpretation is selected. Confirm before playing.',

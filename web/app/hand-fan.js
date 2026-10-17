@@ -1,11 +1,17 @@
 /* Display geometry only. The same physical card buttons and saved rows remain in use. */
 (function(scope){
   'use strict';
-  function layout(count,{width,cardWidth,cardHeight,step,padding=38,breaks=[],gap=18}){
+  function rowMetrics({cards,clusters},{width,cardWidth,step,gap=18,minStep=30}){
+    const fixed=94+clusters*cardWidth+Math.max(0,clusters-1)*gap,overlaps=Math.max(0,cards-clusters);
+    const fitted=overlaps?(width-fixed)/overlaps:step;
+    const pitch=Math.max(Math.min(step,minStep),Math.min(step,Math.floor(fitted*100)/100));
+    return {step:pitch,width:fixed+overlaps*pitch};
+  }
+  function layout(count,{width,cardWidth,cardHeight,step,padding=38,breaks=[],gap=18,minStep=24}){
     if(!Number.isInteger(count)||count<1)return [];
     const boundaries=new Set(breaks.filter(index=>Number.isInteger(index)&&index>0&&index<count));
     const extra=boundaries.size*(cardWidth-step+gap);
-    const pitch=Math.min(step,Math.max(24,(width-padding*2-cardWidth-extra)/Math.max(1,count-1)));
+    const pitch=Math.min(step,Math.max(minStep,(width-padding*2-cardWidth-extra)/Math.max(1,count-1)));
     let offset=0;
     const offsets=Array.from({length:count},(_,index)=>{if(index)offset+=boundaries.has(index)?cardWidth+gap:pitch;return offset;});
     const halfSpan=offset/2,maxRise=cardHeight*.18;
@@ -45,6 +51,6 @@
     const distance=p=>Math.hypot(x-p.x,y-p.y-p.height*.35);
     return targets.reduce((best,p)=>distance(p)<distance(best)?p:best);
   }
-  const api={layout,shelfHeight,topCorner,dropTarget};
+  const api={layout,shelfHeight,topCorner,dropTarget,rowMetrics};
   if(typeof module==='object'&&module.exports)module.exports=api;else scope.GuandanHandFan=Object.freeze(api);
 })(globalThis);

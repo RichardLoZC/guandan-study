@@ -35,11 +35,13 @@ Default SDK/JDK lookup paths suit a Homebrew macOS setup. Windows developers sho
 
 The helper creates a personal release key under `~/.local/share/guandan-study` if no key is provided. Keep this directory backed up privately. A new key cannot update an existing APK signed with a different key. For controlled releases, provide `GUANDAN_STORE_FILE` and `GUANDAN_STORE_PASSWORD`; the key alias is `guandan`. Never commit these values or the key. The public repository contains no release signing credentials.
 
-Android shares `web/`, then adds `android/web/pad.css` and `pad.js`. `phone-layout.css` supplies the final phone portrait and landscape layouts, scoped to Android small screens. The package ID remains `com.guandan.study` for update compatibility. The app handles system bars and display cutouts in its native window insets.
+Android shares `web/`, then adds `android/web/pad.css` and `pad.js`. Native phones use sensor landscape orientation and the single-zone rank stacks in `phone-layout.css`; tablets retain rotation and two-row arrangement. Detection uses the physical display size so a tablet in split screen does not become a phone. The package ID remains `com.guandan.study` for update compatibility. The app handles system bars, display cutouts and keyboard insets in its native window.
 
 ## Assets
 
 Runtime models and artwork are included in the repository under their individual licenses. `scripts/build-icons.mjs` regenerates platform icons on macOS. The approved 对家 master is `artwork/app-icon.png`; the icon script only resizes and packages it as ICNS, multi-size ICO, Android density PNGs and the in-app icon. See `artwork/图标设计说明.md` for its generation record.
+
+`node scripts/build-level-card-art.mjs` regenerates the gold-star level-card variants for all three card styles. Rendering chooses these assets using the level of the displayed round, including historical replays.
 
 ## Isolated development data
 

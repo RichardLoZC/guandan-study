@@ -7,7 +7,8 @@
   else root.GuandanBookPolicy=factory();
 })(globalThis,function(){
   'use strict';
-  const VERSION='public-routes-v3';
+  const VERSION='public-routes-v4';
+  const CALIBRATION={shapeLimit:6,partner:true};
   const sameTeam=(a,b)=>a%2===b%2;
   const routeKey=play=>play.type+':'+play.size;
   const clamp=(value,max)=>Math.max(0,Math.min(max,value));
@@ -36,6 +37,52 @@
   function assertPublic(observation){
     if(observation.state.players.some(p=>p.seat!==observation.seat&&p.hand.some(card=>card!==null)))
       throw new Error('秘籍策略拒绝隐藏手牌');
+  }
+
+  // A greedy partition is a feasible route, not the minimum number of turns.
+  // In particular, removing one card can make its greedy choice jump by many
+  // turns. Bound its relative influence instead of letting this discontinuity
+  // replace the trained model's preferred action by itself.
+  function calibrate(observation,candidates,rows,api){
+    assertPublic(observation);
+    const original=rows.find(row=>row.id===actionId(api.original));
+    const anchor=original?.evidence.find(e=>e.rule==='shape')?.delta;
+    const {state,seat}=observation,own=state.players[seat],partner=state.players[(seat+2)%4];
+    const opponents=state.players.filter(p=>!sameTeam(p.seat,seat)&&!p.finished);
+    const urgent=opponents.some(p=>p.hand.length<=5)||own.hand.length<=5;
+    const protectsPartner=state.tablePlay&&sameTeam(state.tablePlay.owner,seat);
+    rows.forEach((row,index)=>{
+      if(CALIBRATION.openingOnly){
+        for(const evidence of row.evidence)if(evidence.rule!=='finish')row.score-=evidence.delta;
+        row.evidence=row.evidence.filter(e=>e.rule==='finish');return;
+      }
+      for(const evidence of row.evidence){
+        let delta=evidence.delta;
+        if(evidence.rule==='shape'&&Number.isFinite(anchor)&&Number.isFinite(CALIBRATION.shapeLimit)){
+          delta=anchor+Math.max(-CALIBRATION.shapeLimit,Math.min(CALIBRATION.shapeLimit,delta-anchor));
+        }
+        if(evidence.rule==='partner'&&protectsPartner&&CALIBRATION.partner){
+          const play=candidates[index].play;
+          if(play){
+            // Following a small partner lead with a natural loose card can
+            // shed a tail or make the next opponent spend a higher card.
+            const costly=api.isBomb(play)||play.wildCount>0||play.primaryValue>=13;
+            delta=urgent?0:api.isBomb(play)?-9:costly?-4:0;
+            if(!urgent&&!partner.finished&&partner.hand.length<=6)delta-=3;
+            evidence.reason=urgent?'对手已少牌或自己接近走完，优先比较兑现与封堵，不因队友牌权固定扣分。':costly?
+              '接管队友牌权会消耗控制牌或百搭，需比较走牌收益；对家临近走完时更倾向让牌。':
+              '普通跟牌可能减少散牌并抬高对手接牌成本；结合对家余牌判断是否接应。';
+          }else{
+            delta=urgent?0:api.original.play&&api.isBomb(api.original.play)?4:1;
+            if(!urgent&&!partner.finished&&partner.hand.length<=6)delta+=3;
+            evidence.reason='选择不出可保留自己的接管牌；同时比较是否能用普通闲牌顺路跟出。';
+          }
+        }
+        if(delta!==evidence.delta){
+          evidence.uncalibratedDelta=evidence.delta;row.score+=delta-evidence.delta;evidence.delta=delta;
+        }
+      }
+    });
   }
 
   // Rebuild from the saved action order: no cross-round cache or speculative
@@ -101,6 +148,7 @@
     const minOpponent=Math.min(...opponents.map(p=>p.hand.length));
     for(let index=0;index<candidates.length;index++){
       const candidate=candidates[index],row=rows[index],play=candidate.play,p=plan(candidate);plans.set(actionId(candidate),p);
+      if(CALIBRATION.openingOnly)continue;
       if(!play||!p.remaining.length||api.isBomb(play)||state.tablePlay||p.stats.turns<=1)continue;
       const key=routeKey(play),follow=p.plays.filter(next=>!api.isBomb(next)&&next.type===play.type&&api.beats(next,play));
       const selfControls=controls(play),certain=!selfControls&&follow.find(recaptures);
@@ -111,8 +159,8 @@
         add(row,'route-control',8,'领出后仍保留「'+certain.label+'」；按已出牌、本人手牌和公开贡还牌计算，外面无法组成更大的同型普通牌，仍须防炸弹。');
       }else if(!selfControls){
         if(!follow.length){
-          const cost=bombs(p.stats)>0?3:6;
-          add(row,'route-unbacked',-cost,'领出「'+play.label+'」后没有更大的同型后手'+(bombs(p.stats)>0?'，若被接走，可能要花炸弹换回牌权。':'，也没有保留的炸弹接管路线；需比较换一种牌型。'));
+          const hasControl=p.plays.some(api.isBomb),cost=hasControl?3:6;
+          add(row,'route-unbacked',-cost,'领出「'+play.label+'」后没有更大的同型后手'+(hasControl?'，若被接走，可能要花炸弹换回牌权。':'，也没有保留的炸弹接管路线；需比较换一种牌型。'));
         }else{
           add(row,'route-uncertain',-2,'虽有更大的同型后手，但未见牌仍可能压住它，不能把“有后手”当成必能收回牌权。');
         }
@@ -161,5 +209,5 @@
     return {version:VERSION,historyLength:memory.historyLength,observedRoutes:memory.profiles.map(routes=>
       [...routes].map(([type,p])=>({type,leads:Number(p.leads.toFixed(3)),raises:Number(p.raises.toFixed(3)),passes:Number(p.passes.toFixed(3)),events:p.events.slice(-8)})))};
   }
-  return Object.freeze({VERSION,remember,refine,reserveCandidates});
+  return Object.freeze({VERSION,remember,refine,reserveCandidates,calibrate});
 });
