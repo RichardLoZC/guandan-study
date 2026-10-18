@@ -35,7 +35,7 @@ Default SDK/JDK lookup paths suit a Homebrew macOS setup. Windows developers sho
 
 The helper creates a personal release key under `~/.local/share/guandan-study` if no key is provided. Keep this directory backed up privately. A new key cannot update an existing APK signed with a different key. For controlled releases, provide `GUANDAN_STORE_FILE` and `GUANDAN_STORE_PASSWORD`; the key alias is `guandan`. Never commit these values or the key. The public repository contains no release signing credentials.
 
-Android shares `web/`, then adds `android/web/pad.css` and `pad.js`. Native phones use sensor landscape orientation and the single-zone rank stacks in `phone-layout.css`; tablets retain rotation and two-row arrangement. Detection uses the physical display size so a tablet in split screen does not become a phone. The package ID remains `com.guandan.study` for update compatibility. The app handles system bars, display cutouts and keyboard insets in its native window.
+Android shares `web/`, then adds `android/web/pad.css` and `pad.js`. Native phones use sensor landscape orientation and the single-zone rank stacks in `phone-layout.css`; tablets retain rotation and two-row arrangement. Detection uses the physical display size so a tablet in split screen does not become a phone. The package ID remains `com.guandan.study` for update compatibility. The app handles system bars, display cutouts and keyboard insets in its native window. It forwards zeroed handled insets to WebView, including updates after rotation or keyboard dismissal, to prevent duplicate padding. Packaged HTML declares `data-safe-area="native"`; browser previews retain CSS safe areas.
 
 ## Assets
 

@@ -1,4 +1,4 @@
-/* Phone presentation: one workspace, with short vertical stacks by rank. */
+/* Phone presentation: one complete column per rank, independent of saved shelves. */
 (function(scope,factory){
   if(typeof module==='object'&&module.exports)module.exports=factory();
   else scope.GuandanHandStack=Object.freeze(factory());
@@ -9,12 +9,12 @@
     // Keep physical IDs, group boundaries and the player's order on upgrade.
     return {...layout,rows:[[],layout.rows.flat()],groups:layout.groups.map(group=>({...group,ids:[...group.ids]}))};
   }
-  function columns(ids,hand,maxDepth=3){
-    const ranks=new Map(hand.map(card=>[card.id,card.rank])),result=[];
+  function columns(ids,hand){
+    const ranks=new Map(hand.map(card=>[card.id,card.rank])),byRank=new Map(),result=[];
     for(const id of ids){
-      const previous=result.at(-1),rank=ranks.get(id);
-      if(previous&&rank&&ranks.get(previous[0])===rank&&previous.length<maxDepth)previous.push(id);
-      else result.push([id]);
+      const rank=ranks.get(id)||id;
+      if(!byRank.has(rank)){const column=[];byRank.set(rank,column);result.push(column);}
+      byRank.get(rank).push(id);
     }
     return result;
   }
@@ -23,7 +23,15 @@
     const count=groups.reduce((sum,group)=>sum+group.length,0),joins=Math.max(0,count-groups.length);
     const fixed=groups.length*cardWidth+Math.max(0,groups.length-1)*gap;
     const step=joins?Math.max(minStep,Math.min(cardWidth,(width-fixed)/joins)):cardWidth;
-    return {step,width:fixed+joins*step,columns:groups};
+    return {step,width:fixed+joins*step,columns:groups,depth:Math.max(1,...groups.flat().map(column=>column.length))};
+  }
+  // Keep exposed rank headers touchable. On unusually short windows the hand
+  // scrolls vertically rather than splitting a bomb or clipping hidden cards.
+  function verticalMetrics(depth,height){
+    const layers=Math.max(0,depth-1),overhead=90;
+    const cardWidth=Math.max(40,Math.min(54,Math.floor((height-overhead-layers*20)/3)));
+    const rise=layers?Math.max(20,Math.min(24,Math.floor((height-overhead-cardWidth*3)/layers))):24;
+    return {cardWidth,cardHeight:cardWidth*1.5,rise,handHeight:cardWidth*1.5+layers*rise+8};
   }
   // Use the exposed headers for insertion, rather than the hidden full-card
   // bounds. Every target stays in the phone's single logical row.
@@ -39,5 +47,5 @@
     const card=cards[Math.min(index,cards.length-1)];
     return {row:1,index:index<cards.length?card.index:card.index+1,x:column.left-3,y:index<cards.length?card.top:card.bottom-3,height:Math.min(28,card.bottom-card.top)};
   }
-  return {singleRow,columns,metrics,dropTarget};
+  return {singleRow,columns,metrics,verticalMetrics,dropTarget};
 });

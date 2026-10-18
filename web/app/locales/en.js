@@ -1,6 +1,10 @@
 'use strict';
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.GuandanEnglish=factory();})(globalThis,function(){
 const messages={
+  "本副贡还": "Tribute this round",
+  "查看完整贡还信息": "View all tribute details",
+  "关闭贡还信息": "Close tribute details",
+  "同点数叠放；点击牌头选牌，滑动查看全部手牌": "Cards stack by rank. Tap a header to select; swipe to see all cards.",
   "菜单": "Menu",
   "游戏菜单": "Game menu",
   "打开游戏菜单": "Open game menu",
@@ -9,7 +13,7 @@ const messages={
   "打开理牌工具": "Open hand tools",
   "关闭理牌工具": "Close hand tools",
   "同点数叠放，点击牌头选牌；拖动调整顺序，理牌寻找整手组合。": "Cards of the same rank stack together. Tap a card header to select, drag to reorder, or Arrange to find combinations across your hand.",
-  "手机固定横屏，同点数叠放；平板保留双排理牌。点击选牌，拖动调整顺序；系统返回先关闭面板，再返回桌面。每一步自动保存。": "Phones use landscape rank stacks; tablets keep two hand rows. Tap to select and drag to arrange. Back closes panels before leaving. Every move is saved.",
+  "手机固定横屏，同点数叠放；平板保留双排理牌。手机点击牌头选牌；系统返回先关闭面板，再返回桌面。每一步自动保存。": "Phones use landscape rank stacks; tablets keep two hand rows. On phones, tap card headers to select. Back closes panels before leaving. Every move is saved.",
   "叠放手牌": "Stacked hand",
   "叠放手牌；点击露出的牌头选牌，拖动调整顺序": "Stacked hand. Tap exposed card headers to select; drag to reorder.",
   "整理整手牌，轮换组合方案": "Arrange the whole hand; cycle through combinations.",

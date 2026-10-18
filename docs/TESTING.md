@@ -42,3 +42,13 @@ Hand groups and reserved cards (1.8.23–1.8.24): a dragged group is sorted by t
 Phone stacks and level stars (1.8.25): native phones use sensor landscape; tablets keep rotation and two shelves. Phone saves flatten to one area while retaining group membership, and automatic arrangements use the whole hand. Verify same-rank columns (up to three cards), exposed headers for every card, group gaps, drag insertion, undo, menus, public-play enlargement, tribute, declaration choices and round-end remainders at short landscape heights. Each column isolates its stacking order so a deep card cannot cover the next column's header. Browser checks do not replace hardware touch testing. Gold-star assets cover all 13 levels and all three skins; test ordinary level cards and wilds, exclude jokers, and use the historical level for replays.
 
 The actual-model paired benchmark scripts live in `scripts/policy-benchmark/`. They freeze source/model hashes, replay every action for legality, and treat shared deals as paired samples. Public-history strategy changes remain heuristic; passing the functional tests does not establish an improved win rate.
+
+
+Android safe areas (1.8.26): verify a phone with an asymmetric display cutout in both landscape directions. The native frame reserves system-bar/cutout/keyboard space once and forwards zeroed handled insets to WebView; it must continue dispatching updates rather than returning CONSUMED. Packaged HTML disables redundant CSS safe-area padding, while browser-only pages keep it. Compare native/browser viewport and app-frame bounds, public-play widths, dialogs, keyboard open/close and background/resume. The phone play regions use the actual table container width rather than the full window width.
+
+## Phone layout 1.8.27
+
+- Confirm completed tribute shares the score header, with full details accessible by tap/keyboard; active tribute still exposes legal-card selection and confirmation above the hand.
+- No phone Arrange controls, drag editing or bottom dock. Tap selection remains available off-turn. Desktop/tablet saved groups must survive opening the phone presentation.
+- Inspect 5- and 8-card ranks: one column per rank, every physical card selectable through its exposed header, no three-card split. In short windows, scroll the hand instead of clipping or shrinking headers below 20 px.
+- Check 844×390, 640×360 and 740×320, English, completed rounds, browser safe areas and native Android. Cards and buttons must not overlap.

@@ -11,13 +11,27 @@ test('phone migration flattens legacy shelves without losing physical IDs, group
  assert.deepEqual(layout.reconcile(phone,'round',hand),phone);
  const reset=layout.fromPlan('round',hand,null,phone);assert.deepEqual(reset.rows,[[],hand.map(c=>c.id)]);assert.equal(reset.groups.length,0);
 });
-test('rank stacks reveal every physical card, split long bombs and never cross saved group boundaries',()=>{
+test('rank stacks keep all eight bomb cards in one column, with every physical card exactly once',()=>{
  const ids=hand.map(c=>c.id),columns=stack.columns(ids,hand);
- assert.deepEqual(columns.flat(),ids);assert.ok(columns.every(c=>c.length<=3));
+ assert.deepEqual(columns.flat(),ids);assert.deepEqual(columns.map(c=>c.length),[8,8,6]);
  for(const column of columns)assert.equal(new Set(column.map(id=>hand.find(c=>c.id===id).rank)).size,1);
  const split=[{ids:ids.slice(0,4),groupIndex:0},{ids:ids.slice(4),groupIndex:1}];
  const m=stack.metrics(split,hand,{width:640,cardWidth:54});
  assert.deepEqual(m.columns[0].flat(),split[0].ids);assert.deepEqual(m.columns[1].flat(),split[1].ids);
+});
+test('rank columns combine nonadjacent duplicates while keeping jokers and wildcard rank separate',()=>{
+ const cards=core.deck(),chosen=[cards.find(c=>c.rank==='3'),cards.find(c=>c.rank==='BJ'),cards.find(c=>c.rank==='2'&&c.suit==='hearts'),cards.find(c=>c.rank==='3'&&c.suit==='spades'),cards.find(c=>c.rank==='SJ')];
+ const columns=stack.columns(chosen.map(c=>c.id),chosen);
+ assert.deepEqual(columns.map(c=>c.length),[2,1,1,1]);assert.equal(new Set(columns.flat()).size,5);
+});
+test('long phone stacks preserve readable headers, expose eight layers and shrink before scrolling',()=>{
+ const normal=stack.verticalMetrics(3,354),bomb=stack.verticalMetrics(8,354),short=stack.verticalMetrics(8,284);
+ assert.equal(normal.cardWidth,54);assert.ok(bomb.cardWidth<normal.cardWidth);
+ for(const [depth,height]of [[1,354],[3,354],[5,354],[8,354],[8,284]]){
+  const m=stack.verticalMetrics(depth,height);
+  assert.ok(m.rise>=20);assert.ok(m.cardWidth>=40);assert.equal(m.handHeight,m.cardHeight+(depth-1)*m.rise+8);
+ }
+ assert.ok(short.handHeight>284-40-(short.cardHeight+42),'short screens must scroll, never split or clip the stack');
 });
 test('normal 27-card hands fit phone widths, crowded combinations scroll instead of becoming tiny',()=>{
  const mixed=core.sortCards(core.deck().filter(c=>c.suit==='hearts'||c.suit==='spades').slice(0,27));

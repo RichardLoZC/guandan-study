@@ -23,13 +23,22 @@
     if(enabled)root.dataset.handStyle='stack';
     if(!ready)return;
     if(enabled&&!mounted){
-      move(document.querySelector('.match-strip'),document.querySelector('.app-top'));
+      const info=byId('phone-top-info');
+      move(document.querySelector('.match-strip'),info);
+      move(byId('tribute-receipt'),info);
+      byId('tribute-receipt').setAttribute('role','button');byId('tribute-receipt').tabIndex=0;
+      byId('tribute-receipt').title='查看完整贡还信息';
+      move(document.querySelector('.actions'),document.querySelector('.hand-command-bar'));
       for(const id of ['language-toggle','open-review','open-settings','open-history','hint-button'])move(byId(id),byId('phone-menu-items'));
-      for(const node of [document.querySelector('.view-picker'),byId('arrange-priority'),document.querySelector('.hand-options')])move(node,byId('phone-hand-options'));
+      move(byId('clear-selection'),document.querySelector('.hand-feedback'));
       mounted=true;
     }else if(!enabled&&mounted){
-      for(const id of ['phone-menu-dialog','phone-hand-dialog','phone-card-dialog'])if(byId(id).open)closeDialog(byId(id));
+      for(const id of ['phone-menu-dialog','phone-tribute-dialog','phone-card-dialog'])if(byId(id).open)closeDialog(byId(id));
       for(const {node,marker}of moved.splice(0)){marker.replaceWith(node);}
+      for(const attr of ['role','tabindex','title'])byId('tribute-receipt').removeAttribute(attr);
+      root.dataset.handStyle=scope.GuandanTable?.handStyle()||'flat';
+      byId('hand-flat').setAttribute('aria-pressed',String(root.dataset.handStyle==='flat'));
+      byId('hand-fan').setAttribute('aria-pressed',String(root.dataset.handStyle==='fan'));
       mounted=false;
     }
     // Native phones rotate before rendering. Browser previews and constrained
@@ -49,10 +58,17 @@
   document.addEventListener('DOMContentLoaded',()=>{
     ready=true;refresh();
     byId('phone-menu-toggle').addEventListener('click',event=>openDialog(byId('phone-menu-dialog'),event.currentTarget));
-    byId('phone-tools-toggle').addEventListener('click',event=>openDialog(byId('phone-hand-dialog'),event.currentTarget));
     for(const id of ['open-review','open-settings','open-history','hint-button'])byId(id).addEventListener('click',()=>{if(byId('phone-menu-dialog').open)closeDialog(byId('phone-menu-dialog'));},true);
-    for(const id of ['hand-flat','hand-fan','sort-hand','undo-arrange','clear-selection'])byId(id).addEventListener('click',()=>{if(byId('phone-hand-dialog').open)closeDialog(byId('phone-hand-dialog'));});
-    byId('arrange-priority').addEventListener('change',()=>{if(byId('phone-hand-dialog').open)closeDialog(byId('phone-hand-dialog'));});
+    function inspectTribute(event){
+      if(!mounted||event.type==='keydown'&&!['Enter',' '].includes(event.key))return;
+      event.preventDefault();
+      const receipt=byId('tribute-receipt');
+      byId('phone-tribute-summary').textContent=byId('tribute-receipt-title').textContent+' · '+byId('tribute-receipt-leader').textContent;
+      byId('phone-tribute-transfers').replaceChildren(...[...byId('tribute-receipt-cards').children].map(node=>node.cloneNode(true)));
+      openDialog(byId('phone-tribute-dialog'),receipt);
+    }
+    byId('tribute-receipt').addEventListener('click',inspectTribute);
+    byId('tribute-receipt').addEventListener('keydown',inspectTribute);
     function inspect(event){
       if(!mounted||event.type==='keydown'&&!['Enter',' '].includes(event.key))return;
       const target=event.target.closest('.table-play:not(.is-pass),.seat-remainder');

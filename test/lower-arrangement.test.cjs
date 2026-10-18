@@ -53,7 +53,7 @@ function controller(){
  context.handEditor={editing:false,replace(next){context.commitLayout(next);}};
  vm.createContext(context);
  vm.runInContext(source.slice(source.indexOf('let arrangement='),source.indexOf('const canPlay='))+
-  source.slice(source.indexOf('const canArrange='),source.indexOf('const hasOpenDialog='))+
+  source.slice(source.indexOf('const canPrepare='),source.indexOf('const hasOpenDialog='))+
   '\ngetArrangement=()=>arrangement;autoEnabled=()=>canAutoArrange();',context);
  return {c:context,calls,nodes,saved,hand};
 }
@@ -76,4 +76,14 @@ test('empty lower row disables automatic controls but keeps manual editing avail
  for(const id of ['arrange-hand','arrange-priority','sort-hand'])assert.equal(nodes.get(id).disabled,true);
  c.commitLayout(layout.move(c.currentLayout(),[hand[0].id],1,0));c.renderArrangement();
  assert.equal(c.autoEnabled(),true);assert.equal(nodes.get('arrange-hand').disabled,false);c.cycleArrangement();assert.equal(calls.length,1);
+});
+test('phone shows rank order without rearranging or overwriting saved desktop groups',()=>{
+ const {c,calls,saved,hand}=controller(),before=JSON.stringify(saved);
+ c.window.GuandanPhone={active:true};
+ assert.deepEqual(c.currentLayout().rows,[[],hand.map(card=>card.id)]);
+ assert.equal(c.currentLayout().groups.length,0);assert.equal(c.autoEnabled(),false);
+ c.cycleArrangement();c.sortLowerHand();assert.equal(calls.length,0);
+ assert.equal(JSON.stringify(c.handLayout),before);
+ c.window.GuandanPhone.active=false;
+ assert.deepEqual(c.currentLayout().rows,saved.rows);assert.deepEqual(c.currentLayout().groups,saved.groups);
 });

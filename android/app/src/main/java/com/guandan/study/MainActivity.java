@@ -80,10 +80,15 @@ public final class MainActivity extends Activity {
         if (Build.VERSION.SDK_INT >= 30) {
             getWindow().setDecorFitsSystemWindows(false);
             frame.setOnApplyWindowInsetsListener((view, insets) -> {
+                int handledTypes = WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout() | WindowInsets.Type.ime();
                 Insets safe = insets.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout());
                 Insets keyboard = insets.getInsets(WindowInsets.Type.ime());
                 view.setPadding(safe.left, safe.top, safe.right, Math.max(safe.bottom, keyboard.bottom));
-                return insets;
+                // The native frame already reserves these areas. Forward zeroes
+                // so WebView cannot apply the cutout/keyboard padding a second
+                // time. Keep dispatching updates when rotation or the IME changes;
+                // returning CONSUMED can leave a previous web inset stuck on screen.
+                return new WindowInsets.Builder(insets).setInsets(handledTypes, Insets.NONE).build();
             });
         }
         WebSettings settings = web.getSettings();

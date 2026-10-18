@@ -33,6 +33,13 @@ test('a human tribute turn permits arranging all cards, while only one legal tri
   assert.ok(round.selection(ids,0).error);assert.ok(round.selection([ids[1]],0).error);
   assert.equal(round.selection([ids[0]],0).tribute.id,ids[0]);
 });
+test('phone disables arrangement while retaining off-turn selection and legal play',()=>{
+ const {round,context:c}=fixture();c.window.GuandanPhone={active:true,blocked:()=>false};
+ assert.equal(c.checks.canArrange(),false);assert.equal(c.checks.canSelect(),true);assert.equal(c.checks.canPlay(),false);
+ const card=round.hand[0];c.selectCard(card.id);assert.deepEqual([...c.selected],[card.id]);
+ round.game.currentPlayer=round.game.starter=0;assert.equal(c.checks.canPlay(),true);
+ assert.ok(round.selection([...c.selected],0).play);
+});
 test('bot action completion preserves prepared selection; a local action clears it',()=>{
   for(const actor of [1,2,3,0]){
     const {round,context:c}=fixture();round.game.currentPlayer=round.game.starter=actor;

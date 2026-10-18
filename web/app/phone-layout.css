@@ -6,24 +6,29 @@
 #phone-rotate h1 { font-size:26px; margin:0; }
 #phone-rotate p { max-width:320px; margin:0; line-height:1.6; font-size:16px; color:#dce8dc; }
 .rotate-device { display:grid; place-items:center; width:112px; height:62px; border:3px solid #ead18d; border-radius:14px; color:#ead18d; font-size:42px; }
-html[data-phone=true] { --hand-card-width:54px; --hand-card-height:81px; --hand-step:28px; --stack-rise:24px; --phone-header:36px; --phone-dock:44px; -webkit-text-size-adjust:100%; }
+html[data-phone=true] { --hand-card-width:54px; --hand-card-height:81px; --hand-step:28px; --stack-rise:24px; --phone-header:36px; -webkit-text-size-adjust:100%; }
 html[data-phone=true] body { overflow:hidden; }
 html[data-phone=true] #preview { padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); max-width:none; height:100dvh; }
+/* Android's native frame owns cutout, system-bar and keyboard clearance.
+   Browser-only pages retain CSS safe areas; never reserve the same space twice. */
+html[data-phone=true][data-safe-area=native] #preview { padding:0; }
 html[data-phone=true] .app-frame { height:100%; min-height:0; border:0; border-radius:0; overflow:hidden; }
 html[data-phone=true] .phone-only { display:block!important; }
-html[data-phone=true] .app-top { display:grid; grid-template-columns:auto minmax(0,1fr) 52px; flex:0 0 var(--phone-header); height:var(--phone-header); min-height:0; gap:12px; padding:0 8px; }
+html[data-phone=true] .app-top { display:grid; grid-template-columns:auto minmax(0,1fr) 46px; flex:0 0 var(--phone-header); height:var(--phone-header); min-height:0; gap:8px; padding:0 8px; }
 html[data-phone=true] .brand { display:none; }
 html[data-phone=true] .top-controls { display:contents; }
 html[data-phone=true] #open-lan { grid-area:1/1; font-size:13px; max-width:138px; min-height:32px; padding:5px 8px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
 html[data-phone=true] #phone-menu-toggle { grid-area:1/3; min-height:34px; padding:2px 6px; border:0; border-radius:6px; font-size:14px; background:#244b3510; }
-html[data-phone=true] .app-top > .match-strip { position:static; grid-area:1/2; height:auto; display:flex; align-items:center; justify-content:center; gap:16px; font-size:13px; color:var(--text); white-space:nowrap; }
+html[data-phone=true] #phone-top-info { grid-area:1/2; display:flex!important; align-items:center; min-width:0; height:100%; gap:10px; }
+html[data-phone=true] #phone-top-info > .match-strip { position:static; flex:0 0 auto; height:auto; margin:0; display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text); white-space:nowrap; }
+html[data-phone=true] #phone-top-info:has(.tribute-receipt:not([hidden])) .wild-reference { display:none; }
 html[data-phone=true] .score-pair,html[data-phone=true] .level-label { font-size:13px; gap:6px; }
 html[data-phone=true] .score-pair b,html[data-phone=true] .level-label b { font-size:19px; }
 html[data-phone=true] .wild-reference { color:var(--gold-ink); font-size:12px; padding-left:7px; border-left:1px solid var(--line); }
 html[data-phone=true] #round-label { display:none; }
 html[data-phone=true] .arena-layout { flex:1 1 0; min-height:0; position:relative; }
-html[data-phone=true] .arena-layout > .play-zone { display:flex; flex-direction:column; flex:1 1 0; min-height:0; padding:0 8px; overflow:hidden; gap:0; }
-html[data-phone=true] .table-seats { --phone-play-width:calc((100vw - 220px) / 4); flex:1 0 auto; min-height:calc(var(--hand-card-height) + 56px); display:block; padding:0; overflow:visible; }
+html[data-phone=true] .arena-layout > .play-zone { container-type:inline-size; display:flex; flex-direction:column; flex:1 1 0; min-height:0; padding:0 8px; overflow:hidden; gap:0; }
+html[data-phone=true] .table-seats { --phone-play-width:calc((100cqw - 220px) / 4); flex:1 0 auto; min-height:calc(var(--hand-card-height) + 42px); display:block; padding:0; overflow:visible; }
 html[data-phone=true] .table-seats > .player { position:absolute; display:grid; grid-template-columns:1fr; grid-template-rows:36px auto; width:68px; max-width:68px; gap:3px; text-align:center; justify-items:center; transform:none; align-self:auto; }
 html[data-phone=true] .table-seats > .opponent-left { inset:30px auto auto 1px; }
 html[data-phone=true] .table-seats > .opponent-right { inset:30px 1px auto auto; }
@@ -46,8 +51,8 @@ html[data-phone=true] .table-seats > .teammate .seat-bubble { position:static; t
 html[data-phone=true] .table-seats .seat-anchor { position:absolute; grid-area:auto; inset:auto; transform:none; width:var(--phone-play-width); max-width:none; }
 html[data-phone=true] .table-seats .opponent-left .seat-anchor { left:74px; top:-4px; }
 html[data-phone=true] .table-seats .opponent-right .seat-anchor { right:74px; top:-4px; }
-html[data-phone=true] .table-seats .teammate .seat-anchor { right:calc(50% + 10px); top:32px; }
-html[data-phone=true] .table-seats .self-play-anchor { position:absolute; inset:36px auto auto calc(50% + 10px); transform:none; width:var(--phone-play-width); max-width:none; }
+html[data-phone=true] .table-seats .teammate .seat-anchor { right:calc(50% + 10px); top:24px; }
+html[data-phone=true] .table-seats .self-play-anchor { position:absolute; inset:24px auto auto calc(50% + 10px); transform:none; width:var(--phone-play-width); max-width:none; }
 html[data-phone=true] .table-seats .table-play { display:flex; flex-direction:column; flex-wrap:nowrap; align-items:center; justify-content:flex-start; width:100%; max-width:100%; min-height:0; padding:3px 4px; gap:2px; border-radius:6px; border-left-width:2px; }
 html[data-phone=true] .table-seats .table-cards { --table-step:calc(var(--hand-card-width) * .43); display:grid; width:calc(var(--hand-card-width) + (var(--played-count,1) - 1) * var(--table-step)); max-width:100%; padding:0; gap:0; }
 html[data-phone=true] .table-seats .table-cards img { width:var(--hand-card-width); height:var(--hand-card-height); margin:0; }
@@ -62,22 +67,22 @@ html[data-phone=true] .table-seats .is-pass .table-caption strong { font-size:20
 html[data-phone=true] .table-play[role=button],html[data-phone=true] .seat-remainder[role=button] { cursor:pointer; touch-action:manipulation; }
 html[data-phone=true] .table-play:focus-visible { outline:2px solid #f2cf86; outline-offset:2px; }
 html[data-phone=true] .play-zone > .hand-pane { position:relative; inset:auto; display:flex; flex-direction:column; flex:0 1 auto; padding:0; width:100%; min-height:0; border:0; overflow:hidden; }
-html[data-phone=true] .hand-command-bar { display:flex; height:20px; min-height:20px; padding:0 4px; gap:10px; }
-html[data-phone=true] .hand-command-bar .hand-heading { flex-direction:row; align-items:center; justify-content:flex-start; min-height:0; gap:10px; }
+html[data-phone=true] .hand-command-bar { display:flex; flex:0 0 40px; flex-wrap:nowrap; height:40px; min-height:40px; padding:0 4px; gap:10px; }
+html[data-phone=true] .hand-command-bar .hand-heading { flex:0 1 auto; width:auto; flex-direction:column; align-items:flex-start; justify-content:center; min-height:0; gap:0; }
 html[data-phone=true] .hand-heading h1,html[data-phone=true] .hand-heading h1 span { font-size:12px; line-height:18px; }
 html[data-phone=true] .pad-touch-note { display:none; }
 html[data-phone=true] .hand-command-bar .turn-pill { font-size:12px; line-height:18px; padding:0 6px; }
-html[data-phone=true] .hand-feedback { margin-left:auto; max-width:50%; max-height:20px; overflow:hidden; }
+html[data-phone=true] .hand-command-bar .hand-feedback { display:flex; flex:1; width:auto; align-items:center; gap:6px; margin:0; min-width:0; max-height:none; overflow:hidden; }
 html[data-phone=true] .selection-status { font-size:12px; line-height:18px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
 html[data-phone=true] .selection-status span { display:none; }
-html[data-phone=true] .hand-command-bar > .toast { position:absolute; z-index:90; right:4px; bottom:100%; max-width:70%; padding:6px 10px; font-size:13px; }
-html[data-phone=true] .hand-scroll { --group-action-space:28px; --hand-group-gap:12px; height:calc(var(--stack-rise) * 2 + var(--hand-card-height) + var(--group-action-space) + 8px); flex:0 1 auto; min-height:0; max-height:none; padding:4px 6px; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; scrollbar-gutter:auto; touch-action:pan-x; }
-html[data-phone=true] .hand-scroll::-webkit-scrollbar { display:none; }
-html[data-phone=true] .card-row,html[data-phone=true] .card-row:last-child { height:calc(var(--stack-rise) * 2 + var(--hand-card-height) + var(--group-action-space)); min-width:var(--stack-width,100%); padding:var(--group-action-space) 0 0; justify-content:center; pointer-events:none; }
-html[data-phone=true] .hand-cluster { position:relative; height:calc(var(--stack-rise) * 2 + var(--hand-card-height)); display:flex; gap:0; }
+html[data-phone=true] .hand-command-bar > .toast { position:absolute; z-index:90; right:4px; bottom:100%; max-width:70%; padding:6px 10px; font-size:13px; pointer-events:none; }
+html[data-phone=true] .hand-scroll { --group-action-space:0px; --hand-group-gap:12px; --stack-depth:1; --stack-height:calc(var(--stack-rise) * (var(--stack-depth) - 1) + var(--hand-card-height)); height:calc(var(--stack-height) + 8px); flex:0 1 auto; min-height:0; max-height:none; padding:4px 6px; overflow:auto; scrollbar-width:thin; scrollbar-gutter:auto; touch-action:pan-x pan-y; }
+html[data-phone=true] .card-row,html[data-phone=true] .card-row:last-child { height:var(--stack-height); min-width:var(--stack-width,100%); padding:0; justify-content:center; pointer-events:none; }
+html[data-phone=true] .hand-cluster { position:relative; height:var(--stack-height); display:flex; gap:0; }
 html[data-phone=true] .stack-column { position:relative; flex:0 0 var(--stack-step,54px); width:var(--stack-step,54px); height:100%; isolation:isolate; }
 html[data-phone=true] .stack-column:last-of-type { flex-basis:var(--hand-card-width); width:var(--hand-card-width); }
-html[data-phone=true] .stack-column .playing-card { position:absolute; top:calc(var(--stack-slot,2) * var(--stack-rise)); left:0; width:var(--hand-card-width); height:var(--hand-card-height); margin:0; z-index:var(--stack-order,0); transform-origin:center; touch-action:none; }
+html[data-phone=true] .stack-column .playing-card { position:absolute; top:calc((var(--stack-depth) + var(--stack-offset)) * var(--stack-rise)); left:0; width:var(--hand-card-width); height:var(--hand-card-height); margin:0; z-index:var(--stack-order,0); transform:none!important; touch-action:pan-x pan-y; }
+html[data-phone=true] .stack-count { position:absolute; top:calc((var(--stack-depth) - var(--column-count)) * var(--stack-rise) + 1px); right:1px; z-index:10; display:grid; place-items:center; width:14px; height:14px; border-radius:4px; background:#dbb45c; color:#173b2e; font:bold 10px/1 sans-serif; pointer-events:none; }
 html[data-phone=true] .stack-card-index { position:absolute; inset:0 0 auto; display:flex; align-items:center; gap:0; height:var(--stack-rise); padding:1px; color:#18221d; background:#fffff7; border-radius:5px 5px 0 0; font-size:clamp(14px,calc(var(--stack-step,54px) * .35),19px); line-height:22px; white-space:nowrap; pointer-events:none; box-shadow:inset 0 -1px #192c1b18; }
 html[data-phone=true] .stack-card-index b { font-weight:750; }
 html[data-phone=true] .stack-suit { font-size:clamp(11px,calc(var(--stack-step,54px) * .3),16px); line-height:20px; }
@@ -88,6 +93,7 @@ html[data-phone=true] .stack-card-index[data-suit=joker] { font-size:12px; }
 html[data-phone=true][lang=en] .stack-card-index[data-suit=joker] { font-size:9px; }
 html[data-phone=true] .stack-star { color:#b78013; font-size:clamp(7px,calc(var(--stack-step,54px) * .18),10px); line-height:12px; }
 html[data-phone=true] .stack-column .selected .stack-card-index { background:#fff0b7; }
+html[data-phone=true] .stack-column .selected { box-shadow:inset 0 0 0 2px #f0cc6d; outline:0; }
 html[data-phone=true] .stack-column .joker-label { display:none; }
 html[data-phone=true] .playing-card,html[data-phone=true] .group-action { pointer-events:auto; }
 html[data-phone=true] .hand-tier-label { display:none; }
@@ -101,38 +107,48 @@ html[data-phone=true][data-hand-style=fan] .group-marker { top:calc(var(--group-
 html[data-phone=true] .wild-label { top:51%; left:1px; font-size:9px; line-height:11px; padding:0 1px; }
 html[data-phone=true] .joker-label { width:20px; height:42px; font-size:13px; padding:2px; }
 html[data-phone=true][lang=en] .joker-label { width:15px; height:44px; font-size:7px; padding:2px; }
-html[data-phone=true] .selected-mark { top:70%; width:13px; height:13px; font-size:11px; line-height:13px; }
+html[data-phone=true] .selected-mark { top:3px; right:1px; left:auto; z-index:12; width:13px; height:13px; font-size:11px; line-height:13px; }
 html[data-phone=true] .hand-pan-note { display:none; }
 html[data-phone=true] .hand-pane:has(.has-overflow) .hand-heading h1::after { content:' ↔'; color:var(--felt-muted); font-size:15px; }
-html[data-phone=true] .hand-tools { display:flex; flex:0 0 var(--phone-dock); align-items:center; height:var(--phone-dock); min-height:var(--phone-dock); gap:8px; padding:2px 10px; border-top:1px solid #dce9d43d; background:#143b2ff2; }
-html[data-phone=true] .hand-management { display:flex; gap:6px; overflow:visible; flex:1; min-width:0; }
-html[data-phone=true] #phone-tools-toggle { min-height:36px; height:36px; padding:3px 12px; font-size:13px; border-radius:7px; white-space:nowrap; }
-html[data-phone=true] .arrange-controls { max-width:none; border-radius:7px; }
-html[data-phone=true] .arrange-controls button { min-width:96px; height:36px; min-height:36px; padding:3px 10px; border:0; font-size:14px; }
+html[data-phone=true] .hand-tools,html[data-phone=true] .is-round-over .hand-tools { display:none; }
 html[data-phone=true] .arrangement-summary { display:none!important; }
-html[data-phone=true] .hand-tools > .actions { display:flex; flex-wrap:nowrap; gap:8px; margin-left:auto; }
-html[data-phone=true] .hand-tools > .actions button { height:38px; min-height:38px; min-width:82px; padding:3px 16px; border-radius:8px; font-size:18px; }
-html[data-phone=true] .hand-tools #play-button,html[data-phone=true] .hand-tools #confirm-tribute { min-width:108px; }
-html[data-phone=true] .hand-tools #confirm-tribute { height:38px; min-height:38px; margin-left:auto; padding:3px 16px; border-radius:8px; font-size:18px; }
-html[data-phone=true] .hand-tools > .table-assistance { display:none; }
-html[data-phone=true] .tribute-receipt { display:flex; flex:0 0 28px; height:28px; max-height:28px; flex-direction:row; align-items:center; gap:10px; padding:1px 8px; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; }
-html[data-phone=true] .tribute-receipt-heading { display:flex; flex:0 0 auto; gap:4px; font-size:11px; white-space:nowrap; }
+html[data-phone=true] .hand-command-bar > .actions { display:flex; flex:0 0 auto; flex-wrap:nowrap; gap:8px; margin:0 0 0 auto; }
+html[data-phone=true] .hand-command-bar > .actions button { height:36px; min-height:36px; min-width:78px; padding:3px 14px; border-radius:8px; font-size:17px; font-weight:750; }
+html[data-phone=true] .hand-command-bar #play-button,html[data-phone=true] .hand-command-bar #confirm-tribute { height:36px; min-height:36px; min-width:96px; color:#18392c; background:#ebcf86; border:2px solid #f4dfaa; }
+html[data-phone=true] .hand-command-bar #pass-button { color:#fff9e8; background:#143b2f; border:2px solid #dce9d47a; }
+html[data-phone=true] .hand-command-bar .actions button:disabled { opacity:.4; }
+html[data-phone=true] .hand-feedback #clear-selection { min-height:30px; padding:0 6px; font-size:12px; white-space:nowrap; }
+html[data-phone=true] .hand-feedback #clear-selection:disabled { visibility:hidden; }
+html[data-phone=true] .tribute-receipt { display:flex; flex:1; min-width:0; height:32px; max-height:32px; flex-direction:row; align-items:center; gap:8px; padding:0 0 0 8px; border:0; border-left:1px solid var(--line); color:var(--text); background:transparent; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; cursor:pointer; }
+html[data-phone=true] .tribute-receipt-heading { display:flex; flex:0 0 auto; flex-direction:column; align-items:flex-start; gap:0; font-size:11px; line-height:15px; white-space:nowrap; }
 html[data-phone=true] .tribute-receipt-heading span { font-size:10px; }
-html[data-phone=true] .tribute-receipt-cards { display:flex; flex-wrap:nowrap; gap:12px; }
-html[data-phone=true] .tribute-receipt .tribute-transfer { flex:0 0 auto; padding-left:5px; gap:4px; }
-html[data-phone=true] .tribute-receipt .tribute-card { width:16px; height:24px; flex-basis:16px; }
-html[data-phone=true] .tribute-receipt .tribute-copy { display:flex; gap:4px; align-items:center; }
-html[data-phone=true] .tribute-receipt .tribute-route,html[data-phone=true] .tribute-receipt .tribute-copy > b { font-size:10px; white-space:nowrap; }
+html[data-phone=true] .tribute-receipt-heading > span { color:var(--muted); }
+html[data-phone=true] .tribute-receipt-cards { display:flex; flex-wrap:nowrap; gap:8px; }
+html[data-phone=true] .tribute-receipt .tribute-transfer { flex:0 0 auto; padding:0 0 0 5px; border-left-width:2px; gap:0; }
+html[data-phone=true] .tribute-receipt .tribute-card { display:none; }
+html[data-phone=true] .tribute-receipt .tribute-copy { display:flex; flex-direction:column; gap:0; align-items:flex-start; }
+html[data-phone=true] .tribute-receipt .tribute-route,html[data-phone=true] .tribute-receipt .tribute-copy > b { font-size:11px; line-height:15px; white-space:nowrap; }
 html[data-phone=true] .tribute-receipt .tribute-copy > span { display:none; }
+html[data-phone=true][data-theme=day] .tribute-receipt .identity-0 { --seat:#46682c; }
+html[data-phone=true][data-theme=day] .tribute-receipt .identity-1 { --seat:#25678e; }
+html[data-phone=true][data-theme=day] .tribute-receipt .identity-2 { --seat:#886113; }
+html[data-phone=true][data-theme=day] .tribute-receipt .identity-3 { --seat:#a84637; }
+html[data-phone=true] .tribute-receipt:focus-visible { outline:2px solid var(--gold-ink); outline-offset:-2px; }
+html[data-phone=true] .tribute-receipt::after { content:'›'; position:sticky; right:0; align-self:stretch; display:flex; align-items:center; flex:0 0 12px; margin-left:auto; padding-left:3px; color:var(--muted); background:var(--panel); font-size:22px; }
+html[data-phone=true] .lan-lobby-active #tribute-receipt { display:none; }
 html[data-phone=true] .is-tribute .table-seats { min-height:0; }
+html[data-phone=true] .is-tribute #pass-button { display:none; }
 html[data-phone=true] .is-tribute .table-seats > .player { display:none; }
 html[data-phone=true] .is-tribute .table-seats > .tribute-panel { position:absolute; inset:4px 0; width:auto; max-height:none; margin:0; padding:5px 10px; overflow:auto; background:#143b2fc9; }
 html[data-phone=true] .tribute-panel header { display:flex; align-items:baseline; flex-wrap:wrap; gap:2px 10px; }
+html[data-phone=true] .tribute-panel header h2,html[data-phone=true] .tribute-panel header p { color:var(--on-felt); }
+html[data-phone=true] .tribute-panel header #tribute-reason { color:var(--felt-muted); }
 html[data-phone=true] .tribute-panel h2 { font-size:16px; margin:0; }
 html[data-phone=true] .tribute-panel p { font-size:12px; margin:0; line-height:1.35; }
 html[data-phone=true] .tribute-transfers { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin-top:5px; }
 html[data-phone=true] .tribute-transfers .tribute-transfer { padding:4px 6px; gap:6px; }
 html[data-phone=true] .tribute-transfers .tribute-card { width:30px; height:45px; flex-basis:30px; }
+html[data-phone=true] .tribute-transfers .tribute-card.is-pending { font-size:12px; line-height:1.2; }
 html[data-phone=true] .tribute-transfers .tribute-route,html[data-phone=true] .tribute-transfers .tribute-copy b { font-size:12px; line-height:16px; }
 html[data-phone=true] .tribute-transfers .tribute-copy span { font-size:10px; line-height:14px; }
 html[data-phone=true] #lan-status { min-height:24px; max-height:44px; overflow:auto; padding:2px 8px; font-size:12px; line-height:20px; }
@@ -150,13 +166,7 @@ html[data-phone=true] .dialog-bottom { position:sticky; bottom:-14px; display:fl
 html[data-phone=true] .phone-sheet { width:min(480px,calc(100vw - 24px)); }
 html[data-phone=true] #phone-menu-items { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
 html[data-phone=true] #phone-menu-items > button { margin:0; padding:10px; min-height:46px; color:var(--text); background:var(--subtle); border:1px solid var(--line); border-radius:8px; text-decoration:none; }
-html[data-phone=true] #phone-hand-options { display:grid; grid-template-columns:1fr 1fr; gap:10px; align-items:center; }
-html[data-phone=true] #phone-hand-options .view-picker { display:none; }
-html[data-phone=true] #phone-hand-options .view-picker button { min-height:42px; padding:5px 16px; }
-html[data-phone=true] #phone-hand-options > select { grid-column:1/-1; min-width:0; width:100%; max-width:none; font-size:14px; padding:6px; color:var(--text); background:var(--surface); border:1px solid var(--line); border-radius:8px; }
-html[data-phone=true] #phone-hand-options .hand-options { grid-column:1/-1; display:flex; width:100%; gap:8px; padding:0; }
-html[data-phone=true] #phone-hand-options .hand-options button { flex:1; color:var(--text); background:var(--subtle); border-radius:8px; padding:7px; }
-html[data-phone=true] #phone-hand-options button:disabled { opacity:.4; }
+html[data-phone=true] #phone-tribute-transfers { grid-template-columns:repeat(2,minmax(0,1fr)); }
 html[data-phone=true] #phone-card-images { display:flex; flex-wrap:wrap; gap:8px; }
 html[data-phone=true] #phone-card-images img { width:58px; height:87px; border-radius:5px; }
 html[data-phone=true] .declare-dialog { inset:auto 8px 6px; margin:0 auto; max-height:calc(100dvh - 12px); }
@@ -182,19 +192,16 @@ html[data-phone=true] .end-actions button { min-height:36px; padding:4px 10px; f
 html[data-phone=true] .is-round-over .hand-scroll { --group-action-space:0px; }
 html[data-phone=true] .is-round-over .hand-scroll.empty-hand { height:0; padding:0; }
 html[data-phone=true] .is-round-over .card-row:last-child { padding-top:0; }
-html[data-phone=true] .is-round-over .hand-tools { display:none; }
+html[data-phone=true] .is-round-over .hand-command-bar > .actions,html[data-phone=true] .is-round-over .hand-feedback { display:none; }
 html[data-phone=true] .skin-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
 html[data-phone=true] .settings-appearance { flex-wrap:wrap; }
 html[data-phone=true] .replay-layout { grid-template-columns:minmax(0,1fr) 220px; }
 html[data-phone=true] .replay-felt { min-height:220px; }
 html[data-phone=true] .review-tabs { top:44px; }
-@media(max-height:370px) { html[data-phone=true] { --phone-row-step:28px; } html[data-phone=true] .table-seats .teammate .seat-anchor { top:26px; } html[data-phone=true] .table-seats .self-play-anchor { top:26px; } html[data-phone=true] .table-seats > .opponent-left,html[data-phone=true] .table-seats > .opponent-right { top:26px; } }
-@media(max-width:740px) { html[data-phone=true] .wild-reference { display:none; } html[data-phone=true] .app-top { gap:5px; } html[data-phone=true] .app-top > .match-strip { gap:10px; } html[data-phone=true] .table-seats { --phone-play-width:calc((100vw - 196px) / 4); } html[data-phone=true] .table-seats .opponent-left .seat-anchor { left:64px; } html[data-phone=true] .table-seats .opponent-right .seat-anchor { right:64px; } }
+@media(max-height:370px) { html[data-phone=true] .table-seats > .opponent-left,html[data-phone=true] .table-seats > .opponent-right { top:26px; } }
+@media(max-width:740px) { html[data-phone=true] .wild-reference { display:none; } html[data-phone=true] .app-top { gap:5px; } html[data-phone=true] #phone-top-info { gap:6px; } html[data-phone=true] .table-seats { --phone-play-width:calc((100cqw - 196px) / 4); } html[data-phone=true] .table-seats .opponent-left .seat-anchor { left:64px; } html[data-phone=true] .table-seats .opponent-right .seat-anchor { right:64px; } }
 
 html[data-phone=true] .app-top .score-pair b,html[data-phone=true] .app-top .level-label b { color:var(--text); }
-html[data-phone=true] #phone-tools-toggle { color:var(--text); background:var(--panel); }
-@media(max-height:370px) { html[data-phone=true] { --hand-card-width:44px; --hand-card-height:66px; --stack-rise:20px; } html[data-phone=true] .stack-card-index { line-height:18px; } }
-@media(min-height:450px) { html[data-phone=true] { --hand-card-width:60px; --hand-card-height:90px; --stack-rise:26px; } }
 
 html[data-phone=true] .wild-reference { display:inline; }
 html[data-phone=true] .table-seats .player:not(.is-turn) .seat-bubble { display:none; }
@@ -204,10 +211,8 @@ html[data-phone=true] .table-seats > .teammate .relation { display:inline; font-
 @media(max-width:740px) { html[data-phone=true] .wild-reference { display:none; } }
 
 @media(max-height:350px) {
-  html[data-phone=true] { --hand-card-width:40px; --hand-card-height:60px; --stack-rise:20px; --phone-header:28px; --phone-dock:38px; }
-  html[data-phone=true] .hand-scroll { --group-action-space:24px; }
+  html[data-phone=true] { --phone-header:32px; }
   html[data-phone=true] .stack-card-index { line-height:18px; }
-  html[data-phone=true] .hand-command-bar { height:18px; min-height:18px; }
   html[data-phone=true] .table-seats > .player { grid-template-rows:30px auto; gap:1px; }
   html[data-phone=true] .table-seats .player .avatar { width:30px; height:30px; }
   html[data-phone=true] .table-seats .player-info > strong { font-size:12px; line-height:15px; }
@@ -216,7 +221,4 @@ html[data-phone=true] .table-seats > .teammate .relation { display:inline; font-
   html[data-phone=true] .table-seats .table-play { padding-block:2px; }
   html[data-phone=true] .table-seats .teammate .seat-anchor,html[data-phone=true] .table-seats .self-play-anchor { top:22px; }
   html[data-phone=true] .table-seats > .opponent-left,html[data-phone=true] .table-seats > .opponent-right { top:22px; }
-  html[data-phone=true] .hand-tools > .actions button { height:34px; min-height:34px; }
-  html[data-phone=true] .hand-tools #confirm-tribute { height:34px; min-height:34px; }
-  html[data-phone=true] #phone-tools-toggle,html[data-phone=true] .arrange-controls button { height:32px; min-height:32px; }
 }

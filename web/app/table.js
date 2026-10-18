@@ -41,8 +41,10 @@ function arrangementKey(){return layoutKey()+'|'+liveRound?.level+'|'+prefs.arra
 function layoutKey(){return (liveRound?.remote?'lan:':'solo:')+liveRound?.id+'|'+(liveRound?.playerIds?.[0]??0);}
 function currentLayout(){
   const key=layoutKey(),hand=liveRound?.hand||[];
+  // Phones always present the level-sorted hand. Keep desktop/tablet shelves
+  // in storage, so switching devices never destroys a player's saved layout.
+  if(window.GuandanPhone?.active)return GuandanHandLayout.create(key,hand);
   handLayout=handLayout?.key===key?GuandanHandLayout.reconcile(handLayout,key,hand):GuandanHandLayout.load(localStorage,key,hand);
-  if(window.GuandanPhone?.active)handLayout=GuandanHandStack.singleRow(handLayout);
   return handLayout;
 }
 function storeLayout(next){
@@ -90,11 +92,12 @@ function renderArrangement(){
   }
 }
 const canPlay=()=>Boolean(!window.GuandanPhone?.blocked()&&liveRound?.canAct&&!handEditor?.editing&&!handMarquee?.active&&!paused&&!fault&&!dealMotion.active&&(!liveRound.remote||window.GuandanLan?.ready));
-const canArrange=()=>Boolean(liveRound?.hand.length&&!liveRound.game.result&&!dealMotion.active);
+const canPrepare=()=>Boolean(liveRound?.hand.length&&!liveRound.game.result&&!dealMotion.active);
+const canArrange=()=>canPrepare()&&!window.GuandanPhone?.active;
 const canAutoArrange=()=>canArrange()&&currentLayout().rows[1].length>0;
 // Choosing and arranging are private preparation, independent of whose turn
 // it is, model availability, pause state or a pending LAN response.
-const canSelect=()=>canArrange()&&!handEditor?.editing&&!handMarquee?.active;
+const canSelect=()=>canPrepare()&&!handEditor?.editing&&!handMarquee?.active;
 const hasOpenDialog=()=>Boolean(document.querySelector('dialog[open]'));
 function beginDealAnimation(){
   stopBots();
@@ -186,6 +189,11 @@ function renderHand(){
       const destinations=new Map();
       if(phone)for(const ids of GuandanHandStack.columns(segment.ids,hand)){
         const column=document.createElement('div');column.className='stack-column';cluster.append(column);
+        column.style.setProperty('--column-count',ids.length);
+        if(ids.length>=4){
+          column.classList.add('bomb-stack');
+          const count=document.createElement('span');count.className='stack-count';count.textContent=ids.length;count.title=ids.length+' 张';column.append(count);
+        }
         ids.forEach((id,index)=>destinations.set(id,{column,index,count:ids.length}));
       }
       if(segment.groupIndex>=0){
@@ -228,7 +236,7 @@ function renderHand(){
         const suit=document.createElement('span');suit.className='stack-suit';suit.textContent=card.isWild?(GuandanI18n.locale==='en'?'W':'配'):({hearts:'♥',diamonds:'♦',clubs:'♣',spades:'♠'}[card.suit]||'');
         index.append(rank,suit);
         if(isLevel){const star=document.createElement('span');star.className='stack-star';star.textContent='★';index.append(star);}
-        const spot=destinations.get(id);button.style.setProperty('--stack-slot',3-spot.count+spot.index);button.style.setProperty('--stack-order',spot.index);
+        const spot=destinations.get(id);button.style.setProperty('--stack-offset',spot.index-spot.count);button.style.setProperty('--stack-order',spot.index);
       }
       button.setAttribute('aria-label',card.label+(isLevel?' 级牌':'')+(card.isWild?' 逢人配':'')+(duplicates.get(card.face)>1?' 第'+ordinal+'张':''));
       const groupIndex=segment.groupIndex;button.classList.toggle('arranged',groupIndex>=0);button.style.removeProperty('--group-color');
@@ -239,19 +247,24 @@ function renderHand(){
   }
   if(!hand.length){rows.length=0;const empty=document.createElement('p');empty.className='empty-hand-message';empty.textContent=liveRound?.game.result?'手牌已出完。':'手牌已出完，等待本局结束。';rows.push(empty);}
   container.replaceChildren(...rows);renderArrangement();byId('hand-count').textContent=hand.length;byId('hand-scroll').classList.toggle('empty-hand',!hand.length);updateSelection();
-  if(previousFocus&&canArrange()){
+  if(previousFocus&&canPrepare()){
     const target=cardNodes.get(previousFocus)||cardNodes.get(hand[Math.min(Math.max(previousPosition,0),hand.length-1)]?.id);
     target?.focus({preventScroll:true});
   }
 }
 function resizeHand(){
   const width=byId('hand-scroll').clientWidth-16;if(width<=0)return;
+  if(!window.GuandanPhone?.active)for(const name of ['--hand-card-width','--hand-card-height','--stack-rise'])root.style.removeProperty(name);
   const styles=getComputedStyle(root),cardWidth=parseFloat(styles.getPropertyValue('--hand-card-width')),baseStep=parseFloat(styles.getPropertyValue('--hand-step'));
   const layout=displayLayout(),counts=layout.rows.map((row,tier)=>({cards:row.length,clusters:GuandanHandLayout.segments(layout,tier).length}));
   const stylesHand=getComputedStyle(byId('hand-scroll')),gap=parseFloat(stylesHand.getPropertyValue('--hand-group-gap'))||18;
   const cardHeight=parseFloat(styles.getPropertyValue('--hand-card-height'));
   if(window.GuandanPhone?.active){
-    const metrics=GuandanHandStack.metrics(GuandanHandLayout.segments(layout,1),liveRound.hand,{width:Math.max(0,width-12),cardWidth,gap,minStep:38});
+    const segments=GuandanHandLayout.segments(layout,1),depth=Math.max(1,...GuandanHandStack.columns(layout.rows[1],liveRound.hand).map(column=>column.length));
+    const vertical=GuandanHandStack.verticalMetrics(depth,document.querySelector('.play-zone').clientHeight);
+    for(const [name,value]of [['--hand-card-width',vertical.cardWidth],['--hand-card-height',vertical.cardHeight],['--stack-rise',vertical.rise]])root.style.setProperty(name,value+'px');
+    byId('hand-scroll').style.setProperty('--stack-depth',depth);
+    const metrics=GuandanHandStack.metrics(segments,liveRound.hand,{width:Math.max(0,width-12),cardWidth:vertical.cardWidth,gap,minStep:38});
     byId('hand-cards').style.setProperty('--stack-step',metrics.step+'px');
     byId('hand-cards').style.setProperty('--stack-width',metrics.width+'px');
     byId('hand-scroll').classList.toggle('has-overflow',metrics.width>width-12);
@@ -555,7 +568,7 @@ function updateSelection(){
   const allowed=isTribute&&liveRound.canAct?new Set(liveRound.tributeChoices.map(card=>card.id)):null;
   cardNodes.forEach((button,id)=>{
     const on=selected.has(id);button.classList.toggle('selected',on);button.setAttribute('aria-pressed',String(on));
-    button.disabled=!canArrange();
+    button.disabled=!canPrepare();
     button.classList.toggle('unavailable',Boolean(!handEditor?.editing&&allowed&&!allowed.has(id)));button.classList.toggle('playable-tribute',Boolean(!handEditor?.editing&&allowed?.has(id)));
   });
   updateGroupActions();syncDeclaration();
