@@ -28,7 +28,7 @@
     },
     suspend() {
       if (suspended) return;
-      suspended = true; handEditor?.cancel(); dealMotion.finish(); stopBots();
+      suspended = true; window.GuandanAndroidHost?.suspend(); handEditor?.cancel(); dealMotion.finish(); stopBots();
       if (activeTask) {
         workEpoch++; activeTask = null; model.cancel();
         if (byId('analysis-dialog').open) closeDialog(byId('analysis-dialog'));
@@ -38,7 +38,7 @@
     },
     resume() {
       if (!suspended) return;
-      suspended = false; renderGame();
+      suspended = false; window.GuandanAndroidHost?.resume(); renderGame();
       if (!model.ready && !activeTask && !fault) checkModel(); else scheduleBots();
     },
     notice: toast

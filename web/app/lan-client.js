@@ -6,6 +6,7 @@
   const pending=new Map();let seq=0;
   window.GuandanLanReply=(id,json)=>{const task=pending.get(id);if(!task)return;pending.delete(id);clearTimeout(task.timer);try{const r=JSON.parse(json);r.error?task.reject(new Error(r.error)):task.resolve(r);}catch(error){task.reject(error);}};
   function transport(payload){
+    if(payload.action==='host'&&window.GuandanAndroidHost)return window.GuandanAndroidHost.host(payload);
     if(window.GuandanLanNative)return window.GuandanLanNative.request(payload);
     if(window.GuandanPadNative?.lanRequest)return new Promise((resolve,reject)=>{
       const id=++seq,timer=setTimeout(()=>{pending.delete(id);reject(new Error('连接超时，请检查房主和 Wi-Fi'));},102000);
@@ -64,7 +65,7 @@
     byId('open-lan').textContent=session?(online?'多人游戏 · '+count+'/4 ⌄':'多人游戏 · 连接中 ⌄'):'单人练习 ⌄';
     byId('lan-restore').hidden=Boolean(session)||!read(KEY+'.parked');
     byId('lan-connect').hidden=Boolean(session);byId('lan-room').hidden=!session;
-    byId('lan-host').hidden=!window.GuandanLanNative;byId('lan-host').disabled=busy;byId('lan-join').disabled=busy;
+    byId('lan-host').hidden=!window.GuandanLanNative&&!window.GuandanAndroidHost;byId('lan-host').disabled=busy;byId('lan-join').disabled=busy;
     byId('lan-restore').disabled=busy;byId('lan-refresh').disabled=scanning||connecting;
     byId('lan-status').hidden=!session||inLobby||Boolean(online&&!room?.error&&!waiting.length&&!room?.paused&&!liveRound?.confirmWaiting);
     byId('lan-status-text').textContent=!online?'连接中断 · 正在重连':room?.error?room.error:waiting.length?'等待 '+waiting.join('、')+' 重新连接':room?.paused?'多人牌局已暂停':liveRound?.confirmWaiting?'等待其他玩家确认贡还':'';
@@ -113,7 +114,7 @@
         const selected=nearby.find(r=>r.address===addressBefore)||nearby.find(r=>!r.started&&r.count<4)||nearby[0];
         byId('lan-address').value=selected?.address||'';
       }
-      byId('lan-discovery-status').textContent=nearby.length?'选好牌桌，输入房主的六位房间码。':'还没找到牌桌。请朋友在电脑上开一桌，或手动输入地址。';renderNearby();
+      byId('lan-discovery-status').textContent=nearby.length?'选好牌桌，输入房主的六位房间码。':'还没找到牌桌。请朋友先开一桌，或手动输入地址。';renderNearby();
     }catch{if(epoch===scanEpoch)byId('lan-discovery-status').textContent='暂时找不到附近牌桌，可在下方手动输入房主地址。';}
     finally{if(epoch===scanEpoch){scanning=false;controls();}}
   }
@@ -189,6 +190,7 @@
     }catch(error){if(epoch===generation)message(error.message);}
   }
   function leaveLocal(keep=false){
+    if(session?.host)window.GuandanAndroidHost?.park();
     try{if(keep&&session)localStorage.setItem(KEY+'.parked',JSON.stringify(session));else localStorage.removeItem(KEY+'.parked');}catch{toast('暂未保存重连信息。');}
     generation++;scanEpoch++;scanning=false;busy=false;clearTimeout(pollTimer);session=null;room=null;online=false;lastRender='';mode='solo';remember();dealMotion.cancel();
     liveRound=offline?.round||GuandanMatch.read(localStorage);paused=offline?.paused||false;offline=null;selected.clear();cardNodes.clear();hintSnapshot=null;clearError();message();renderGame();controls();closeDialog(dialog);checkModel();

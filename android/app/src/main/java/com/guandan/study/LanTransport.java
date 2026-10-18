@@ -21,7 +21,7 @@ import org.json.JSONArray;
 
 /** Narrow native LAN transport; packaged WebView content still has no network fallback. */
 final class LanTransport {
-    private static boolean privateIP(String value) {
+    static boolean privateIP(String value) {
         if (!value.matches("[0-9]{1,3}(\\.[0-9]{1,3}){3}")) return false;
         String[] parts = value.split("\\."); int[] ip = new int[4];
         for (int i = 0; i < 4; i++) { ip[i] = Integer.parseInt(parts[i]); if (ip[i] > 255) return false; }
@@ -70,9 +70,9 @@ final class LanTransport {
     static String request(String raw) throws Exception {
         JSONObject payload = new JSONObject(raw);
         if ("discover".equals(payload.optString("action"))) return discover();
-        if (!"request".equals(payload.optString("action"))) throw new Exception("Pad 请加入 Mac 创建的房间");
+        if (!"request".equals(payload.optString("action"))) throw new Exception("不支持的联机操作");
         String address = payload.getString("address");
-        if (!address.matches("[0-9]{1,3}(\\.[0-9]{1,3}){3}:[0-9]{1,5}")) throw new Exception("请输入 Mac 显示的地址和端口");
+        if (!address.matches("[0-9]{1,3}(\\.[0-9]{1,3}){3}:[0-9]{1,5}")) throw new Exception("请输入房主显示的地址和端口");
         String[] parts = address.split(":"), octets = parts[0].split("\\.");
         int[] ip = new int[4];
         for (int i = 0; i < 4; i++) { ip[i] = Integer.parseInt(octets[i]); if (ip[i] > 255 || !Integer.toString(ip[i]).equals(octets[i])) throw new Exception("地址格式不正确"); }
@@ -91,7 +91,7 @@ final class LanTransport {
             int status = connection.getResponseCode();
             if (status >= 300 && status < 400) throw new Exception("不接受房间地址重定向");
             InputStream stream = status < 400 ? connection.getInputStream() : connection.getErrorStream();
-            if (stream == null) throw new Exception("Mac 房间没有响应");
+            if (stream == null) throw new Exception("房主没有响应");
             try (InputStream input = stream; ByteArrayOutputStream output = new ByteArrayOutputStream()) {
                 byte[] buffer = new byte[8192]; int size;
                 while ((size = input.read(buffer)) != -1) { if (output.size() + size > 4000000) throw new Exception("房间响应过大"); output.write(buffer, 0, size); }

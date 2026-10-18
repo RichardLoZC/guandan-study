@@ -30,7 +30,7 @@ Play Guandan offline against DanLM, or share a table with friends on your local 
 - Visible tribute/return/exemption cards, each player's latest play or pass, and all remaining cards after a round.
 - AI turns have a randomized minimum display time of 1.12–1.82 seconds while inference runs. Highlighted avatars distinguish AI thinking from human turns.
 - Solo practice and LAN games with 2–4 human players. DanLM fills empty seats; four humans can play without bots.
-- Automatic room discovery and six-digit room codes. A Mac or Windows computer hosts; desktop and Android devices can join.
+- Automatic room discovery and six-digit room codes. Android phones/tablets and Mac/Windows computers can all host or join.
 - Local saves, offline assets, no account and no hosted inference service.
 
 ## Install
@@ -45,7 +45,7 @@ Get an archive or APK from [Releases](https://github.com/RichardLoZC/guandan-stu
 
 The Mac build uses an ad-hoc signature and is not notarized. The Windows build has no Authenticode signature. Android releases use a dedicated release key. Existing Android installations with the same application ID and signing key can update in place.
 
-For multiplayer, connect devices to the same trusted Wi-Fi. Choose **Solo practice → Multiplayer**. Host a room on a computer, then join using its code. New games and clearing A randomize seats. Android joins rooms; it does not host them. Guest Wi-Fi isolation can prevent discovery; manual entry uses the address shown in Room options. The host must remain awake.
+For multiplayer, connect devices to the same trusted Wi-Fi. Choose **Solo practice → Multiplayer**. Choose **Host a table** on any Android phone/tablet or computer; others join using its code. Phone-to-phone play needs no computer. New games and clearing A randomize seats. Guest Wi-Fi isolation can prevent discovery; manual entry uses the address shown in Room options. Keep the host game open. An Android host pauses the table when sent to the background; reopen it and choose **Resume game**. A hosted save is separate from solo practice.
 
 ## Arrange your hand
 
@@ -90,7 +90,7 @@ Tribute returns use a separate deterministic hand-structure policy. It evaluates
 
 The teaching text is a separate presentation layer. English advice summarizes the chosen move, actual card counts, candidates and information limits. It does not expose the neural network's internal reasoning or claim a win probability. Stored game facts and model inputs do not change when the language changes.
 
-`web/app/core.js` is a documented extraction of the original distributed rule code. `match.js` manages validated state, saves, tribute and reviews. `table.js` / `review.js` render the UI; `i18n.js` and `locales/en.js` localize presentation while keeping canonical game state unchanged. Flat and fan layouts share the same DOM card buttons and hand editor. Desktop LAN rooms are authoritative and send each guest a view with opponents' hands masked.
+`web/app/core.js` is a documented extraction of the original distributed rule code. `match.js` manages validated state, saves, tribute and reviews. `table.js` / `review.js` render the UI; `i18n.js` and `locales/en.js` localize presentation while keeping canonical game state unchanged. Flat and fan layouts share the same DOM card buttons and hand editor. The shared `web/app/lan-room.js` is authoritative on desktop and Android hosts and sends each guest a view with opponents' hands masked.
 
 The original Windows 1.0.0 distribution did not include its React/TypeScript sources. Its compiled source remains in `web/assets/` for provenance; extraction hashes are in `web/app/core-source.json`. Upstream MIT and DanLM license notices are retained. This is an independent application adaptation, not an official DanLM release.
 

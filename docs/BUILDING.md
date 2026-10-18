@@ -46,3 +46,5 @@ Runtime models and artwork are included in the repository under their individual
 ## Isolated development data
 
 Set `GUANDAN_DATA_DIR` to an absolute temporary directory before running Electron to avoid changing your daily game. `GUANDAN_LEGACY_DATA_DIR` can identify an old Windows save directory for one-time migration. Never use real player saves in public test fixtures.
+
+Android hosting (1.8.28) shares `web/app/lan-room.js` with the desktop wrapper `lan-room.cjs`. `LanHostServer` exposes only the bounded private-network HTTP API and public UDP discovery; room codes, tokens and private hands are never broadcast. The WebView handles the shared authority and local DanLM worker. On background, native requests are stopped and the room is saved paused. Package builds run native socket unit tests before assembling. Target SDK remains 36; a future SDK 37 update must adopt Android's local-network runtime permission.

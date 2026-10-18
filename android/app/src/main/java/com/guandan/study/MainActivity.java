@@ -33,6 +33,11 @@ import java.nio.file.Files;
 import java.util.ArrayDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import android.net.wifi.WifiManager;
 import java.lang.ref.WeakReference;
 import org.json.JSONObject;
 
@@ -44,6 +49,11 @@ public final class MainActivity extends Activity {
     private static final ArrayDeque<String> unclaimedNotices = new ArrayDeque<>();
     private WebView web;
     private volatile boolean phoneDevice;
+    private volatile boolean foreground;
+    private volatile LanHostServer hostServer;
+    private WifiManager.MulticastLock hostMulticast;
+    private final AtomicInteger hostSequence = new AtomicInteger();
+    private final ConcurrentHashMap<Integer, CompletableFuture<String>> hostRequests = new ConcurrentHashMap<>();
     private boolean exportPending;
     private boolean pickerOpen;
     private boolean pageReady;
@@ -183,11 +193,13 @@ public final class MainActivity extends Activity {
     }
     @Override public void onBackPressed() { handleBack(); }
     @Override protected void onPause() {
+        foreground = false; if (hostServer != null) hostServer.foreground(false);
         if (web != null) { web.evaluateJavascript("window.guandanPad?.suspend()", null); web.onPause(); }
         super.onPause();
     }
     @Override protected void onResume() {
         super.onResume();
+        foreground = true; if (hostServer != null) hostServer.foreground(true);
         if (web != null) { web.onResume(); web.evaluateJavascript("window.guandanPad?.resume()", null); immersive(); }
     }
     @Override protected void onSaveInstanceState(Bundle state) {
@@ -197,6 +209,7 @@ public final class MainActivity extends Activity {
         super.onSaveInstanceState(state);
     }
     @Override protected void onDestroy() {
+        stopHost();
         if (web != null) { web.removeJavascriptInterface("GuandanPadNative"); web.destroy(); }
         if (current.get() == this) current.clear();
         files.shutdown(); network.shutdownNow();
@@ -212,7 +225,56 @@ public final class MainActivity extends Activity {
         if (!pageReady) { notices.add(message); return; }
         web.evaluateJavascript("window.guandanPad?.notice(" + JSONObject.quote(message) + ")", null);
     }
+    private String hostRequest(String payload) throws Exception {
+        int id = hostSequence.incrementAndGet();
+        CompletableFuture<String> response = new CompletableFuture<>(); hostRequests.put(id, response);
+        try {
+            runOnUiThread(() -> {
+                if (isDestroyed() || web == null || !foreground) response.completeExceptionally(new IllegalStateException("房主已切到后台"));
+                else web.evaluateJavascript("window.GuandanAndroidHost?.dispatch(" + id + "," + JSONObject.quote(payload) + ")", null);
+            });
+            return response.get(96, TimeUnit.SECONDS);
+        } catch (java.util.concurrent.TimeoutException timeout) { throw new java.io.IOException("房主响应超时，请重新连接"); }
+        finally { hostRequests.remove(id); }
+    }
+    private synchronized String startHost() {
+        try {
+            if (isDestroyed() || !foreground) throw new java.io.IOException("请回到游戏再开桌");
+            if (hostServer == null) hostServer = new LanHostServer(this::hostRequest, getSharedPreferences("lan-host", MODE_PRIVATE).getInt("port", 0));
+            JSONObject endpoint = hostServer.start();
+            if (endpoint.getJSONArray("addresses").length() == 0) throw new java.io.IOException("未找到局域网地址，请连接 Wi-Fi 或开启热点后重试");
+            int port = Integer.parseInt(endpoint.getString("address").split(":")[1]);
+            getSharedPreferences("lan-host", MODE_PRIVATE).edit().putInt("port", port).apply();
+            if (hostMulticast == null) {
+                try {
+                    WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+                    hostMulticast = wifi.createMulticastLock("guandan-room"); hostMulticast.setReferenceCounted(false); hostMulticast.acquire();
+                } catch (RuntimeException ignored) { hostMulticast = null; }
+            }
+            return endpoint.toString();
+        } catch (Exception error) { stopHost(); return LanHostServer.error(error.getMessage()); }
+    }
+    private synchronized void stopHost() {
+        if (hostServer != null) { hostServer.close(); hostServer = null; }
+        if (hostMulticast != null) { if (hostMulticast.isHeld()) hostMulticast.release(); hostMulticast = null; }
+        for (CompletableFuture<String> response : hostRequests.values()) response.completeExceptionally(new IllegalStateException("牌桌已关闭"));
+        hostRequests.clear();
+    }
     public final class ExportBridge {
+        @JavascriptInterface public String hostStart() { return startHost(); }
+        @JavascriptInterface public void hostStop() { stopHost(); }
+        @JavascriptInterface public void hostAnnounce(String json) {
+            synchronized (MainActivity.this) {
+                if (hostServer != null) try { hostServer.announce(json); } catch (Exception ignored) { }
+            }
+        }
+        @JavascriptInterface public void hostReply(int id, String result) {
+            CompletableFuture<String> response = hostRequests.get(id);
+            if (response != null) {
+                if (result == null || result.length() > 4000000) response.completeExceptionally(new IllegalArgumentException("房间响应无效"));
+                else response.complete(result);
+            }
+        }
         @JavascriptInterface public String deviceKind() { return phoneDevice ? "phone" : "tablet"; }
 
         @JavascriptInterface public void lanRequest(int requestId, String raw) {
@@ -222,7 +284,7 @@ public final class MainActivity extends Activity {
                 try { response = LanTransport.request(raw); }
                 catch (Exception error) {
                     JSONObject failure = new JSONObject();
-                    try { failure.put("error", error.getMessage() == null ? "无法连接 Mac，请检查 Wi-Fi 和房间地址" : error.getMessage()); } catch (Exception ignored) { }
+                    try { failure.put("error", error.getMessage() == null ? "无法连接房主，请检查 Wi-Fi 和房间地址" : error.getMessage()); } catch (Exception ignored) { }
                     response = failure.toString();
                 }
                 final String result = response;

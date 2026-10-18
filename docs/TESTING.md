@@ -52,3 +52,7 @@ Android safe areas (1.8.26): verify a phone with an asymmetric display cutout in
 - No phone Arrange controls, drag editing or bottom dock. Tap selection remains available off-turn. Desktop/tablet saved groups must survive opening the phone presentation.
 - Inspect 5- and 8-card ranks: one column per rank, every physical card selectable through its exposed header, no three-card split. In short windows, scroll the hand instead of clipping or shrinking headers below 20 px.
 - Check 844×390, 640×360 and 740×320, English, completed rounds, browser safe areas and native Android. Cards and buttons must not overlap.
+
+## Android host 1.8.28
+
+Run `npm test` for shared-room/controller tests; Android builds also run `testReleaseUnitTest` (or debug equivalent) for real Java HTTP/UDP sockets. Verify phone hosts with 2–4 humans, masked hands, room-code discovery, model fill-in, background pause, restored tokens, full rooms, stale requests and failed saves. Hardware acceptance should include a second Android device joining the phone over Wi-Fi; a desktop acting only as a client validates the transport but does not replace that two-Android check. Never overwrite a user's solo save for a fixture.
