@@ -56,7 +56,8 @@ def prepareWeb = tasks.register('prepareWeb', Sync) {
             .replace('关闭窗口会保留应用。⌘Q退出，Control+⌘F全屏；⌘+与⌘−调整界面大小。', '手机固定横屏，同点数叠放；平板使用单层手牌。手机点击牌头选牌；系统返回先关闭面板，再返回桌面。每一步自动保存。'), 'UTF-8')
     }
 }
-android.sourceSets.main.assets.setSrcDirs([layout.buildDirectory.dir('generated/guandan-assets')])
+android.sourceSets.all { assets.setSrcDirs([]) }
+android.sourceSets.main.assets.srcDir(layout.buildDirectory.dir('generated/guandan-assets'))
 tasks.named('preBuild').configure { dependsOn prepareWeb }
 
 dependencies {
