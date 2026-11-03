@@ -36,6 +36,16 @@ def prepareWeb = tasks.register('prepareWeb', Sync) {
     from('../../web') { into 'web'; include(approvedWeb as String[]) }
     from('../web') { into 'web/pad'; include 'pad.js', 'pad.css' }
     into layout.buildDirectory.dir('generated/guandan-assets')
+    doFirst {
+        def repositoryRoot = rootProject.projectDir.parentFile
+        def allInputs = publicManifest.files.findAll { name, value -> name.startsWith('web/') } + publicManifest.androidAssets
+        allInputs.each { name, expected ->
+            def source = new File(repositoryRoot, name)
+            if (!source.isFile() || java.nio.file.Files.isSymbolicLink(source.toPath())) throw new GradleException('Unreviewed asset: ' + name)
+            def actual = java.security.MessageDigest.getInstance('SHA-256').digest(source.bytes).encodeHex().toString()
+            if (actual != expected.sha256) throw new GradleException('Asset hash mismatch: ' + name)
+        }
+    }
     doLast {
         def page = layout.buildDirectory.file('generated/guandan-assets/web/index.html').get().asFile
         page.setText(page.getText('UTF-8')
@@ -46,7 +56,7 @@ def prepareWeb = tasks.register('prepareWeb', Sync) {
             .replace('关闭窗口会保留应用。⌘Q退出，Control+⌘F全屏；⌘+与⌘−调整界面大小。', '手机固定横屏，同点数叠放；平板使用单层手牌。手机点击牌头选牌；系统返回先关闭面板，再返回桌面。每一步自动保存。'), 'UTF-8')
     }
 }
-android.sourceSets.main.assets.srcDir(layout.buildDirectory.dir('generated/guandan-assets'))
+android.sourceSets.main.assets.setSrcDirs([layout.buildDirectory.dir('generated/guandan-assets')])
 tasks.named('preBuild').configure { dependsOn prepareWeb }
 
 dependencies {

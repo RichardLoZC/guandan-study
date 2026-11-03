@@ -1,6 +1,16 @@
 {
   "schema": 1,
   "edition": "public-offline-lan",
+  "androidAssets": {
+    "android/web/pad.css": {
+      "size": 5532,
+      "sha256": "bd15867434f2b66070725f9d50efb3587380f684e4cd95e7927814137f2f529f"
+    },
+    "android/web/pad.js": {
+      "size": 2025,
+      "sha256": "1646daa5b29c0c6bd5291071de8021bf5cde394a7e0f87fb5425adc116f988e1"
+    }
+  },
   "files": {
     "LICENSE": {
       "size": 1141,

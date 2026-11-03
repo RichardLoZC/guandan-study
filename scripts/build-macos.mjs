@@ -18,7 +18,7 @@ const nativeSource=process.env.GUANDAN_BUILD_NATIVE_DIR;
 if(nativeSource&&!await fs.stat(path.join(nativeSource,'worker.py')).then(()=>true,()=>false))throw Error('Invalid GUANDAN_BUILD_NATIVE_DIR');
 // Build and sign on the local filesystem. Cloud providers can attach Finder
 // metadata to app bundles that makes macOS code-signature verification fail.
-if(nativeSource)verifyNativeRuntime(nativeSource);
+if(nativeSource)verifyNativeRuntime(nativeSource,{requirePrivateRules:true});
 const staging = await fs.mkdtemp(path.join(os.tmpdir(), 'guandan-macos-build-'));
 const packages = await packager({
   dir: project, tmpdir:path.join(staging,'packager-temp'), name: '掼蛋研习社',
