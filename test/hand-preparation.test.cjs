@@ -44,7 +44,7 @@ test('bot action completion preserves prepared selection; a local action clears 
   for(const actor of [1,2,3,0]){
     const {round,context:c}=fixture();round.game.currentPlayer=round.game.starter=actor;
     const selected=round.hand.slice(0,2).map(card=>card.id);selected.forEach(id=>c.selected.add(id));
-    Object.assign(c,{stopBots(){},clearError(){},localStorage:{setItem(){}},renderGame(){},scheduleBots(){},hintSnapshot:{},reportError(error){throw error;}});
+    Object.assign(c,{feedback:{collect(){}},stopBots(){},clearError(){},localStorage:{setItem(){}},renderGame(){},scheduleBots(){},hintSnapshot:{},reportError(error){throw error;}});
     vm.runInContext(source.slice(source.indexOf('function saveAction('),source.indexOf('function scheduleBots(')),c);
     const card=round.game.players[actor].hand[0];c.saveAction(()=>round.commit(actor,[card.id]));
     assert.deepEqual([...c.selected],actor===0?[]:selected);
@@ -71,7 +71,7 @@ test('public turn updates keep pressed card nodes, while a cleared cache on lobb
   const container=node(),nodes=new Map([['hand-cards',container]]),cardNodes=new Map();let replacements=0;
   container.replaceChildren=(...items)=>{container.children=items;replacements++;};
   const c={document:{activeElement:null,createElement:node},GuandanCardArt:require('../web/app/card-art.js'),loadCardImage(img){img.dataset.levelCard='false';},currentSkin:'jumbo',GuandanCore:core,GuandanHandLayout:layout,GuandanI18n:{locale:'zh-CN'},window:{},
-    liveRound:{level:'2',game:{}},renderedHandKey:'',cardNodes,handEditor:{reconcile(){}},handMarquee:null,ownHand:()=>hand,displayLayout:()=>layout.create('same-round',hand),
+    root:{dataset:{handStyle:'flat'}},liveRound:{level:'2',game:{}},renderedHandKey:'',cardNodes,handEditor:{reconcile(){}},handMarquee:null,ownHand:()=>hand,displayLayout:()=>layout.create('same-round',hand),
     byId:id=>{if(!nodes.has(id))nodes.set(id,node());return nodes.get(id);},imageFor:node,selectCard(){},renderArrangement(){},updateSelection(){},canArrange:()=>true};
   vm.createContext(c);vm.runInContext(source.slice(source.indexOf('function renderHand('),source.indexOf('function resizeHand(')),c);
   c.renderHand();const original=cardNodes.get(hand[0].id);assert.equal(replacements,1);

@@ -11,7 +11,7 @@ async function desktop(isMac){
     loadURL(){return Promise.resolve();}
     isDestroyed(){return false;}
   }
-  const context={isMac,win:null,BrowserWindow:Window,app:{quit(){quitCount++;}},screen:{getPrimaryDisplay:()=>({workAreaSize:{width:1920,height:1080}})},
+  const context={isMac,nativeAvailable:false,win:null,BrowserWindow:Window,app:{quit(){quitCount++;}},screen:{getPrimaryDisplay:()=>({workAreaSize:{width:1920,height:1080}})},
     fitDesktopWindow(){return ()=>{};},session:{defaultSession:{flushStorageData(){flushCount++;}}},
     path,__dirname:path.join(__dirname,'..'),APP_NAME:'Fixture',edition:'Fixture',ORIGIN:'guandan://app',log(){}};
   vm.createContext(context);vm.runInContext(createWindowSource,context);

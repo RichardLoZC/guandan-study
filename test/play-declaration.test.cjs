@@ -41,7 +41,8 @@ test('defaults honor full-house primary rank, the level rank, bombs and straight
   assert.equal(fixture(bomb).selection(bomb,0).play.type,'bomb');
   const flush=['1-clubs-5','1-clubs-6','1-clubs-7','1-hearts-2','2-hearts-2'];
   const plays=fixture(flush).selection(flush,0).plays;
-  assert.deepEqual(plays.map(p=>p.primaryValue),[9,8,7]);assert.ok(plays.every(p=>p.type==='straight-flush'));
+  assert.deepEqual(plays.filter(p=>p.type==='straight-flush').map(p=>p.primaryValue),[9,8,7]);
+  assert.deepEqual(plays.filter(p=>p.type==='straight').map(p=>p.primaryValue),[9,8,7]);
   assert.match(choices.describe(plays[0]),/♣8.*♣9/);
 });
 test('wildcard descriptions cover A-low/A-high runs, repeated ranks and full houses without changing cards',()=>{
@@ -110,9 +111,9 @@ test('LAN authority rejects implicit ambiguity and broadcasts the explicit decla
   const room=new Room(),host=room.host('Mac');room.join({code:room.code,name:'Pad',protocol:PROTOCOL});
   room.match=fixture();room.seats=[room.members[0].id,room.members[1].id,'bot:2','bot:3'];
   const version=room.version,before=JSON.stringify(room.match.state);
-  await assert.rejects(room.request(host.token,{op:'play',version,requestId:'implicit',ids}),/声明牌型/);
+  await assert.rejects(room.request(host.token,{protocol:PROTOCOL,op:'play',version,requestId:'implicit',ids}),/声明牌型/);
   assert.equal(room.version,version);assert.equal(JSON.stringify(room.match.state),before);
-  const result=await room.request(host.token,{op:'play',version,requestId:'explicit',ids,key:'straight:8:0:none'});
+  const result=await room.request(host.token,{protocol:PROTOCOL,op:'play',version,requestId:'explicit',ids,key:'straight:8:0:none'});
   assert.equal(result.round.state.game.tablePlay.play.primaryValue,8);
 });
 test('late LAN responses cannot close or report failure in a newer solo declaration',async()=>{

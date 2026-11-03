@@ -1,7 +1,7 @@
 {
   "name": "guandan-study-offline",
-  "version": "1.8.28",
-  "description": "Guandan Study: offline DanLM, flat/fan hands, Chinese/English and 2–4 player LAN games",
+  "version": "1.8.40",
+  "description": "Guandan Study: official-aligned DanLM, single-row hands, post-round stats, offline and LAN play",
   "author": "Guandan Study",
   "main": "main.cjs",
   "private": true,
@@ -11,12 +11,14 @@
   },
   "scripts": {
     "start": "install-electron && electron .",
-    "test": "node --test test/*.test.cjs",
+    "test": "node --test --test-concurrency=2 test/*.test.cjs",
     "build:mac": "node scripts/build-macos.mjs",
     "test:mac": "node scripts/smoke-macos.mjs",
     "build:win": "node scripts/build-windows.mjs",
     "verify:win": "node scripts/verify-windows.mjs",
-    "build:android": "node scripts/build-android.mjs"
+    "build:android": "node scripts/build-android.mjs",
+    "check:public": "node scripts/check-public-boundary.mjs",
+    "manifest:public": "node scripts/generate-public-runtime.mjs"
   },
   "devDependencies": {
     "@electron/asar": "4.3.1",

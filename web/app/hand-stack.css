@@ -1,0 +1,40 @@
+/* Shared rank stacks for browser, Mac, Windows and tablet. Phones use their compact layout. */
+html:not([data-phone=true]) .hand-pan-note { display:none; }
+html:not([data-phone=true])[data-hand-style=stack] { --hand-card-width:72px; --hand-card-height:108px; --stack-rise:26px; }
+html:not([data-phone=true])[data-hand-style=stack].large-type { --hand-card-width:80px; --hand-card-height:120px; --stack-rise:30px; }
+html:not([data-phone=true])[data-hand-style=stack] .hand-scroll { height:auto; padding:4px 8px 8px; }
+html:not([data-phone=true])[data-hand-style=stack] .card-row[data-row="0"] { --stack-depth:var(--upper-stack-depth,1); --stack-step:var(--upper-stack-step,72px); --stack-width:var(--upper-stack-width,0px); }
+html:not([data-phone=true])[data-hand-style=stack] .card-row[data-row="1"] { --stack-depth:var(--lower-stack-depth,1); --stack-step:var(--lower-stack-step,72px); --stack-width:var(--lower-stack-width,0px); }
+html:not([data-phone=true])[data-hand-style=stack] .card-row {
+  --stack-height:calc((var(--stack-depth) - 1) * var(--stack-rise) + var(--hand-card-height));
+  height:calc(var(--group-action-space) + var(--stack-height) + 12px);
+  min-width:calc(var(--stack-width) + 76px); padding:var(--group-action-space) 38px 12px; pointer-events:none;
+}
+html:not([data-phone=true])[data-hand-style=stack] .card-row.is-empty { height:40px; min-width:0; padding-block:0; }
+html:not([data-phone=true])[data-hand-style=stack] .is-empty .hand-tier-label { top:6px; }
+html:not([data-phone=true])[data-hand-style=stack] .hand-cluster { position:relative; height:var(--stack-height); display:flex; gap:0; }
+html:not([data-phone=true])[data-hand-style=stack] .stack-column { position:relative; flex:0 0 var(--stack-step); width:var(--stack-step); height:100%; isolation:isolate; }
+html:not([data-phone=true])[data-hand-style=stack] .stack-column:last-of-type { flex-basis:var(--hand-card-width); width:var(--hand-card-width); }
+html:not([data-phone=true])[data-hand-style=stack] .stack-column .playing-card {
+  position:absolute; top:calc((var(--stack-depth) + var(--stack-offset)) * var(--stack-rise)); left:0;
+  width:var(--hand-card-width); height:var(--hand-card-height); margin:0; z-index:var(--stack-order,0); transform:none!important; pointer-events:auto;
+}
+html:not([data-phone=true])[data-hand-style=stack] .stack-count { position:absolute; top:calc((var(--stack-depth) - var(--column-count)) * var(--stack-rise) + 3px); right:2px; z-index:10; display:grid; place-items:center; width:18px; height:18px; border-radius:4px; background:#dbb45c; color:#173b2e; font:bold 12px/1 sans-serif; pointer-events:none; }
+html:not([data-phone=true])[data-hand-style=stack] .stack-card-index { position:absolute; inset:0 0 auto; display:flex; align-items:center; gap:2px; height:var(--stack-rise); padding:1px 3px; color:#18221d; background:#fffff7; border-radius:5px 5px 0 0; font-size:21px; line-height:24px; white-space:nowrap; pointer-events:none; box-shadow:inset 0 -1px #192c1b18; }
+html:not([data-phone=true])[data-hand-style=stack] .stack-card-index b { font-weight:750; }
+html:not([data-phone=true])[data-hand-style=stack] .stack-suit { font-size:17px; }
+html:not([data-phone=true])[data-hand-style=stack] .stack-card-index:is([data-suit=hearts],[data-suit=diamonds],[data-joker=big]) { color:#c91427; }
+html:not([data-phone=true])[data-hand-style=stack][data-card-skin=accessible] .stack-card-index[data-suit=clubs] { color:#147345; }
+html:not([data-phone=true])[data-hand-style=stack][data-card-skin=accessible] .stack-card-index[data-suit=diamonds] { color:#1869c5; }
+html:not([data-phone=true])[data-hand-style=stack] .stack-card-index[data-suit=joker] { font-size:16px; }
+html:not([data-phone=true])[data-hand-style=stack][lang=en] .stack-card-index[data-suit=joker] { font-size:12px; }
+html:not([data-phone=true])[data-hand-style=stack] .stack-star { color:#b78013; font-size:12px; }
+html:not([data-phone=true])[data-hand-style=stack] .selected .stack-card-index { background:#fff0b7; }
+html:not([data-phone=true])[data-hand-style=stack] .stack-column .selected { box-shadow:inset 0 0 0 2px #f0cc6d; outline:0; }
+html:not([data-phone=true])[data-hand-style=stack] .stack-column .joker-label { display:none; }
+html:not([data-phone=true])[data-hand-style=stack] .selected-mark { top:3px; right:2px; left:auto; z-index:12; width:16px; height:16px; font-size:13px; line-height:16px; }
+html:not([data-phone=true])[data-hand-style=stack] .group-action { pointer-events:auto; }
+@media(max-width:1100px) {
+  html:not([data-phone=true])[data-hand-style=stack] { --hand-card-width:64px; --hand-card-height:96px; --stack-rise:25px; }
+  html:not([data-phone=true])[data-hand-style=stack] .stack-card-index { font-size:19px; }
+}

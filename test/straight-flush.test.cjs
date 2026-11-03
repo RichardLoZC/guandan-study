@@ -14,7 +14,7 @@ function fixture(ids=flushIds){
 }
 const worker=require('./helpers/strategy-worker.cjs');
 
-test('all suits, sequence ends, levels and wild substitutions classify only as straight flushes',()=>{
+test('natural suited straights require flush; wildcard suited straights also allow ordinary declarations',()=>{
   const ai=worker(),sequence=['A','2','3','4','5','6','7','8','9','10','J','Q','K','A'];
   for(const level of ['2','7','A'])for(const suit of ['clubs','diamonds','hearts','spades'])for(let start=0;start<10;start++){
     const base=cards(sequence.slice(start,start+5).map(rank=>'1-'+suit+'-'+rank),level);
@@ -25,7 +25,9 @@ test('all suits, sequence ends, levels and wild substitutions classify only as s
       }
       ai.mt(level);
       for(const plays of [core.recognize(hand),ai.Ke(hand)]){
-        assert.ok(plays.length>0);assert.ok(plays.every(play=>play.type==='straight-flush'));
+        assert.ok(plays.some(play=>play.type==='straight-flush'));
+        assert.ok(plays.every(play=>['straight','straight-flush'].includes(play.type)));
+        assert.equal(plays.some(play=>play.type==='straight'),hand.some(card=>card.isWild));
       }
     }
   }
@@ -94,13 +96,13 @@ test('old saved actions stay readable without rewriting the historical play',()=
   assert.ok(restored.game.players[0].hand.every(card=>!flushIds.includes(card.id)));
   restored.commit(restored.actingSeat,[]);assert.equal(restored.revision,1);
 });
-test('LAN authority rejects the ordinary-straight key sent by an older client and broadcasts the flush',async()=>{
+test('LAN authority rejects the stale ordinary-straight key and broadcasts the flush',async()=>{
   const room=new Room(),host=room.host('Mac');room.join({code:room.code,name:'Pad',protocol:PROTOCOL});
   room.match=fixture();room.seats=[room.members[0].id,room.members[1].id,'bot:2','bot:3'];
   const version=room.version,before=JSON.stringify(room.match.state),old=core.recognizeRecorded(cards(flushIds)).find(play=>play.type==='straight');
-  await assert.rejects(room.request(host.token,{op:'play',version,requestId:'old',ids:flushIds,key:old.key}),/牌型已失效/);
+  await assert.rejects(room.request(host.token,{protocol:PROTOCOL,op:'play',version,requestId:'old',ids:flushIds,key:old.key}),/牌型已失效/);
   assert.equal(room.version,version);assert.equal(JSON.stringify(room.match.state),before);
-  const result=await room.request(host.token,{op:'play',version,requestId:'fixed',ids:flushIds});
+  const result=await room.request(host.token,{protocol:PROTOCOL,op:'play',version,requestId:'fixed',ids:flushIds});
   assert.equal(result.round.state.game.tablePlay.play.type,'straight-flush');
   assert.equal(result.round.state.game.players[0].hand.length,22);
 });

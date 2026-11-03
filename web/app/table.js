@@ -2,28 +2,34 @@
 const root=document.documentElement,byId=id=>document.getElementById(id);
 const SKINS={jumbo:{name:'经典大角标',note:'传统人物牌 · 红黑双色'},accessible:{name:'清晰四色',note:'四种花色 · 各有颜色'},minimal:{name:'极简纸牌',note:'干净牌面 · 更少装饰'}};
 const SKIN_KEY='guandan.desktop.cardSkin.v1',PREFS_KEY='guandan.desktop.preferences.v1';
-const PLAYERS=[{name:'你',avatar:null},{name:'青岚',avatar:'assets/avatars/qing-lan.png'},{name:'知秋',avatar:'assets/avatars/zhi-qiu.png'},{name:'墨白',avatar:'assets/avatars/mo-bai.png'}];
-let prefs={theme:'day',large:false,book:true,paused:false,dealAnimation:true,handStyle:'flat',arrangePriority:'balanced'};
+GuandanPersonas.names.forEach(name=>GuandanI18n.protectName(name));
+let prefs={theme:'day',large:false,paused:false,dealAnimation:true,eventAnimation:true,sound:true,soundVolume:0.35,handStyle:'flat'};
 let currentSkin='jumbo',pendingSkin='jumbo';
-try{const previous=JSON.parse(localStorage.getItem('guandan-engine-choices')||'null');if(previous?.book===false)prefs.book=false;Object.assign(prefs,JSON.parse(localStorage.getItem(PREFS_KEY)||'{}'));const saved=localStorage.getItem(SKIN_KEY);if(Object.hasOwn(SKINS,saved))currentSkin=saved;}catch{}
-// Existing solo games used one switch for bots and advice. Preserve that choice
-// on upgrade, then store the two preferences independently.
-if(typeof prefs.aiBook!=='boolean')prefs.aiBook=prefs.book!==false;
-prefs.handStyle=prefs.handStyle==='fan'?'fan':'flat';root.dataset.handStyle=root.dataset.phone==='true'?'stack':prefs.handStyle;
-if(!Object.hasOwn(GuandanArrange.priorities,prefs.arrangePriority))prefs.arrangePriority='balanced';
+try{Object.assign(prefs,JSON.parse(localStorage.getItem(PREFS_KEY)||'{}'));const saved=localStorage.getItem(SKIN_KEY);if(Object.hasOwn(SKINS,saved))currentSkin=saved;}catch{}
+// Retire old strategy flags and migrate fan preferences on every client.
+delete prefs.book;delete prefs.aiBook;
+prefs.handStyle=['fan','stack'].includes(prefs.handStyle)?'stack':'flat';root.dataset.handStyle=root.dataset.phone==='true'?'stack':prefs.handStyle;
+delete prefs.arrangePriority;
 let liveRound=null,loadError=null,initialDeal=false;
 try{initialDeal=!localStorage.getItem(GuandanMatch.SAVE_KEY);liveRound=GuandanMatch.read(localStorage);}catch(error){loadError=error;}
 let selected=new Set(),toastTimer,botTimer,botWait=null,hintSnapshot=null,playKey=null,pendingDeclaration=null,handLayout=null,handEditor=null,handMarquee=null,handSelection=null,renderedHandKey='';
 let paused=Boolean(prefs.paused),fault=null,faultKind=null,workEpoch=0,activeTask=null,confirmMode='restart';
 const model=new DanLMClient(),cardNodes=new Map(),dialogFocus=new WeakMap();
+const feedback=new GuandanFeedback.Player({element:byId('game-event'),preferences:()=>prefs,round:()=>liveRound});
+feedback.prime(liveRound);
 const dealView=new DealAnimation.TableView({stage:byId('deal-stage'),table:document.querySelector('.play-zone'),receipt:byId('tribute-receipt'),hand:byId('hand-cards')});
 const dealMotion=new DealAnimation.Player({view:dealView,onFinish:(meta,restoreFocus)=>{
   if(meta.id!==liveRound?.id)return;
-  renderGame();scheduleBots();
+  renderGame();feedback.start(liveRound);scheduleBots();
   if(restoreFocus&&!hasOpenDialog()&&!document.hidden)(liveRound.needsTributeConfirmation?byId('confirm-tribute'):byId('hand-scroll')).focus({preventScroll:true});
 }});
 dealView.onSkip=()=>dealMotion.finish();
-const playerAt=(seat,round=liveRound)=>round?.remote?{name:round.names[seat],avatar:PLAYERS[round.playerIds[seat]]?.avatar||'assets/brand/app-icon.png'}:PLAYERS[(round?.playerIds||[0,1,2,3])[seat]];
+const playerAt=(seat,round=liveRound)=>{
+  const identity=round?.playerIds?.[seat]??seat,name=round?.names?.[seat]||'你';
+  const human=round?.remote?(round.humanSeats||[0]).includes(seat):identity===0;
+  const profile=GuandanPersonas.profile(round?.state?.personaIds||round?.personaIds,identity);
+  return !human&&profile?{...profile,name}:{name,avatar:seat===0?null:'/assets/brand/app-icon.png'};
+};
 const seatStyle=(seat,round=liveRound)=>'seat-'+seat+' identity-'+(round?.playerIds||[0,1,2,3])[seat];
 const signed=value=>(value>0?'+':'')+value;
 const TUO3_RULES=[
@@ -35,75 +41,44 @@ const TUO3_RULES=[
   '头游拖三后，搭档立即硬接风，其他人不能压。接风首手不能含 3；仅剩纯三（含红桃 2）或含 3 的同花顺时，可以整手出完。仅剩含 3 的普通顺子须拆开出。仅剩纯三接风出完视为拖三成功。',
   '拖三时每张红桃 3、红桃 2 各计 2 分，其他 3 各计 1 分。结束时所有未出完者的这些分牌按同值扣分。每项加减都由本副两名搭档共同承担，另一队反向加减；四人总积分之和保持为 0。'
 ];
-let arrangement={key:'',plans:[],index:-1};
-function arrangementHand(){const lower=new Set(currentLayout().rows[1]);return (liveRound?.hand||[]).filter(card=>lower.has(card.id));}
-function arrangementKey(){return layoutKey()+'|'+liveRound?.level+'|'+prefs.arrangePriority+'|'+arrangementHand().map(c=>c.id).sort().join(',');}
 function layoutKey(){return (liveRound?.remote?'lan:':'solo:')+liveRound?.id+'|'+(liveRound?.playerIds?.[0]??0);}
 function currentLayout(){
   const key=layoutKey(),hand=liveRound?.hand||[];
-  // Phones always present the level-sorted hand. Keep desktop/tablet shelves
-  // in storage, so switching devices never destroys a player's saved layout.
+  // Phones keep rank stacks; other clients migrate legacy shelves into one row.
   if(window.GuandanPhone?.active)return GuandanHandLayout.create(key,hand);
   handLayout=handLayout?.key===key?GuandanHandLayout.reconcile(handLayout,key,hand):GuandanHandLayout.load(localStorage,key,hand);
+  handLayout=GuandanHandLayout.singleRow(handLayout,key,hand);
   return handLayout;
 }
 function storeLayout(next){
-  handLayout=next;
-  try{GuandanHandLayout.save(localStorage,next);}catch{toast('牌序已调整，但未能保存到本机。');}
+  handLayout=GuandanHandLayout.singleRow(next,layoutKey(),liveRound.hand);
+  try{GuandanHandLayout.save(localStorage,handLayout);}catch{toast('牌序已调整，但未能保存到本机。');}
 }
-function commitLayout(next){storeLayout(next);arrangement.index=-1;resizeHand();renderHand();window.tableView?.sync();}
+function commitLayout(next){storeLayout(next);resizeHand();renderHand();window.tableView?.sync();}
 function displayLayout(){return liveRound?.game.result?GuandanHandLayout.create(layoutKey(),liveRound.hand):currentLayout();}
 function ownHand(){
   const hand=liveRound?.hand||[];
-  if(arrangement.key!==arrangementKey())arrangement={key:arrangementKey(),plans:[],index:-1};
   return GuandanHandLayout.ordered(displayLayout(),hand);
 }
-function cycleArrangement(){
-  if(!canAutoArrange())return;
-  ownHand(); // A change in either shelf's membership invalidates lower-shelf plans.
-  if(!arrangement.plans.length)arrangement.plans=GuandanArrangeSearch.plans(arrangementHand(),liveRound.level,{priority:prefs.arrangePriority});
-  if(!arrangement.plans.length)return;
-  const index=(arrangement.index+1)%arrangement.plans.length;
-  handEditor.replace(GuandanHandLayout.fromPlan(layoutKey(),liveRound.hand,arrangement.plans[index],currentLayout()));
-  arrangement.index=index;renderArrangement();
-}
-function sortLowerHand(){
-  if(canAutoArrange())handEditor.replace(GuandanHandLayout.fromPlan(layoutKey(),liveRound.hand,null,currentLayout()));
-}
+function sortHand(){if(canArrange())handEditor.replace(GuandanHandLayout.create(layoutKey(),liveRound.hand));}
 function renderArrangement(){
-  ownHand();
-  const plan=arrangement.plans[arrangement.index],summary=byId('arrangement-summary');
-  summary.replaceChildren();
-  const phone=window.GuandanPhone?.active;
-  const arrangeLabel=document.createElement('span');arrangeLabel.textContent=phone?'理牌':'理下排';
-  byId('arrange-hand').title=byId('arrange-priority').title=phone?'整理整手牌，轮换组合方案':'仅整理下排，上排保留组合不变';
-  byId('arrange-priority').setAttribute('aria-label',phone?'理牌优先方式':'下排理牌优先方式');
-  byId('sort-hand').title=phone?'整手牌按大小排序':'仅按大小排序下排，上排保持不变';
-  const arrangeCount=document.createElement('span');arrangeCount.className='arrange-cycle';arrangeCount.setAttribute('aria-hidden','true');
-  arrangeCount.textContent=plan?(arrangement.index+1)+'/'+arrangement.plans.length:'';
-  byId('arrange-hand').replaceChildren(arrangeLabel,arrangeCount);
-  if(liveRound?.game.result)return;
-  for(const id of ['arrange-hand','arrange-priority','sort-hand'])byId(id).disabled=!canAutoArrange();
-  if(plan){
-    const status=document.createElement('strong');status.className='arrangement-status';
-    const missing={flush:'未找到同花顺',bomb:'未找到炸弹',runs:'未找到顺连',pairs:'未找到对子'};
-    status.textContent=(plan.matches===0?missing[prefs.arrangePriority]+' · ':'')+'组合 '+(arrangement.index+1)+' / '+arrangement.plans.length;
-    summary.append(status);
-  }
+  byId('sort-hand').disabled=!canArrange();
 }
 const canPlay=()=>Boolean(!window.GuandanPhone?.blocked()&&liveRound?.canAct&&!handEditor?.editing&&!handMarquee?.active&&!paused&&!fault&&!dealMotion.active&&(!liveRound.remote||window.GuandanLan?.ready));
 const canPrepare=()=>Boolean(liveRound?.hand.length&&!liveRound.game.result&&!dealMotion.active);
 const canArrange=()=>canPrepare()&&!window.GuandanPhone?.active;
-const canAutoArrange=()=>canArrange()&&currentLayout().rows[1].length>0;
 // Choosing and arranging are private preparation, independent of whose turn
 // it is, model availability, pause state or a pending LAN response.
 const canSelect=()=>canPrepare()&&!handEditor?.editing&&!handMarquee?.active;
 const hasOpenDialog=()=>Boolean(document.querySelector('dialog[open]'));
 function beginDealAnimation(){
   stopBots();
-  if(prefs.dealAnimation===false||!liveRound||liveRound.game.result||fault)return;
+  if(!liveRound||liveRound.game.result||fault)return;
+  if(prefs.dealAnimation===false){feedback.start(liveRound);return;}
+  feedback.sound.play('deal');
   const players=[0,1,2,3].map(seat=>({...playerAt(seat),identity:liveRound.playerIds[seat]}));
-  dealMotion.start({id:liveRound.id,round:liveRound.state.round,level:liveRound.state.level,mode:liveRound.isTuo3?'拖 3':'经典掼蛋',players});
+  const started=dealMotion.start({id:liveRound.id,round:liveRound.state.round,level:liveRound.state.level,mode:liveRound.isTuo3?'拖 3':'经典掼蛋',players});
+  if(!started)feedback.start(liveRound);
   renderGame();
 }
 function savePrefs(){try{localStorage.setItem(PREFS_KEY,JSON.stringify(prefs));}catch{toast('外观偏好未能保存。');}}
@@ -125,9 +100,9 @@ function loadCardImage(img,skin,face){
   img.onerror=()=>{
     if(img.dataset.imageVersion!==version)return;
     if(attempts++>=2){img.onerror=null;img.src=pathFor('minimal');return;}
-    requestAnimationFrame(()=>{if(img.dataset.imageVersion===version)img.src=pathFor(skin)+'?v=205&r='+attempts;});
+    requestAnimationFrame(()=>{if(img.dataset.imageVersion===version)img.src=pathFor(skin)+'?v=213&r='+attempts;});
   };
-  img.src=pathFor(skin)+'?v=205';
+  img.src=pathFor(skin)+'?v=213';
 }
 function imageFor(face,label='',lockedSkin,level=liveRound?.level){
   const img=document.createElement('img');img.dataset.cardFace=face;img.dataset.levelCard=String(GuandanCardArt.isLevel(face,level));
@@ -168,8 +143,8 @@ function renderHand(){
   GuandanCore.setLevel(liveRound?.level||'2');
   handEditor?.reconcile();
   handMarquee?.reconcile();
-  const phone=window.GuandanPhone?.active;
-  const key=JSON.stringify([layout,liveRound?.level,Boolean(liveRound?.game.result),phone]);
+  const phone=window.GuandanPhone?.active,stacked=root.dataset.handStyle==='stack';
+  const key=JSON.stringify([layout,liveRound?.level,Boolean(liveRound?.game.result),phone,stacked]);
   // Opponent turns must not detach the pressed card or steal touch capture.
   // The public table updates freely while the unchanged hand keeps its nodes.
   if(key===renderedHandKey&&cardNodes.size===hand.length&&hand.every(card=>cardNodes.has(card.id))){renderArrangement();updateSelection();return;}
@@ -180,14 +155,12 @@ function renderHand(){
   for(const [id] of cardNodes)if(!liveIds.has(id))cardNodes.delete(id);
   const duplicates=new Map(),ordinals=new Map(),rows=[];
   hand.forEach(card=>duplicates.set(card.face,(duplicates.get(card.face)||0)+1));
-  for(const tier of liveRound?.game.result||phone?[1]:[0,1]){
-    const row=document.createElement('div');row.className='card-row'+(!layout.rows[tier].length?' is-empty':'');row.dataset.row=tier;row.setAttribute('role','group');row.setAttribute('aria-label',phone?'叠放手牌':tier===0?'上排手牌':'下排手牌');rows.push(row);
-    const label=document.createElement('span');label.className='hand-tier-label';label.textContent=tier===0?'上排':'下排';row.append(label);
-    label.title=tier===0?'上排保留：自动理牌不会移动这里的牌':'下排试排：理牌与按大小只调整这里';
+  for(const tier of [1]){
+    const row=document.createElement('div');row.className='card-row'+(!layout.rows[tier].length?' is-empty':'');row.dataset.row=tier;row.setAttribute('role','group');row.setAttribute('aria-label',stacked?'叠放手牌':'手牌');rows.push(row);
     for(const segment of GuandanHandLayout.segments(layout,tier)){
       const cluster=document.createElement('div');cluster.className='hand-cluster';row.append(cluster);
       const destinations=new Map();
-      if(phone)for(const ids of GuandanHandStack.columns(segment.ids,hand)){
+      if(stacked)for(const ids of GuandanHandStack.columns(segment.ids,hand)){
         const column=document.createElement('div');column.className='stack-column';cluster.append(column);
         column.style.setProperty('--column-count',ids.length);
         if(ids.length>=4){
@@ -214,7 +187,7 @@ function renderHand(){
       const ordinal=(ordinals.get(card.face)||0)+1;ordinals.set(card.face,ordinal);
       if(!button){
         button=document.createElement('button');button.type='button';button.className='playing-card';button.dataset.id=card.id;
-        button.setAttribute('aria-keyshortcuts','Alt+ArrowLeft Alt+ArrowRight Alt+ArrowUp Alt+ArrowDown');
+        button.setAttribute('aria-keyshortcuts','Alt+ArrowLeft Alt+ArrowRight');
         const img=imageFor(card.face);img.setAttribute('aria-hidden','true');button.append(img);
         const mark=document.createElement('span');mark.className='selected-mark';mark.textContent='✓';mark.setAttribute('aria-hidden','true');button.append(mark);
         if(card.suit==='joker'){
@@ -228,7 +201,7 @@ function renderHand(){
       }
       const face=button.querySelector('img[data-card-face]'),isLevel=GuandanCardArt.isLevel(card.face,liveRound.level);
       if(face.dataset.levelCard!==String(isLevel)){face.dataset.levelCard=String(isLevel);loadCardImage(face,currentSkin,card.face);}
-      if(phone){
+      if(stacked){
         let index=button.querySelector('.stack-card-index');
         if(!index){index=document.createElement('span');index.className='stack-card-index';index.setAttribute('aria-hidden','true');index.setAttribute('translate','no');button.append(index);}
         index.replaceChildren();index.dataset.suit=card.suit;index.dataset.wild=String(Boolean(card.isWild));index.dataset.joker=card.rank==='BJ'?'big':card.rank==='SJ'?'small':'';
@@ -241,7 +214,7 @@ function renderHand(){
       button.setAttribute('aria-label',card.label+(isLevel?' 级牌':'')+(card.isWild?' 逢人配':'')+(duplicates.get(card.face)>1?' 第'+ordinal+'张':''));
       const groupIndex=segment.groupIndex;button.classList.toggle('arranged',groupIndex>=0);button.style.removeProperty('--group-color');
       button.dataset.clusterStart=String(id===segment.ids[0]);
-      (phone?destinations.get(id).column:cluster).append(button);
+      (stacked?destinations.get(id).column:cluster).append(button);
     }
     }
   }
@@ -270,16 +243,28 @@ function resizeHand(){
     byId('hand-scroll').classList.toggle('has-overflow',metrics.width>width-12);
     byId('hand-scroll').style.setProperty('--hand-rows',1);return;
   }
+  if(root.dataset.handStyle==='stack'){
+    // Reuse phone rank columns in the single Mac hand region.
+    const available=Math.max(0,width-76);
+    let overflow=false;
+    layout.rows.forEach((ids,tier)=>{
+      const metrics=GuandanHandStack.metrics(GuandanHandLayout.segments(layout,tier),liveRound.hand,{width:available,cardWidth,gap,minStep:40});
+      const name=tier===0?'upper':'lower';
+      for(const [property,value]of [['depth',metrics.depth],['step',metrics.step+'px'],['width',metrics.width+'px']])
+        byId('hand-cards').style.setProperty('--'+name+'-stack-'+property,value);
+      overflow ||= metrics.width>available;
+    });
+    byId('hand-scroll').classList.toggle('has-overflow',overflow);
+    byId('hand-scroll').style.setProperty('--hand-rows',1);return;
+  }
   const header=parseFloat(stylesHand.getPropertyValue('--group-action-space'))||0;
   byId('hand-scroll').style.setProperty('--hand-shelf-height',GuandanHandFan.shelfHeight(cardWidth,cardHeight,header)+'px');
-  // Each shelf fits independently, so trying lower-shelf combinations cannot
-  // compress or recenter the player's reserved upper combinations.
   counts.forEach((count,tier)=>{
     const metrics=GuandanHandFan.rowMetrics(count,{width,cardWidth,step:baseStep,gap,minStep:root.dataset.phone==='true'?18:30}),name=tier===0?'upper':'lower';
     byId('hand-cards').style.setProperty('--'+name+'-hand-step',metrics.step+'px');
     byId('hand-cards').style.setProperty('--'+name+'-row-width',metrics.width+'px');
   });
-  byId('hand-scroll').style.setProperty('--hand-rows',2);
+  byId('hand-scroll').style.setProperty('--hand-rows',1);
 }
 function groupPlaySelection(ids,key){
   if(!canPlay()||hasOpenDialog()||liveRound.phase!=='playing'||key!==layoutKey()||ids.length<2)return null;
@@ -332,11 +317,11 @@ function renderTable(){
     const seat=Number(player.dataset.seat);
     for(const id of [0,1,2,3])player.classList.toggle('identity-'+id,liveRound.playerIds[seat]===id);
     const heading=player.querySelector('.player-info strong');let name=heading.querySelector('.player-name');if(!name){name=document.createElement('span');name.className='player-name';heading.firstChild.replaceWith(name);}name.setAttribute('translate',liveRound.remote?'no':'yes');name.textContent=playerAt(seat).name+' ';
-    player.querySelector('.avatar img').setAttribute('src',playerAt(seat).avatar);
+    GuandanPersonas.paint(player.querySelector('.avatar img'),playerAt(seat));
     let score=player.querySelector('.player-score');
     if(!score){score=document.createElement('span');score.className='player-score';player.querySelector('.player-info').append(score);}
     score.hidden=!liveRound.isTuo3;score.textContent=liveRound.isTuo3?'累计 '+signed(liveRound.state.tuo3.totals[liveRound.playerIds[seat]])+' 分':'';
-    player.querySelector('.remaining b').textContent=game.players[seat].hand.length;
+    GuandanCardCounts.render(player.querySelector('.remaining'),game.players[seat].hand.length,{seat,completed:Boolean(game.result),dealing:dealMotion.active});
     player.classList.toggle('last-player',table?.owner===seat);player.classList.toggle('is-turn',turn?.seat===seat);
     player.classList.toggle('is-thinking',turn?.seat===seat&&turn.kind==='ai');
     const bubble=player.querySelector('.seat-bubble'),finished=game.players[seat].finished||Boolean(game.result),isTurn=player.classList.contains('is-turn');
@@ -367,6 +352,9 @@ function renderSeatRemainders(){
     }
   }
 }
+function presentRoundText(value,round=liveRound){
+  return round?.remote?String(value):GuandanPersonas.notice(value,round?.playerIds||[0,1,2,3],round?.names||['你','青岚','知秋','墨白']);
+}
 function renderTribute(){
   const view=liveRound.tributeDisplay,panel=byId('tribute-panel'),receipt=byId('tribute-receipt');
   panel.setAttribute('aria-label',liveRound.isTuo3?'本副翻牌与搭档':'本局贡还明牌');
@@ -381,7 +369,7 @@ function renderTribute(){
   byId('tribute-title').textContent=view.title;byId('tribute-reason').textContent=view.reason;byId('tribute-message').textContent=view.message;
   byId('confirm-tribute').disabled=paused||Boolean(fault)||dealMotion.active;
   byId('tribute-receipt-title').textContent=liveRound.isTuo3?'拖 3 · 本副翻牌':view.mode==='抗贡'?'本副抗贡 · 免贡还':view.mode+' · 未抗贡';
-  byId('tribute-receipt-leader').textContent=liveRound.isTuo3?Tuo3Rules.hint(liveRound.state):playerAt(view.starter??liveRound.actingSeat).name+'先手';
+  byId('tribute-receipt-leader').textContent=liveRound.isTuo3?presentRoundText(Tuo3Rules.hint(liveRound.state)):playerAt(view.starter??liveRound.actingSeat).name+'先手';
   for(const row of view.rows){
     const item=document.createElement('div');item.className='tribute-transfer '+seatStyle(row.from)+(row.active?' is-current':'');
     const card=document.createElement('div');card.className='tribute-card';
@@ -401,7 +389,7 @@ function setTheme(theme){
 
 function revealAvatar(seat,round=liveRound){
   const avatar=document.createElement('span');avatar.className='reveal-avatar';avatar.setAttribute('aria-hidden','true');
-  if(playerAt(seat,round).avatar){const img=document.createElement('img');img.src=playerAt(seat,round).avatar;img.alt='';avatar.append(img);}else avatar.textContent='你';
+  if(playerAt(seat,round).avatar){const img=document.createElement('img');avatar.append(img);GuandanPersonas.paint(img,playerAt(seat,round));img.alt='';}else avatar.textContent='你';
   return avatar;
 }
 function renderFinalPlay(section,play,round=liveRound){
@@ -443,13 +431,13 @@ function renderScores(section,score,round=liveRound){
   const body=document.createElement('tbody');
   for(const row of score.rows){
     const tr=document.createElement('tr');tr.className=seatStyle(row.seat,round);
-    for(const [index,value] of [row.name,...['placement','drag','remainder','delta','total'].map(key=>signed(row[key]))].entries()){
+    for(const [index,value] of [round.names?.[row.seat]||presentRoundText(row.name,round),...['placement','drag','remainder','delta','total'].map(key=>signed(row[key]))].entries()){
       const cell=document.createElement(index===0?'th':'td');cell.textContent=value;if(index===0)cell.scope='row';tr.append(cell);
     }body.append(tr);
   }table.append(body);section.append(table);
   const details=document.createElement('div');details.className='score-details';
   for(const detail of score.details){
-    const line=document.createElement('p');line.textContent=detail.label+'：'+signed(detail.value)+' 分'+(detail.cards.length?'（'+detail.cards.map(GuandanCore.cardLabel).join('、')+'）':'');details.append(line);
+    const line=document.createElement('p');line.textContent=presentRoundText(detail.label,round)+'：'+signed(detail.value)+' 分'+(detail.cards.length?'（'+detail.cards.map(GuandanCore.cardLabel).join('、')+'）':'');details.append(line);
   }
   const note=document.createElement('p');note.textContent='以上每项由本副搭档共同加减，另一队反向记分。';details.append(note);section.append(details);
 }
@@ -574,7 +562,49 @@ function updateSelection(){
   updateGroupActions();syncDeclaration();
   window.tableView?.sync();
 }
+function renderSeriesOutcome(){
+  if(!liveRound)return;
+  const state=liveRound.state,game=liveRound.game,result=GuandanSeries.settlement(state);
+  const english=GuandanI18n.locale==='en',say=(zh,en)=>english?en:zh;
+  const banner=byId('round-end-banner'),standings=byId('series-standings');
+  for(const team of [0,1]){
+    const progress=byId(team===0?'our-ace-progress':'their-ace-progress');
+    progress.hidden=liveRound.isTuo3||Boolean(result?.victory)||state.levels[team]!=='A';
+    if(progress.hidden){progress.textContent='';progress.removeAttribute('title');progress.removeAttribute('aria-label');continue;}
+    const count=result?(result.team===team?result.attempt:0):(state.aceAttempts?.[team]||0);
+    const description=say((team===0?'我方':'对方')+'冲 A 受阻 '+count+'/3；连续三副第一＋第四退回 2，其他结果清零',
+      (team===0?'Our team':'Opponents')+' A attempts '+count+'/3; three consecutive first and fourth finishes return the team to 2, other results reset the count');
+    progress.textContent=say('冲 A '+count+'/3','A '+count+'/3');
+    progress.title=description;progress.setAttribute('aria-label',description);
+  }
+  banner.classList.toggle('is-series-victory',Boolean(result?.victory));banner.classList.toggle('is-demotion',Boolean(result?.demotion));
+  standings.hidden=!game.result;standings.replaceChildren();
+  if(!game.result)return;
+  const kind=result?.victory?'victory':result?.demotion?'demotion':result?.attempt?'attempt':result?'upgrade':'round';
+  const text=GuandanFeedback.words({kind,result},liveRound,english);
+  const heading=banner.querySelector('h2'),detail=banner.querySelector('p');
+  heading.setAttribute('translate','no');detail.setAttribute('translate','no');standings.setAttribute('translate','no');
+  heading.textContent=liveRound.isTuo3?say((game.result.winnerTeam===0?'我方':'对方')+'取得头游',(game.result.winnerTeam===0?'Our team':'Opponents')+' took first place'):text.title;
+  detail.textContent=liveRound.isTuo3?GuandanI18n.t(game.result.summary):text.detail+(result?.victory?say(' · 本场胜利已确认，点击后从 2 开始',' · Match complete. Start again when ready'):result?.demotion?say('；另一队级别保留，点击后生效','; the other team keeps its level. Applied on the next deal'): '');
+  for(const [index,seat] of game.finishOrder.entries()){
+    const place=document.createElement('span');place.textContent=say('第'+(index+1)+'名 ', '#'+(index+1)+' ')+GuandanI18n.t(liveRound.names[seat])+(game.players[seat].hand.length?say('（结算）',' (assigned)'):'');standings.append(place);
+  }
+  const button=byId('next-round');button.textContent=result?.victory?'再开一场 · 从 2 开始':'开始下一副';
+}
+function renderPrivateHandScore(){
+  const badge=byId('private-hand-score'),own=GuandanPrivateHandScore.readOwn(liveRound),english=GuandanI18n.locale==='en';
+  badge.hidden=!liveRound;
+  const label=own.provisional?(english?'Deal':'暂评'):(english?'Start':'起手');
+  badge.textContent=own.score===null?(english?'Start —':'起手 —'):label+' '+own.score+'/100';
+  const pending=own.reason==='unsupported_rule_mode'?(english?'Not available for Tuo 3.':'拖 3 的手牌结构分尚未适配。'):
+    own.reason==='tribute_in_progress'?(english?'Tribute in progress; updates when your hand is complete.':'贡还进行中，手牌完整后更新。'):(english?'Starting hand unavailable.':'缺少完整起手牌。');
+  const note=own.score===null?pending:own.provisional?(english?'Before-tribute trial score; updates after tribute.':'贡还前暂评，贡还完成后更新并固定。'):(english?'Starting hand after tribute; remains fixed as cards are played.':'贡还后的起手结构分，出牌后保持固定。');
+  badge.title=(english?'Only you can see this. Trial structure score, not win probability. ':'仅自己可见；试行结构分，不是胜率。')+note;
+  badge.setAttribute('aria-label',badge.textContent+'；'+badge.title);
+  badge.classList.toggle('is-provisional',Boolean(own.provisional));
+}
 function renderGame(){
+  renderPrivateHandScore();
   if(byId('toast').classList.contains('visible'))placeToast();
   const legacyRules=byId('legacy-tuo3-rules');if(legacyRules)legacyRules.hidden=!liveRound?.isTuo3;
   if(!liveRound){byId('hand-count').textContent='—';updateSelection();return;}
@@ -596,9 +626,10 @@ function renderGame(){
   let turn=game.result?'本局已结束':paused?'对局已暂停':fault?'请处理提示':connection|| (dealMotion.active?'正在发牌':liveRound.needsTributeConfirmation?(liveRound.isTuo3?'看清分组后开始':'看清贡还后开始'):liveRound.confirmWaiting?'等待其他玩家确认':liveRound.phase==='give'?actor+'进贡':liveRound.phase==='return'?actor+'还贡':status?.seat===0?'轮到你出牌':status?actor+' · '+status.label:'对局已暂停');
   document.querySelector('.turn-pill strong').textContent=turn;
   document.querySelector('.turn-pill').classList.toggle('is-self-turn',status?.seat===0);
-  if(game.result){byId('round-end-banner').querySelector('h2').textContent=(game.result.winnerTeam===0?'我方':'对方')+(liveRound.isTuo3?'取得头游':'获胜');byId('round-end-banner').querySelector('p').textContent=game.result.summary;}
+  renderSeriesOutcome();
   byId('engine-indicator').textContent=fault?'需要处理提示':activeTask==='health'?'正在加载离线模型…':model.ready?'DanLM · 离线就绪':'模型等待加载';
   resizeHand();renderHand();window.GuandanLan?.controls();
+  window.GuandanAssessmentUI?.afterRender(liveRound);
 }
 function saveAction(action,{preserveSelection=false}={}){
   stopBots();if(!liveRound)return false;clearToast();
@@ -606,7 +637,7 @@ function saveAction(action,{preserveSelection=false}={}){
   try{
     action();liveRound.persist(localStorage);
   }catch(error){liveRound.state=oldState;liveRound.revision=oldRevision;reportError(error,'save');return false;}
-  if(actor===0&&!preserveSelection)selected.clear();playKey=null;hintSnapshot=null;clearError();renderGame();
+  if(actor===0&&!preserveSelection)selected.clear();playKey=null;hintSnapshot=null;clearError();renderGame();feedback.collect(liveRound);
   if(liveRound.game.result){
     try{GuandanMatch.archive(localStorage,liveRound);}catch{toast('本局已保存，历史复盘暂未保存。请导出备份后再继续。');}
   }else scheduleBots();
@@ -624,13 +655,13 @@ function scheduleBots(){
     }
     const epoch=++workEpoch,wait=GuandanTurnTiming.begin();botWait=wait;activeTask='npc';renderGame();
     try{
-      const decision=liveRound.phase!=='playing'?liveRound.chooseTribute():null;
+      const tribute=liveRound.phase!=='playing';
       const [rawResponse,ready]=await Promise.all([
-        decision?null:model.request({observation:liveRound.observation(seat),provider:'danlm',book:prefs.aiBook,variant:liveRound.state.ruleMode}),wait.promise
+        tribute?liveRound.chooseTribute(payload=>model.request(payload)):model.request({observation:liveRound.observation(seat),provider:'danlm',variant:liveRound.state.ruleMode}),wait.promise
       ]);
       if(window.GuandanPhone?.blocked()||!ready||epoch!==workEpoch||!liveRound||liveRound.remote||id!==liveRound.id||revision!==liveRound.revision||liveRound.actingSeat!==seat||liveRound.needsTributeConfirmation||paused||fault||dealMotion.active||hasOpenDialog()||document.hidden)return;
       activeTask=null;
-      if(decision)saveAction(()=>liveRound.commit(seat,[decision.card.id],{expectedRevision:revision,automatic:true}));
+      if(tribute)saveAction(()=>liveRound.commit(seat,[rawResponse.card.id],{expectedRevision:revision,automatic:true,engine:rawResponse.engine}));
       else{const response=liveRound.adaptModel(rawResponse,seat);saveAction(()=>liveRound.commitModel(response,revision,seat));}
     }catch(error){if(epoch===workEpoch){activeTask=null;reportError(new Error('AI 计算失败：'+error.message),'model');}}
     finally{wait.cancel();if(botWait===wait)botWait=null;if(epoch===workEpoch){activeTask=null;renderGame();}}
@@ -661,7 +692,7 @@ async function openAdvice(trigger){
   byId('teaching-details').replaceChildren();byId('suggested-cards').replaceChildren();
   const epoch=++workEpoch;activeTask='teaching';renderGame();
   try{
-    const rawResponse=liveRound.remote?await window.GuandanLan.command('advice',{book:prefs.book!==false}):await model.request({observation:liveRound.observation(0),selected:chosen,teaching:true,provider:'danlm',book:prefs.book,variant:liveRound.state.ruleMode});
+    const rawResponse=liveRound.remote?await window.GuandanLan.command('advice'):await model.request({observation:liveRound.observation(0),selected:chosen,teaching:true,provider:'danlm',variant:liveRound.state.ruleMode});
     if(epoch!==workEpoch||revision!==liveRound.revision||id!==liveRound.id||!byId('analysis-dialog').open)return;
     const response=liveRound.adaptModel(rawResponse,0);
     const candidate=response.result?.candidates?.[0];if(!candidate)throw new Error('没有获得推荐打法');
@@ -678,10 +709,10 @@ async function openAdvice(trigger){
 
 function renderAdviceContent(){
   if(!displayedAdvice)return;
-  const {response,candidate,notes,advanced,line}=displayedAdvice,ids=candidate.play?.cards.map(c=>c.id)||[],usedBook=Boolean(response.result?.book||advanced?.book);
+  const {response,candidate,notes,advanced,line}=displayedAdvice,ids=candidate.play?.cards.map(c=>c.id)||[];
   byId('teaching-details').replaceChildren();
     byId('advice-title').textContent=candidate.play?'出'+candidate.play.label:'建议不出';
-    byId('advice-reason').textContent=line;byId('advice-source').textContent=liveRound.isTuo3?'DanLM + 拖3规则筛选 · 权重未针对拖3重训':'DanLM'+(usedBook?' + 秘籍策略':'')+' · 解释来自教学层，评分不等于胜率';
+    byId('advice-reason').textContent=line;byId('advice-source').textContent=liveRound.isTuo3?'DanLM + 拖3规则筛选 · 权重未针对拖3重训':'DanLM · 解释来自教学层，评分不等于胜率';
     byId('suggested-cards').replaceChildren(...(candidate.play?.cards||[]).map(card=>imageFor(GuandanMatch.decorate(card).face,GuandanCore.cardLabel(card))));
     byId('adopt-from-dialog').textContent=ids.length?'选中推荐':'返回并确认不出';byId('adopt-from-dialog').disabled=false;
     addTeachingDetails('推荐依据',notes.filter(item=>typeof item==='string'),{open:true});
@@ -689,8 +720,6 @@ function renderAdviceContent(){
     if(advanced){
       addTeachingDetails('接下来怎么走',advanced.plan||[]);
       addTeachingDetails('候选打法与余牌拆分',(advanced.options||[]).map(option=>option.label+'：剩约'+option.hands+'手；'+(option.groups||[]).map(group=>group.label).join('、')));
-      const book=advanced.book||response.result.book;
-      if(book)addTeachingDetails('秘籍依据与适用条件',(book.rows?.[0]?.evidence||[]).map(item=>item.reason));
       addTeachingDetails('公开信息与采样边界',[...(advanced.publicMemory||[]),advanced.caution,response.result.warning]);
     }
   if(GuandanI18n.locale==='en'){
@@ -700,9 +729,9 @@ function renderAdviceContent(){
       table?.owner===2?'Your partner controls the trick. Passing lets them keep the lead and preserves your cards.':'Pass this turn and keep your current hand.';
     byId('teaching-details').replaceChildren();
     addTeachingDetails('Recommendation and context',[
-      'DanLM ranked the legal candidate moves using your hand and public information.'+(usedBook?' Strategy-book guidance is enabled.':''),
+      'DanLM ranked the legal candidate moves using your hand and public information.',
       table?`${t(playerAt(table.owner).name)} currently leads with ${t(table.play.label)}.`:'You are leading a new trick.',
-      `Remaining cards: ${liveRound.game.players.map((p,i)=>t(playerAt(i).name)+' '+p.hand.length).join(' · ')}.`,
+      `Remaining cards: ${liveRound.game.players.map((p,i)=>t(playerAt(i).name)+' '+GuandanCardCounts.label(p.hand.length,{seat:i,english:true})).join(' · ')}.`,
       'This is a factual teaching summary, not the neural network’s internal reasoning. Model scores are not win probabilities.'
     ],{open:true});
     const options=response.result?.candidates||[];
@@ -710,6 +739,7 @@ function renderAdviceContent(){
     if(advanced?.options?.length)addTeachingDetails('Remaining combinations',advanced.options.map(option=>`${t(option.label)}: about ${option.hands} combinations left. ${(option.groups||[]).map(g=>t(g.label)).join(', ')}`));
     addTeachingDetails('Information limits',['Other players’ hidden hands are not available to the acting model. Sampling unseen cards does not establish a win rate.']);
   }
+
 }
 window.addEventListener('guandan-language-change',()=>{if(byId('analysis-dialog').open&&displayedAdvice)renderAdviceContent();});
 
@@ -722,16 +752,16 @@ function adoptAdvice(){
 function openHistory(trigger){
   const list=byId('history-list');list.replaceChildren();
   if(!liveRound)return;
-  for(const note of liveRound.state.notice||[]){const p=document.createElement('p');p.textContent=note;list.append(p);}
+  for(const note of liveRound.state.notice||[]){const p=document.createElement('p');p.textContent=presentRoundText(note);list.append(p);}
   for(const event of liveRound.events){const row=document.createElement('p');row.className='seat-'+event.seat;
-    for(const [tag,text] of [['b',(event.index+1)+'. '+playerAt(event.seat).name],['span',event.label],['span','剩'+event.remaining[event.seat]+'张']]){const child=document.createElement(tag);child.textContent=text;row.append(child);}list.append(row);}
+    for(const [tag,text] of [['b',(event.index+1)+'. '+playerAt(event.seat).name],['span',event.label],['span',GuandanCardCounts.label(event.remaining[event.seat],{seat:event.seat,completed:Boolean(liveRound.game.result)})]]){const child=document.createElement(tag);child.textContent=text;row.append(child);}list.append(row);}
   if(!list.childElementCount){const p=document.createElement('p');p.textContent='本局尚未出牌。';list.append(p);}openDialog(byId('history-dialog'),trigger);
 }
 function exportSave(){
   if(liveRound?.remote){downloadText('掼蛋-联机复盘.json',JSON.stringify(liveRound.snapshot(),null,2));return;}
   downloadText('掼蛋-存档备份-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify({exportedAt:new Date().toISOString(),game:localStorage.getItem(GuandanMatch.SAVE_KEY),reviews:localStorage.getItem(GuandanMatch.ARCHIVE_KEY)},null,2));
 }
-function replaceMatch(next){next.persist(localStorage);dealMotion.cancel();liveRound=next;selected.clear();playKey=null;hintSnapshot=null;cardNodes.clear();clearToast();clearError();renderGame();beginDealAnimation();scheduleBots();}
+function replaceMatch(next){next.persist(localStorage);dealMotion.cancel();liveRound=next;feedback.prime(liveRound);selected.clear();playKey=null;hintSnapshot=null;cardNodes.clear();clearToast();clearError();renderGame();beginDealAnimation();scheduleBots();}
 
 byId('theme-day').addEventListener('click',()=>{setTheme('day');prefs.theme='day';savePrefs();});
 byId('theme-night').addEventListener('click',()=>{setTheme('night');prefs.theme='night';savePrefs();});
@@ -764,19 +794,18 @@ byId('next-round').addEventListener('click',()=>{
   try{replaceMatch(liveRound.next());}catch(error){reportError(error,'save');}
 });
 byId('open-settings').addEventListener('click',event=>openDialog(byId('settings-dialog'),event.currentTarget));
-async function setAiBook(enabled){
-  if(window.GuandanLan?.active){
-    try{await window.GuandanLan.command('ai-book',{enabled});}catch{}finally{window.GuandanLan.controls();}
-    return;
-  }
-  stopBots();prefs.aiBook=enabled;savePrefs();renderGame();scheduleBots();
-}
-byId('ai-book-enabled').checked=prefs.aiBook;
-byId('ai-book-enabled').addEventListener('change',event=>setAiBook(event.target.checked));
-byId('book-enabled').checked=prefs.book!==false;
-byId('book-enabled').addEventListener('change',event=>{prefs.book=event.target.checked;hintSnapshot=null;savePrefs();});
 byId('deal-animation-enabled').checked=prefs.dealAnimation!==false;
 byId('deal-animation-enabled').addEventListener('change',event=>{prefs.dealAnimation=event.target.checked;savePrefs();});
+byId('event-animation-enabled').checked=prefs.eventAnimation!==false;
+byId('event-animation-enabled').addEventListener('change',event=>{prefs.eventAnimation=event.target.checked;savePrefs();feedback.paint();});
+byId('sound-enabled').checked=prefs.sound!==false;
+byId('sound-enabled').addEventListener('change',event=>{prefs.sound=event.target.checked;savePrefs();if(prefs.sound)feedback.sound.unlock();else feedback.sound.stop();});
+byId('sound-volume').value=Math.round((prefs.soundVolume??0.35)*100);
+byId('sound-volume-value').textContent=byId('sound-volume').value+'%';
+byId('sound-volume').addEventListener('input',event=>{prefs.soundVolume=Number(event.target.value)/100;byId('sound-volume-value').textContent=event.target.value+'%';savePrefs();});
+byId('sound-preview').addEventListener('click',async()=>{await feedback.sound.unlock();feedback.sound.play('rank');});
+for(const type of ['pointerdown','keydown'])document.addEventListener(type,event=>{if(event.isTrusted)feedback.sound.unlock();},{capture:true});
+window.addEventListener('guandan-language-change',()=>{renderSeriesOutcome();renderPrivateHandScore();feedback.paint();});
 byId('recheck-model').addEventListener('click',checkModel);
 byId('retry-model').addEventListener('click',()=>{clearError();try{liveRound?.persist(localStorage);}catch(error){reportError(error);return;}checkModel();});
 byId('export-save').addEventListener('click',exportSave);byId('export-raw').addEventListener('click',exportSave);
@@ -817,9 +846,9 @@ document.querySelectorAll('[data-close-dialog]').forEach(button=>button.addEvent
 byId('open-skins').addEventListener('click',event=>{selectSkinOption(currentSkin);openDialog(byId('skin-dialog'),event.currentTarget);});
 byId('apply-skin').addEventListener('click',()=>{const saved=setCardSkin(pendingSkin);closeDialog(byId('skin-dialog'));toast('已使用'+SKINS[currentSkin].name+(saved?'。':'，偏好未能保存。'));});
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&dealMotion.active&&!hasOpenDialog()){event.preventDefault();dealMotion.finish();}});
-document.addEventListener('visibilitychange',()=>{if(document.hidden){dealMotion.finish();stopBots();}else scheduleBots();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){dealMotion.finish();feedback.clear();stopBots();}else scheduleBots();});
 window.addEventListener('resize',()=>dealMotion.finish());
-window.addEventListener('beforeunload',()=>{dealMotion.cancel();stopBots();model.cancel();});
+window.addEventListener('beforeunload',()=>{feedback.clear();dealMotion.cancel();stopBots();model.cancel();});
 new ResizeObserver(()=>resizeHand()).observe(byId('hand-scroll'));
 function measureTable(){
   const zone=document.querySelector('.play-zone'),height=document.querySelector('.hand-pane').getBoundingClientRect().height;
@@ -830,7 +859,7 @@ tableObserver.observe(document.querySelector('.hand-pane'));tableObserver.observ
 // Changing the hand shape never changes the selected cards or saved positions.
 window.GuandanTable=Object.freeze({
   handStyle:()=>prefs.handStyle,
-  setHandStyle(style){prefs.handStyle=style==='fan'?'fan':'flat';savePrefs();},
+  setHandStyle(style){prefs.handStyle=['stack','fan'].includes(style)?'stack':'flat';savePrefs();},
   cancelDrag(){handEditor?.cancel();handMarquee?.cancel();},
   layout(){resizeHand();renderHand();},
 });
@@ -847,7 +876,7 @@ handMarquee=GuandanHandMarquee.create({root,scroll:byId('hand-scroll'),container
   onModeChange:()=>updateSelection(),translate:text=>GuandanI18n.t(text)
 });
 handSelection=GuandanHandSelection.create({table:document.querySelector('.play-zone'),
-  getOrder:()=>ownHand().map(card=>card.id),getSelected:()=>selected,getSignature:()=>JSON.stringify(displayLayout()),
+  getOrder:()=>root.dataset.handStyle==='stack'?[...byId('hand-cards').querySelectorAll('.playing-card')].map(card=>card.dataset.id):ownHand().map(card=>card.id),getSelected:()=>selected,getSignature:()=>JSON.stringify(displayLayout()),
   canSelect,hasDialog:hasOpenDialog,onSelect:setSelection,
   cancelGesture(){
     const active=handEditor?.active||handMarquee?.pending;
@@ -855,10 +884,7 @@ handSelection=GuandanHandSelection.create({table:document.querySelector('.play-z
     return active;
   }
 });
-byId('arrange-hand').addEventListener('click',cycleArrangement);
-byId('arrange-priority').value=prefs.arrangePriority;
-byId('arrange-priority').addEventListener('change',event=>{prefs.arrangePriority=event.target.value;savePrefs();cycleArrangement();});
-byId('sort-hand').addEventListener('click',sortLowerHand);
+byId('sort-hand').addEventListener('click',sortHand);
 buildSkinOptions();setCardSkin(currentSkin);setTheme(prefs.theme==='night'?'night':'day');
 root.classList.toggle('large-type',Boolean(prefs.large));byId('large-type').setAttribute('aria-pressed',String(Boolean(prefs.large)));
 

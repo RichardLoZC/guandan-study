@@ -38,13 +38,11 @@ test('pause, disconnect and failure to persist preserve the unadvanced turn',asy
   r.members[1].lastSeen=Date.now();r.save=()=>{throw Error('disk full');};await r.tick();
   assert.equal(JSON.stringify(r.match.state),before);assert.match(r.error,/自动不出未能保存/);
 });
-test('model decision trace is saved but never exposed through live events or LAN snapshots',()=>{
+test('legacy private strategy traces are preserved in saves but hidden during play',()=>{
   const m=seeded(5),card=m.hand[0],result=m.selection([card.id],0);
-  m.commitModel({result:{engine:'DanLM + 秘籍策略',candidates:[{type:'play',play:result.play}],
-    book:{version:'public-routes-v3',original:'old',chosen:result.play.label,changed:true,rows:[{evidence:[{delta:-3,reason:'PRIVATE follow-up'}]}]}}},0,0);
-  assert.equal(m.state.study.choices[0].strategy.historyLength,0);
-  assert.equal(m.state.study.choices[0].strategy.reasons[0],'PRIVATE follow-up');
-  assert.equal(m.events[0].strategy,null);
-  assert.equal(JSON.stringify(perspective(m,1,m.names)).includes('PRIVATE'),false);
-  assert.equal(new Match(m.state).state.study.choices[0].strategy.version,'public-routes-v3');
+  m.commitModel({result:{engine:'DanLM',candidates:[{type:'play',play:result.play}],book:{changed:true}}},0,0);
+  assert.equal(m.state.study.choices[0].strategy,undefined);
+  m.state.study.choices[0].strategy={version:'legacy',reasons:['PRIVATE follow-up']};
+  assert.equal(m.events[0].strategy,null);assert.equal(JSON.stringify(perspective(m,1,m.names)).includes('PRIVATE'),false);
+  assert.equal(new Match(m.state).state.study.choices[0].strategy.version,'legacy');
 });

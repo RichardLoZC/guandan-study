@@ -132,6 +132,13 @@
     return {...layout,rows,groups:cleaned,source:'manual'};
   }
   function ordered(layout,hand){const cards=new Map(hand.map(card=>[card.id,card]));return layout.rows.flat().map(id=>cards.get(id)).filter(Boolean);}
+  function singleRow(saved,key,hand){
+    const layout=reconcile(saved,key,hand);
+    // Retire automatic plans and migrate manual shelves without losing a card.
+    if(layout.source!=='manual')return create(key,hand);
+    const rows=[[],layout.rows.flat()];
+    return {...layout,rows,groups:cleanGroups(rows,layout.groups)};
+  }
   function load(storage,key,hand){
     try{const records=JSON.parse(storage.getItem(STORAGE_KEY)||'[]');return reconcile(Array.isArray(records)?records.find(item=>item?.key===key):null,key,hand);}catch{return create(key,hand);}
   }
@@ -139,5 +146,5 @@
     let records=[];try{const parsed=JSON.parse(storage.getItem(STORAGE_KEY)||'[]');if(Array.isArray(parsed))records=parsed;}catch{}
     storage.setItem(STORAGE_KEY,JSON.stringify([layout,...records.filter(item=>item?.key!==layout.key)].slice(0,8)));
   }
-  return {STORAGE_KEY,create,reconcile,fromPlan,move,describeGroup,segments,ordered,load,save};
+  return {STORAGE_KEY,create,reconcile,fromPlan,move,describeGroup,segments,ordered,singleRow,load,save};
 });

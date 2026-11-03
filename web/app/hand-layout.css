@@ -1,8 +1,8 @@
-/* Two permanent shelves; only the card placement changes between flat and curved. */
+/* One hand region shared by flat, curved and rank-stack presentations. */
 .view-picker { display:flex; gap:3px; padding:3px; border:1px solid var(--line); border-radius:10px; background:#203e3010; white-space:nowrap; }
 .view-picker button { min-height:38px; padding:5px 12px; color:var(--muted); border:0; border-radius:7px; background:transparent; font-size:16px; font-weight:650; }
 .view-picker button[aria-pressed=true] { background:var(--panel); color:var(--text); box-shadow:0 1px 5px #142b2522; }
-html .hand-scroll { --hand-group-gap:18px; --group-action-space:32px; --fan-rise:calc(var(--hand-card-height) * .18 + 12px); max-height:none; height:calc(var(--hand-shelf-height,204px) * 2 + 16px); padding:8px; touch-action:pan-x; scrollbar-gutter:stable; }
+html .hand-scroll { --hand-group-gap:18px; --group-action-space:32px; --fan-rise:calc(var(--hand-card-height) * .18 + 12px); max-height:none; height:calc(var(--hand-shelf-height,204px) + 16px); padding:8px; touch-action:pan-x; scrollbar-gutter:stable; }
 html .hand-scroll.empty-hand { height:56px; }
 html #hand-cards { width:100%; min-width:0; }
 html .card-row[data-row="0"] { --hand-step:var(--upper-hand-step); min-width:var(--upper-row-width); }

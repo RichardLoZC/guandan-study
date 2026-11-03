@@ -3,6 +3,6 @@ module.exports=function worker(file=require.resolve('../../web/assets/fairWorker
   const source=fs.readFileSync(file,'utf8').replace(/^import "[^"\n]+";\n/gm,'')
     .replaceAll('import.meta.url','"http://localhost/assets/fairWorker-CTCwrT35.js"');
   const context={self:{},performance,TextEncoder,TextDecoder,structuredClone,
-    GuandanPlayRules:require('../../web/app/play-rules.js'),GuandanBookPolicy:require('../../web/app/book-policy.js')};
+    GuandanDanLMAdapter:require('../../web/app/danlm-adapter.js'),GuandanPlayRules:require('../../web/app/play-rules.js')};
   vm.createContext(context);vm.runInContext(source,context);return context;
 };

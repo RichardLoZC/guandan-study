@@ -1,8 +1,8 @@
 'use strict';
 (function(scope,factory){
-  if(typeof module==='object'&&module.exports)module.exports=factory(require('./match.js'),require('./turn-timing.js'));
-  else scope.GuandanRoom=factory(scope.GuandanMatch,scope.GuandanTurnTiming);
-})(typeof globalThis==='object'?globalThis:this,function({Match},TurnTiming){
+  if(typeof module==='object'&&module.exports)module.exports=factory(require('./match.js'),require('./turn-timing.js'),require('./personas.js'));
+  else scope.GuandanRoom=factory(scope.GuandanMatch,scope.GuandanTurnTiming,scope.GuandanPersonas);
+})(typeof globalThis==='object'?globalThis:this,function({Match},TurnTiming,personas){
 const copy=value=>structuredClone(value);
 const token=()=>Array.from(crypto.getRandomValues(new Uint8Array(24)),n=>n.toString(16).padStart(2,'0')).join('');
 function randomInt(min,max){
@@ -11,7 +11,8 @@ function randomInt(min,max){
   do{crypto.getRandomValues(bytes);}while(bytes[0]>=limit);
   return min+bytes[0]%span;
 }
-const PROTOCOL=1;
+// Gameplay protocol3 aligns official declarations; discovery remains version1.
+const PROTOCOL=3;
 const nameOf=value=>String(value||'玩家').trim().replace(/[\x00-\x1f\x7f]/g,'').slice(0,12)||'玩家';
 
 // Build a complete rotated state only inside the host. Mask before serialization.
@@ -24,7 +25,7 @@ function perspective(match,seat,names){
   if(g.tablePlay)g.tablePlay.owner=rot(g.tablePlay.owner);
   g.roundTrace=mapped(g.roundTrace);g.lastActions=Object.fromEntries(Object.entries(mapped(g.lastActions)).map(([k,v])=>[k,text(v)]));
   g.passedPlayers=g.passedPlayers.map(rot);g.finishOrder=g.finishOrder.map(rot);
-  g.actionHistory=g.actionHistory.map(e=>({...e,seat:rot(e.seat),tableOwnerAfter:rot(e.tableOwnerAfter)}));
+  g.actionHistory=g.actionHistory.map(e=>({...e,seat:rot(e.seat),tableOwnerAfter:rot(e.tableOwnerAfter),...(Number.isInteger(e.hardWindTo)?{hardWindTo:rot(e.hardWindTo)}:{})}));
   if(g.result){
     g.result.winnerTeam=(g.result.winnerTeam+seat)%2;
     const places=[0,2].map(own=>g.finishOrder.indexOf(own)+1).sort((a,b)=>a-b);
@@ -35,14 +36,15 @@ function perspective(match,seat,names){
   }
   if(g.winnerTeam!=null)g.winnerTeam=(g.winnerTeam+seat)%2;
   g.message=text(g.message);
-  if(seat%2){s.levels.reverse();s.wins.reverse();}
+  if(seat%2){s.levels.reverse();s.wins.reverse();s.aceAttempts?.reverse();}
   s.notice=(s.notice||[]).map(text);
   s.exchanges=s.exchanges.map(e=>({...e,from:rot(e.from),to:rot(e.to)}));
   if(s.tribute){s.tribute.donors=s.tribute.donors.map(rot);s.tribute.winners=s.tribute.winners.map(rot);s.tribute.offers=s.tribute.offers.map(o=>({...o,from:rot(o.from)}));}
   if(s.antiTribute)s.antiTribute=s.antiTribute.map(e=>({...e,seat:rot(e.seat)}));
   s.known=(s.known||[]).map(e=>({...e,seat:rot(e.seat)}));
   // Private teaching text from another player's analysis is never public.
-  s.study.choices=Object.fromEntries(Object.entries(s.study.choices||{}).map(([k,v])=>[k,{automatic:v.automatic,engine:v.engine,teaching:null,...(g.result&&v.strategy?{strategy:v.strategy}:{})}]));
+  s.study.choices=Object.fromEntries(Object.entries(s.study.choices||{}).map(([k,v])=>[k,{automatic:v.automatic,engine:v.engine,teaching:null,
+    ...(g.result&&v.strategy?{strategy:v.strategy}:{}),...((g.result||g.actionHistory[Number(k)]?.seat===0)&&v.decision?{decision:v.decision}:{})}]));
   const view=new Match(s);Object.defineProperty(view,'names',{value:[0,1,2,3].map(i=>names[(i+seat)%4])});
   const tributeDisplay=view.tributeDisplay,tributeChoices=view.actingSeat===0?view.tributeChoices:[];
   for(const p of s.game.players)if(p.seat!==0&&!s.game.result)p.hand=Array(p.hand.length).fill(null);
@@ -50,10 +52,9 @@ function perspective(match,seat,names){
 }
 
 class Room {
-  constructor({persist=null,runModel,now=Date.now,random=randomInt,restored=null,startThinking=TurnTiming.begin,aiBook=true}={}){
+  constructor({persist=null,runModel,now=Date.now,random=randomInt,restored=null,startThinking=TurnTiming.begin}={}){
     this.persist=persist;this.runModel=runModel;this.now=now;this.random=random;
     this.startThinking=startThinking;this.botWait=null;
-    this.aiBook=restored?restored.aiBook!==false:aiBook!==false;
     this.members=[];this.match=null;this.seats=[];this.version=1;this.code=String(random(100000,1000000));this.id=token();this.paused=false;this.acks=[];this.error=null;this.modelReady=false;this.busy=false;this.completed=new Map();this.closed=false;
     if(restored){this.id=restored.id;this.code=restored.code;this.members=restored.members.map(m=>({...m,lastSeen:0}));this.seats=restored.seats;this.version=restored.version+1;this.match=restored.state?new Match(restored.state):null;this.paused=restored.paused;this.acks=restored.acks||[];}
     this.members.forEach((m,index)=>m.identity??=index);
@@ -61,11 +62,11 @@ class Room {
     this.seats=this.seats.map(id=>id||'bot:'+available.shift());
     if(!this.members.length)this.members.push({id:token(),token:token(),name:'房主',identity:0,host:true,lastSeen:now()});
   }
-  serialize(){return {protocol:PROTOCOL,id:this.id,code:this.code,members:this.members,seats:this.seats,version:this.version,state:this.match?.state||null,paused:this.paused,acks:this.acks,aiBook:this.aiBook};}
+  serialize(){return {protocol:PROTOCOL,id:this.id,code:this.code,members:this.members,seats:this.seats,version:this.version,state:this.match?.state||null,paused:this.paused,acks:this.acks};}
   save(){this.persist?.(this.serialize());}
   change(action){
     const before=copy(this.serialize()),revision=this.match?.revision;
-    try{action();this.version++;this.save();this.botWait?.cancel();}catch(error){this.members=before.members;this.seats=before.seats;this.version=before.version;this.match=before.state?new Match(before.state):null;if(this.match)this.match.revision=revision;this.paused=before.paused;this.acks=before.acks;this.aiBook=before.aiBook;throw error;}
+    try{action();this.version++;this.save();this.botWait?.cancel();}catch(error){this.members=before.members;this.seats=before.seats;this.version=before.version;this.match=before.state?new Match(before.state):null;if(this.match)this.match.revision=revision;this.paused=before.paused;this.acks=before.acks;throw error;}
   }
   host(name){const m=this.members.find(m=>m.host);this.change(()=>{m.name=nameOf(name||m.name);m.lastSeen=this.now();});return {token:m.token,roomId:this.id,protocol:PROTOCOL};}
   authenticate(auth){const member=this.members.find(m=>m.token===auth);if(!member)throw new Error('房间身份失效，请重新加入');member.lastSeen=this.now();return member;}
@@ -84,11 +85,11 @@ class Room {
   connected(m){return this.now()-m.lastSeen<12000;}
   get waiting(){return this.members.filter(m=>!this.connected(m)).map(m=>m.name);}
   identity(id){return this.members.find(m=>m.id===id)?.identity??Number(String(id).split(':')[1]);}
-  names(){const bots=['你','青岚','知秋','墨白'];return this.seats.map(id=>this.members.find(m=>m.id===id)?.name||bots[this.identity(id)]);}
+  names(){return this.seats.map(id=>this.members.find(m=>m.id===id)?.name||personas.profile(this.match?.state.personaIds,this.identity(id))?.name||'AI');}
   shuffle(){const slots=[...this.members.map(m=>m.id),...[0,1,2,3].filter(id=>!this.members.some(m=>m.identity===id)).map(id=>'bot:'+id)];for(let i=3;i>0;i--){const j=this.random(i+1);[slots[i],slots[j]]=[slots[j],slots[i]];}this.seats=slots;}
   projected(member){
     const seat=this.seats.indexOf(member.id),waiting=this.waiting;
-    const info={protocol:PROTOCOL,id:this.id,version:this.version,code:this.code,host:member.host,started:Boolean(this.match),paused:this.paused,waiting,error:this.error,modelReady:this.modelReady,aiBook:this.aiBook,
+    const info={protocol:PROTOCOL,id:this.id,version:this.version,code:this.code,host:member.host,started:Boolean(this.match),paused:this.paused,waiting,error:this.error,modelReady:this.modelReady,
       members:this.members.map(m=>({id:m.id,name:m.name,identity:m.identity,self:m.id===member.id,host:m.host,connected:this.connected(m),seat:this.seats.indexOf(m.id)}))};
     if(!this.match)return {room:info,round:null};
     if(seat<0)throw new Error('没有此玩家的座位');
@@ -105,18 +106,19 @@ class Room {
   }
   async request(auth,body){
     if(this.closed)throw new Error('房间已关闭');
+    if(body.protocol!==PROTOCOL)throw new Error('联机规则版本不同，请所有设备更新至1.8.40 或兼容的新版本');
     const m=this.authenticate(auth),op=body.op;
     if(op==='poll')return this.projected(m);
     if(typeof body.requestId!=='string'||body.requestId.length>80)throw new Error('缺少操作编号');
     const cacheKey=m.id+':'+body.requestId;
     if(this.completed.has(cacheKey))return this.projected(m);
     if(body.version!==this.version)throw new Error('牌局已变化，已同步最新状态，请再操作一次');
-    if(['start','new','next','lobby','kick','pause','retry','ai-book'].includes(op)&&!m.host)throw new Error('请由房主操作');
+    if(['start','new','next','lobby','kick','pause','retry'].includes(op)&&!m.host)throw new Error('请由房主操作');
     if(op==='advice'){
       if(!this.match||this.paused||this.waiting.length||this.error||this.match.actingSeat!==this.seats.indexOf(m.id)||this.match.phase!=='playing'||this.match.needsTributeConfirmation)throw new Error('现在不能请求建议');
       if(this.busy)throw new Error('模型正在思考，请稍后再试');
       const version=this.version,seat=this.seats.indexOf(m.id);this.busy=true;
-      try{const result=await this.runModel({observation:this.match.observation(seat),teaching:true,provider:'danlm',book:body.book!==false});if(this.version!==version)throw new Error('牌局已变化，请重新计算');return {advice:result};}finally{this.busy=false;}
+      try{const result=await this.runModel({observation:this.match.observation(seat),teaching:true,provider:'danlm'});if(this.version!==version)throw new Error('牌局已变化，请重新计算');return {advice:result};}finally{this.busy=false;}
     }
     this.change(()=>{
       if(['start','new'].includes(op)){
@@ -137,9 +139,6 @@ class Room {
       }
       else if(op==='leave'){
         if(m.host){this.paused=true;}else{this.members=this.members.filter(p=>p.id!==m.id);this.seats=this.seats.map(id=>id===m.id?'bot:'+m.identity:id);this.acks=this.acks.filter(id=>id!==m.id);}
-      }else if(op==='ai-book'){
-        if(typeof body.enabled!=='boolean')throw new Error('秘籍开关状态无效');
-        this.aiBook=body.enabled;
       }else if(op==='pause')this.paused=!this.paused;
       else if(op==='retry'){this.error=null;this.modelReady=false;}
       else if(op==='ack'){
@@ -172,13 +171,12 @@ class Room {
     const version=this.version,id=this.match.id,phase=this.match.phase,wait=this.startThinking();this.busy=true;this.botWait=wait;
     try{
       // Inference runs during the visible thinking period, not after it.
-      const decision=phase!=='playing'?this.match.chooseTribute():null;
       const [response,ready]=await Promise.all([
-        phase==='playing'?this.runModel({observation:this.match.observation(seat),provider:'danlm',book:this.aiBook}):null,
+        phase==='playing'?this.runModel({observation:this.match.observation(seat),provider:'danlm'}):this.match.chooseTribute(this.runModel),
         wait.promise
       ]);
       if(!ready||this.closed||this.version!==version||this.match?.id!==id||this.match.actingSeat!==seat||this.paused||this.waiting.length)return;
-      if(decision)this.change(()=>this.match.commit(seat,[decision.card.id],{automatic:true}));
+      if(phase!=='playing')this.change(()=>this.match.commit(seat,[response.card.id],{automatic:true,engine:response.engine}));
       else{this.change(()=>this.match.commitModel(response,this.match.revision,seat));this.modelReady=true;}
     }catch(error){if(!this.closed&&this.version===version&&this.match?.id===id){this.error='房主模型或存档处理失败：'+error.message;this.version++;}}
     finally{wait.cancel();if(this.botWait===wait)this.botWait=null;this.busy=false;}

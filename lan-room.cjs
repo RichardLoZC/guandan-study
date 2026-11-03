@@ -15,7 +15,7 @@ class Room extends shared.Room {
   static load(options){
     if(options.savePath&&fs.existsSync(options.savePath)){
       const saved=JSON.parse(fs.readFileSync(options.savePath,'utf8'));
-      if(saved.protocol!==shared.PROTOCOL)throw new Error('房间存档版本不兼容');
+      if(![1,2,shared.PROTOCOL].includes(saved.protocol))throw new Error('房间存档版本不兼容');
       return new Room({...options,restored:saved});
     }
     return new Room(options);

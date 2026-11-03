@@ -19,8 +19,23 @@ public class LanHostServerTest {
             // Split a multibyte player name across writes as real TCP peers may do.
             for (byte b : bytes) socket.getOutputStream().write(b);
             socket.getOutputStream().flush();
-            String reply = new String(socket.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            return new JSONObject(reply.substring(reply.indexOf("\r\n\r\n") + 4));
+            // Read the advertised HTTP body. Rejected malformed requests may leave
+            // unread client bytes, so waiting for EOF can raise a TCP reset.
+            InputStream input = socket.getInputStream();
+            ByteArrayOutputStream headBytes = new ByteArrayOutputStream();
+            int tail = 0;
+            while (tail != 0x0d0a0d0a) {
+                int b = input.read(); if (b < 0) throw new EOFException("Missing HTTP headers");
+                headBytes.write(b); tail = (tail << 8) | b;
+                if (headBytes.size() > 8192) throw new IOException("Headers too large");
+            }
+            String responseHead = headBytes.toString(StandardCharsets.US_ASCII);
+            java.util.regex.Matcher length = java.util.regex.Pattern.compile("(?im)^Content-Length: ([0-9]+)\\r?$").matcher(responseHead);
+            if (!length.find()) throw new IOException("Missing body length");
+            int size = Integer.parseInt(length.group(1));
+            byte[] responseBody = input.readNBytes(size);
+            assertEquals(size, responseBody.length);
+            return new JSONObject(new String(responseBody, StandardCharsets.UTF_8));
         }
     }
     private int port(JSONObject endpoint) throws Exception { return Integer.parseInt(endpoint.getString("address").split(":")[1]); }

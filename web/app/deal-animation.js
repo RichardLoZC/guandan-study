@@ -71,9 +71,9 @@
         const node=this.node('div','deal-seat deal-seat-'+seat+' identity-'+player.identity),pile=this.node('div','deal-pocket deal-card-back');
         pile.setAttribute('aria-hidden','true');node.append(pile);
         const avatar=this.node('span','deal-avatar');avatar.setAttribute('aria-hidden','true');
-        if(player.avatar){const img=this.node('img','');img.src=player.avatar;img.alt='';avatar.append(img);}else avatar.textContent='你';
+        if(player.avatar){const img=this.node('img','');avatar.append(img);if(globalThis.GuandanPersonas)globalThis.GuandanPersonas.paint(img,player);else img.src=player.avatar;img.alt='';}else avatar.textContent='你';
         const copy=this.node('div','deal-player'),name=this.node('strong','',player.name),counter=this.node('span','deal-counter');
-        const count=this.node('b','','0');counter.append(count,doc.createTextNode(' 张'));counter.setAttribute('aria-live','off');copy.append(name,counter);
+        const count=this.node('b','',seat===0?'0':'');counter.hidden=seat!==0;counter.append(count,doc.createTextNode(' 张'));counter.setAttribute('aria-live','off');copy.append(name,counter);
         node.append(avatar,copy);this.stage.append(node);return {node,pile,count};
       });
       const area=this.stage.getBoundingClientRect(),rect=deck.getBoundingClientRect();
@@ -98,7 +98,7 @@
       if(phase!==this.phase){this.phase=phase;this.stage.dataset.phase=phase;this.status.textContent={shuffle:'正在洗牌',deal:'正在发牌 · 每人 27 张',reveal:'展开手牌'}[phase];}
       counts.forEach((count,seat)=>{
         if(this.counts[seat]===count)return;this.counts[seat]=count;
-        this.seats[seat].count.textContent=count;this.seats[seat].pile.style.opacity=count?'1':'0';
+        this.seats[seat].count.textContent=seat===0?count:'';this.seats[seat].pile.style.opacity=count?'1':'0';
       });
     }
     reveal(){

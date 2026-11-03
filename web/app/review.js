@@ -4,7 +4,7 @@ const timelineNodes=new Map();
 const el=(tag,className,text)=>{const element=document.createElement(tag);if(className)element.className=className;if(text!==undefined)element.textContent=text;return element;};
 function avatarFor(seat){
   const wrap=el('span','review-avatar'),player=playerAt(seat,reviewRound);
-  if(player.avatar){const img=el('img');img.src=player.avatar;img.alt='';wrap.append(img);}else wrap.textContent='你';
+  if(player.avatar){const img=el('img');wrap.append(img);GuandanPersonas.paint(img,player);img.alt='';}else wrap.textContent='你';
   return wrap;
 }
 function stopReplay(){clearInterval(replayTimer);replayTimer=null;byId('replay-auto').textContent='播放';}
@@ -14,7 +14,7 @@ function showReviewTab(name){
   document.querySelectorAll('[data-review-tab]').forEach(button=>{
     const active=button.dataset.reviewTab===name;button.setAttribute('aria-selected',String(active));button.tabIndex=active?0:-1;
   });
-  for(const tab of ['overview','decisions','replay'])byId('review-'+tab).hidden=tab!==name;
+  for(const tab of ['overview','decisions','replay','performance'])byId('review-'+tab).hidden=tab!==name;
   if(name==='replay')renderReplay();
   byId('review-dialog').scrollTop=0;
 }
@@ -25,7 +25,7 @@ function prepareReview(snapshot,trigger){
   byId('review-source').textContent=(snapshot.ruleMode==='tuo3'?'拖 3 · ':'经典掼蛋 · ')+'第'+snapshot.round+'副 · 实际牌局记录';
   byId('review-title').textContent=snapshot.completed?'这一局，回头看清楚':'本局进行中 · 回看已发生的行动';
   byId('review-boundary').textContent='复盘来自本机实际对局。只保留当时已请求的模型建议；没有当时的建议时，不补造评分或胜率。';
-  renderOverview();buildTimeline();showReviewTab('overview');openDialog(byId('review-dialog'),trigger);
+  renderOverview();buildTimeline();window.GuandanAssessmentUI?.prepare(snapshot);showReviewTab('overview');openDialog(byId('review-dialog'),trigger);
 }
 window.openCurrentReview=trigger=>{
   if(!liveRound)return;
@@ -45,6 +45,12 @@ function renderOverview(){
   byId('result-title').textContent=round.ruleMode==='tuo3'&&round.completed?team+'取得头游':round.completed?(round.placement==='12'?'我方双上':round.placement==='34'?'对方双上':team+'获胜'):'本局尚未结束';
   byId('result-summary').textContent=round.completed?round.names[round.finishOrder[0]]+'第1，'+round.names[round.finishOrder[1]]+'第2。复盘关注当时的选择与条件。':'已记录'+round.events.length+'次行动，可回看当前进度。';
   byId('result-badge').textContent=round.completed?(round.ruleMode==='tuo3'?'你 '+signed(round.settlement.rows.find(row=>row.identity===0).delta)+' 分':team+' +'+round.levelDelta+'级'):'进行中';
+  if(round.seriesOutcome){
+    const out=round.seriesOutcome,kind=out.victory?'victory':out.demotion?'demotion':out.attempt?'attempt':'upgrade';
+    const label=GuandanFeedback.words({kind,result:out},round,GuandanI18n.locale==='en');
+    for(const id of ['result-title','result-badge'])byId(id).setAttribute('translate','no');
+    byId('result-title').textContent=label.title;byId('result-badge').textContent=label.symbol;
+  }else for(const id of ['result-title','result-badge'])byId(id).removeAttribute('translate');
   for(const id of ['review-stats','finish-list','takeaways','decision-list'])byId(id).replaceChildren();
   for(const [value,label] of [[round.stats.actions,'全局行动'],[round.stats.myPlays,'我的出牌'],[round.stats.myPasses,'我的不出'],[round.stats.myBombs,'我的炸弹']]){
     const stat=el('div','review-stat');stat.append(el('strong','',String(value)),el('span','',label));byId('review-stats').append(stat);
@@ -124,7 +130,7 @@ function renderReplay(){
   const felt=byId('replay-felt');felt.replaceChildren();
   for(const seat of [2,3,1,0]){
     const panel=el('section','replay-seat '+seatStyle(seat,round)+(event.seat===seat?' is-acting':''));panel.setAttribute('aria-label',round.names[seat]+'的区域');
-    const meta=el('div','replay-seat-meta'),copy=el('div');copy.append(el('strong','',round.names[seat]),el('span','','剩 '+counts[seat]+' 张'));meta.append(avatarFor(seat),copy);panel.append(meta);
+    const meta=el('div','replay-seat-meta'),copy=el('div');copy.append(el('strong','',round.names[seat]),el('span','',GuandanCardCounts.label(counts[seat],{seat,completed:round.completed})));meta.append(avatarFor(seat),copy);panel.append(meta);
     if(table?.owner===seat){
       const cards=el('div','replay-played');for(const card of table.play.cards)cards.append(imageFor(card.face,card.label,undefined,round.level));
       panel.append(cards,el('span','replay-last-action','桌面 · '+table.play.label));
@@ -153,13 +159,16 @@ function toggleReplay(){
 }
 function reviewText(){
   const round=reviewRound;
-  const lines=['掼蛋研习社 · 第'+round.round+'副复盘 · 打'+round.level,round.source,''];
+  const lines=['掼蛋研习社'+' · 第'+round.round+'副复盘 · 打'+round.level,round.source,''];
   if(round.completed&&round.ruleMode==='tuo3'){
     lines.push('拖 3 · 固定打 2；本副积分：');
-    for(const row of round.settlement.rows)lines.push(row.name+'：名次 '+signed(row.placement)+'，拖三 '+signed(row.drag)+'，余牌 '+signed(row.remainder)+'；本副 '+signed(row.delta)+'，累计 '+signed(row.total));
-    for(const detail of round.settlement.details)lines.push(detail.label+' '+signed(detail.value)+' 分'+(detail.cards.length?'：'+detail.cards.map(GuandanCore.cardLabel).join('、'):''));
+    for(const row of round.settlement.rows)lines.push((round.names?.[row.seat]||presentRoundText(row.name,round))+'：名次 '+signed(row.placement)+'，拖三 '+signed(row.drag)+'，余牌 '+signed(row.remainder)+'；本副 '+signed(row.delta)+'，累计 '+signed(row.total));
+    for(const detail of round.settlement.details)lines.push(presentRoundText(detail.label,round)+' '+signed(detail.value)+' 分'+(detail.cards.length?'：'+detail.cards.map(GuandanCore.cardLabel).join('、'):''));
     lines.push('本副每项加减由两名搭档共同承担，另一队反向记分。');
-  }else if(round.completed)lines.push((round.winnerTeam===0?'我方':'对方')+'升'+round.levelDelta+'级；我方名次：'+round.placement+'。');
+  }else if(round.completed){
+    const out=round.seriesOutcome,team=round.winnerTeam===0?'我方':'对方';
+    lines.push(team+(out?.victory?'过 A，赢得整场':out?.demotion?'连续三副第一＋第四，冲 A 受阻 3/3，退回 2':out?.attempt?'冲 A 受阻 '+out.attempt+'/3，继续打 A':'升'+round.levelDelta+'级')+'；我方名次：'+round.placement+'。');
+  }
   else lines.push('本局进行中，以下为已经发生的行动。');
   lines.push('全局'+round.stats.actions+'次行动；我的出牌'+round.stats.myPlays+'次，不出'+round.stats.myPasses+'次。','');
   if(round.completed&&round.finalPlay){
@@ -175,10 +184,8 @@ function reviewText(){
   for(const key of round.keyDecisions)lines.push('第'+(key.eventIndex+1)+'次：'+key.title,'当时：'+key.actual+'；对照：'+key.alternative,key.body,'');
   lines.push('完整行动记录');
   for(const event of round.events){
-    lines.push((event.index+1)+'. '+round.names[event.seat]+'：'+event.label+(event.engine?'（'+event.engine+'）':'')+'；余牌 '+event.remaining.map((count,seat)=>round.names[seat]+count).join(' / '));
+    lines.push((event.index+1)+'. '+round.names[event.seat]+'：'+event.label+(event.engine?'（'+event.engine+'）':'')+'；余牌 '+event.remaining.map((count,seat)=>round.names[seat]+' '+GuandanCardCounts.label(count,{seat,completed:round.completed})).join(' / '));
     if(event.cards.length)lines.push('   牌面：'+event.cards.map(card=>card.label).join('、'));
-    if(event.strategy)lines.push('   当时策略 '+event.strategy.version+'：参考此前 '+event.strategy.historyLength+' 次行动；模型原选 '+event.strategy.original+' → 实际 '+event.strategy.chosen,
-      ...event.strategy.reasons.map(reason=>'   '+reason));
     if(event.seat===0)lines.push('   行动前手牌：'+event.ownBefore.map(card=>card.label).join('、'),'   行动后手牌：'+(event.ownAfter.map(card=>card.label).join('、')||'已出完'));
   }
   return lines.join('\n');
@@ -190,15 +197,15 @@ function decisionBody(key,round){
 }
 function englishReviewText(){
  const r=reviewRound,t=GuandanI18n.t;
- const lines=[`Guandan Study · Round ${r.round} · Level ${r.level}`,t(r.source),r.completed?(r.winnerTeam===0?'Our team':'Opponents')+(r.ruleMode==='tuo3'?' finished first':` won · +${r.levelDelta} levels`):'Round in progress',`Actions: ${r.stats.actions} · My plays: ${r.stats.myPlays} · My passes: ${r.stats.myPasses}`,''];
- if(r.ruleMode==='tuo3'&&r.settlement){lines.push('Tuo 3 · Fixed level 2');for(const row of r.settlement.rows)lines.push(`${t(row.name)}: placement ${signed(row.placement)}, bonus ${signed(row.drag)}, unplayed ${signed(row.remainder)}; round ${signed(row.delta)}, total ${signed(row.total)}`);}
+ const lines=[`Guandan Study · Round ${r.round} · Level ${r.level}`,t(r.source),r.completed?(r.winnerTeam===0?'Our team':'Opponents')+(r.ruleMode==='tuo3'?' finished first':r.seriesOutcome?.victory?' cleared A · Match won':r.seriesOutcome?.demotion?' failed A 3/3 · Return to 2':r.seriesOutcome?.attempt?` A attempt ${r.seriesOutcome.attempt}/3 · Stay at A`:` won · +${r.levelDelta} levels`):'Round in progress',`Actions: ${r.stats.actions} · My plays: ${r.stats.myPlays} · My passes: ${r.stats.myPasses}`,''];
+ if(r.ruleMode==='tuo3'&&r.settlement){lines.push('Tuo 3 · Fixed level 2');for(const row of r.settlement.rows)lines.push(`${t(r.names?.[row.seat]||presentRoundText(row.name,r))}: placement ${signed(row.placement)}, bonus ${signed(row.drag)}, unplayed ${signed(row.remainder)}; round ${signed(row.delta)}, total ${signed(row.total)}`);}
  if(r.finalPlay)lines.push('Final play: '+t(r.names[r.finalPlay.seat])+' · '+t(r.finalPlay.label),r.finalPlay.cards.map(c=>t(c.label)).join(', '));
  for(const h of r.revealedHands||[])lines.push(t(r.names[h.seat])+` · ${h.cards.length} cards left: `+h.cards.map(c=>t(c.label)).join(', '));
  lines.push('','Key decisions');for(const key of r.keyDecisions)lines.push(`Move ${key.eventIndex+1}: ${t(key.title)}`,decisionBody(key,r));
- lines.push('','All actions');for(const e of r.events)lines.push(`${e.index+1}. ${t(r.names[e.seat])}: ${t(e.label)} · Cards left: ${e.remaining.join(' / ')}`+(e.cards.length?' · '+e.cards.map(c=>t(c.label)).join(', '):''));
+ lines.push('','All actions');for(const e of r.events)lines.push(`${e.index+1}. ${t(r.names[e.seat])}: ${t(e.label)} · Cards left: ${e.remaining.map((count,seat)=>GuandanCardCounts.label(count,{seat,completed:r.completed,english:true})).join(' / ')}`+(e.cards.length?' · '+e.cards.map(c=>t(c.label)).join(', '):''));
  return lines.join('\n');
 }
-window.addEventListener('guandan-language-change',()=>{if(reviewRound&&byId('review-dialog').open){renderOverview();renderReplay();}});
+window.addEventListener('guandan-language-change',()=>{if(reviewRound&&byId('review-dialog').open){renderOverview();renderReplay();window.GuandanAssessmentUI?.render();}});
 function exportReview(){
   downloadText(GuandanI18n.locale==='en'?'Guandan-Round-'+reviewRound.round+'.txt':'掼蛋-第'+reviewRound.round+'副复盘.txt',GuandanI18n.locale==='en'?englishReviewText():reviewText());
 }
@@ -209,7 +216,7 @@ document.querySelectorAll('[data-review-tab]').forEach(button=>{
   button.addEventListener('keydown',event=>{
     if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();
     const tabs=[...document.querySelectorAll('[data-review-tab]')],index=tabs.indexOf(button);
-    const next=event.key==='Home'?0:event.key==='End'?2:(index+(event.key==='ArrowRight'?1:2))%3;
+    const next=event.key==='Home'?0:event.key==='End'?tabs.length-1:(index+(event.key==='ArrowRight'?1:tabs.length-1))%tabs.length;
     showReviewTab(tabs[next].dataset.reviewTab);tabs[next].focus();
   });
 });

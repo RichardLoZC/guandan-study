@@ -15,6 +15,7 @@ html .table-seats .player-name { max-width:200px; }
 html .table-seats .relation { font-size:16px; padding:0; border:0; background:none; }
 html .table-seats .remaining { font-size:16px; margin:0; }
 html .table-seats .remaining b { font-size:36px; }
+html .table-seats .remaining.is-reported b { color:var(--gold); }
 html .table-seats .seat-bubble { position:absolute; top:-18px; right:0; margin:0; padding:1px 6px; font-size:13px; border:0; background:#163d30; }
 /* The active seat already has an explicit status; avoid a second Turn badge. */
 html .table-seats .player.is-turn .player-info > strong::after { display:none; }

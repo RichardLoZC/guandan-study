@@ -11,7 +11,7 @@ const metadata=JSON.parse(await fs.readFile(path.join(project,'package.json'),'u
 const arch=process.env.GUANDAN_BUILD_ARCH||'x64';
 if(!['x64','arm64'].includes(arch))throw new Error('Windows supports x64 or arm64.');
 const staging=await fs.mkdtemp(path.join(os.tmpdir(),'guandan-windows-'));
-const packages=await packager({dir:project,name:'GuandanStudy',executableName:'GuandanStudy',platform:'win32',arch,
+const packages=await packager({dir:project, tmpdir:path.join(staging,'packager-temp'),name:'GuandanStudy',executableName:'GuandanStudy',platform:'win32',arch,
  electronVersion:metadata.devDependencies.electron,appVersion:metadata.version,buildVersion:metadata.version,
  asar:true,prune:false,icon:path.join(project,'build/icon.ico'),out:staging,overwrite:true,ignore:ignoreRuntimeFile,
  appCopyright:'Guandan Study; third-party licenses included',win32metadata:{ProductName:'Guandan Study',FileDescription:'Guandan Study — offline and LAN card game'}});

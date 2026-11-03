@@ -266,7 +266,7 @@ test('final play survives reload and both state archives and older snapshot arch
 });
 test('review export includes final played cards before the unplayed hands',()=>{
   const m=complete(seededMatch(1)),round=m.snapshot(),vm=require('node:vm');
-  const context={reviewRound:round};vm.createContext(context);
+  const context={GuandanCardCounts:require('../web/app/card-counts.js'),reviewRound:round};vm.createContext(context);
   const reviewSource=fs.readFileSync(path.join(__dirname,'../web/app/review.js'),'utf8');
   vm.runInContext(reviewSource.match(/function reviewText\(\)\{[\s\S]*?\n\}/)[0],context);
   const text=context.reviewText(),last=round.finalPlay;

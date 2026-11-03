@@ -9,7 +9,7 @@ function harness(failSave=false,mode='classic'){
   if(!previous.isTuo3){previous.state.levels=['J','Q'];previous.commit(previous.actingSeat,[previous.game.players[previous.actingSeat].hand[0].id]);}
   const raw=JSON.stringify(previous.state),archive='[{"id":"preserved-archive"}]';
   const saved=new Map([[GuandanMatch.SAVE_KEY,raw],[GuandanMatch.ARCHIVE_KEY,archive]]),nodes=new Map();let handler;
-  const context={GuandanMatch,liveRound:previous,paused:true,prefs:{paused:true},selected:new Set(['old-selection']),cardNodes:new Map(),
+  const context={feedback:{prime(){}},GuandanMatch,liveRound:previous,paused:true,prefs:{paused:true},selected:new Set(['old-selection']),cardNodes:new Map(),
     playKey:'old-play',hintSnapshot:{roundId:previous.id},confirmMode:'restart',model:{ready:true},activeTask:null,
     stopBots(){},clearToast(){},clearError(){},renderGame(){},scheduleBots(){},savePrefs(){},checkModel(){},
     dealMotion:{cancel(){context.cancelledDeal=true;}},beginDealAnimation(){context.animatedDeal=JSON.parse(saved.get(GuandanMatch.SAVE_KEY)).id;},

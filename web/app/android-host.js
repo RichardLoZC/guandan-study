@@ -19,21 +19,41 @@
       if(timer!==null)clearTimer(timer);timer=null;
       if(room){room.closed=true;room.botWait?.cancel();}disposeModel();native.hostStop();
     }
+    function parse(raw){
+      if(!raw)return null;const saved=JSON.parse(raw);
+      if(!/^[a-f0-9]{48}$/.test(saved?.id||'')||![1,2,3].includes(saved.protocol))throw new Error('房间存档版本不兼容');
+      return saved;
+    }
     async function host(payload={}){
       if(suspended)throw new Error('请先回到游戏再开桌');
-      if(payload.fresh||!room||room.closed){
-        const raw=storage.getItem(KEY);
-        // Keep the previous room recoverable if creating or saving a new one fails.
-        if(payload.fresh&&raw)storage.setItem(KEY+'.before-new',raw);
+      const requested=payload.roomId;
+      if(requested!==undefined&&(typeof requested!=='string'||!/^[a-f0-9]{48}$/.test(requested)||payload.fresh))throw new Error('局域网牌桌身份无效。');
+      if(payload.fresh||!room||room.closed||(requested&&room.id!==requested)){
+        const raw=storage.getItem(KEY),current=parse(raw);let restored=payload.fresh?null:current;
+        if(requested&&current?.id!==requested){
+          restored=parse(storage.getItem(KEY+'.room.'+requested));
+          if(!restored){const legacy=parse(storage.getItem(KEY+'.before-new'));if(legacy?.id===requested)restored=legacy;}
+          if(!restored||restored.id!==requested)throw new Error('未找到原来的局域网牌桌，请重新开桌。');
+        }
+        // Archive the previous host table before a new table can replace it.
+        if(raw&&(payload.fresh||(requested&&current?.id!==requested)))storage.setItem(KEY+'.room.'+current.id,raw);
+        if(payload.fresh&&raw){
+          const legacyRaw=storage.getItem(KEY+'.before-new'),legacy=parse(legacyRaw);
+          if(legacy){
+            const archive=KEY+'.room.'+legacy.id,existing=storage.getItem(archive);
+            if(!existing)storage.setItem(archive,legacyRaw);
+            else if(existing!==legacyRaw)storage.setItem(KEY+'.legacy.'+legacy.id+'.'+crypto.randomUUID(),legacyRaw);
+          }
+          storage.setItem(KEY+'.before-new',raw);
+        }
         stop();room=null;
-        const restored=!payload.fresh&&raw?JSON.parse(raw):null;
-        if(restored&&restored.protocol!==1)throw new Error('房间存档版本不兼容');
-        room=new Room({persist,restored,aiBook:payload.aiBook!==false,runModel:args=>{
+        room=new Room({persist,restored,runModel:args=>{
           if(!client)client=makeModel();return client.request(args);
         }});
         // A restored room never resumes play before everyone sees the table again.
         if(restored)room.paused=true;
       }
+      if(requested&&room.id!==requested)throw new Error('未找到原来的局域网牌桌，请重新开桌。');
       const identity=room.host(payload.name||'安卓玩家');
       const endpoint=JSON.parse(native.hostStart());
       if(endpoint.error){stop();throw new Error(endpoint.error);}

@@ -1,26 +1,43 @@
 'use strict';
 (() => {
-  const KEY='guandan.lan.session.v1',PROTOCOL=1,dialog=byId('lan-dialog');
+  const KEY='guandan.lan.session.v1',PROTOCOL=3,dialog=byId('lan-dialog');
+  const key=()=>KEY;
   let session=null,room=null,offline=null,pollTimer=null,busy=false,connecting=false,pollingEpoch=null,online=false,generation=0,lastRender='',lastEnded=null,lastArchiveWarning=null;
-  let mode='solo',nearby=[],scanning=false,scanEpoch=0,memberSignature='';
-  const pending=new Map();let seq=0;
+  let compatibilityError='',mode='solo',nearby=[],scanning=false,scanEpoch=0,memberSignature='',configuredNetwork=null,parkedSignature='';
+  const pending=new Map(),pageId=crypto.randomUUID();let seq=0;
   window.GuandanLanReply=(id,json)=>{const task=pending.get(id);if(!task)return;pending.delete(id);clearTimeout(task.timer);try{const r=JSON.parse(json);r.error?task.reject(new Error(r.error)):task.resolve(r);}catch(error){task.reject(error);}};
   function transport(payload){
     if(payload.action==='host'&&window.GuandanAndroidHost)return window.GuandanAndroidHost.host(payload);
     if(window.GuandanLanNative)return window.GuandanLanNative.request(payload);
     if(window.GuandanPadNative?.lanRequest)return new Promise((resolve,reject)=>{
-      const id=++seq,timer=setTimeout(()=>{pending.delete(id);reject(new Error('连接超时，请检查房主和 Wi-Fi'));},102000);
+      const id=pageId+':'+(++seq),timer=setTimeout(()=>{pending.delete(id);reject(new Error('连接超时，请检查房主和 Wi-Fi'));},102000);
       pending.set(id,{resolve,reject,timer});window.GuandanPadNative.lanRequest(id,JSON.stringify(payload));
     });
     if(payload.action==='request'&&payload.address===location.host&&['127.0.0.1','localhost'].includes(location.hostname))return fetch('/api',{method:'POST',headers:{'content-type':'application/json','authorization':'Bearer '+(payload.token||'')},body:JSON.stringify(payload.body)}).then(r=>r.json()).then(r=>{if(r.error)throw new Error(r.error);return r;});
     return Promise.reject(new Error('请在电脑或安卓安装版中使用联机'));
   }
   function read(key){try{return localStorage.getItem(key);}catch{return null;}}
-  function remember(){try{session?localStorage.setItem(KEY,JSON.stringify(session)):localStorage.removeItem(KEY);}catch{toast('连接信息未保存，关闭后需要重新加入。');}}
+  function remember(){try{session?localStorage.setItem(key(),JSON.stringify(session)):localStorage.removeItem(key());}catch{toast('连接信息未保存，关闭后需要重新加入。');}}
+  function sameSession(a,b){return Boolean(a&&b&&a.roomId===b.roomId&&a.token===b.token);}
+  function parkedSessions(){
+    let list=[];try{const parsed=JSON.parse(read(key()+'.parkedList')||'[]');if(Array.isArray(parsed))list=parsed.filter(item=>item?.roomId&&item?.address&&item?.token);}catch{}
+    try{const legacy=JSON.parse(read(key()+'.parked')||'null');if(legacy?.roomId&&legacy?.address&&legacy?.token&&!list.some(item=>sameSession(item,legacy)))list.push(legacy);}catch{}
+    return list;
+  }
+  function parkSession(value){
+    const saved={...value,...(room?.code?{code:room.code}:{})},list=parkedSessions().filter(item=>!sameSession(item,saved));list.push(saved);
+    localStorage.setItem(key()+'.parkedList',JSON.stringify(list));localStorage.setItem(key()+'.parked',JSON.stringify(saved));
+  }
+  function discardParked(value){
+    const list=parkedSessions();if(!list.some(item=>sameSession(item,value)))return;
+    const remaining=list.filter(item=>!sameSession(item,value));
+    if(remaining.length){localStorage.setItem(key()+'.parkedList',JSON.stringify(remaining));localStorage.setItem(key()+'.parked',JSON.stringify(remaining.at(-1)));}
+    else{localStorage.removeItem(key()+'.parkedList');localStorage.removeItem(key()+'.parked');}
+  }
   function message(text=''){byId('lan-message').textContent=text;byId('lan-message').hidden=!text;}
   function suspendOffline(){
     if(offline)return;
-    offline={round:liveRound,paused};dealMotion.cancel();stopBots();workEpoch++;model.cancel();activeTask=null;paused=true;
+    offline={round:liveRound,paused};feedback.clear();dealMotion.cancel();stopBots();workEpoch++;model.cancel();activeTask=null;paused=true;
     selected.clear();hintSnapshot=null;clearError();renderGame();
   }
   function remoteRound(data){
@@ -55,20 +72,27 @@
   }
   function controls(){
     const count=room?.members.length||0,inLobby=Boolean(session&&!room?.started),waiting=room?.waiting||[];
+    byId('lan-footnote').textContent='局域网仅限同一 Wi-Fi，空位由 DanLM 补齐；安卓房主切到后台会暂停。';
     byId('mode-solo').setAttribute('aria-pressed',String(mode==='solo'));byId('mode-multi').setAttribute('aria-pressed',String(mode==='multi'));
-    byId('mode-solo').disabled=connecting;byId('mode-multi').disabled=connecting;
+    byId('mode-solo').disabled=connecting;byId('mode-multi').disabled=connecting;byId('lan-confirm-leave').disabled=connecting;
     byId('solo-panel').hidden=mode!=='solo';byId('multi-panel').hidden=mode!=='multi';
     byId('solo-current').hidden=Boolean(session);byId('lan-leave-confirm').hidden=!session;
     const solo=offline?.round||liveRound;
     byId('solo-progress').textContent='第 '+(solo?.state.round||1)+' 副 · 我方 '+(solo?.state.levels[0]||'2')+' / 对方 '+(solo?.state.levels[1]||'2')+' · 进度已保留';
     byId('lan-leave-note').textContent=session?.host?'多人牌桌会暂停，下次可以继续。你的单人进度会接着上次。':'离桌后由 DanLM 接替你的座位，你的单人进度会接着上次。';
     byId('open-lan').textContent=session?(online?'多人游戏 · '+count+'/4 ⌄':'多人游戏 · 连接中 ⌄'):'单人练习 ⌄';
-    byId('lan-restore').hidden=Boolean(session)||!read(KEY+'.parked');
+    const savedRooms=parkedSessions(),savedSignature=JSON.stringify(savedRooms.map(item=>[item.roomId,item.code,item.host]));
+    if(savedSignature!==parkedSignature){
+      parkedSignature=savedSignature;const choices=byId('lan-restore-choices');choices.replaceChildren(...savedRooms.map((item,index)=>{const option=document.createElement('option');option.value=String(index);option.textContent=item.code?'房间 '+item.code:'牌桌 '+(index+1);return option;}));
+      if(savedRooms.length)choices.value=String(savedRooms.length-1);
+    }
+    byId('lan-restore-picker').hidden=Boolean(session)||savedRooms.length<2;byId('lan-restore').textContent=savedRooms.length>1?'继续所选牌桌':'继续上次牌桌';
+    byId('lan-restore').hidden=Boolean(session)||(!savedRooms.length&&!read(key()));
     byId('lan-connect').hidden=Boolean(session);byId('lan-room').hidden=!session;
     byId('lan-host').hidden=!window.GuandanLanNative&&!window.GuandanAndroidHost;byId('lan-host').disabled=busy;byId('lan-join').disabled=busy;
     byId('lan-restore').disabled=busy;byId('lan-refresh').disabled=scanning||connecting;
     byId('lan-status').hidden=!session||inLobby||Boolean(online&&!room?.error&&!waiting.length&&!room?.paused&&!liveRound?.confirmWaiting);
-    byId('lan-status-text').textContent=!online?'连接中断 · 正在重连':room?.error?room.error:waiting.length?'等待 '+waiting.join('、')+' 重新连接':room?.paused?'多人牌局已暂停':liveRound?.confirmWaiting?'等待其他玩家确认贡还':'';
+    byId('lan-status-text').textContent=!online?(compatibilityError||'连接中断 · 正在重连'):room?.error?room.error:waiting.length?'等待 '+waiting.join('、')+' 重新连接':room?.paused?'多人牌局已暂停':liveRound?.confirmWaiting?'等待其他玩家确认贡还':'';
     byId('lan-room-title').textContent=room?.code||'连接中…';byId('lan-count').textContent=room?count+' / 4 人':'尚未连接';
     byId('lan-addresses').textContent=(session?.addresses||[session?.address]).filter(Boolean).join(' 或 ');
     byId('lan-room-note').textContent=!online&&session?'正在连接牌桌…':room?.error?room.error:waiting.length?'等待 '+waiting.join('、')+' 重连。'+(!room?.started&&room?.host?'可在房间选项中移除离线玩家。':''):room?.started?(room.paused?'牌局已暂停，由房主继续。':'座位已分好。新游戏或打过 A 后，会重新随机分位。'):count===4?'四位玩家已到齐，全真人对局。':count>=2?count+' 位玩家已入座，可直接开局，也可等朋友坐满。':'等待朋友加入。两人即可开局，最多四位玩家。';
@@ -85,12 +109,6 @@
     byId('lan-waiting-title').textContent=online?(count===4?'四位玩家已到齐':'等待朋友入座')+' · '+count+'/4':'尚未连接到牌桌';
     byId('lan-waiting-note').textContent=online?'人齐后由房主开局，自动随机分位。':'请打开牌桌查看连接状态，也可以切回单人练习。';
     for(const id of ['next-round','new-game','lan-new-game','pause-button'])byId(id).disabled=Boolean(session&&(!room?.host||!online||busy));
-    const supportsBook=typeof room?.aiBook==='boolean';
-    byId('ai-book-enabled').checked=session?room?.aiBook!==false:prefs.aiBook!==false;
-    byId('ai-book-enabled').disabled=Boolean(session&&(!supportsBook||!room?.host||!online||busy));
-    byId('ai-book-scope').textContent=!session?'适用于单人练习，自动保存你的选择。':!room?'正在同步房间设置…':!supportsBook?'更新房主应用后可调整 AI 秘籍策略。':room.host?'本牌桌所有 AI 共用此设置，其他玩家同步查看。':'由房主统一设置，当前显示的是本牌桌的选择。';
-    byId('book-enabled').disabled=Boolean(session&&!supportsBook);
-    byId('book-enabled').checked=session&&!supportsBook?true:prefs.book!==false;
     if(session){byId('pause-button').textContent=room?.paused?'继续多人牌局':'暂停多人牌局';byId('engine-indicator').textContent=count===4?'4 位玩家 · 自主出牌':room?.error?'房主模型需要重试':'多人游戏 · DanLM 补齐空位';}
   }
   function renderNearby(){
@@ -120,6 +138,8 @@
   }
   function apply(data){
     if(!data?.room||!session||data.room.id!==session.roomId||room&&data.room.version<room.version)return;
+    if(data.room.protocol!==PROTOCOL){compatibilityError='联机规则版本不同，请所有设备更新至1.8.40 或更新版本';throw new Error(compatibilityError);}
+    compatibilityError='';
     const started=room?.started,wasOnline=online;room=data.room;online=true;
     const signature=[room.id,room.version,room.paused,room.error,room.modelReady,room.waiting.join('|'),room.members.map(m=>m.id+':'+m.connected).join('|')].join('/');
     if(signature!==lastRender||!wasOnline){
@@ -127,10 +147,11 @@
       if(data.round){
         const oldId=liveRound?.remote?liveRound.id:null;liveRound=remoteRound(data.round);paused=false;clearError();
         if(oldId!==liveRound.id){selected.clear();hintSnapshot=null;playKey=null;cardNodes.clear();dealMotion.cancel();}
-        renderGame();
+        if(oldId!==liveRound.id)feedback.prime(liveRound);
+        renderGame();feedback.collect(liveRound);
         if(!started&&room.started&&!room.paused&&!room.waiting.length&&mode==='multi'&&dialog.open)closeDialog(dialog);
-        if(oldId!==liveRound.id&&!liveRound.game.result)beginDealAnimation();
-      }else{liveRound=offline?.round||liveRound;paused=true;renderGame();}
+        if(oldId!==liveRound.id&&!liveRound.game.result&&!liveRound.game.actionHistory.length)beginDealAnimation();
+      }else{liveRound=offline?.round||liveRound;feedback.prime(liveRound);paused=true;renderGame();}
     }
     // Retry a failed save on later polls even when the room version is unchanged.
     if(data.round&&liveRound.game.result&&lastEnded!==liveRound.id){
@@ -141,7 +162,7 @@
   }
   async function poll(){
     if(!session||pollingEpoch===generation)return;const epoch=generation;pollingEpoch=epoch;
-    try{const data=await transport({action:'request',address:session.address,token:session.token,body:{op:'poll'}});if(epoch===generation){apply(data);message();}}
+    try{const data=await transport({action:'request',address:session.address,token:session.token,body:{op:'poll',protocol:PROTOCOL}});if(epoch===generation){apply(data);message();}}
     catch(error){if(epoch===generation){online=false;message(error.message);renderGame();controls();}}
     finally{if(pollingEpoch===epoch)pollingEpoch=null;if(session&&epoch===generation){clearTimeout(pollTimer);pollTimer=setTimeout(poll,online?400:1200);}}
   }
@@ -149,7 +170,7 @@
     if(!session||!room||busy)return;busy=true;const epoch=generation,roundAtSend=liveRound?.id,selectionAtSend=[...selected].sort().join('|');
     controls();updateSelection();
     try{
-      const result=await transport({action:'request',address:session.address,token:session.token,body:{op,version:room.version,requestId:crypto.randomUUID(),...details}});
+      const result=await transport({action:'request',address:session.address,token:session.token,body:{op,protocol:PROTOCOL,version:room.version,requestId:crypto.randomUUID(),...details}});
       if(epoch!==generation)return;
       if(result.advice)return result.advice;
       if(result.left)return result;
@@ -166,16 +187,17 @@
   }
   async function connect(host){
     if(busy||session)return;
-    const address=byId('lan-address').value.trim(),code=byId('lan-code').value.trim();
+    const address=byId('lan-address').value.trim(),input=byId('lan-code').value.trim(),code=host?null:input;
     if(!host&&!address){byId('lan-manual').open=true;message('请选择附近的牌桌，或输入房主显示的地址。');return;}
-    if(!host&&!/^\d{6}$/.test(code)){message('请输入六位数字房间码。');return;}
+    if(!host&&!/^\d{6}$/.test(code||'')){message('请输入六位数字房间码。');return;}
     busy=true;connecting=true;scanEpoch++;scanning=false;const epoch=generation;controls();renderNearby();message('正在连接…');
     try{
+      let clientId=read(key()+'.device');if(!clientId)clientId=crypto.randomUUID();
       const name=byId('lan-name').value.trim()||(GuandanI18n.locale==='en'?(window.GuandanLanNative?'Desktop player':'Android player'):(window.GuandanLanNative?'电脑玩家':'安卓玩家'));
-      let clientId=read(KEY+'.device');if(!clientId)clientId=crypto.randomUUID();
-      try{localStorage.setItem(KEY+'.device',clientId);localStorage.setItem(KEY+'.name',name);}catch{}
-      const result=host?await transport({action:'host',name,fresh:true,aiBook:prefs.aiBook!==false}):await transport({action:'request',address,body:{op:'join',code,name,clientId,protocol:PROTOCOL}});
+      try{localStorage.setItem(key()+'.device',clientId);localStorage.setItem(key()+'.name',name);}catch{}
+      const result=host?await transport({action:'host',name,fresh:true}):await transport({action:'request',address,body:{op:'join',code,name,clientId,protocol:PROTOCOL}});
       if(epoch!==generation)return;
+      if(result.protocol!==PROTOCOL)throw new Error('联机规则版本不同，请所有设备更新至1.8.40 或更新版本');
       suspendOffline();session={...result,address:result.address||address,host,name};generation++;mode='multi';remember();lastRender='';await poll();
     }catch(error){message(error.message);}
     finally{busy=false;connecting=false;controls();renderNearby();}
@@ -183,23 +205,28 @@
   async function reconnect(resume=false){
     if(!session)return;const epoch=generation,current=session;
     try{
-      if(current.host){const result=await transport({action:'host',name:current.name});if(epoch!==generation)return;Object.assign(current,result);remember();}
+      if(current.host){
+        const result=await transport({action:'host',name:current.name,roomId:current.roomId});if(epoch!==generation)return;
+        if(result.roomId!==current.roomId)throw new Error('未找到原来的局域网牌桌，请重新开桌。');
+        Object.assign(current,result);remember();
+      }
       if(epoch!==generation)return;await poll();if(epoch===generation&&room?.error&&room.host)await command('retry');
       if(epoch===generation&&resume===true&&room?.host&&room.started&&room.paused)await command('pause');
       if(epoch===generation&&resume===true&&online&&room?.started&&!room.error&&!room.waiting.length)closeDialog(dialog);
     }catch(error){if(epoch===generation)message(error.message);}
   }
-  function leaveLocal(keep=false){
+  function leaveLocal(keep=false,startSolo=false){
     if(session?.host)window.GuandanAndroidHost?.park();
-    try{if(keep&&session)localStorage.setItem(KEY+'.parked',JSON.stringify(session));else localStorage.removeItem(KEY+'.parked');}catch{toast('暂未保存重连信息。');}
-    generation++;scanEpoch++;scanning=false;busy=false;clearTimeout(pollTimer);session=null;room=null;online=false;lastRender='';mode='solo';remember();dealMotion.cancel();
-    liveRound=offline?.round||GuandanMatch.read(localStorage);paused=offline?.paused||false;offline=null;selected.clear();cardNodes.clear();hintSnapshot=null;clearError();message();renderGame();controls();closeDialog(dialog);checkModel();
+    let saved=true;try{if(keep&&session)parkSession(session);else discardParked(session);}catch{saved=false;toast('暂未保存重连信息。');}
+    compatibilityError='';generation++;scanEpoch++;scanning=false;busy=false;clearTimeout(pollTimer);session=null;room=null;online=false;lastRender='';mode='solo';if(saved||!keep)remember();dealMotion.cancel();
+    liveRound=offline?.round||GuandanMatch.read(localStorage);feedback.prime(liveRound);paused=offline?.paused||false;offline=null;selected.clear();cardNodes.clear();hintSnapshot=null;clearError();message();
+    renderGame();controls();closeDialog(dialog);checkModel();
   }
   byId('open-lan').addEventListener('click',openGame);byId('lan-show-room').addEventListener('click',openGame);byId('lan-open-lobby').addEventListener('click',openGame);
   byId('mode-solo').addEventListener('click',()=>showMode('solo'));byId('mode-multi').addEventListener('click',()=>showMode('multi'));
-  byId('solo-continue').addEventListener('click',()=>{paused=false;prefs.paused=false;savePrefs();closeDialog(dialog);renderGame();scheduleBots();});
+  byId('solo-continue').addEventListener('click',()=>{paused=false;prefs.paused=false;savePrefs();closeDialog(dialog);renderGame();if(!model.ready)checkModel();else scheduleBots();});
   byId('lan-refresh').addEventListener('click',discover);byId('lan-address').addEventListener('input',renderNearby);
-  byId('lan-restore').addEventListener('click',()=>{if(busy)return;try{const saved=JSON.parse(read(KEY+'.parked'));if(!saved)return;suspendOffline();session=saved;room=null;generation++;scanEpoch++;scanning=false;mode='multi';remember();lastRender='';reconnect(true);controls();}catch(error){message(error.message);}});
+  byId('lan-restore').addEventListener('click',()=>{if(busy)return;try{const list=parkedSessions(),choice=Number(byId('lan-restore-choices').value),saved=read(key())?JSON.parse(read(key())):list[Number.isInteger(choice)&&choice>=0&&choice<list.length?choice:list.length-1];if(!saved)return;suspendOffline();session=saved;room=null;generation++;scanEpoch++;scanning=false;mode='multi';remember();lastRender='';reconnect(true);controls();}catch(error){message(error.message);}});
   byId('lan-host').addEventListener('click',()=>connect(true));
   byId('lan-join').addEventListener('click',event=>{event.preventDefault();return connect(false);});
   byId('lan-join-form').addEventListener('submit',event=>{event.preventDefault();return connect(false);});
@@ -210,9 +237,17 @@
   byId('lan-cancel-lobby').addEventListener('click',()=>byId('lan-lobby-confirm').hidden=true);
   byId('lan-retry').addEventListener('click',reconnect);
   byId('lan-cancel-leave').addEventListener('click',()=>showMode('multi'));
-  byId('lan-confirm-leave').addEventListener('click',async()=>{const host=session?.host;let left=false;try{if(online)left=Boolean((await command('leave'))?.left);}catch{}leaveLocal(host||!left);});
-  window.GuandanLan=Object.freeze({get active(){return Boolean(session);},get ready(){return online&&!busy&&!room?.paused&&!room?.waiting?.length&&!room?.error;},get turnMessage(){return !online?'正在重连':room?.paused?'多人牌局已暂停':room?.waiting?.length?'等待玩家重连':room?.error?'请处理提示':'';},get hosting(){return room?.host;},command,reconnect,controls});
+  byId('lan-confirm-leave').addEventListener('click',async()=>{
+    if(connecting)return;
+    const epoch=generation,current=session,host=current?.host;let result=null;
+    try{if(online)result=await command('leave');}catch{}
+    if(epoch!==generation||session!==current)return;
+    const closed=Boolean(result?.roomClosed);
+    leaveLocal((host&&!closed)||!result?.left,true);
+    if(!result?.left)toast('离桌尚未确认，牌桌可能等待重连；可稍后返回检查。');
+  });
+  window.GuandanLan=Object.freeze({get active(){return Boolean(session);},get ready(){return online&&!busy&&!room?.paused&&!room?.waiting?.length&&!room?.error;},get turnMessage(){return !online?(compatibilityError||'正在重连'):room?.paused?'多人牌局已暂停':room?.waiting?.length?'等待玩家重连':room?.error?'请处理提示':'';},get hosting(){return room?.host;},command,reconnect,controls});
   window.addEventListener?.('guandan-language-change',()=>{memberSignature='';controls();});
-  byId('lan-name').value=read(KEY+'.name')||'';controls();
-  try{const stored=JSON.parse(read(KEY)||'null');if(stored?.address&&stored?.token){suspendOffline();session=stored;generation++;mode='multi';controls();reconnect();}}catch{}
+  byId('lan-name').value=read(key()+'.name')||'';controls();
+  try{const stored=JSON.parse(read(key())||'null');if(stored?.address&&stored?.token){suspendOffline();session=stored;generation++;mode='multi';controls();reconnect();}}catch{}
 })();

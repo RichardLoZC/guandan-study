@@ -1,0 +1,2 @@
+import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';import {project,runtimeFiles,manifestPath} from './public-runtime.mjs';
+const files=Object.fromEntries(runtimeFiles().map(name=>{const bytes=fs.readFileSync(path.join(project,name));return [name,{size:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex')}];}));fs.writeFileSync(manifestPath,JSON.stringify({schema:1,edition:'public-offline-lan',files},null,2)+'\n');console.log('Reviewed runtime manifest:',Object.keys(files).length,'files');

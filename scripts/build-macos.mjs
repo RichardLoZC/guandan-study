@@ -6,6 +6,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { packager } from '@electron/packager';
 import {ignoreRuntimeFile} from './package-options.mjs';
+import {verifyNativeRuntime} from './verify-native-runtime.mjs';
 
 if (process.platform !== 'darwin') throw new Error('请在 macOS 上构建，以完成 Universal 合并与本地签名。');
 const project = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -13,11 +14,14 @@ const metadata = JSON.parse(await fs.readFile(path.join(project, 'package.json')
 const arch = process.env.GUANDAN_BUILD_ARCH || 'universal';
 if (!['universal', 'arm64', 'x64'].includes(arch)) throw new Error('GUANDAN_BUILD_ARCH 只能是 universal、arm64 或 x64。');
 const dist = path.join(project, 'dist');
+const nativeSource=process.env.GUANDAN_BUILD_NATIVE_DIR;
+if(nativeSource&&!await fs.stat(path.join(nativeSource,'worker.py')).then(()=>true,()=>false))throw Error('Invalid GUANDAN_BUILD_NATIVE_DIR');
 // Build and sign on the local filesystem. Cloud providers can attach Finder
 // metadata to app bundles that makes macOS code-signature verification fail.
+if(nativeSource)verifyNativeRuntime(nativeSource);
 const staging = await fs.mkdtemp(path.join(os.tmpdir(), 'guandan-macos-build-'));
 const packages = await packager({
-  dir: project, name: '掼蛋研习社',
+  dir: project, tmpdir:path.join(staging,'packager-temp'), name: '掼蛋研习社',
   appBundleId: 'cn.guandan.study.offline', appCategoryType: 'public.app-category.card-games',
   platform: 'darwin', arch, electronVersion: metadata.devDependencies.electron,
   appVersion: metadata.version, buildVersion: metadata.version,
@@ -39,6 +43,13 @@ const release = path.join(dist, '掼蛋研习社-macOS离线版');
 await fs.mkdir(release, { recursive: true });
 const appPath = path.join(staging, '掼蛋研习社.app');
 await fs.rename(path.join(packages[0], '掼蛋研习社.app'), appPath);
+if(arch!=='x64'&&nativeSource){
+  const target=path.join(appPath,'Contents/Resources/danlm-native');
+  // The Python core is arm64-only and is dispatched only on Apple Silicon.
+  // Copy after Universal merging so Intel continues to use the aligned ONNX worker.
+  execFileSync('/usr/bin/ditto',[nativeSource,target]);
+  execFileSync('/usr/bin/codesign',['--force','--deep','--sign','-','--timestamp=none',appPath],{stdio:'inherit'});
+}
 execFileSync('/usr/bin/codesign', ['--verify', '--deep', '--strict', appPath], { stdio: 'inherit' });
 const binary = path.join(appPath, 'Contents', 'MacOS', '掼蛋研习社');
 const architectures = execFileSync('/usr/bin/lipo', ['-archs', binary], { encoding: 'utf8' }).trim();
@@ -54,6 +65,7 @@ await fs.writeFile(path.join(release, '构建信息.json'), JSON.stringify({
   name: '掼蛋研习社', version: metadata.version,
   electron: metadata.devDependencies.electron, architectures,
   archive: zipName,
+  ai:{appleSilicon:arch==='x64'?null:nativeSource?'official-native-d200e455':'aligned-onnx-danlm-v1',intel:'aligned-onnx-danlm-v1'},
   signed: 'ad-hoc', notarized: false,
 }, null, 2) + '\n');
 console.log(`本机应用：${appPath}\n架构：${architectures}\n发布包：${zipPath}\n请将 ZIP 解压到本机后运行其中的 .app。`);

@@ -15,21 +15,22 @@ const {Room, PROTOCOL} = require(path.join(project, 'lan-room.cjs'));
 const KEY = 'guandan.lan.session.v1';
 const flush = () => new Promise(setImmediate);
 const session = (roomId = 'room', token = 'guest-token') => ({address:'127.0.0.1:18765', token, roomId, host:false, name:'Pad'});
-const snapshot = (id = 'room', version = 1, fields = {}) => ({room:{id,version,code:'123456',host:false,started:false,paused:false,waiting:[],error:null,modelReady:false,members:[],...fields},round:null});
+const snapshot = (id = 'room', version = 1, fields = {}) => ({room:{protocol:PROTOCOL,id,version,code:'123456',host:false,started:false,paused:false,waiting:[],error:null,modelReady:false,members:[],...fields},round:null});
 function deferred() {
   let resolve, reject;
   const promise = new Promise((yes, no) => { resolve = yes; reject = no; });
   return {promise, resolve, reject};
 }
 function makeNode() {
-  return {value:'',hidden:false,disabled:false,textContent:'',open:false,children:[],handlers:new Map(),attrs:{},style:{setProperty(){}},classList:{toggle(){}},
+  return {value:'',hidden:false,disabled:false,textContent:'',open:false,children:[],handlers:new Map(),attrs:{},dataset:{},style:{setProperty(){}},classList:{toggle(){}},
     setAttribute(key,value) { this.attrs[key]=value; },
+    removeAttribute(key) { delete this.attrs[key]; },
     addEventListener(type, fn) { this.handlers.set(type, fn); },
     replaceChildren(...children) { this.children = children; },
     append(...children) { this.children.push(...children); }
   };
 }
-function harness({stored = session(), request, saved = new Map()} = {}) {
+function harness({stored = session(), request, saved = new Map(), cloudRequest, androidLan} = {}) {
   const nodes = new Map(), timers = new Map(), calls = [], notices = [];
   let nextTimer = 0;
   if (stored) saved.set(KEY, JSON.stringify(stored));
@@ -37,11 +38,11 @@ function harness({stored = session(), request, saved = new Map()} = {}) {
   const localRound = GuandanMatch.create();
   const context = {
     console, crypto:webcrypto, GuandanMatch, GuandanI18n:require('../web/app/i18n.js'),
-    window:{GuandanLanNative:{request(payload) { calls.push(payload); return request(payload); }}},
+    window:androidLan?{GuandanPadNative:{lanRequest(id,raw){calls.push({id,payload:JSON.parse(raw)});androidLan(id,raw);}}}:{GuandanLanNative:{request(payload) { calls.push(payload); return request(payload); }}},
     document:{createElement:makeNode,createTextNode:text => ({textContent:text})},
     byId:node,root:makeNode(),prefs:{},savePrefs(){},scheduleBots(){},
     localStorage:{getItem:key => saved.get(key) || null,setItem:(key,value) => saved.set(key,value),removeItem:key => saved.delete(key)},
-    liveRound:localRound,paused:false,dealMotion:{cancel(){}},stopBots(){},workEpoch:0,
+    feedback:{clear(){},prime(){},collect(){}},liveRound:localRound,paused:false,dealMotion:{cancel(){}},stopBots(){},workEpoch:0,
     model:{cancel(){}},activeTask:null,selected:new Set(),hintSnapshot:null,playKey:null,
     cardNodes:new Map(),clearError(){},renderGame(){},updateSelection(){},beginDealAnimation(){},
     toast:message => notices.push(message),openDialog(dialog){dialog.open=true;},closeDialog(dialog){dialog.open=false;},checkModel(){},
@@ -56,11 +57,39 @@ function harness({stored = session(), request, saved = new Map()} = {}) {
   };
 }
 
+test('a restored LAN host changing address updates one parked identity',async()=>{
+  const old={...session('same-room','same-token'),host:true,address:'192.168.1.5:18765'},newAddress='192.168.1.8:18765';
+  const saved=new Map([[KEY+'.parked',JSON.stringify(old)]]);
+  const h=harness({stored:old,saved,request:async payload=>{
+    if(payload.action==='host')return {...old,address:newAddress,protocol:PROTOCOL};
+    if(payload.body?.op==='leave')return {left:true};
+    return snapshot('same-room',1,{host:true});
+  }});
+  await flush();await h.click('lan-confirm-leave');const list=JSON.parse(h.saved.get(KEY+'.parkedList'));
+  assert.equal(list.length,1);assert.equal(list[0].address,newAddress);
+});
+test('Android local-network reply IDs cannot cross a page reload',async()=>{
+  let oldId,newId;
+  const old=harness({androidLan:id=>{oldId=id;}}),next=harness({androidLan:id=>{newId=id;}});
+  assert.notEqual(oldId,newId);
+  next.context.window.GuandanLanReply(oldId,JSON.stringify(snapshot()));await flush();assert.equal(next.api.ready,false);
+  next.context.window.GuandanLanReply(newId,JSON.stringify(snapshot()));old.context.window.GuandanLanReply(oldId,JSON.stringify(snapshot()));
+  await flush();assert.equal(next.api.ready,true);assert.equal(old.api.ready,true);
+});
+
+test('restoring an old-host session rejects the snapshot before using its rules',async()=>{
+  const h=harness({request:async()=>snapshot('room',4,{protocol:1,started:true})});
+  const original=h.context.liveRound;await flush();
+  assert.equal(h.api.ready,false);assert.equal(h.context.liveRound,original);
+  assert.match(h.node('lan-message').textContent,/联机规则版本不同/);
+  assert.match(h.node('lan-status-text').textContent,/1\.8\.40/);
+  assert.equal(h.calls.at(-1).body.protocol,PROTOCOL);
+});
 test('an old poll cannot suppress the new session poll or its heartbeat', async () => {
   const old = deferred(), fresh = deferred();
   let freshPolls = 0;
   const h = harness({stored:session('old-room','old-token'), request:payload => {
-    if (payload.body?.op === 'join') return Promise.resolve({...session('new-room','new-token'),protocol:1});
+    if (payload.body?.op === 'join') return Promise.resolve({...session('new-room','new-token'),protocol:PROTOCOL});
     assert.equal(payload.body?.op,'poll');
     if (payload.token === 'old-token') return old.promise;
     freshPolls++;
@@ -109,7 +138,7 @@ test('leaving during advice clears busy and restores a usable session', async ()
 });
 test('turn indicators restore on reconnect without needing a new game revision',async()=>{
   const room=new Room(),host=room.host('Mac'),guest=room.join({code:room.code,name:'Pad',protocol:PROTOCOL});
-  await room.request(host.token,{op:'start',version:room.version,requestId:'indicator-start'});
+  await room.request(host.token,{protocol:PROTOCOL,op:'start',version:room.version,requestId:'indicator-start'});
   let fail=false;
   const h=harness({stored:{...guest,address:'127.0.0.1:18765',host:false},request:payload=>fail?Promise.reject(new Error('offline')):room.request(payload.token,payload.body)});
   await flush();assert.equal(h.api.turnMessage,'');assert.equal([...h.timers.values()][0].ms,400);
@@ -119,27 +148,9 @@ test('turn indicators restore on reconnect without needing a new game revision',
   const before=renders;fail=false;await h.fireTimer();assert.equal(h.api.turnMessage,'');assert.equal(renders,before+1);
   room.paused=true;await h.fireTimer();assert.equal(h.api.turnMessage,'多人牌局已暂停');
 });
-test('AI policy controls follow the authoritative room and guests cannot edit them',async()=>{
-  const room=new Room({aiBook:false}),host=room.host('Mac'),guest=room.join({code:room.code,name:'Pad',protocol:PROTOCOL});
-  const hostView=harness({stored:{...host,address:'127.0.0.1:18765',host:true},request:payload=>payload.action==='host'?Promise.resolve({...room.host('Mac'),address:'127.0.0.1:18765'}):room.request(payload.token,payload.body)});
-  const guestView=harness({stored:{...guest,address:'127.0.0.1:18765',host:false},request:payload=>room.request(payload.token,payload.body)});
-  await flush();
-  assert.equal(hostView.node('ai-book-enabled').checked,false);assert.equal(hostView.node('ai-book-enabled').disabled,false);
-  assert.equal(guestView.node('ai-book-enabled').checked,false);assert.equal(guestView.node('ai-book-enabled').disabled,true);
-  assert.equal(guestView.node('book-enabled').disabled,false,'hint preference stays personal');
-  await hostView.api.reconnect();await hostView.api.command('ai-book',{enabled:true});await guestView.api.reconnect();
-  assert.equal(guestView.node('ai-book-enabled').checked,true);
-  guestView.context.prefs.aiBook=false;await guestView.click('lan-confirm-leave');
-  assert.equal(guestView.node('ai-book-enabled').disabled,false);assert.equal(guestView.node('ai-book-enabled').checked,false,'returning to solo restores the local preference');
-});
-test('old hosts show their always-on AI policy without offering an unsupported toggle',async()=>{
-  const h=harness({request:()=>Promise.resolve(snapshot())});await flush();
-  assert.equal(h.node('ai-book-enabled').checked,true);assert.equal(h.node('ai-book-enabled').disabled,true);
-  assert.match(h.node('ai-book-scope').textContent,/更新房主/);
-});
 test('human seat fallback understands a room hosted by the previous app version',async()=>{
   const room=new Room(),host=room.host('Mac'),guest=room.join({code:room.code,name:'Pad',protocol:PROTOCOL});
-  await room.request(host.token,{op:'start',version:room.version,requestId:'old-host'});
+  await room.request(host.token,{protocol:PROTOCOL,op:'start',version:room.version,requestId:'old-host'});
   const h=harness({stored:{...guest,address:'127.0.0.1:18765',host:false},request:async payload=>{const data=await room.request(payload.token,payload.body);delete data.round.humanSeats;return data;}});
   await flush();const data=room.projected(room.authenticate(guest.token));assert.deepEqual(Array.from(h.context.liveRound.humanSeats),data.round.humanSeats);
 });
@@ -213,7 +224,7 @@ test('same client identity rejoins an active match without creating a ghost memb
   const room = new Room({now:() => now});
   const host = room.host('Mac'),clientId = randomUUID();
   const guest = room.join({code:room.code,name:'Pad',protocol:PROTOCOL,clientId});
-  await room.request(host.token,{op:'start',version:room.version,requestId:'start'});
+  await room.request(host.token,{protocol:PROTOCOL,op:'start',version:room.version,requestId:'start'});
   now += 13000;
   room.authenticate(host.token);
   const recovered = room.join({code:room.code,name:'Pad',protocol:PROTOCOL,clientId});
@@ -227,12 +238,12 @@ test('a rejected AI request from the previous match cannot fault a new match', a
   const room = new Room({runModel:() => pending.promise});
   const host = room.host('Mac');
   room.join({code:room.code,name:'Pad',protocol:PROTOCOL,clientId:randomUUID()});
-  await room.request(host.token,{op:'start',version:room.version,requestId:'start'});
+  await room.request(host.token,{protocol:PROTOCOL,op:'start',version:room.version,requestId:'start'});
   room.match.state.game.currentPlayer = room.seats.findIndex(id=>String(id).startsWith('bot:'));
   const oldId = room.match.id;
   const ticking = room.tick();
   assert.equal(room.busy,true);
-  await room.request(host.token,{op:'new',version:room.version,requestId:'new'});
+  await room.request(host.token,{protocol:PROTOCOL,op:'new',version:room.version,requestId:'new'});
   pending.reject(new Error('stale inference failure'));
   await ticking;
   assert.notEqual(room.match.id,oldId);
@@ -252,7 +263,7 @@ test('one mode entry discovers a table, shows four seats and returns to the exac
   h.node('lan-code').value=room.code;await h.click('lan-join');
   assert.equal(h.api.active,true);assert.equal(h.node('lan-members').children.length,4);assert.equal(h.node('lan-count').textContent,'3 / 4 人');
   room.join({code:room.code,name:'第四位',protocol:PROTOCOL});await h.api.reconnect();assert.equal(h.node('lan-count').textContent,'4 / 4 人');
-  await room.request(host.token,{op:'start',version:room.version,requestId:'start-four'});await h.api.reconnect();
+  await room.request(host.token,{protocol:PROTOCOL,op:'start',version:room.version,requestId:'start-four'});await h.api.reconnect();
   assert.equal(h.node('lan-dialog').open,false,'guests automatically enter the game when the host starts');
   h.click('open-lan');h.click('mode-solo');assert.equal(h.node('lan-leave-confirm').hidden,false);
   await h.click('lan-confirm-leave');assert.equal(h.api.active,false);assert.equal(h.context.liveRound,solo);assert.equal(h.context.paused,false);
@@ -279,7 +290,7 @@ test('a delayed discovery cannot overwrite a manually entered address',async()=>
 });
 test('a failed completed-round archive retries at the same room version and survives reconnect',async()=>{
   const room=new Room(),host=room.host('Mac 房主'),guest=room.join({code:room.code,name:'Pad 玩家',protocol:PROTOCOL});
-  await room.request(host.token,{op:'start',version:room.version,requestId:'archive-start'});
+  await room.request(host.token,{protocol:PROTOCOL,op:'start',version:room.version,requestId:'archive-start'});
   let guard=2000;
   while(!room.match.game.result&&guard--){
     const seat=room.match.actingSeat,card=room.match.game.players[seat].hand.find(card=>room.match.selection([card.id],seat).play);

@@ -28,12 +28,12 @@ test('solo inference starts immediately but a fast result waits for the thinking
   assert.equal(h.calls.requests,1);await Promise.resolve();assert.equal(h.calls.commits,0);
   release(true);await work;assert.equal(h.calls.commits,1);
 });
-test('solo bots use their own strategy setting independently of the hint setting',async()=>{
+test('legacy strategy preferences do not reach solo model inference',async()=>{
   for(const enabled of [false,true]){
-    const h=scheduling();h.context.prefs.aiBook=enabled;h.context.prefs.book=!enabled;
-    let book;h.context.model.request=async payload=>{book=payload.book;return {};};
+    const h=scheduling();h.context.prefs.aiBook=enabled;h.context.prefs.book=enabled;
+    let payload;h.context.model.request=async value=>{payload=value;return {};};
     h.context.liveRound.needsTributeConfirmation=false;h.context.scheduleBots();await h.timers[0]();
-    assert.equal(book,enabled);assert.equal(h.calls.commits,1);
+    assert.equal('book' in payload,false);assert.equal(h.calls.commits,1);
   }
 });
 test('stopping a solo turn cancels its delay and discards late inference',async()=>{
@@ -44,11 +44,11 @@ test('stopping a solo turn cancels its delay and discards late inference',async(
   h.context.stopBots();assert.equal(cancelled,1);modelReply({});await work;
   assert.equal(h.calls.commits,0);assert.equal(h.context.activeTask,null);assert.equal(h.context.botWait,null);
 });
-test('a delayed solo tribute uses the strategy once and cannot commit after a round switch',async()=>{
+test('a delayed solo tribute uses the model once and cannot commit after a round switch',async()=>{
   let release,choices=0;
   const h=scheduling(()=>({promise:new Promise(done=>release=done),cancel(){}}));
-  Object.assign(h.context.liveRound,{phase:'return',needsTributeConfirmation:false,chooseTribute(){choices++;return {card:{id:'return'}};},commit(){h.calls.commits++;}});
-  h.context.scheduleBots();const work=h.timers[0]();assert.equal(choices,1);assert.equal(h.calls.requests,0);assert.equal(h.calls.commits,0);
+  Object.assign(h.context.liveRound,{phase:'return',needsTributeConfirmation:false,async chooseTribute(runModel){choices++;await runModel({tribute:{phase:'return'}});return {card:{id:'return'}};},commit(){h.calls.commits++;}});
+  h.context.scheduleBots();const work=h.timers[0]();assert.equal(choices,1);assert.equal(h.calls.requests,1);assert.equal(h.calls.commits,0);
   h.context.liveRound.id='next';release(true);await work;assert.equal(h.calls.commits,0);
 });
 test('an already queued bot timer rechecks confirmation before requesting the model',async()=>{

@@ -1,0 +1,1710 @@
+{
+  "schema": 1,
+  "edition": "public-offline-lan",
+  "files": {
+    "LICENSE": {
+      "size": 1141,
+      "sha256": "28804722f33bc04efdd1600e616cb4739500b616ef0a7cd0e2641a72885da3c3"
+    },
+    "NOTICE": {
+      "size": 816,
+      "sha256": "ef723dbbfd93ffdf5637430292193b9be1887cdfb93d16c273ebbe1664a14639"
+    },
+    "THIRD_PARTY_NOTICES.md": {
+      "size": 3804,
+      "sha256": "b93879e20d5cdba18f2a05432884c622e18ca65c1800d020e2193b81ec531b40"
+    },
+    "desktop-fit.cjs": {
+      "size": 1055,
+      "sha256": "675fc0283993ec8eed2fda968b70d27e9c508a05b9df8268b76cbac60294e54c"
+    },
+    "engine-preload.cjs": {
+      "size": 548,
+      "sha256": "8bebcbcaa1a4cc48ea8df3bf928e34ef1c934b33cea6860b10e8b4e7df06317b"
+    },
+    "icon.png": {
+      "size": 94466,
+      "sha256": "b91aff9579d48bc921840b2b76d961ad185df225b7620880856985838a24e76b"
+    },
+    "lan-discovery.cjs": {
+      "size": 3706,
+      "sha256": "92ab8656d78ad372bb642c598b203a292328b0cd165f7a7e84395d8747715ee9"
+    },
+    "lan-host-storage.cjs": {
+      "size": 2297,
+      "sha256": "6b4b843f0d8e4a9849b7df1efc18d276b7ad59bbb38a91dc2a9e7be947e57e3a"
+    },
+    "lan-room.cjs": {
+      "size": 916,
+      "sha256": "8b8ce29476e4a4008e61c4deced5cbdf612de3b31d5e1be04069ef138aaf62cd"
+    },
+    "lan-server.cjs": {
+      "size": 7228,
+      "sha256": "6fc3e825be056570cb3aa5b0f905bc6a9d9ad27df0f2105ad0d1819c17ad358c"
+    },
+    "main.cjs": {
+      "size": 17222,
+      "sha256": "66d18e17b7858dea7436272802828141592bd7a525d0b52430397cff42cb13b7"
+    },
+    "official-danlm.cjs": {
+      "size": 6711,
+      "sha256": "9b1a054d65fa4a75da2c1b76e055fc1224598b06b8e82041dd866729cd390ba2"
+    },
+    "package.json": {
+      "size": 1014,
+      "sha256": "925ede22c3f91617c7497064d23d7249eb6ba61790855f2884ffd7a92a94961e"
+    },
+    "preload.cjs": {
+      "size": 747,
+      "sha256": "cd23394b3aae29d7cf1ac66e80f145035fc4a08ca4a649f842b26dede349802d"
+    },
+    "storage.cjs": {
+      "size": 1986,
+      "sha256": "51a5b5dc08f28dbbea8e64080ae623d7950389d2b31c3ef61adc8434e3c4a62b"
+    },
+    "web/app/android-host.js": {
+      "size": 5152,
+      "sha256": "089d8f7fd26cc1cdc6c6a5004ac8a91287535c5fb767747a8964f2c855e2d699"
+    },
+    "web/app/arrange-search.js": {
+      "size": 9488,
+      "sha256": "23a1b87599cf553ffed1d888680c052d125521026ea8ae18065f3ad394a72597"
+    },
+    "web/app/arrange.js": {
+      "size": 7349,
+      "sha256": "42c377bed19584f6058cb32a1e8149c5d5571df1d6e1f3cece75d6d52e890fc6"
+    },
+    "web/app/assessment-legacy.js": {
+      "size": 18177,
+      "sha256": "434d001502fa71b41f8a9f80da9842a390fb3d3e3a6ce93ab10478a33ad3758d"
+    },
+    "web/app/assessment-pilot.js": {
+      "size": 8474,
+      "sha256": "e889735991fcb1733e4c852040926dd0c480078dd957cfc788e1c23adc423488"
+    },
+    "web/app/assessment-provenance.js": {
+      "size": 2574,
+      "sha256": "c9a3c8e3c8af66241f289db0b9b1d9d4dec615e3025b88c67824923c18d38673"
+    },
+    "web/app/assessment-rating-legacy.js": {
+      "size": 2658,
+      "sha256": "c766e18c15bc08ebf1bc592a0d5502a765f61ef5495a96ed6cf07193536ba720"
+    },
+    "web/app/assessment-rating.js": {
+      "size": 3067,
+      "sha256": "c8ea251d6aacc438b55cb116dc7e5dbdbcd2d34dcad182f3d5badc9735dd26d5"
+    },
+    "web/app/assessment-standard.js": {
+      "size": 11220,
+      "sha256": "8aec34eaf7989285c72e4aeea7e3ed1190c7a204d898387860df93f8723aed56"
+    },
+    "web/app/assessment-standard.json": {
+      "size": 11042,
+      "sha256": "22d53eb0440e1c09e22f4cb89135fffabc7bd96c0497545232469f4454ad89e9"
+    },
+    "web/app/assessment-ui.js": {
+      "size": 28820,
+      "sha256": "315cc27a05524fc62b65cf03b81f504f5761c59d81369be099ca03696fc1d461"
+    },
+    "web/app/assessment.css": {
+      "size": 5591,
+      "sha256": "b2d2f3d46d44157b0949d2985e4005a57d13fcbc1631617a9ebd71a7a791d3ff"
+    },
+    "web/app/assessment.js": {
+      "size": 20712,
+      "sha256": "2efc0dbe64754b27c42b9355c5a74322166b10deb5f1ba8b688f7439f4f06466"
+    },
+    "web/app/card-art.js": {
+      "size": 735,
+      "sha256": "85ca8d8fe9ecf52a5d33d372515b66c88070fd42a3b78cf9e7078710f5b84131"
+    },
+    "web/app/card-counts.js": {
+      "size": 1319,
+      "sha256": "c1d53a46d442f6d8246af9b22b148ae792192261fc87d411a795e532fcdb9d3f"
+    },
+    "web/app/core-source.json": {
+      "size": 272,
+      "sha256": "644a26c672be81f1225d8656639e4abcce5c55177aae6cf9023ac47cd2af371b"
+    },
+    "web/app/core.js": {
+      "size": 17365,
+      "sha256": "aaedeb0f0a0c5807aa28eccfc7309b1d41d0c582440eb874ec8d61612a3b9954"
+    },
+    "web/app/danlm-adapter.js": {
+      "size": 10655,
+      "sha256": "157699f31925b10cff30629d7ff7d123a0ddcf51552db5cc7cf4224ea381d5ac"
+    },
+    "web/app/deal-animation.css": {
+      "size": 5239,
+      "sha256": "e84fce2ded88aa7e339d50435c7d4615a76246d0872e89d0ce45b00501f2db09"
+    },
+    "web/app/deal-animation.js": {
+      "size": 7963,
+      "sha256": "4e4f2bbf022ab73ff0d5c8d247dd65419a65248ea18ecf856966241b0255dc50"
+    },
+    "web/app/desktop.css": {
+      "size": 20062,
+      "sha256": "8e254b9a5c029ecfc6012868ebf394ead695f21195082d58fc542c997f9e1afa"
+    },
+    "web/app/evaluation-protocol.js": {
+      "size": 5499,
+      "sha256": "54d86d3a7e98258d13eb64c331bee37f4d9f4b81e96a0701524ed4e8a4900089"
+    },
+    "web/app/game-feedback.css": {
+      "size": 6636,
+      "sha256": "04106760202ae5afe435708f42a77034a8a296bf91bb3e32e4cff79afdf13e92"
+    },
+    "web/app/game-feedback.js": {
+      "size": 18056,
+      "sha256": "aaee78ea872d5db90da11cea206658deeff7e5035ecfb73f55a5ca2d4690afe1"
+    },
+    "web/app/hand-assessment-legacy.js": {
+      "size": 7453,
+      "sha256": "5e445998fac3341d56f3c4303655d25c44dcf8f001d4410a1d1cead89d16d56e"
+    },
+    "web/app/hand-assessment.js": {
+      "size": 390,
+      "sha256": "2d1227efabfe41ec8a276d96e71c3adb7e7dbfbe9103f3514a18d8a914f53717"
+    },
+    "web/app/hand-editor.js": {
+      "size": 11879,
+      "sha256": "586729995165c75b538ebb0c1aa4a2c1894088d25ce17cd3645437a6958bd0c5"
+    },
+    "web/app/hand-fan.js": {
+      "size": 3334,
+      "sha256": "0826f2cb6ca62a0cfd6c6814face6ffb215b32cf91eb27addfe25f2417eb1dcb"
+    },
+    "web/app/hand-layout.css": {
+      "size": 13400,
+      "sha256": "c563ba2c73d0e0d1609e923e1f70b3c6f9f7918004fc3df495e89d89e6868da2"
+    },
+    "web/app/hand-layout.js": {
+      "size": 9096,
+      "sha256": "2dbd8c6c0d39824e3b7f59918d2f6c23b981e845defb791b67289ca5980ca8a1"
+    },
+    "web/app/hand-marquee.js": {
+      "size": 9693,
+      "sha256": "55bf59fbb0a84a73445ac091facab206055860337ee12b77426e3a54a317d3b3"
+    },
+    "web/app/hand-selection.js": {
+      "size": 5294,
+      "sha256": "bee4601f00053071fdc8a45e73729931660a6dd03e89319e2f9797d50b69da30"
+    },
+    "web/app/hand-stack.css": {
+      "size": 4739,
+      "sha256": "430ce629d1faa24695877240d28e5392231cbedd4a31c6ec733ec171df23c082"
+    },
+    "web/app/hand-stack.js": {
+      "size": 2891,
+      "sha256": "d888d738e1abc824d0ad4a0a6f60706e606e580d49ac8a47eb6f7a49986cd00f"
+    },
+    "web/app/i18n.js": {
+      "size": 4125,
+      "sha256": "73fb4aaba472dce07b379731d1088e17884c29b83c5ccc43308a24718a674a27"
+    },
+    "web/app/judge-v2.js": {
+      "size": 7834,
+      "sha256": "d0b9978796cef9017ae2d0c3e78cedb0a44471182a044c3aa923537d7db0feb7"
+    },
+    "web/app/lan-client.js": {
+      "size": 23884,
+      "sha256": "dd6bfb0952f1d6d2cacde7e5ffdfae6d49f0cf345729de841bc3e0bd57442c31"
+    },
+    "web/app/lan-engine.js": {
+      "size": 250,
+      "sha256": "5b9dc74a80d28dc78988fef8563b5d55fbc7429569319a6c29935c6dbe138a67"
+    },
+    "web/app/lan-room.js": {
+      "size": 14523,
+      "sha256": "03f390c07259b057742ba46f52dc363531c52d7f9e6966548c714d0365449e25"
+    },
+    "web/app/lan.css": {
+      "size": 7551,
+      "sha256": "fa1f05875991a0be5ea8efa93f4b938b4111e6b966648901cdd21ce08f9007aa"
+    },
+    "web/app/locales/en.js": {
+      "size": 67669,
+      "sha256": "27f559c4bbcfbc0138d411123a2f5846b68c8861d31aa2da7a4c16843cb9ddce"
+    },
+    "web/app/match.js": {
+      "size": 32041,
+      "sha256": "cc4f690af3d256964f8bbd42e6129c538b638dbed6f43c6cb6769b23593ee133"
+    },
+    "web/app/mobile.css": {
+      "size": 8104,
+      "sha256": "6ce5732a9998e87a1eea59340b246610c8f38390571bcdc28e571c1be6c838b9"
+    },
+    "web/app/model-client.js": {
+      "size": 2488,
+      "sha256": "5853bacd0b050f7c70d94c6d277085f50096f06910ee1e6ba4ac642698b2740b"
+    },
+    "web/app/personas.js": {
+      "size": 1959,
+      "sha256": "fa05cbb65256b6ab93cbe35e17760433c10762bbf4b4241cb192b3f3d6a3a2a6"
+    },
+    "web/app/phone-layout.css": {
+      "size": 25652,
+      "sha256": "f58b8ae0e52556e9d1ef6424c5feec3ecca4a9441bab6e5d0110e279ac354db7"
+    },
+    "web/app/phone-layout.js": {
+      "size": 5268,
+      "sha256": "8e28243aded16de99e8cc54535c0d009a1f197ec6fb716696f1635636116069f"
+    },
+    "web/app/play-choices.js": {
+      "size": 2134,
+      "sha256": "45adf2ac2e453324a0e96d468ad93e97f725bcf09ad65ee14c3c1ce001217f30"
+    },
+    "web/app/play-declaration.css": {
+      "size": 2635,
+      "sha256": "aaff1776a52daf1559c7fe01aafd4b7a5acab8d0c9151d2345674e86bd0796af"
+    },
+    "web/app/play-rules.js": {
+      "size": 1575,
+      "sha256": "cbe6c6ed7a8daeb39b0c5ad7b2b3792adca3b93b8c687ed26fef82cbf5003b6e"
+    },
+    "web/app/presentation.js": {
+      "size": 3643,
+      "sha256": "44db467f382406cbb33d620739243eddfbb5579f926f18d95b3765cbf22eda3f"
+    },
+    "web/app/private-hand-score.js": {
+      "size": 1453,
+      "sha256": "f6aadaf52bf2089ad6ea15cace3b43e4ec300aac9b3bcf60884952dce37a7706"
+    },
+    "web/app/review.js": {
+      "size": 18985,
+      "sha256": "da9e21e9ad51c94ece3ac886238a987ad6c5772cde4309e04dba7009bdd5e569"
+    },
+    "web/app/round-table.css": {
+      "size": 4785,
+      "sha256": "0cdbe67f3df0caa81a2cfbacb1efa460366d0d2cb0622fe66bd911d2cd5fc472"
+    },
+    "web/app/series.js": {
+      "size": 1324,
+      "sha256": "72d3b0886fe63f3036639f174140baf4924d476ef0f7c7ba92c2d86ad5edc847"
+    },
+    "web/app/starting-reference.js": {
+      "size": 1824,
+      "sha256": "71a8535e68e511d5a2ce41164f0e821ac604dd7e00622a92475470b451f1ce56"
+    },
+    "web/app/table-layout.css": {
+      "size": 14988,
+      "sha256": "2cf0ee740328cfe863c086de73e59b0998cf37323c9419d9a7220938e044e35a"
+    },
+    "web/app/table-view.js": {
+      "size": 2247,
+      "sha256": "a00c5e56c920d7c68b96021c6bd6e2978a986532cc683544c12dad6ec9cfb6b3"
+    },
+    "web/app/table.css": {
+      "size": 39972,
+      "sha256": "8d987330f3ead3abbc39b9c71148e9601ce8f878fdffeaf740e81ded2102ed8b"
+    },
+    "web/app/table.js": {
+      "size": 73789,
+      "sha256": "dc0625c21ba8ca74b6a54685fcfdb84cb002a4a10380352ad223f81fb2b33282"
+    },
+    "web/app/tribute-strategy.js": {
+      "size": 5205,
+      "sha256": "add11e58e384ca904a959cb35bee054172e53c2c92fff6af25e97ac5c91027ff"
+    },
+    "web/app/tuo3.js": {
+      "size": 8778,
+      "sha256": "ecee9daedf92ce01ea6d6e61ea082c2e9eb56be0c494d105a5e49c093d003fae"
+    },
+    "web/app/turn-timing.js": {
+      "size": 761,
+      "sha256": "1e730ca9e56c40d44413db40d62d2fa57ca505d55a2998788e577f8220cc6d83"
+    },
+    "web/assets/accessible/blackJoker.svg": {
+      "size": 12082,
+      "sha256": "48f74f845f9fce93325c97da96ae1dd37ad1a4995bac95990a7ae6b3418a47e5"
+    },
+    "web/assets/accessible/club10.svg": {
+      "size": 12930,
+      "sha256": "014e9dc8aec816c05beda2c5290b94867a74e10dcbeb752f9434759953e98aa7"
+    },
+    "web/assets/accessible/club2.svg": {
+      "size": 7562,
+      "sha256": "0d7bb6b0341696f43305f80f7dc1391f3002de4028ae304034398bf9f03a36d7"
+    },
+    "web/assets/accessible/club3.svg": {
+      "size": 8228,
+      "sha256": "90b53f2dcaef287377d4db4ffbca77c3aa5f8086e90924b372b67e001bb137d7"
+    },
+    "web/assets/accessible/club4.svg": {
+      "size": 9109,
+      "sha256": "13a0d61a1d4febb6e66ffb28ae39c8a0397b2256b6ee239a7ea780b8fc76ab35"
+    },
+    "web/assets/accessible/club5.svg": {
+      "size": 9628,
+      "sha256": "39cd442cb0caca29ae429320ef03e38e9be4613e5777cc36816da142d871f5a3"
+    },
+    "web/assets/accessible/club6.svg": {
+      "size": 10119,
+      "sha256": "aadb9c41a366ec3e229979a3534de6d2b79c9dbea6b86290b7b4418e0fc3d7e9"
+    },
+    "web/assets/accessible/club7.svg": {
+      "size": 10806,
+      "sha256": "062ca579881698bf8371e1e6aa593a1779af91dfcc7f8e16a9a1086d9b1003ca"
+    },
+    "web/assets/accessible/club8.svg": {
+      "size": 11484,
+      "sha256": "364f690a390e9f1b777a541cb894d659fb3021eb0ab6288d80e29c17d97c047b"
+    },
+    "web/assets/accessible/club9.svg": {
+      "size": 12150,
+      "sha256": "2927853f722665903b085b2f8463f4321a7e62a3fda8b9511786ff184203ef29"
+    },
+    "web/assets/accessible/clubAce.svg": {
+      "size": 6886,
+      "sha256": "a53868d43874dc5b5505bfa50a627cd7e4511dfa75aaeff47354eb7b7715f957"
+    },
+    "web/assets/accessible/clubJack.svg": {
+      "size": 430838,
+      "sha256": "57cd46eb0f2c59a1e42f4d5265db0e9c80b147a035c10c1052e4702f2312a7f2"
+    },
+    "web/assets/accessible/clubKing.svg": {
+      "size": 1051299,
+      "sha256": "33c8931b14ca5ed45d6dc5f1acf5d820c647818d0f1e8077bb9ed5597f81b5df"
+    },
+    "web/assets/accessible/clubQueen.svg": {
+      "size": 1041943,
+      "sha256": "1d36a7b61300a9bcd6ed1ce9c442fc4be371ae49bc2b333c2f3e38357d1d7abb"
+    },
+    "web/assets/accessible/diamond10.svg": {
+      "size": 11274,
+      "sha256": "dea3e22a0883ecef3d0c6098fe3459fde720c119cc3fb541c2be0f1b2abb74f3"
+    },
+    "web/assets/accessible/diamond2.svg": {
+      "size": 7057,
+      "sha256": "86e5be0b2ba826675e093317c77d479c76a661966fde80c7d4298635d230c9ab"
+    },
+    "web/assets/accessible/diamond3.svg": {
+      "size": 7596,
+      "sha256": "2313d0c2925d75ae21bcbcac3d28ae5a1d1133e2bca965ec62f1365ce51547f5"
+    },
+    "web/assets/accessible/diamond4.svg": {
+      "size": 8161,
+      "sha256": "7f92a6543121454c19f2ee3afedbb75fb9cd892f4ebcf902f90be14f726bb05c"
+    },
+    "web/assets/accessible/diamond5.svg": {
+      "size": 8710,
+      "sha256": "2a84bd0410c79ec0aa3a86edc0f96d07d1a4d7f29849b7036a3e6acaf32e5e75"
+    },
+    "web/assets/accessible/diamond6.svg": {
+      "size": 9052,
+      "sha256": "f608f5d805127a91617ee1e1f7653b8cefd8ac724287576f4d0be60585c4f887"
+    },
+    "web/assets/accessible/diamond7.svg": {
+      "size": 10230,
+      "sha256": "9be7ea07beb4d4430938de66acbcd3a99cf89d17a1f016d8255fde45a5a3b127"
+    },
+    "web/assets/accessible/diamond8.svg": {
+      "size": 10191,
+      "sha256": "b4626cf3005709f531d0cab8bdc2bd40c03aef7a11ce3523e11a81606a88567d"
+    },
+    "web/assets/accessible/diamond9.svg": {
+      "size": 10730,
+      "sha256": "b2c6ada21bd5eeec0233133d6aebd2c70359b99c71f267075c5bbe37135363a9"
+    },
+    "web/assets/accessible/diamondAce.svg": {
+      "size": 6512,
+      "sha256": "f5295b74cfa712af46c41ce8a816b85c14d4edab1493c459d9ada045f96e68c9"
+    },
+    "web/assets/accessible/diamondJack.svg": {
+      "size": 370300,
+      "sha256": "31eba89df74713b43071045a26d594abf22d827ab3cd0950b4d9f0f6f2b06932"
+    },
+    "web/assets/accessible/diamondKing.svg": {
+      "size": 616913,
+      "sha256": "070ee47c13beb689e0419a5a4b61149ccfa6313461c5a64079c57e89156caf91"
+    },
+    "web/assets/accessible/diamondQueen.svg": {
+      "size": 341138,
+      "sha256": "a3dbf6489c3ae4826df60b11c6d312bba38595594e60d884e4036fc09bd8137f"
+    },
+    "web/assets/accessible/heart10.svg": {
+      "size": 10816,
+      "sha256": "660d3b880b43d8cd60ec326b17c349a8526af6e6c0c584e7eb3ce856c5216332"
+    },
+    "web/assets/accessible/heart2.svg": {
+      "size": 6792,
+      "sha256": "2eff605c11b667ae8c49d08a7341c4d39a4092553e8bf625730d055bb475f110"
+    },
+    "web/assets/accessible/heart3.svg": {
+      "size": 7281,
+      "sha256": "894a65c6f41f326e3f4e428dd8e778578cff571a9076539069bbe54fb2d2b2d9"
+    },
+    "web/assets/accessible/heart4.svg": {
+      "size": 7793,
+      "sha256": "6ec895528b77cd51bfe561fb7ccb8887947cbb7e0a84746121665d13f7f2d6db"
+    },
+    "web/assets/accessible/heart5.svg": {
+      "size": 8269,
+      "sha256": "2de8381911e1c028c824fc8cfe96a5609aba80cf85f4796ccd2d4042f0a0e591"
+    },
+    "web/assets/accessible/heart6.svg": {
+      "size": 8629,
+      "sha256": "13f1c41608df138ab953b242a763c4a1f5b8340720a53702c6e32d6751a589f7"
+    },
+    "web/assets/accessible/heart7.svg": {
+      "size": 9121,
+      "sha256": "4fc90f20edbdf184ebdd0cb9b133db21eb38fda72c53a8e86c5edd6a708546dd"
+    },
+    "web/assets/accessible/heart8.svg": {
+      "size": 9565,
+      "sha256": "043bb4a09738b780cedbddd50adc5b3aead91589bbe7f7be66f6cb48b1667fee"
+    },
+    "web/assets/accessible/heart9.svg": {
+      "size": 10064,
+      "sha256": "7cbfc2e348be6bbe06eb5b7d5c0847559609363534e4884d704ca4f7941796a3"
+    },
+    "web/assets/accessible/heartAce.svg": {
+      "size": 6282,
+      "sha256": "84a6ed39672b7b5fab50ac19034a7b3d8d8574510159c25e3cd6ab87597015fb"
+    },
+    "web/assets/accessible/heartJack.svg": {
+      "size": 617598,
+      "sha256": "3da531076422048440b3d9c88f38623845e56bc219fec22df1b3e0614d5857e8"
+    },
+    "web/assets/accessible/heartKing.svg": {
+      "size": 770513,
+      "sha256": "3661754ffa9230bed384dfb89c03ddedfc4d8edd114f2b3c14114f51603287c5"
+    },
+    "web/assets/accessible/heartQueen.svg": {
+      "size": 617987,
+      "sha256": "71ef8fb50b8f60ccc5701cf0240be2494eb07ebd6b4b462e865436a90a33b999"
+    },
+    "web/assets/accessible/level/club10.svg": {
+      "size": 13214,
+      "sha256": "aed576b0bc0933f63fda49e33255de99ab71b76cdba2583f64378c9803904448"
+    },
+    "web/assets/accessible/level/club2.svg": {
+      "size": 7846,
+      "sha256": "9b07c3ef37824745e4ad3bf2ef02a7f7961bdf04477b5300f786eaf98eeb35c7"
+    },
+    "web/assets/accessible/level/club3.svg": {
+      "size": 8512,
+      "sha256": "c6a8b6ea6b33937b31ca47bc5ae0e3a90ff8d4a83019424a713ced01bdaa5ba8"
+    },
+    "web/assets/accessible/level/club4.svg": {
+      "size": 9393,
+      "sha256": "8b137f254d2469cf98d0a341eb7272fd3f7bd41d4235fd48389ecde090e86084"
+    },
+    "web/assets/accessible/level/club5.svg": {
+      "size": 9912,
+      "sha256": "9826e7db883e049951d9f1f665369f18750bdf7a277039c75126653bbd702c0e"
+    },
+    "web/assets/accessible/level/club6.svg": {
+      "size": 10403,
+      "sha256": "37b4aab5a2e2a9aef5b7ef4f621eff7a6855819f15141950df5dd2ae4303f0a6"
+    },
+    "web/assets/accessible/level/club7.svg": {
+      "size": 11090,
+      "sha256": "a32db30be71b400c749e06fbb28380c03ae9d0982092647a61218ee4e7d92ae4"
+    },
+    "web/assets/accessible/level/club8.svg": {
+      "size": 11768,
+      "sha256": "ca86da12255340459c2f142ea01201f9281ac01225f0c4dbfe7420492f3044cc"
+    },
+    "web/assets/accessible/level/club9.svg": {
+      "size": 12434,
+      "sha256": "9fe740a149ce3ef518eb5b4b65dba8df63ee00ecb7b71b35528998df5cede7e6"
+    },
+    "web/assets/accessible/level/clubAce.svg": {
+      "size": 7170,
+      "sha256": "d204d42c5e2ea9e7a5842f4b5eb69059db3c1dc321f59f94d4d9e5ec4fd6bf18"
+    },
+    "web/assets/accessible/level/clubJack.svg": {
+      "size": 431122,
+      "sha256": "d355baafd0892269589dc5490c914b7ab7b0e14d8d888e065de43b3fe90376d1"
+    },
+    "web/assets/accessible/level/clubKing.svg": {
+      "size": 1051583,
+      "sha256": "49eb544045deceeb4d774ceff3cf5f6dabe246350c89010c26919ac2a56f2394"
+    },
+    "web/assets/accessible/level/clubQueen.svg": {
+      "size": 1042227,
+      "sha256": "e20bc8d75bf79fa80794c6e91a75f72c9b44800349e11bbf65b98021aa3e4d22"
+    },
+    "web/assets/accessible/level/diamond10.svg": {
+      "size": 11558,
+      "sha256": "f8322124e9faa784faa35212b78da23ec416da75dbd30b602289387411f5974f"
+    },
+    "web/assets/accessible/level/diamond2.svg": {
+      "size": 7341,
+      "sha256": "ce2cd575cb624e2ef8e6e3c968149e2c6b8137fc6b0226ecf1ec116f3cea75f7"
+    },
+    "web/assets/accessible/level/diamond3.svg": {
+      "size": 7880,
+      "sha256": "2e804ba10ba1b35f0e1ee06205bf4b7f93c43461cb7c081d0cd2325acbd60836"
+    },
+    "web/assets/accessible/level/diamond4.svg": {
+      "size": 8445,
+      "sha256": "b2ed7473c0ce721219ee0c56e74e932e301069a8c2c92580182e1a7fbcc639f9"
+    },
+    "web/assets/accessible/level/diamond5.svg": {
+      "size": 8994,
+      "sha256": "5f93124eb79e5adab3394f3c3c490eb450fa9d254eeb6a9cf7395205d78574af"
+    },
+    "web/assets/accessible/level/diamond6.svg": {
+      "size": 9336,
+      "sha256": "e6c1c5a3d7e4726ec2642bd44413d459b85bcb3bf2edaf41c1545368a299aa78"
+    },
+    "web/assets/accessible/level/diamond7.svg": {
+      "size": 10514,
+      "sha256": "72d8529eb0d59260b4284702deb255d9f0cb7ec3b2760178d8d93fd0f34e407f"
+    },
+    "web/assets/accessible/level/diamond8.svg": {
+      "size": 10475,
+      "sha256": "6ddc8c30b117f6c843d5f66217a1bd329763b99e5b5f28df4c4e5a18e2a66eda"
+    },
+    "web/assets/accessible/level/diamond9.svg": {
+      "size": 11014,
+      "sha256": "3b786bad94bce873e7e12f74dc7e719d6ea240f82dbb9d574c4290df8ebc9685"
+    },
+    "web/assets/accessible/level/diamondAce.svg": {
+      "size": 6796,
+      "sha256": "dec9df8e2c4c538d1bc2dc7f5580af35c841da9ff5ffcd97c4712c8581a5659a"
+    },
+    "web/assets/accessible/level/diamondJack.svg": {
+      "size": 370584,
+      "sha256": "424b4aae53017bf8407672d4e8e97116f8a22df60911395f92994bf5885ac545"
+    },
+    "web/assets/accessible/level/diamondKing.svg": {
+      "size": 617197,
+      "sha256": "1975537302ae5a7ec149f209575fe5d4a679b57066c946344b0d2824e279ca30"
+    },
+    "web/assets/accessible/level/diamondQueen.svg": {
+      "size": 341422,
+      "sha256": "1cbf0c16d789f2734905490f31a1fadd576ba2fd5c223da558225287b461f72d"
+    },
+    "web/assets/accessible/level/heart10.svg": {
+      "size": 11100,
+      "sha256": "d957d9a2982b095afa933ad8a463c0e6b1f9e32e9ddee027d4da9639bfcb9b63"
+    },
+    "web/assets/accessible/level/heart2.svg": {
+      "size": 7076,
+      "sha256": "f3125b91656c9324bc674a99b5ed4ce9846c282c5716c0e7e9f8e3f2ee89c6d8"
+    },
+    "web/assets/accessible/level/heart3.svg": {
+      "size": 7565,
+      "sha256": "b4297a8081de0567946bc15d3304f0f3a30c932432a4396cf60fd63a628cf919"
+    },
+    "web/assets/accessible/level/heart4.svg": {
+      "size": 8077,
+      "sha256": "1674a9f97ec30e9d27688629ac7c85b339c546237453da0cfff098a9b9fbe10c"
+    },
+    "web/assets/accessible/level/heart5.svg": {
+      "size": 8553,
+      "sha256": "f552aa406e0349f8ff6f7b61c35687a02062c8ab94095af537d1d101715cd4f6"
+    },
+    "web/assets/accessible/level/heart6.svg": {
+      "size": 8913,
+      "sha256": "e9d61fed74f0f48ead2cc8e9ac04d94eeb551053c31774c0ec1061c94b6d6a2a"
+    },
+    "web/assets/accessible/level/heart7.svg": {
+      "size": 9405,
+      "sha256": "5914d5ecc7668ba45e73e6f5ccdf661362074e4ae478011266728fe6449fbd0e"
+    },
+    "web/assets/accessible/level/heart8.svg": {
+      "size": 9849,
+      "sha256": "feb1f161ccb431b9e75daf034616a889713eef9810644ca0d7bd4a76a772f180"
+    },
+    "web/assets/accessible/level/heart9.svg": {
+      "size": 10348,
+      "sha256": "9946c952811d84c5d814462e4688f56f5fa7f9a7fd59618c374364e62ec6fc63"
+    },
+    "web/assets/accessible/level/heartAce.svg": {
+      "size": 6566,
+      "sha256": "2f0e8c9adbe9f860957be1c0971ef4748dcff4b121debb61ac78c672bc61478a"
+    },
+    "web/assets/accessible/level/heartJack.svg": {
+      "size": 617882,
+      "sha256": "0beee0b01f03b7f7383b25f607ac33688d8b6a2706a2b9847dd373f51d759257"
+    },
+    "web/assets/accessible/level/heartKing.svg": {
+      "size": 770797,
+      "sha256": "865eb2228e7b5929dbe14156e36002d181e1805550ef3031515fadcab00115c6"
+    },
+    "web/assets/accessible/level/heartQueen.svg": {
+      "size": 618271,
+      "sha256": "1f0c2e2e90f959f8630ee58e45ead4e519af4217845e0ed3ccd43dd877736938"
+    },
+    "web/assets/accessible/level/spade10.svg": {
+      "size": 12439,
+      "sha256": "b45d15ef28d21c4a889475990c11a8e37607396db7f452b62fa2e36ea74f4bef"
+    },
+    "web/assets/accessible/level/spade2.svg": {
+      "size": 7537,
+      "sha256": "c0a242c3f434b79410840fb420bcc5ea1797635cb2c9d2aeb456abcfe1b3b90a"
+    },
+    "web/assets/accessible/level/spade3.svg": {
+      "size": 8177,
+      "sha256": "325a022bee1692c846af731ecde5dc95cee8c511a401ca6cddc08fa0fbe6e10d"
+    },
+    "web/assets/accessible/level/spade4.svg": {
+      "size": 8830,
+      "sha256": "d68e2568e68447350cd892c07578d75a285f6eb0d1708ed25eed20d8750ff883"
+    },
+    "web/assets/accessible/level/spade5.svg": {
+      "size": 9448,
+      "sha256": "086673fe2c605e95a08de854d0d11c40d69510a43f6f969fa19641cc89ea6e65"
+    },
+    "web/assets/accessible/level/spade6.svg": {
+      "size": 9914,
+      "sha256": "8cd2a636f9fbc9dda4eda6fd82148443cb4e2878ea0e0b3ee76a9a9540b00e96"
+    },
+    "web/assets/accessible/level/spade7.svg": {
+      "size": 10539,
+      "sha256": "a377b8946f338647afad631f9e3078eacc252db39d597192898c334abd5f9dd2"
+    },
+    "web/assets/accessible/level/spade8.svg": {
+      "size": 11142,
+      "sha256": "017ac4d95683db6bb3b110b522a5d0927bd2ae4367f12e88d2179868198a4f7a"
+    },
+    "web/assets/accessible/level/spade9.svg": {
+      "size": 11754,
+      "sha256": "7b337b49f418bca54bb0501ece02d5a57c9621497b11048d2517e74396d68c01"
+    },
+    "web/assets/accessible/level/spadeAce.svg": {
+      "size": 6933,
+      "sha256": "572072986cd0180883e2d9b5f90496634b611fc49d798290437f6581f6f60b0b"
+    },
+    "web/assets/accessible/level/spadeJack.svg": {
+      "size": 690770,
+      "sha256": "929e2e9ababd564493e28a92f9bccbc596f7d8829814b17a8ef108917afdd4b6"
+    },
+    "web/assets/accessible/level/spadeKing.svg": {
+      "size": 392548,
+      "sha256": "beec236801b7b07f29d96c942da9d8317ba6f1979e796ee475d67bd5d3a31af1"
+    },
+    "web/assets/accessible/level/spadeQueen.svg": {
+      "size": 426265,
+      "sha256": "848045559b30a409fdc825b5f61f5ee5c2b94dc1a9ed093573d5e57b9be9fad4"
+    },
+    "web/assets/accessible/redJoker.svg": {
+      "size": 12136,
+      "sha256": "a5ac76e190f2801d5e930b8e47d13ab23d9d9b891d695ce87233b594eedf9dbd"
+    },
+    "web/assets/accessible/spade10.svg": {
+      "size": 12155,
+      "sha256": "c75ea1f3b40dd12d18e2d2f3686ddb3625bc7a9a493ac8ed1e9f2c26940afc5c"
+    },
+    "web/assets/accessible/spade2.svg": {
+      "size": 7253,
+      "sha256": "b42350e1c34d672323119870aab863d684e8ca385070f5606702819809ce0658"
+    },
+    "web/assets/accessible/spade3.svg": {
+      "size": 7893,
+      "sha256": "06dcdf95fffddde44a5ab71cc9ef10af6225bb375737cf222b5522a936b6c67e"
+    },
+    "web/assets/accessible/spade4.svg": {
+      "size": 8546,
+      "sha256": "32e6aee2244539396cbe83a7b0cae9fb2e709e53d45c69141a1e35be1b2e21cd"
+    },
+    "web/assets/accessible/spade5.svg": {
+      "size": 9164,
+      "sha256": "3dac0a8bb7d6567c1656b9dff45a1987f35e2c1146e7b7a08d6130f89e066560"
+    },
+    "web/assets/accessible/spade6.svg": {
+      "size": 9630,
+      "sha256": "5d3781d2875438b0ceeffc717f562c5dc122a2cc8b4abe015f700d7b8d17c212"
+    },
+    "web/assets/accessible/spade7.svg": {
+      "size": 10255,
+      "sha256": "bcb5728b5ffd961b34ef84d7bc03d80abee0d8de6075e4c051f1bfbba28dcd53"
+    },
+    "web/assets/accessible/spade8.svg": {
+      "size": 10858,
+      "sha256": "b9d0615a4fd202b7b330d2c93da2674c55a650137cafd594a36ea05b80a67a8a"
+    },
+    "web/assets/accessible/spade9.svg": {
+      "size": 11470,
+      "sha256": "9b24ea953ccd58330e3d50da717e095ca77c3421ee3f700a08280cd66a184472"
+    },
+    "web/assets/accessible/spadeAce.svg": {
+      "size": 6649,
+      "sha256": "1b9ba3c48746d22490e644cc3d6381f9a633d2ba51625aace01c6cf5adfd9dc4"
+    },
+    "web/assets/accessible/spadeJack.svg": {
+      "size": 690486,
+      "sha256": "78d119d1671dc3ae69fde61175e7488479b06ded66cf6c7f55f8cb49466cdc5b"
+    },
+    "web/assets/accessible/spadeKing.svg": {
+      "size": 392264,
+      "sha256": "4380fae7ef28297ece77a1c051bc55e1c9ac6a707f508c486868d793a92fa6ef"
+    },
+    "web/assets/accessible/spadeQueen.svg": {
+      "size": 425981,
+      "sha256": "1356ba0baf788f69b73b51e5eb255b668385eb1432685d8c95215dde0a89207b"
+    },
+    "web/assets/avatars/historical-figures-v1.png": {
+      "size": 3619871,
+      "sha256": "62dedc87a71d2f4cee2cebee8c01ba85371d67c8afccd43a96c2e27b7cc271f8"
+    },
+    "web/assets/avatars/historical-figures-v1.prompt.txt": {
+      "size": 1137,
+      "sha256": "79774236a4b9225f62f2b4d47c8d7208631ccf119bcef34ab9fdb84e31636bdb"
+    },
+    "web/assets/avatars/mo-bai.png": {
+      "size": 2052374,
+      "sha256": "2dbee79de99d7ee6b5bca86079c23543fa2db7ff99382ac1b02cf69e0e3093e3"
+    },
+    "web/assets/avatars/qing-lan.png": {
+      "size": 1953197,
+      "sha256": "863131e409ca5bb3db9d0f6c2f3a2ffab8afc0717d9444f22f91d862fc6ec966"
+    },
+    "web/assets/avatars/zhi-qiu.png": {
+      "size": 2075089,
+      "sha256": "580c4c07d902cf83329f6ac13d9e658d823044a7fc2d0823ca28f40d4cb64edb"
+    },
+    "web/assets/brand/app-icon.png": {
+      "size": 29178,
+      "sha256": "aa8bb3eaa98e71f4c50825831c0f7c8a0e372b466ebcd3a810be61c3602766a5"
+    },
+    "web/assets/fairWorker-CTCwrT35.js": {
+      "size": 84591,
+      "sha256": "407c27f33b8748af0f87ade911b44a01d69c8da01b2d45fd0495e1e835a1fd1b"
+    },
+    "web/assets/index-CJeykJr1.js": {
+      "size": 236567,
+      "sha256": "bd451a02eed9e76fc060608f2c3bcf725061c55f636a29e2e8a07f6d5803e06c"
+    },
+    "web/assets/index-akMK8lev.css": {
+      "size": 20338,
+      "sha256": "d45ceebf7e1d40d5fe63bfab5ec5e515117f9539985c0ef94732427bd81ec3f9"
+    },
+    "web/assets/jumbo/blackJoker.svg": {
+      "size": 12082,
+      "sha256": "8e8ef0df6c630a0347714eb3423a0b711fe80c8f4be541f4191011d35666e26a"
+    },
+    "web/assets/jumbo/blueBack.svg": {
+      "size": 250590,
+      "sha256": "13794ea7890f254971af7c8b0edd77e927d64b76c6199ec638c39f61436ab52b"
+    },
+    "web/assets/jumbo/club10.svg": {
+      "size": 12873,
+      "sha256": "e4949197641bdc211f11b11594dcea112df04d6570984314a13b2c9c90d64ad1"
+    },
+    "web/assets/jumbo/club2.svg": {
+      "size": 7564,
+      "sha256": "8b48a747be324b34d2127094b7660364b0f402dafec2e41b283cfbd24cd68820"
+    },
+    "web/assets/jumbo/club3.svg": {
+      "size": 8274,
+      "sha256": "e605e58528d3baa9f21cbc9ec7092aad045b9b08ac464e3b88e2c9207b924b49"
+    },
+    "web/assets/jumbo/club4.svg": {
+      "size": 9155,
+      "sha256": "d138a67e3f456f13d7fa010ef6284bf76c49bea6e7f8790ec691e7d5bf3e1a9f"
+    },
+    "web/assets/jumbo/club5.svg": {
+      "size": 9674,
+      "sha256": "170ed910228b2fa23c6f2e92d16bd776e902a89fd5c2a5b0b00a7428fc4751be"
+    },
+    "web/assets/jumbo/club6.svg": {
+      "size": 10165,
+      "sha256": "6e5efe3336d2b35cce4d4418c17098d69ec8d168fdaf0038d8019111e82feeff"
+    },
+    "web/assets/jumbo/club7.svg": {
+      "size": 10852,
+      "sha256": "7cdbd79f81a361deb63036d9c2252cf1a49fbe07a8a628e868641ee13d868b51"
+    },
+    "web/assets/jumbo/club8.svg": {
+      "size": 11530,
+      "sha256": "38aed134a2a2eaf68b3d4d9f7b691349a06081ae6330c8a4edef2ac00f225957"
+    },
+    "web/assets/jumbo/club9.svg": {
+      "size": 12196,
+      "sha256": "2bb4fb6aabfbb95ba43172e9fa54665d00bb9fd6715c3fb3bac9d79fc9925813"
+    },
+    "web/assets/jumbo/clubAce.svg": {
+      "size": 6932,
+      "sha256": "8bd3944b0dd715caa0a0a9073a5c9817a7d607265bc4965f9ffb4fe06f1397da"
+    },
+    "web/assets/jumbo/clubJack.svg": {
+      "size": 458822,
+      "sha256": "15ca481724d004b5b5cccfcb0c7a3449d21adc26f99dc5dbfe80a8f9e313a5d8"
+    },
+    "web/assets/jumbo/clubKing.svg": {
+      "size": 1134081,
+      "sha256": "7420d4009d0fcdd1fb17523695a2e7083702579239968c7002048a0d7879748b"
+    },
+    "web/assets/jumbo/clubQueen.svg": {
+      "size": 1113886,
+      "sha256": "eb925da6d6ecf94b90794b94bfb5d76b498dde6f87c49cba6f28b9a022294410"
+    },
+    "web/assets/jumbo/diamond10.svg": {
+      "size": 11274,
+      "sha256": "71c7441e2499e2bd6eb4cff79b2fd78f37637cacf0fdcddb1ae3c891f585d13f"
+    },
+    "web/assets/jumbo/diamond2.svg": {
+      "size": 7013,
+      "sha256": "e2a067c995d2c3a0e3645b41e1de85fd5f88e1bd4392949353728fa02f34eb04"
+    },
+    "web/assets/jumbo/diamond3.svg": {
+      "size": 7596,
+      "sha256": "9b73d78b39850a4ffb7313b037934d62bc515992c9debc3266ef849d9b985b1e"
+    },
+    "web/assets/jumbo/diamond4.svg": {
+      "size": 8161,
+      "sha256": "93f6dbea69ee66561448b33a15332ef61355f4596d2ec67296a837974984947f"
+    },
+    "web/assets/jumbo/diamond5.svg": {
+      "size": 8710,
+      "sha256": "90a307a66a17afa219336cfcbf9f1315378c0c811d62dc7f4e6f695a0e9e3c23"
+    },
+    "web/assets/jumbo/diamond6.svg": {
+      "size": 9052,
+      "sha256": "7491a05af117ee47ba1843702cca8fadb66a6ee0d2aedda95073a745562f1935"
+    },
+    "web/assets/jumbo/diamond7.svg": {
+      "size": 10342,
+      "sha256": "14f96e9e34181bbacfc88ec2de2bc277e05d36ef9b23edef7ea65062c21d053c"
+    },
+    "web/assets/jumbo/diamond8.svg": {
+      "size": 10191,
+      "sha256": "a0bba6a717f3f1b49c566d3573b204d9e50d55c58450dc02a144a1019c4a5a5b"
+    },
+    "web/assets/jumbo/diamond9.svg": {
+      "size": 10730,
+      "sha256": "6b8f84ef87d4da43b1932ef51be95304e5deca6a96a48834bd18ad68c0cc7515"
+    },
+    "web/assets/jumbo/diamondAce.svg": {
+      "size": 6512,
+      "sha256": "c6d3147b12aed8000ddb148207f54231d4b05996c334fdb1ae580b8d542b2e2b"
+    },
+    "web/assets/jumbo/diamondJack.svg": {
+      "size": 398919,
+      "sha256": "a7efd85e8f0905cebcd0c8efed96999286ea2f446b49e35ebaf7b330788f23d5"
+    },
+    "web/assets/jumbo/diamondKing.svg": {
+      "size": 616968,
+      "sha256": "bba82786ec4a36ef6eb60b3b31b8b6cfdf0999f10c046f79fcf5ff6ec0bfee2b"
+    },
+    "web/assets/jumbo/diamondQueen.svg": {
+      "size": 341138,
+      "sha256": "2dd5e7db6fa8e348d82aba34d758f1fc4828931482bb2cc2d6334886775e290a"
+    },
+    "web/assets/jumbo/heart10.svg": {
+      "size": 10804,
+      "sha256": "60dc4c8789551d86f0600f0e85ce3d18a7888a1368cbefd0bc25bba1596087f5"
+    },
+    "web/assets/jumbo/heart2.svg": {
+      "size": 6780,
+      "sha256": "0e6adb210b4f29f22e4fe7cf3ce62a7fe33a8d841bac450a7e813434ba2fc6e7"
+    },
+    "web/assets/jumbo/heart3.svg": {
+      "size": 7269,
+      "sha256": "9caa73db46efe414b106bfbfeae0800d7d2e33e8f618f19b5b9897abcbe9b928"
+    },
+    "web/assets/jumbo/heart4.svg": {
+      "size": 7781,
+      "sha256": "e006092fb17351b6df64d8b6f876528c746f8bb48af37bf7bcea19872fb63b6a"
+    },
+    "web/assets/jumbo/heart5.svg": {
+      "size": 8257,
+      "sha256": "5ce52cf6d15870328c8f22cd4df366c1125de90864115ab9e60b2478aee98bb5"
+    },
+    "web/assets/jumbo/heart6.svg": {
+      "size": 8617,
+      "sha256": "cda9631a6545c10baa0ccf332e60cceb8d5f7b674900123128ce45b0f9b40080"
+    },
+    "web/assets/jumbo/heart7.svg": {
+      "size": 9109,
+      "sha256": "c783155dee65e58296d190f343b156da97d27624abe7a98b68b7af3c6fd68eb3"
+    },
+    "web/assets/jumbo/heart8.svg": {
+      "size": 9578,
+      "sha256": "d82d6a82465a924f1821ba9f8abebec205d4530987a32de28eafb8d507f7cae2"
+    },
+    "web/assets/jumbo/heart9.svg": {
+      "size": 10052,
+      "sha256": "41709dedf1429d1ac5da313c4b3d93cd1b7e84e0a48e1bd014d4f3fc8cfa3d08"
+    },
+    "web/assets/jumbo/heartAce.svg": {
+      "size": 6339,
+      "sha256": "dfbc90c2af253a25754f606735ad953a9c75c61c3ea75ca0ae432e4cee9a354d"
+    },
+    "web/assets/jumbo/heartJack.svg": {
+      "size": 617586,
+      "sha256": "9c8257f00fb8319ec4c470318df8008b44a42c8ff2334f87b1661bbd8068b6f5"
+    },
+    "web/assets/jumbo/heartKing.svg": {
+      "size": 770501,
+      "sha256": "9a0e45927a026e17210a49f2654fae7fea4cdf7a1720081775dadb74c6309369"
+    },
+    "web/assets/jumbo/heartQueen.svg": {
+      "size": 618032,
+      "sha256": "e485fc2d97ca67bb2ed7b53310c7cb9a8e011f9b1db276fbfd2065df61f3c5a9"
+    },
+    "web/assets/jumbo/level/club10.svg": {
+      "size": 13157,
+      "sha256": "0bb087f0cf3cce488d70f8250ace94a21a42d44f935692efd172e49f012c68bf"
+    },
+    "web/assets/jumbo/level/club2.svg": {
+      "size": 7848,
+      "sha256": "c0dcddbc29ccb92175348c2f6604d0b8a8252f62e70e9d1a65ec500266e7ef8b"
+    },
+    "web/assets/jumbo/level/club3.svg": {
+      "size": 8558,
+      "sha256": "b673eb603e2b023c552a65ab84a6f6fd40bf73d030e58747bdd7fb2f5b0750a1"
+    },
+    "web/assets/jumbo/level/club4.svg": {
+      "size": 9439,
+      "sha256": "edadea849acc570f9913fc6bc8b8882cf5dcd3ee9496c455682941b47b506926"
+    },
+    "web/assets/jumbo/level/club5.svg": {
+      "size": 9958,
+      "sha256": "06ffcfb737222376f51169ff1bed00678703296b9e5dc17138b49ff086267721"
+    },
+    "web/assets/jumbo/level/club6.svg": {
+      "size": 10449,
+      "sha256": "e613b7c0e7d724a52d502485eb37e1260557e7f8d05e9078e0115ef28ae5e9a2"
+    },
+    "web/assets/jumbo/level/club7.svg": {
+      "size": 11136,
+      "sha256": "62f189445edd932dd4372f818c217d85e4b90ee7f442e42f6ec5919acc262010"
+    },
+    "web/assets/jumbo/level/club8.svg": {
+      "size": 11814,
+      "sha256": "e9db0d24e88adc51f1f31a24a62c1696545cac2782247c416c099ea8ff15f691"
+    },
+    "web/assets/jumbo/level/club9.svg": {
+      "size": 12480,
+      "sha256": "61fbe2a400223610580fd4963ca333247d38006107379dee8bf0507a45566e0e"
+    },
+    "web/assets/jumbo/level/clubAce.svg": {
+      "size": 7216,
+      "sha256": "6aaa314c4c5f1eb59da93d59a13c8389b46ec2e664082b5096e6dae84b8ecf2f"
+    },
+    "web/assets/jumbo/level/clubJack.svg": {
+      "size": 459106,
+      "sha256": "7f7d00f5c7ac9afba8c4cf6cd987a85a55835840e384cd4df1d3eac536bbfbcc"
+    },
+    "web/assets/jumbo/level/clubKing.svg": {
+      "size": 1134365,
+      "sha256": "abb2392e3af4988de133bd36075a53fc88581c65e80fd79c647c8806061b71d4"
+    },
+    "web/assets/jumbo/level/clubQueen.svg": {
+      "size": 1114170,
+      "sha256": "f289ab8bdf65eddb33872957c955240a976af1d52e32f4b20c2df43fb3c27858"
+    },
+    "web/assets/jumbo/level/diamond10.svg": {
+      "size": 11558,
+      "sha256": "05969972c4f6fc5bb0998b6e53b5d16202e336f488861936d6264519782bcc71"
+    },
+    "web/assets/jumbo/level/diamond2.svg": {
+      "size": 7297,
+      "sha256": "c64b508bcf153fdcb5d8838d0b76723e3e1b6c2bd97012fda4b9cdd650725dca"
+    },
+    "web/assets/jumbo/level/diamond3.svg": {
+      "size": 7880,
+      "sha256": "b3d0e888b0057c346a51f47a7880822e3c8774ddce0b772519f679e43f502d71"
+    },
+    "web/assets/jumbo/level/diamond4.svg": {
+      "size": 8445,
+      "sha256": "75036a1d7ac53db84866897ce176c7bc70d547ae6997a3efbcfdfb0d66203ca5"
+    },
+    "web/assets/jumbo/level/diamond5.svg": {
+      "size": 8994,
+      "sha256": "7424aebe38920829f2cf1da88901aaa3ecc4c819724f62fbef5c381b2f23441e"
+    },
+    "web/assets/jumbo/level/diamond6.svg": {
+      "size": 9336,
+      "sha256": "54edb28b7013aec4d9bfcf9fc12787faa2cd16417b4556834368a2ee8f61d671"
+    },
+    "web/assets/jumbo/level/diamond7.svg": {
+      "size": 10626,
+      "sha256": "f7101db87ac06fbd534856a032385f140a66626cdd10207ddba669955b3362c5"
+    },
+    "web/assets/jumbo/level/diamond8.svg": {
+      "size": 10475,
+      "sha256": "e580ac19f4f3e756f28c8b8891cf489487050f2d48737cb5c095a91bcd5d693c"
+    },
+    "web/assets/jumbo/level/diamond9.svg": {
+      "size": 11014,
+      "sha256": "dbafc444cc9025945fedbd6db54c01ea4adeff0d3125167f94625188beccf1fc"
+    },
+    "web/assets/jumbo/level/diamondAce.svg": {
+      "size": 6796,
+      "sha256": "51d1f4797a82e294ef6041c05f5fd9db4bf790577a46477dabe6164a5cbc5608"
+    },
+    "web/assets/jumbo/level/diamondJack.svg": {
+      "size": 399203,
+      "sha256": "4f0da5a74c3b6b9fd8ae24a92a0924d60fa3654d64708e5ba27d36a9de75b7fa"
+    },
+    "web/assets/jumbo/level/diamondKing.svg": {
+      "size": 617252,
+      "sha256": "385de625cbce025453c6bd2df4e11c7d88571c6f10b88385519ef19a8984c4f6"
+    },
+    "web/assets/jumbo/level/diamondQueen.svg": {
+      "size": 341422,
+      "sha256": "cd385a2e3e1166e9f51e8aca97fa9307c7120594d75e7c70a3f9c6e865055687"
+    },
+    "web/assets/jumbo/level/heart10.svg": {
+      "size": 11088,
+      "sha256": "10fc09ae917a510b35e8791bfd05097f69242955a786c01d40e4270d44b52008"
+    },
+    "web/assets/jumbo/level/heart2.svg": {
+      "size": 7064,
+      "sha256": "7ffd2291a62c50103cef910a37381d9943e257868e37824864a6348693d1918f"
+    },
+    "web/assets/jumbo/level/heart3.svg": {
+      "size": 7553,
+      "sha256": "362a363c2b74f19dbafbe06c46bd6264d0973acfb5e1ac28d4ec793e16b3103e"
+    },
+    "web/assets/jumbo/level/heart4.svg": {
+      "size": 8065,
+      "sha256": "0e4079f48b628d4bef266843e158c05aca5c7e4bb386bc5dda2fe944451132d0"
+    },
+    "web/assets/jumbo/level/heart5.svg": {
+      "size": 8541,
+      "sha256": "d1bf4a66317ded2462b907f4909d678f5a6f11aee2a975cf6b614bf9ae4332ca"
+    },
+    "web/assets/jumbo/level/heart6.svg": {
+      "size": 8901,
+      "sha256": "147863857dc588b7a282c8ccfff7285678c18d8b2fc1c31b295fe144733d4c1f"
+    },
+    "web/assets/jumbo/level/heart7.svg": {
+      "size": 9393,
+      "sha256": "1638160c4f660f7ac5502f5169251972a9c6b6400e7d8191b6b98a594cddd500"
+    },
+    "web/assets/jumbo/level/heart8.svg": {
+      "size": 9862,
+      "sha256": "d4b543444e1fee98a3b6b28697cf194e7aa93780901e679c7010c50960460be9"
+    },
+    "web/assets/jumbo/level/heart9.svg": {
+      "size": 10336,
+      "sha256": "4a64a7d59dd49659103c45c87de72dda2f06a691827888c7e3674ca0fb62e95b"
+    },
+    "web/assets/jumbo/level/heartAce.svg": {
+      "size": 6623,
+      "sha256": "aaa6b3175f8664681413aac2c39e976685f347ff75ef7da5414aff3937f8628f"
+    },
+    "web/assets/jumbo/level/heartJack.svg": {
+      "size": 617870,
+      "sha256": "4594ff7c2cda3711c8d1d34da6ae642f23a4fe4f02e58550337e1a496c21849e"
+    },
+    "web/assets/jumbo/level/heartKing.svg": {
+      "size": 770785,
+      "sha256": "d36829966eb54005533c7d2a298990f8af23cb96bb99719b45168b357af97265"
+    },
+    "web/assets/jumbo/level/heartQueen.svg": {
+      "size": 618316,
+      "sha256": "4f9431e596be25b20621f6a92d1a1b7df0a6decffde1e1201f0bdcb43f8d2e87"
+    },
+    "web/assets/jumbo/level/spade10.svg": {
+      "size": 12484,
+      "sha256": "5d1540746b944050443bc0129d41134f1dfacff320ebc0fb961b1a0576365ce6"
+    },
+    "web/assets/jumbo/level/spade2.svg": {
+      "size": 7593,
+      "sha256": "4eea27c0b83d6d394257a80ad4effe27004962d73ce50022c8102e4079f89bd6"
+    },
+    "web/assets/jumbo/level/spade3.svg": {
+      "size": 8222,
+      "sha256": "80c75241698079205ed3d0149b0a82ecfcee2defe6cf6a946208e28b348e1386"
+    },
+    "web/assets/jumbo/level/spade4.svg": {
+      "size": 8875,
+      "sha256": "bad4cb02b38ed5b485019793540dd77eee809ba45d62fead3cc8b28da7bad4a8"
+    },
+    "web/assets/jumbo/level/spade5.svg": {
+      "size": 9493,
+      "sha256": "06dd8f0f615ab214a5dd58f976c4ce198a1de0e4f2e9aadca4cad344b617f23d"
+    },
+    "web/assets/jumbo/level/spade6.svg": {
+      "size": 9959,
+      "sha256": "9dfeaea79f081d169ffbb23a9912815d60e2a30a2a1f3f759db3b8c3c1745017"
+    },
+    "web/assets/jumbo/level/spade7.svg": {
+      "size": 10584,
+      "sha256": "4e6f0a0b812f84b243f3c25f1d38bd3e399c7d6cb27993ac865b901d3caae3b6"
+    },
+    "web/assets/jumbo/level/spade8.svg": {
+      "size": 11187,
+      "sha256": "09e0fe71a9cb7516bba8e37f55c334d88d73aa60adcdbb82c9d57266390291de"
+    },
+    "web/assets/jumbo/level/spade9.svg": {
+      "size": 11799,
+      "sha256": "f2f4b5cb6bc7d82c7b940fac1f5cf71145b3f42f7e16795dda480d22735d5b2e"
+    },
+    "web/assets/jumbo/level/spadeAce.svg": {
+      "size": 6978,
+      "sha256": "28526fad83e3de6b44b831a4c9ced0e233073728151248993a16d00cf8610dc5"
+    },
+    "web/assets/jumbo/level/spadeJack.svg": {
+      "size": 690815,
+      "sha256": "28210a9c51c02be4d6869517115a5bfee16498e002c5ecbaa31096cd7890333f"
+    },
+    "web/assets/jumbo/level/spadeKing.svg": {
+      "size": 392593,
+      "sha256": "9a77ecf35ad1d006f935a5670815f6eadb856e272adc063f517309d7c885b238"
+    },
+    "web/assets/jumbo/level/spadeQueen.svg": {
+      "size": 426310,
+      "sha256": "7ba0bb227a1723379c008cb21b9d66b99a9da22f802c61315276cd92e2aa896c"
+    },
+    "web/assets/jumbo/redJoker.svg": {
+      "size": 12136,
+      "sha256": "08cdb87583c7b55cb36a97d20bd8f05c3ed92782bac674de7c2d14a395c647ca"
+    },
+    "web/assets/jumbo/spade10.svg": {
+      "size": 12200,
+      "sha256": "0c71562fc96daf17a61db33ffa8509a98ec4ef4df77ffa378192b88b9c0594ed"
+    },
+    "web/assets/jumbo/spade2.svg": {
+      "size": 7309,
+      "sha256": "f1e84b4864736cd07bfc4142c93daeef9fee442226fa60c56e82bce7fd97b2a0"
+    },
+    "web/assets/jumbo/spade3.svg": {
+      "size": 7938,
+      "sha256": "b4f0f31939bee5bbfd012749c5b7b6156393421f337e8910e06d29c6e4504b09"
+    },
+    "web/assets/jumbo/spade4.svg": {
+      "size": 8591,
+      "sha256": "b18847a7158716117ce77a384e75f9c239f26c9d977fce6723dcd2ca689cb3dc"
+    },
+    "web/assets/jumbo/spade5.svg": {
+      "size": 9209,
+      "sha256": "b018550000669a1229c67f1e97aa4db00ea291b72a25cdfad9888ecf97910f0f"
+    },
+    "web/assets/jumbo/spade6.svg": {
+      "size": 9675,
+      "sha256": "0813d176fd452a72bd4827f9ce11abb14572229d66a5e0685a82da04e4968a39"
+    },
+    "web/assets/jumbo/spade7.svg": {
+      "size": 10300,
+      "sha256": "be2fdc90c312e5c918d337ae7b24da515e5496c13488dd94279b0b8da00ce0b5"
+    },
+    "web/assets/jumbo/spade8.svg": {
+      "size": 10903,
+      "sha256": "0e801f602fad8fbda8acc909398f3b527d959b98d4c6cc928ebe7cec9a911e91"
+    },
+    "web/assets/jumbo/spade9.svg": {
+      "size": 11515,
+      "sha256": "ccdb21dffd82d5b4594a50c4e004ef92ffeb2ea961bf10b654e859404de36699"
+    },
+    "web/assets/jumbo/spadeAce.svg": {
+      "size": 6694,
+      "sha256": "f26ba79bd78b5bdeb6ba7fa74c3df27366bbc86708c974efff0ea89a7c1732d7"
+    },
+    "web/assets/jumbo/spadeJack.svg": {
+      "size": 690531,
+      "sha256": "42866dffa8a9524698e76a39c399648eba0244b94af7468ae838da510ca515e2"
+    },
+    "web/assets/jumbo/spadeKing.svg": {
+      "size": 392309,
+      "sha256": "a7ab767de1a3a75cf3b90dd9663440c4623223e1e93bcf8dca4e182451c59de9"
+    },
+    "web/assets/jumbo/spadeQueen.svg": {
+      "size": 426026,
+      "sha256": "b63fc1f68e648aee8f0be8f8b42a5abc33fc21dbd373d4affb84c4e4e7d8e4d6"
+    },
+    "web/assets/minimal/blackJoker.svg": {
+      "size": 501,
+      "sha256": "91696816a267f085101ffa423736c7e10044a1be3019d185ddfd422119578a2c"
+    },
+    "web/assets/minimal/club10.svg": {
+      "size": 702,
+      "sha256": "e43c8c8e5e06ee5417380101abfd4a0d8a9a1a8b814f08cdc446dc7c253a281a"
+    },
+    "web/assets/minimal/club2.svg": {
+      "size": 700,
+      "sha256": "fcfae8ae62b76170e8fdb3fe224f8ffab1715002be0850c999fc9a2c157dd0d0"
+    },
+    "web/assets/minimal/club3.svg": {
+      "size": 700,
+      "sha256": "d64aa6daab3988389fd7802fa116772302a4fcac9281cd90eae34535018c22f2"
+    },
+    "web/assets/minimal/club4.svg": {
+      "size": 700,
+      "sha256": "528b1aab98a25b1e00e53a8cffe4a99682912c112061de59dad6e818f2105795"
+    },
+    "web/assets/minimal/club5.svg": {
+      "size": 700,
+      "sha256": "ff2507f7787751e2380bc8c09beee1914b385f9f6c78ba5081d5861575a2d475"
+    },
+    "web/assets/minimal/club6.svg": {
+      "size": 700,
+      "sha256": "b08655a7ed801a9a64bbc2cfbb944570d51312afed08fd61034ee632c8b14efb"
+    },
+    "web/assets/minimal/club7.svg": {
+      "size": 700,
+      "sha256": "7c874bfdc7aea745f354de4411cec6d0fda9f08ccf873e8238efc059c26b539c"
+    },
+    "web/assets/minimal/club8.svg": {
+      "size": 700,
+      "sha256": "bf267fe780309f39d2167e71733e7363c55fc3bd22248e28dee7dd0d58d03f50"
+    },
+    "web/assets/minimal/club9.svg": {
+      "size": 700,
+      "sha256": "14958e64588b7056f5b959e6d7268df2511dc5c2f38b13238ae513f92c9e4cc4"
+    },
+    "web/assets/minimal/clubAce.svg": {
+      "size": 813,
+      "sha256": "598a0764581929a513da2ecf7ed1083849ab3b5948d0c5e577537d048cd65a35"
+    },
+    "web/assets/minimal/clubJack.svg": {
+      "size": 813,
+      "sha256": "12b766cb2ee3f655fe319bcbf56429b52d7377d3632d8a4492a30a3ad2dfc0ef"
+    },
+    "web/assets/minimal/clubKing.svg": {
+      "size": 813,
+      "sha256": "d1bd6f2c0dcc474ec8f4f542d9b76c7ebd0cbc3d9be90f14117a45f00b85368d"
+    },
+    "web/assets/minimal/clubQueen.svg": {
+      "size": 813,
+      "sha256": "15a23e2511f17c3d76a4457235f195ffa414e82aa6f3427a0fa478b70b522e79"
+    },
+    "web/assets/minimal/diamond10.svg": {
+      "size": 702,
+      "sha256": "2e927aef31c08de38391fb21d8c09033d667422bbbe7e01f238747baab1ce97a"
+    },
+    "web/assets/minimal/diamond2.svg": {
+      "size": 700,
+      "sha256": "e2935b6bd39ea0a8fe7b1b3ebda3945855f4a0002b141dfcc006079de0f39a26"
+    },
+    "web/assets/minimal/diamond3.svg": {
+      "size": 700,
+      "sha256": "0b0e53da260e33b8e43072b1b88210fd9ba1df3fa3aa34448e4c315b6280c7a6"
+    },
+    "web/assets/minimal/diamond4.svg": {
+      "size": 700,
+      "sha256": "bd4c03a800a0339903ebe5dead68e9be518d80574c4fe0aa295841e22dc55139"
+    },
+    "web/assets/minimal/diamond5.svg": {
+      "size": 700,
+      "sha256": "a45269794cc5519a275bca53fe60e9d712b701450efbe76500caf01f83a358fd"
+    },
+    "web/assets/minimal/diamond6.svg": {
+      "size": 700,
+      "sha256": "868dcb392b86dfa85ad3536fd2383de3c1753f741d3012fd58f7751e7d8931ca"
+    },
+    "web/assets/minimal/diamond7.svg": {
+      "size": 700,
+      "sha256": "491064336fbe8c45b0856883452915f7a27054b412fd2fca3eb0d531dea5e650"
+    },
+    "web/assets/minimal/diamond8.svg": {
+      "size": 700,
+      "sha256": "b27cafc977445c5aee2071d1c6326b6faac430a525418f51dd801df219c59fc0"
+    },
+    "web/assets/minimal/diamond9.svg": {
+      "size": 700,
+      "sha256": "12cb54e428dd5e23b5203a7923613bf99b51203d1842d83619dfbcff4e027068"
+    },
+    "web/assets/minimal/diamondAce.svg": {
+      "size": 813,
+      "sha256": "5ae1cb17325931c48325a24eb5f0281a7a366e70a61f5943371df5aa0f7228e4"
+    },
+    "web/assets/minimal/diamondJack.svg": {
+      "size": 813,
+      "sha256": "9391cf05166fd92be7278dd609777962ae685ad252caceb120afcef93c6376fe"
+    },
+    "web/assets/minimal/diamondKing.svg": {
+      "size": 813,
+      "sha256": "e266444cd3babb0ceef7132b728b02a27b81547754e94b69fd5a7471cd50ca1b"
+    },
+    "web/assets/minimal/diamondQueen.svg": {
+      "size": 813,
+      "sha256": "2dd4542b7600cb65cbbd799fba96bdf320ffabe7341cf611480339de9f283350"
+    },
+    "web/assets/minimal/heart10.svg": {
+      "size": 702,
+      "sha256": "90cece8880706a3434a6afcb235dd99de8ba1402e5c37fbd902dc1a6c4614caf"
+    },
+    "web/assets/minimal/heart2.svg": {
+      "size": 700,
+      "sha256": "60493bd69277169a16cd65b1082654cea34870d2752c2c73bd543aa5baadfc35"
+    },
+    "web/assets/minimal/heart3.svg": {
+      "size": 700,
+      "sha256": "27edb50fb0195bba2420f16bc5d48c7b5cacf1b5e6b00d56f1e02c7d0d994ca6"
+    },
+    "web/assets/minimal/heart4.svg": {
+      "size": 700,
+      "sha256": "ddd5571915dfb0706465d294f5875dd170257ac2d121b34b5ac54995619392cc"
+    },
+    "web/assets/minimal/heart5.svg": {
+      "size": 700,
+      "sha256": "5c6d4ada200d2aa9d6af24d37c62d8eeb30875ec947d9b965f6973d1a1f7d710"
+    },
+    "web/assets/minimal/heart6.svg": {
+      "size": 700,
+      "sha256": "a47bd254e9d31fd426a8ecf9d73a2c32d074177ff94d65d52a111e9feef13437"
+    },
+    "web/assets/minimal/heart7.svg": {
+      "size": 700,
+      "sha256": "53faa6fcfe4586ad6a3fd325a6f1d49ef82c0d284d1d29cd3d45a901f2c00805"
+    },
+    "web/assets/minimal/heart8.svg": {
+      "size": 700,
+      "sha256": "4b897305a9a4815d5263b75cfded798f7049f3386f2c78885ddbe32130d14199"
+    },
+    "web/assets/minimal/heart9.svg": {
+      "size": 700,
+      "sha256": "e935714fd42e6c7475b549ea1038827105a231e5a888476dedcf0b71c0234b29"
+    },
+    "web/assets/minimal/heartAce.svg": {
+      "size": 813,
+      "sha256": "25c2428ea6e31b1846901fa672a6e266ad278557f74afecc52ad60a98419ea5b"
+    },
+    "web/assets/minimal/heartJack.svg": {
+      "size": 813,
+      "sha256": "599d460f817435816260d653bf5266a30add0217f94dd75663a24c5c4d7b4bb8"
+    },
+    "web/assets/minimal/heartKing.svg": {
+      "size": 813,
+      "sha256": "a7b416e2fb8069a6b41b689b636e417ec123db17652965cb8e4581b7d098762f"
+    },
+    "web/assets/minimal/heartQueen.svg": {
+      "size": 813,
+      "sha256": "6f928b7b2ba47c8f95525d9330b09f77669f92695ea45f4d69a36617c6e4f4ee"
+    },
+    "web/assets/minimal/level/club10.svg": {
+      "size": 986,
+      "sha256": "3d34c55403a92a93cf09b16aa4b9143288915acf3410808ad21ca18ac03e3a36"
+    },
+    "web/assets/minimal/level/club2.svg": {
+      "size": 984,
+      "sha256": "6111cd90a9e7dbba3eda578885cb21101386f7f058975807be8c02b80f4b3288"
+    },
+    "web/assets/minimal/level/club3.svg": {
+      "size": 984,
+      "sha256": "4bceaf165f8e9bea7971f3dedef3dbdc75a15ffae4ab4a5555210bbfc6268e68"
+    },
+    "web/assets/minimal/level/club4.svg": {
+      "size": 984,
+      "sha256": "180e3331f485ad247ae557ff9adc4b709d285feec04fe242f73f982d828ab9c3"
+    },
+    "web/assets/minimal/level/club5.svg": {
+      "size": 984,
+      "sha256": "543160fbb27008a9a45e8adafcea1249f05bf7b2b21daa535aa6c4f77d1b51e7"
+    },
+    "web/assets/minimal/level/club6.svg": {
+      "size": 984,
+      "sha256": "4c8b61baa4d0268aaa69eb32b800d6aaac78db3ecc517b4f7d0b74006bd8f7ea"
+    },
+    "web/assets/minimal/level/club7.svg": {
+      "size": 984,
+      "sha256": "852fc65c74340cd0d4e9153eeaf87739e0fc8a4064dcd714295ba60694eb086c"
+    },
+    "web/assets/minimal/level/club8.svg": {
+      "size": 984,
+      "sha256": "9f66f49f460c5d480d44005b0438e8bc882de6eb975e64d5f6178578f983afad"
+    },
+    "web/assets/minimal/level/club9.svg": {
+      "size": 984,
+      "sha256": "0cb19c7b356123ba25d53baa42f71b78d6c342022cd95d2209e569b2eaf362a3"
+    },
+    "web/assets/minimal/level/clubAce.svg": {
+      "size": 1097,
+      "sha256": "c17149847eba805786970f86c6a5580a1a08526b6a705b5c052fcb3852eb768e"
+    },
+    "web/assets/minimal/level/clubJack.svg": {
+      "size": 1097,
+      "sha256": "5e98378aac15615c0766e556dbe542d297b7d8c8df148d4066ad62141e295724"
+    },
+    "web/assets/minimal/level/clubKing.svg": {
+      "size": 1097,
+      "sha256": "4ce4569d7c662846e3da5fa8527856d6775773822bc4e46ca28f38c843e80aff"
+    },
+    "web/assets/minimal/level/clubQueen.svg": {
+      "size": 1097,
+      "sha256": "4d174d7d77187b1c4d990e73dcca48168a60fc8c483af7aa73db51d7724e6341"
+    },
+    "web/assets/minimal/level/diamond10.svg": {
+      "size": 986,
+      "sha256": "fe9beaef4354de3b81581bdda7d230fce33861ada2d8b6adfe48942de2fb9995"
+    },
+    "web/assets/minimal/level/diamond2.svg": {
+      "size": 984,
+      "sha256": "318c9439d7049660aedc8bdcecf101eef734a45899ebafc1a6db5d89580654f1"
+    },
+    "web/assets/minimal/level/diamond3.svg": {
+      "size": 984,
+      "sha256": "ccb1571654560ea51b16cd0cdd5fecc1b559355d45b4d07bcad0674eb2d2cb36"
+    },
+    "web/assets/minimal/level/diamond4.svg": {
+      "size": 984,
+      "sha256": "1edc98a482317ddcace0ef1dd7d41b8a444f098b5260bc98dbd704523c5b5690"
+    },
+    "web/assets/minimal/level/diamond5.svg": {
+      "size": 984,
+      "sha256": "b0b8aaa4b086d63c006d1f8ebbc0cb7e887efb4032435eac35c786f518898b00"
+    },
+    "web/assets/minimal/level/diamond6.svg": {
+      "size": 984,
+      "sha256": "f095a1debeb5ef3adb273cdb4e712979b79b130a8d5c44eb1f98e8d777e5df6d"
+    },
+    "web/assets/minimal/level/diamond7.svg": {
+      "size": 984,
+      "sha256": "68062d502ae9747542238fd3403e564de6957f16c78e89458026dd177433dfaa"
+    },
+    "web/assets/minimal/level/diamond8.svg": {
+      "size": 984,
+      "sha256": "5e6260a3c6b9400a154ced9b3649117290ec8d8142453f6515628c07ce48de4f"
+    },
+    "web/assets/minimal/level/diamond9.svg": {
+      "size": 984,
+      "sha256": "475a56ebd08400b1dcebc503f5b10da52739ef65799eb587e728418faf78fa7c"
+    },
+    "web/assets/minimal/level/diamondAce.svg": {
+      "size": 1097,
+      "sha256": "8d467acdcad513676093e51c9f36da94752c1b37296ad5a32bca08eb43770851"
+    },
+    "web/assets/minimal/level/diamondJack.svg": {
+      "size": 1097,
+      "sha256": "c7529e48b87aae3f36f4006e686a50fc7dea043079b230586ed7189956417892"
+    },
+    "web/assets/minimal/level/diamondKing.svg": {
+      "size": 1097,
+      "sha256": "e998f7194ad38678c112b9be1162fd3508e647050369945a69b037d7ab13c437"
+    },
+    "web/assets/minimal/level/diamondQueen.svg": {
+      "size": 1097,
+      "sha256": "386b2ecd59f3d904af7bfa1528758b664add524d08cbea884fac9105232236a4"
+    },
+    "web/assets/minimal/level/heart10.svg": {
+      "size": 986,
+      "sha256": "9a6342c97140e5f47dc08d7044a12a41a29f0adcc6a4353a8cb628d2a17c7e3f"
+    },
+    "web/assets/minimal/level/heart2.svg": {
+      "size": 984,
+      "sha256": "c7ccce638a2d376a1fae92f37821ddbf122b1de7f92db77ca14733e4542653f0"
+    },
+    "web/assets/minimal/level/heart3.svg": {
+      "size": 984,
+      "sha256": "0cad16a3bb43ae017e5980b11f5104f23ae63fae06780c89dab73aafd02a6158"
+    },
+    "web/assets/minimal/level/heart4.svg": {
+      "size": 984,
+      "sha256": "ffb79f364a4792250f7f321e9f5ccba8a25ad5a9ed06969f763807e0adf4982d"
+    },
+    "web/assets/minimal/level/heart5.svg": {
+      "size": 984,
+      "sha256": "0fbd2ef72b3eca251405a95ee96c1130aa0bc8d38f0cbbe2e22537192ddc6fca"
+    },
+    "web/assets/minimal/level/heart6.svg": {
+      "size": 984,
+      "sha256": "af0deba924cd9e2a24c064fd540798802b0ddcb82d0f33d2e115aa95c8ec2993"
+    },
+    "web/assets/minimal/level/heart7.svg": {
+      "size": 984,
+      "sha256": "6d71ad3bedfeceb95e551675b5d5d1ca84b2b281bf6de130ba34f597fe6fcf25"
+    },
+    "web/assets/minimal/level/heart8.svg": {
+      "size": 984,
+      "sha256": "77a70898872d5ee90443a5fa5ce15e8234e2ba582771d9584dc68aa1e818d839"
+    },
+    "web/assets/minimal/level/heart9.svg": {
+      "size": 984,
+      "sha256": "e270706d90bcdb4d0e13f017add88f3f3213ea28c168397fa82fed9f17bfbfa3"
+    },
+    "web/assets/minimal/level/heartAce.svg": {
+      "size": 1097,
+      "sha256": "c02e2d28a4c17c95f957881ecdd791c9055af00c65252c893f275061e76286b2"
+    },
+    "web/assets/minimal/level/heartJack.svg": {
+      "size": 1097,
+      "sha256": "dd5cf1aedf3c60a487fcda1036324c42e7442af6de846247ade81c6abba99854"
+    },
+    "web/assets/minimal/level/heartKing.svg": {
+      "size": 1097,
+      "sha256": "996f244c0745cd5f70100f9890c9e389b443f0cf492a2097f0b419373ff97a76"
+    },
+    "web/assets/minimal/level/heartQueen.svg": {
+      "size": 1097,
+      "sha256": "f22dda77bcac7ef67ad0c563b45d9581a387f61e0d6d2638eb0545b04e07b3fa"
+    },
+    "web/assets/minimal/level/spade10.svg": {
+      "size": 986,
+      "sha256": "fe3c5ae1683f8d385fe2281d8a68bf8e76909075b67724951f5dd9bf912269f0"
+    },
+    "web/assets/minimal/level/spade2.svg": {
+      "size": 984,
+      "sha256": "c688f96a808ec1e8848ab0af542ecac4ba4cdb87fd910608b88bc29c7713c4c7"
+    },
+    "web/assets/minimal/level/spade3.svg": {
+      "size": 984,
+      "sha256": "e8d232adb5e0b5cfe189cc28e4425b0b1416bd0ad01d3d97a559e568ce5ec1de"
+    },
+    "web/assets/minimal/level/spade4.svg": {
+      "size": 984,
+      "sha256": "4678d6e56f9d47383688a9b298b312b8d1d5586b110d505cd4df1354f47cc7b3"
+    },
+    "web/assets/minimal/level/spade5.svg": {
+      "size": 984,
+      "sha256": "d1d768fe26d48155638ce6be380ce9053e488267509df92544b72cfe062e82fd"
+    },
+    "web/assets/minimal/level/spade6.svg": {
+      "size": 984,
+      "sha256": "6fecb5fdb6e8c28843bec2935c7a2b7b5c43d299a985e6d70a763f8efa908e0e"
+    },
+    "web/assets/minimal/level/spade7.svg": {
+      "size": 984,
+      "sha256": "03f38eaa0d3e12b9c9e6c7b6a31797defd23e2cfebade0b351aa148066dbf98e"
+    },
+    "web/assets/minimal/level/spade8.svg": {
+      "size": 984,
+      "sha256": "6556a22ea348210b84f7c897d2449a31f8c6bed2bba57e16de50740404183ede"
+    },
+    "web/assets/minimal/level/spade9.svg": {
+      "size": 984,
+      "sha256": "668e6c4a0f335f7d21aa91f40f1d77df0e75745cc07bf9d725c666bbf5ca0a12"
+    },
+    "web/assets/minimal/level/spadeAce.svg": {
+      "size": 1097,
+      "sha256": "374c40ecb56e374b2e334eb071b0686c263aafcd47ef0b61d5a044397b983bfb"
+    },
+    "web/assets/minimal/level/spadeJack.svg": {
+      "size": 1097,
+      "sha256": "c4f9b17516ab95c921a222f9dcad8465f7eaf9c345b91de7932e838d7e558f13"
+    },
+    "web/assets/minimal/level/spadeKing.svg": {
+      "size": 1097,
+      "sha256": "d0dca0b7c80fc236bbb0eebef206c957ab785ea4fa6c1bd4204beea999a7499d"
+    },
+    "web/assets/minimal/level/spadeQueen.svg": {
+      "size": 1097,
+      "sha256": "44e8fe071c2d27dfc720770715caa1d7d9b07a49348299b1fb98f4b9110a8ff2"
+    },
+    "web/assets/minimal/redJoker.svg": {
+      "size": 501,
+      "sha256": "416f3e0101359eb994fe321458d2a6734da33f5851652343af0768fc5544acc5"
+    },
+    "web/assets/minimal/spade10.svg": {
+      "size": 702,
+      "sha256": "cead428d99dc4573bb4620d34617284c69a4800e711c3b8b1daab9e377144e61"
+    },
+    "web/assets/minimal/spade2.svg": {
+      "size": 700,
+      "sha256": "b91e713826cdae591fb12984925397af4af70948699dfcaa7ce5f50ff225e174"
+    },
+    "web/assets/minimal/spade3.svg": {
+      "size": 700,
+      "sha256": "8d4bf7e1348934a9c02ab5cb22535604a5e32e606c7c4cf4914d46e775414c5b"
+    },
+    "web/assets/minimal/spade4.svg": {
+      "size": 700,
+      "sha256": "0c487c267b1656087cf4c0d2a355e63cc2eb977c7a3e6e37f9ed44aa1dfb433a"
+    },
+    "web/assets/minimal/spade5.svg": {
+      "size": 700,
+      "sha256": "0bfbd59b603083e4076026135d463ade6c5b90baf61942790a1af6b06e966f86"
+    },
+    "web/assets/minimal/spade6.svg": {
+      "size": 700,
+      "sha256": "68c70056dc8a228f3cb4e9c74f44b11ab772e5fb5d44c8bf3a140bd96be557b7"
+    },
+    "web/assets/minimal/spade7.svg": {
+      "size": 700,
+      "sha256": "126a236d61c10140a82c89013b14ba6bf94b236e3a34ccf530b5db6af07151f1"
+    },
+    "web/assets/minimal/spade8.svg": {
+      "size": 700,
+      "sha256": "656871b4d71b1edd23f2e10f324589c429e7b185a80558257c63d790d0c17912"
+    },
+    "web/assets/minimal/spade9.svg": {
+      "size": 700,
+      "sha256": "68589050c4871ef247076df3b3562fe74c724d6ef1056e5b845ea9241a636bcc"
+    },
+    "web/assets/minimal/spadeAce.svg": {
+      "size": 813,
+      "sha256": "515676c41f9a68d7097ac89fee8f86b93997035edf807e33310449ac66fe78d0"
+    },
+    "web/assets/minimal/spadeJack.svg": {
+      "size": 813,
+      "sha256": "67671ff2cc15e342fbdc9da177c823d0a77fdcc5eaefaea266efa98920652652"
+    },
+    "web/assets/minimal/spadeKing.svg": {
+      "size": 813,
+      "sha256": "12c7ecf43ec6cff1f57fa712476b3c16584437a8854add56c890ca8d1f9525e2"
+    },
+    "web/assets/minimal/spadeQueen.svg": {
+      "size": 813,
+      "sha256": "d82202e50d3b981db1654f048bb75e12715e285b6fb5ee7a37d65c141150fb86"
+    },
+    "web/assets/native-explain-worker.js": {
+      "size": 30587,
+      "sha256": "943b46dd5b6aade2608628822677a978ed9e0337f67e53dcccbb8a9f1f1df24b"
+    },
+    "web/card-sources/SVG-cards-LGPL-2.1.txt": {
+      "size": 26530,
+      "sha256": "dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551"
+    },
+    "web/card-sources/SVG-cards-README.txt": {
+      "size": 8029,
+      "sha256": "010e1a4c29eb848196806862f22a890440f69076413d047a2e69bb923f9f6d2e"
+    },
+    "web/card-sources/SVGCards-README-license.txt": {
+      "size": 7987,
+      "sha256": "3704576ee4e092cd4bb17b737a953d67633cb452c88c2828aa4bd90cdc2e3f7b"
+    },
+    "web/card-sources/assets-manifest.json": {
+      "size": 34886,
+      "sha256": "d3af48c98be229bd21eeaf9817c78e774ec910799155ee357dbc337f54615224"
+    },
+    "web/card-sources/minimal-card-source.txt": {
+      "size": 161,
+      "sha256": "46e288d14feaec10e59095279fe569dc41b17de5aa76c6aa971f4885708c3e13"
+    },
+    "web/card-sources/头像生成记录.txt": {
+      "size": 2870,
+      "sha256": "2a69ebd65dbb5ba315e6d7b093220c19526a4d2a08bab2db94066f7857b83e24"
+    },
+    "web/card-sources/规则来源.txt": {
+      "size": 575,
+      "sha256": "e7809137728bac2256b5e851ef13373992c3827654a6a551348b75e7d041a543"
+    },
+    "web/engine.html": {
+      "size": 215,
+      "sha256": "db0d38ee131e4526bcb4f31d6496e6760276b06b3de687d22ef6b4da03991cbf"
+    },
+    "web/index-legacy.html": {
+      "size": 585,
+      "sha256": "f495765bd5dec3154ba6529a814d47d05bad0777d90aee6d299be7a761a9607e"
+    },
+    "web/index.html": {
+      "size": 37982,
+      "sha256": "9c3db7d9b0d838ff6c067efe78f386b24a3bde7a149a3d712065a8b7dabf06f0"
+    },
+    "web/mobile/DanLM-LICENSE.txt": {
+      "size": 11709,
+      "sha256": "b13d119e611ea2f65e71d9fd67897c64e405214fd0a0f522a688ac7c604d83b3"
+    },
+    "web/mobile/LICENSE": {
+      "size": 1066,
+      "sha256": "b7c45145a1b72213edc9f6e0dc3badf66f596837eed34f346cc9a265843795fb"
+    },
+    "web/mobile/ONNX-Runtime-LICENSE.txt": {
+      "size": 1073,
+      "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c"
+    },
+    "web/mobile/React-LICENSE.txt": {
+      "size": 1086,
+      "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85"
+    },
+    "web/mobile/context.onnx": {
+      "size": 3994215,
+      "sha256": "a9f274f3c50382048f855547579d08d116c3c08cd52b841df6dca66711e4d8a4"
+    },
+    "web/mobile/ort-wasm-simd-threaded.mjs": {
+      "size": 24381,
+      "sha256": "e13f7f94fc51b4ca72b12faeb1ee95f4ace6dfbc8939bc718aabdc0a27c4299b"
+    },
+    "web/mobile/ort-wasm-simd-threaded.wasm": {
+      "size": 14239897,
+      "sha256": "3398c10d07d229bd91b364548e130e0e51a8e5704b88c7c083ebbeb78842dee2"
+    },
+    "web/mobile/scores.onnx": {
+      "size": 12100224,
+      "sha256": "96cbf7b589b6a8b496d5d8993feefea5dd11665df1dac2da49d9d096ec438791"
+    },
+    "使用说明.txt": {
+      "size": 1282,
+      "sha256": "31759bf907947cad6090bcbfd63bb896f5c5aebb9958c6a19163f68148109a9d"
+    }
+  }
+}

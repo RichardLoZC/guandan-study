@@ -4,14 +4,14 @@
   else root.GuandanPlayRules=factory();
 })(globalThis,function(){
   'use strict';
-  // Callers have already checked the sequence. Wild cards can fill its suit,
-  // so a straight with just one natural suit must be played as a straight flush.
+  // The pinned DanLM engine reserves a fully natural same-suit run for a
+  // straight flush. With a wild card, ordinary-run declarations also exist.
   function isDowngradedStraight(play){
     if(play.type!=='straight'||play.cards.length!==5)return false;
     const natural=play.cards.filter(card=>!card.isWild);
-    return natural.length>0&&natural[0].suit!=='joker'&&natural.every(card=>card.suit===natural[0].suit);
+    return natural.length===play.cards.length&&natural.length>0&&natural[0].suit!=='joker'&&natural.every(card=>card.suit===natural[0].suit);
   }
-  const isAllowedPlay=play=>!isDowngradedStraight(play);
+  const isAllowedPlay=play=>!isDowngradedStraight(play)&&!(play.type==='full-house'&&new Set(play.cards.map(card=>card.rank)).size===1);
   function ordinaryStraightVariants(hand,cards){
     if(!isDowngradedStraight({type:'straight',cards}))return [cards];
     // The worker initially picks one card per rank. If those happen to share

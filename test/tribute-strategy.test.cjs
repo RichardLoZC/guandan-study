@@ -72,36 +72,25 @@ test('the rules fallback with one high legal card is honored without expanding t
   assert.throws(()=>strategy.choose({hand,level:'2',choices:[{id:'foreign'}]}));
   assert.throws(()=>strategy.choose({hand:Array(29).fill(hand[0]),level:'2',choices:[hand[0]]}));
 });
-test('Match uses the same return strategy without reading another player hand; give retains its rule',()=>{
+test('Match tribute decisions invoke the model and read only the acting hand and public exchanges',async()=>{
   const state=core.newMatch();state.phase='give';state.tribute={donors:[1],winners:[0],offers:[]};
-  const match=new Match(state),given=match.tributeChoices[0].id;
-  assert.equal(match.chooseTribute().card.id,given);assert.equal(match.chooseTribute().method,'maximum-tribute');
-  match.commit(match.actingSeat,[given]);
-  const direct=strategy.choose({hand:match.game.players[match.actingSeat].hand,level:match.level,choices:match.tributeChoices});
-  const ownSeat=match.actingSeat;
-  for(const player of match.game.players)if(player.seat!==ownSeat)Object.defineProperty(player,'hand',{get(){throw new Error('hidden hand read');}});
-  assert.deepEqual(match.chooseTribute(),direct);
-  assert.throws(()=>new Match().chooseTribute(),/没有合法/);
+  const match=new Match(state);let calls=0;
+  const model=async payload=>{calls++;assert.ok(payload.tribute);assert.equal('observation' in payload,false);assert.equal('players' in payload.tribute,false);return {cardId:payload.tribute.choices.at(-1).id,score:0.25,engine:'model-fixture'};};
+  const given=await match.chooseTribute(model);assert.equal(given.method,'danlm-v1');assert.equal(calls,1);match.commit(match.actingSeat,[given.card.id]);
+  const ownSeat=match.actingSeat;for(const player of match.game.players)if(player.seat!==ownSeat)Object.defineProperty(player,'hand',{get(){throw new Error('hidden hand read');}});
+  const decision=await match.chooseTribute(model);assert.equal(calls,2);assert.ok(match.tributeChoices.some(card=>card.id===decision.card.id));
+  await assert.rejects(match.chooseTribute(async()=>({cardId:'foreign',score:1})),/合法/);
+  await assert.rejects(match.chooseTribute(),/必须调用/);await assert.rejects(new Match().chooseTribute(model),/没有合法/);
 });
-test('random legal deals produce bounded, deterministic choices that can actually be returned',()=>{
-  const original=crypto.getRandomValues;let value=186;
+test('random legal tribute phases use one model reply, remain immutable until commit, and conserve cards',async()=>{
+  const original=crypto.getRandomValues;let value=186,calls=0;
   crypto.getRandomValues=buffer=>{for(let i=0;i<buffer.length;i++)buffer[i]=value=(Math.imul(value,1664525)+1013904223)>>>0;return buffer;};
-  try{
-    for(let n=0;n<20;n++){
-      const state=core.newMatch();state.phase='give';state.tribute={donors:[3,1],winners:[0,2],offers:[]};
-      const match=new Match(state);
-      while(match.phase!=='playing'){
-        const before=JSON.stringify(match.state),decision=match.chooseTribute();
-        assert.equal(JSON.stringify(match.state),before);
-        assert.ok(match.tributeChoices.some(card=>card.id===decision.card.id));
-        if(match.phase==='return'){
-          assert.ok(decision.evaluatedHands<=28);
-          assert.ok(decision.candidates.every(candidate=>candidate.assessment.plansExamined<=8));
-          assert.equal(match.chooseTribute().card.id,decision.card.id);
-        }
-        match.commit(match.actingSeat,[decision.card.id]);
-      }
-      assert.deepEqual(match.game.players.map(player=>player.hand.length),[27,27,27,27]);
+  try{for(let n=0;n<20;n++){
+    const state=core.newMatch();state.phase='give';state.tribute={donors:[3,1],winners:[0,2],offers:[]};const match=new Match(state);
+    while(match.phase!=='playing'){
+      const before=JSON.stringify(match.state),start=calls,decision=await match.chooseTribute(async payload=>{calls++;return {cardId:payload.tribute.choices.at(-1).id,score:-0.2,engine:'model-fixture'};});
+      assert.equal(calls,start+1);assert.equal(JSON.stringify(match.state),before);assert.equal(decision.method,'danlm-v1');assert.ok(match.tributeChoices.some(card=>card.id===decision.card.id));match.commit(match.actingSeat,[decision.card.id]);
     }
-  }finally{crypto.getRandomValues=original;}
+    assert.deepEqual(match.game.players.map(player=>player.hand.length),[27,27,27,27]);
+  }}finally{crypto.getRandomValues=original;}
 });

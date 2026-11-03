@@ -38,7 +38,7 @@
       for(const attr of ['role','tabindex','title'])byId('tribute-receipt').removeAttribute(attr);
       root.dataset.handStyle=scope.GuandanTable?.handStyle()||'flat';
       byId('hand-flat').setAttribute('aria-pressed',String(root.dataset.handStyle==='flat'));
-      byId('hand-fan').setAttribute('aria-pressed',String(root.dataset.handStyle==='fan'));
+      byId('hand-fan').setAttribute('aria-pressed',String(root.dataset.handStyle==='stack'));
       mounted=false;
     }
     // Native phones rotate before rendering. Browser previews and constrained

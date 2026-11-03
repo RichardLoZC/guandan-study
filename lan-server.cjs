@@ -1,6 +1,7 @@
 'use strict';
 const http=require('node:http'),os=require('node:os'),net=require('node:net');
 const fs=require('node:fs'),path=require('node:path');
+const {randomBytes}=require('node:crypto');
 const {Room,PROTOCOL}=require('./lan-room.cjs');
 const discovery=require('./lan-discovery.cjs');
 function privateIP(value){
@@ -22,13 +23,15 @@ async function request(address,body,token=''){
     });req.on('error',()=>reject(new Error('无法连接房间，请确认同一 Wi-Fi、地址正确且房主应用已打开')));req.on('timeout',()=>req.destroy(new Error('房间响应超时')));req.end(data);
   });
 }
-async function start({savePath,runModel,port=18765,webRoot=null,room:existingRoom=null,discoverable=port===18765,fresh=false,aiBook=true}={}){
-  const room=existingRoom||(fresh?new Room({savePath,runModel,aiBook}):Room.load({savePath,runModel,aiBook})),attempts=new Map();
+async function start({savePath,runModel,port=18765,webRoot=null,room:existingRoom=null,discoverable=port===18765,fresh=false}={}){
+  const room=existingRoom||(fresh?new Room({savePath,runModel}):Room.load({savePath,runModel})),attempts=new Map();
+  const probeKey=randomBytes(24).toString('hex'),probePath='/__guandan_local_probe/'+probeKey;
   const server=http.createServer(async(req,res)=>{
     const reply=(status,value)=>{if(!res.headersSent)res.writeHead(status,{'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff'});res.end(JSON.stringify(value));};
     try{
       if(!privateIP(req.socket.remoteAddress)||!privateIP((req.headers.host||'').split(':')[0]))return reply(403,{error:'仅允许局域网访问'});
       if(req.headers.origin&&req.headers.origin!=='http://'+req.headers.host)return reply(403,{error:'跨站请求已拒绝'});
+      if(req.method==='GET'&&req.url===probePath&&String(req.socket.remoteAddress).replace(/^::ffff:/,'')==='127.0.0.1')return reply(200,{probe:probeKey});
       // Static assets are enabled only in isolated local browser acceptance fixtures.
       if(webRoot&&req.method==='GET'){
         const u=new URL(req.url,'http://localhost'),name=decodeURIComponent(u.pathname==='/'?'/index.html':u.pathname),file=path.resolve(webRoot,'.'+name);
@@ -51,7 +54,31 @@ async function start({savePath,runModel,port=18765,webRoot=null,room:existingRoo
     }catch(error){return reply(400,{error:error.message});}
   });
   server.requestTimeout=15000;server.headersTimeout=10000;
-  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(port,'0.0.0.0',resolve);});
+  const listen=number=>new Promise((resolve,reject)=>{
+    const failed=error=>{server.off('listening',ready);reject(error);};
+    const ready=()=>{server.off('error',failed);resolve();};
+    server.once('error',failed);server.once('listening',ready);server.listen(number,'0.0.0.0');
+  });
+  const verifyLocal=number=>new Promise(resolve=>{
+    let done=false;const finish=value=>{if(done)return;done=true;resolve(value);};
+    const req=http.request({hostname:'127.0.0.1',port:number,path:probePath,method:'GET',agent:false,headers:{connection:'close'}},res=>{
+      let body='';res.on('data',part=>{body+=part;if(body.length>1024)req.destroy();});
+      res.on('end',()=>{try{finish(res.statusCode===200&&JSON.parse(body).probe===probeKey);}catch{finish(false);}});
+      res.on('error',()=>finish(false));
+    });
+    req.setTimeout(1500,()=>req.destroy());req.on('error',()=>finish(false));req.end();
+  });
+  const ports=port===0?[0,0,0]:port===18765?[18765,18767,18768,18769,0]:[port,0];
+  let listening=false,lastError=null;
+  for(const candidate of ports){
+    try{
+      await listen(candidate);
+      if(await verifyLocal(server.address().port)){listening=true;break;}
+      lastError=new Error('本机联机地址被其他服务占用');
+      await new Promise(resolve=>server.close(resolve));
+    }catch(error){lastError=error;if(server.listening)await new Promise(resolve=>server.close(resolve));}
+  }
+  if(!listening)throw new Error('无法启动局域网牌桌：'+(lastError?.message||'没有可用地址'));
   const bound=server.address().port,addresses=Object.values(os.networkInterfaces()).flat().filter(i=>i.family==='IPv4'&&!i.internal&&privateIP(i.address)).map(i=>i.address+':'+bound);
   const beacon=discoverable?await discovery.advertise(room,bound):null;
   const timer=setInterval(()=>room.tick().catch(error=>{room.error=error.message;room.version++;}),700);timer.unref();

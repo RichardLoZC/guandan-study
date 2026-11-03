@@ -1,9 +1,23 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
 const {Room,perspective,PROTOCOL}=require('../lan-room.cjs'),net=require('../lan-server.cjs'),{Match}=require('../web/app/match.js');
 let sequence=0;
-const command=(r,t,op,fields={})=>r.request(t,{op,version:r.version,requestId:String(++sequence),...fields});
+const command=(r,t,op,fields={})=>r.request(t,{protocol:PROTOCOL,op,version:r.version,requestId:String(++sequence),...fields});
 async function setup(options={}){const r=new Room({random:(...args)=>args.length===2?123456:0,startThinking:()=>({promise:Promise.resolve(true),cancel(){}}),runModel:async()=>{throw new Error('fixture model');},...options}),host=r.host('Mac'),pad=r.join({code:r.code,name:'Pad',protocol:PROTOCOL});await command(r,host.token,'start');r.match.game.currentPlayer=0;r.match.game.starter=0;r.save();return {r,host,pad};}
 function complete(m){let guard=2000;while(!m.game.result&&guard--){if(m.needsTributeConfirmation){m.acknowledgeTribute();continue;}if(m.phase!=='playing'){m.commit(m.actingSeat,[m.tributeChoices[0].id]);continue;}const seat=m.actingSeat,card=m.game.players[seat].hand.find(c=>m.selection([c.id],seat).play);m.commit(seat,card?[card.id]:[]);}assert.ok(m.game.result);}
+test('gameplay protocol rejects old joins and saved-token requests, while migrating old host saves',async()=>{
+  const {r,host}=await setup();
+  for(const old of [1,2])assert.throws(()=>r.join({protocol:old,code:r.code,name:'Old client'}),/联机版本不同/);
+  await assert.rejects(r.request(host.token,{op:'poll'}),/联机规则版本不同/);
+  for(const old of [1,2])await assert.rejects(r.request(host.token,{op:'poll',protocol:old}),/联机规则版本不同/);
+  const before=JSON.stringify(r.match.state),legacy=r.serialize();legacy.protocol=1;delete legacy.state.aceAttempts;
+  const directory=fs.mkdtempSync(path.join(os.tmpdir(),'guandan-protocol-migration-')),savePath=path.join(directory,'room.json');
+  try{
+    fs.writeFileSync(savePath,JSON.stringify(legacy));const restored=Room.load({savePath});
+    assert.deepEqual(restored.match.state.aceAttempts,[0,0]);assert.deepEqual(restored.match.state,JSON.parse(before));
+    assert.equal((await restored.request(host.token,{op:'poll',protocol:PROTOCOL})).room.protocol,PROTOCOL);
+    restored.save();assert.equal(JSON.parse(fs.readFileSync(savePath)).protocol,PROTOCOL);
+  }finally{fs.rmSync(directory,{recursive:true,force:true});}
+});
 test('four perspectives expose only own cards and public history, including replay data',async()=>{
   const {r}=await setup();for(let seat=0;seat<4;seat++){
     const view=perspective(r.match,seat,r.names());assert.deepEqual(view.state.game.players[0].hand,r.match.game.players[seat].hand);
@@ -30,7 +44,7 @@ test('all seats see their own final places, winner and settlement text after rot
 test('a human can only act at their seat; stale and duplicate submissions conserve cards',async()=>{
   const {r,host,pad}=await setup(),id=r.match.game.players[0].hand[0].id;
   await assert.rejects(command(r,host.token,'play',{ids:[id]}),/此玩家/);
-  const body={op:'play',version:r.version,requestId:'same-request',ids:[id]};await r.request(pad.token,body);const version=r.version;
+  const body={protocol:PROTOCOL,op:'play',version:r.version,requestId:'same-request',ids:[id]};await r.request(pad.token,body);const version=r.version;
   await r.request(pad.token,body);assert.equal(r.version,version);assert.equal(r.match.game.players[0].hand.length,26);
   await assert.rejects(r.request(pad.token,{...body,requestId:'another'}),/牌局已变化/);
   assert.equal(r.match.game.actionHistory.length,1);
@@ -49,9 +63,9 @@ test('clearing Ace resets levels and triggers a fresh seat shuffle',async()=>{
 });
 test('disconnected humans pause play, reconnect keeps the same hand and seat',async()=>{
   let now=100000;const {r,host,pad}=await setup({now:()=>now});const seat=r.seats.indexOf(r.members.find(m=>m.token===pad.token).id),ids=r.match.game.players[seat].hand.map(c=>c.id);
-  now+=13000;await r.request(host.token,{op:'poll'});assert.deepEqual(r.waiting,['Pad']);
+  now+=13000;await r.request(host.token,{protocol:PROTOCOL,op:'poll'});assert.deepEqual(r.waiting,['Pad']);
   await assert.rejects(command(r,host.token,'play',{ids:[]}),/暂停/);
-  await r.request(pad.token,{op:'poll'});assert.deepEqual(r.waiting,[]);assert.deepEqual(r.match.game.players[seat].hand.map(c=>c.id),ids);
+  await r.request(pad.token,{protocol:PROTOCOL,op:'poll'});assert.deepEqual(r.waiting,[]);assert.deepEqual(r.match.game.players[seat].hand.map(c=>c.id),ids);
 });
 test('model response after host pauses is discarded',async()=>{
   let resolve;const {r,host,pad}=await setup({runModel:()=>new Promise(done=>resolve=done)});
@@ -67,32 +81,15 @@ test('LAN human seats rotate with each viewer, so humans never appear as AI',asy
     assert.ok(view.round.humanSeats.includes(0));assert.equal(view.round.humanSeats.length,2);
   }
 });
-test('host controls the shared bot policy, while hint guidance remains a personal request',async()=>{
+test('legacy policy flags cannot affect a restored room or model request',async()=>{
   const requests=[];
-  const {r,host,pad}=await setup({aiBook:false,runModel:async payload=>{requests.push(payload);return {result:{candidates:[{type:'pass'}],engine:'fixture'}};}});
-  assert.equal(r.projected(r.authenticate(pad.token)).room.aiBook,false);
-  await assert.rejects(command(r,pad.token,'ai-book',{enabled:true}),/房主/);
-  await assert.rejects(command(r,host.token,'ai-book',{enabled:'false'}),/无效/);assert.equal(r.aiBook,false);
-  await command(r,pad.token,'advice',{book:true});assert.equal(requests.at(-1).book,true);assert.equal(r.aiBook,false);
-  await command(r,pad.token,'advice',{book:false});assert.equal(requests.at(-1).book,false);
-  await command(r,pad.token,'play',{ids:[r.match.game.players[0].hand[0].id]});await r.tick();assert.equal(requests.at(-1).book,false);
-  await command(r,host.token,'ai-book',{enabled:true});await r.tick();assert.equal(requests.at(-1).book,true);
-  assert.equal(r.projected(r.authenticate(pad.token)).room.aiBook,true);
-});
-test('changing bot policy discards a pending inference and recalculates with the new setting',async()=>{
-  let reply;const requests=[];
-  const {r,host,pad}=await setup({runModel:payload=>{requests.push(payload.book);return payload.book?new Promise(done=>reply=done):Promise.resolve({result:{candidates:[{type:'pass'}],engine:'fixture'}});}});
-  await command(r,pad.token,'play',{ids:[r.match.game.players[0].hand[0].id]});const pending=r.tick();
-  await command(r,host.token,'ai-book',{enabled:false});reply({result:{candidates:[{type:'pass'}],engine:'fixture'}});await pending;
-  assert.equal(r.match.game.actionHistory.length,1);await r.tick();assert.equal(r.match.game.actionHistory.length,2);assert.deepEqual(requests,[true,false]);
-});
-test('bot policy survives room restore and resets neither on new games nor failed saves',async()=>{
-  const {r,host}=await setup({aiBook:false});
-  assert.equal(new Room({restored:r.serialize()}).aiBook,false);
-  await command(r,host.token,'new');assert.equal(r.aiBook,false);
-  const legacy=r.serialize();delete legacy.aiBook;assert.equal(new Room({restored:legacy,aiBook:false}).aiBook,true);
-  const version=r.version;r.save=()=>{throw new Error('disk full');};
-  await assert.rejects(command(r,host.token,'ai-book',{enabled:true}),/disk full/);assert.equal(r.aiBook,false);assert.equal(r.version,version);
+  const {r,host,pad}=await setup({aiBook:true,runModel:async payload=>{requests.push(payload);return {result:{candidates:[{type:'pass'}],engine:'fixture'}};}});
+  const saved=r.serialize();saved.aiBook=true;const restored=new Room({restored:saved});
+  assert.equal('aiBook' in restored.serialize(),false);
+  await command(r,pad.token,'advice',{book:true});assert.equal('book' in requests.at(-1),false);
+  await command(r,pad.token,'play',{ids:[r.match.game.players[0].hand[0].id]});await r.tick();
+  assert.equal('book' in requests.at(-1),false);
+  await assert.rejects(command(r,host.token,'ai-book',{enabled:true}),/不支持/);
 });
 test('LAN inference and thinking run together, duplicate ticks cannot skip the delay',async()=>{
   let release,requests=0;
@@ -116,19 +113,13 @@ test('tribute choices are private, and every connected player acknowledges the p
   while(r.match.phase!=='playing')r.match.commit(r.match.actingSeat,[r.match.tributeChoices[0].id]);
   assert.ok(r.match.needsTributeConfirmation);await command(r,host.token,'ack');assert.ok(r.match.needsTributeConfirmation);await command(r,pad.token,'ack');assert.equal(r.match.needsTributeConfirmation,false);
 });
-test('a LAN bot returns tribute through the same hand-structure decision as a local Match',async()=>{
-  let modelCalls=0;const {r}=await setup({runModel:async()=>{modelCalls++;throw new Error('tribute must not invoke play inference');}});
-  r.match.state.phase='give';r.match.state.tribute={donors:[3],winners:[2],offers:[]};
-  r.match.commit(3,[r.match.tributeChoices[0].id]);
+test('a LAN bot and local Match use the same model tribute decision',async()=>{
+  let modelCalls=0;const runModel=async payload=>{modelCalls++;assert.equal(payload.tribute.phase,'return');assert.equal(payload.tribute.seat,2);return {cardId:payload.tribute.choices.at(-1).id,score:0.125,engine:'model-fixture'};};
+  const {r}=await setup({runModel});r.match.state.phase='give';r.match.state.tribute={donors:[3],winners:[2],offers:[]};r.match.commit(3,[r.match.tributeChoices[0].id]);
   assert.equal(r.match.phase,'return');assert.equal(r.match.actingSeat,2);
-  assert.ok(!r.members.some(member=>member.id===r.seats[2]),'recipient is a bot');
-  const local=new Match(r.match.state),expected=local.chooseTribute();local.commit(2,[expected.card.id],{automatic:true});
-  const choose=r.match.chooseTribute.bind(r.match);let strategyCalls=0;
-  r.match.chooseTribute=()=>{strategyCalls++;return choose();};
-  await r.tick();
-  assert.equal(strategyCalls,1);assert.equal(modelCalls,0);assert.equal(r.error,null);
-  assert.equal(r.match.state.exchanges[0].returned.id,expected.card.id);
-  assert.deepEqual(r.match.state,local.state,'LAN and local commits have identical game state');
+  const local=new Match(r.match.state),expected=await local.chooseTribute(runModel);local.commit(2,[expected.card.id],{automatic:true});modelCalls=0;
+  const choose=r.match.chooseTribute.bind(r.match);let calls=0;r.match.chooseTribute=(...args)=>{calls++;return choose(...args);};await r.tick();
+  assert.equal(calls,1);assert.equal(modelCalls,1);assert.equal(r.error,null);assert.equal(r.match.state.exchanges[0].returned.id,expected.card.id);assert.deepEqual(r.match.state,local.state);
 });
 test('durable room restore preserves sessions; failed persistence rolls back the deal',async()=>{
   const dir=fs.mkdtempSync(path.join(os.tmpdir(),'guandan-lan-test-')),file=path.join(dir,'room.json');
@@ -140,9 +131,9 @@ test('durable room restore preserves sessions; failed persistence rolls back the
 test('HTTP endpoint authenticates, rejects cross-origin access and refuses public targets',async()=>{
   const service=await net.start({port:0});try{
     const host=service.room.host('Mac'),joined=await net.request(service.address,{op:'join',name:'Pad',code:service.room.code,protocol:PROTOCOL});
-    assert.equal((await net.request(service.address,{op:'poll'},joined.token)).room.members.length,2);
-    await assert.rejects(net.request(service.address,{op:'poll'},'bad'),/身份/);
-    const response=await fetch('http://'+service.address+'/api',{method:'POST',headers:{origin:'https://example.com','content-type':'application/json'},body:JSON.stringify({op:'poll'})});assert.equal(response.status,403);
+    assert.equal((await net.request(service.address,{protocol:PROTOCOL,op:'poll'},joined.token)).room.members.length,2);
+    await assert.rejects(net.request(service.address,{protocol:PROTOCOL,op:'poll'},'bad'),/身份/);
+    const response=await fetch('http://'+service.address+'/api',{method:'POST',headers:{origin:'https://example.com','content-type':'application/json'},body:JSON.stringify({protocol:PROTOCOL,op:'poll'})});assert.equal(response.status,403);
     for(const address of ['8.8.8.8:18765','127.0.0.1:22','example.com:18765','192.168.1.1:65536'])assert.throws(()=>net.addressURL(address));
   }finally{service.close();}
 });
@@ -154,7 +145,7 @@ test('native LAN transport preserves Chinese text split across HTTP response chu
     setImmediate(()=>res.end(bytes.subarray(split)));
   });
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
-  try{assert.deepEqual(await net.request('127.0.0.1:'+server.address().port,{op:'poll'}),payload);}
+  try{assert.deepEqual(await net.request('127.0.0.1:'+server.address().port,{protocol:PROTOCOL,op:'poll'}),payload);}
   finally{await new Promise(resolve=>server.close(resolve));}
 });
 test('LAN server preserves a Chinese player name split inside an incoming UTF-8 character',async()=>{
@@ -175,7 +166,7 @@ test('four humans complete a deal over HTTP, keep private hands, and never trigg
   let modelCalls=0;
   const service=await net.start({port:0,runModel:async()=>{modelCalls++;throw new Error('all seats are human');}}),r=service.room;
   const host=r.host('Mac 房主'),players=[host],clients=[];
-  const send=(p,op,extra={})=>net.request(service.address,{op,version:r.version,requestId:'four-'+(++sequence),...extra},p.token);
+  const send=(p,op,extra={})=>net.request(service.address,{protocol:PROTOCOL,op,version:r.version,requestId:'four-'+(++sequence),...extra},p.token);
   try{
     for(const name of ['Pad 甲','Pad 乙','Mac 乙']){
       const clientId=require('node:crypto').randomUUID();clients.push(clientId);

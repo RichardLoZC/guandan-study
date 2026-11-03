@@ -49,13 +49,20 @@ window.createHandEditor=function(options){
     return {row:Number(node.dataset?.row??row),index,x:next?next.left-3:last?last.right-3:bounds.left+bounds.width/2,y:bounds.top+3,height:Math.min(bounds.height,95)};
   }
   function stackTarget(x,y){
-    const ids=getLayout().rows[1],columns=[...container.querySelectorAll('.stack-column')].map(column=>{
+    const bounds=scroll.getBoundingClientRect();
+    if(x<bounds.left||x>bounds.right||y<bounds.top||y>bounds.bottom)return null;
+    const phone=root.dataset.phone==='true';
+    const row=phone?null:[...container.querySelectorAll('.card-row')].find(node=>{const b=node.getBoundingClientRect();return y>=b.top&&y<=b.bottom;});
+    if(!phone&&!row)return null;
+    const tier=phone?1:Number(row.dataset.row),ids=getLayout().rows[tier],columns=[...(row||container).querySelectorAll('.stack-column')].map(column=>{
       const box=column.getBoundingClientRect();
       return {left:box.left,right:box.right,cards:[...column.querySelectorAll('.playing-card')].map(button=>{
         const b=button.getBoundingClientRect();return {index:ids.indexOf(button.dataset.id),top:b.top,bottom:b.bottom};
       })};
     });
-    return GuandanHandStack.dropTarget(columns,scroll.getBoundingClientRect(),x,y);
+    if(!columns.length)return row?{row:tier,index:0,x:bounds.left+bounds.width/2,y:row.getBoundingClientRect().top+5,height:28}:null;
+    const target=GuandanHandStack.dropTarget(columns,bounds,x,y);
+    return target?{...target,row:tier}:null;
   }
   function targetAt(x,y){
     const hit=document.elementFromPoint?.(x,y);
@@ -144,7 +151,7 @@ window.createHandEditor=function(options){
     event.preventDefault();cancel();const layout=getLayout(),id=card.dataset.id,row=layout.rows.findIndex(list=>list.includes(id)),index=layout.rows[row].indexOf(id);
     const ids=getSelected().has(id)?layout.rows.flat().filter(id=>getSelected().has(id)):[id];
     if(event.key==='ArrowUp'||event.key==='ArrowDown'){
-      if(root.dataset.phone==='true')return;
+      if(root.dataset.phone==='true'||container.querySelectorAll('.card-row').length===1)return;
       const target=event.key==='ArrowUp'?0:1;if(target!==row)apply(ids,target,Math.min(index,layout.rows[target].length));
     }else{
       const members=layout.rows[row].map((id,index)=>ids.includes(id)?index:-1).filter(index=>index>=0);

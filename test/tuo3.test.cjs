@@ -40,7 +40,7 @@ test('flip creates valid teams, preserves all physical cards, and reveals only t
     const m=seeded(n+1,()=>create('tuo3')),t=m.state.tuo3;partners.add(m.playerIds[2]);
     assert.deepEqual(m.game.players.map(p=>p.hand.length),[27,27,27,27]);
     assert.ok(m.needsTributeConfirmation);assert.throws(()=>m.commit(m.actingSeat,[m.game.players[m.actingSeat].hand[0].id]));
-    assert.equal(m.names[2],core.names[t.playerIds[2]]);
+    assert.equal(m.names[2],require('../web/app/personas.js').profile(m.state.personaIds,t.playerIds[2]).name);
     assert.equal(m.game.starter,t.holder);
     assert.ok(m.game.players[t.holder].hand.some(card=>card.id===t.flipped.id));
     assert.ok(m.game.players[t.other].hand.some(card=>card.id===t.twin.id));
@@ -129,10 +129,12 @@ test('illegal model candidates are replaced by legal candidates and hard-wind dr
 
 test('Tuo3 review export includes shared point breakdown and identity names, without an upgrade claim',()=>{
   const m=complete(seeded(74,()=>create('tuo3'))),round=m.snapshot(),vm=require('node:vm'),fs=require('node:fs'),path=require('node:path');
-  const context={reviewRound:round,GuandanCore:core,signed:value=>(value>0?'+':'')+value};vm.createContext(context);
+  const personas=require('../web/app/personas.js');
+  const context={GuandanCardCounts:require('../web/app/card-counts.js'),reviewRound:round,GuandanCore:core,signed:value=>(value>0?'+':'')+value,presentRoundText:(value,r)=>personas.notice(value,r.playerIds,r.names)};vm.createContext(context);
   const source=fs.readFileSync(path.join(__dirname,'../web/app/review.js'),'utf8');
   vm.runInContext(source.match(/function reviewText\(\)\{[\s\S]*?\n\}/)[0],context);
   const text=context.reviewText();assert.match(text,/拖 3 · 固定打 2/);assert.match(text,/另一队反向记分/);assert.doesNotMatch(text,/升0级/);
-  for(const row of round.settlement.rows)assert.ok(text.includes(row.name+'：名次 '+context.signed(row.placement)));
+  for(const row of round.settlement.rows)assert.ok(text.includes(round.names[row.seat]+'：名次 '+context.signed(row.placement)));
+  assert.doesNotMatch(text,/青岚|知秋|墨白/);
   assert.ok(text.includes('最后打出的牌'));assert.ok(text.includes('终局明牌'));
 });

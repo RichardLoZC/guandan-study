@@ -1,8 +1,8 @@
 'use strict';
 (function(root,factory){
-  if(typeof module==='object'&&module.exports)module.exports=factory(require('./core.js'),require('./tuo3.js'),require('./tribute-strategy.js'),require('./play-choices.js'));
-  else root.GuandanMatch=factory(root.GuandanCore,root.Tuo3Rules,root.GuandanTributeStrategy,root.GuandanPlayChoices);
-})(typeof globalThis==='object'?globalThis:this,function(core,tuo3,tributeStrategy,playChoices){
+  if(typeof module==='object'&&module.exports)module.exports=factory(require('./core.js'),require('./tuo3.js'),require('./tribute-strategy.js'),require('./play-choices.js'),require('./series.js'),require('./personas.js'));
+  else root.GuandanMatch=factory(root.GuandanCore,root.Tuo3Rules,root.GuandanTributeStrategy,root.GuandanPlayChoices,root.GuandanSeries,root.GuandanPersonas);
+})(typeof globalThis==='object'?globalThis:this,function(core,tuo3,tributeStrategy,playChoices,series,personas){
   const SAVE_KEY='guandan-trainer-v2', ARCHIVE_KEY='guandan-study-reviews-v1';
   const clone=value=>structuredClone(value);
   const ranks=new Set(['2','3','4','5','6','7','8','9','10','J','Q','K','A','SJ','BJ']);
@@ -31,6 +31,8 @@
       !Number.isSafeInteger(state.round)||state.round<1||typeof state.id!=='string'||!state.id||
       !Array.isArray(state.exchanges)||!seat(state.game.currentPlayer)||!seat(state.game.starter))
       throw new Error('存档结构不完整，已保留原始数据。请导出后再重开。');
+    if(state.aceAttempts!=null&&(!Array.isArray(state.aceAttempts)||state.aceAttempts.length!==2||
+      state.aceAttempts.some((value,team)=>!Number.isInteger(value)||value<0||value>2||(value>0&&state.levels[team]!=='A'))))fail('冲 A 次数无效');
     const game=state.game,owners=new Map();
     const held=state.game.players.flatMap((player,seat)=>{
       if(!player||player.seat!==seat||!Array.isArray(player.hand)||player.team!==seat%2||
@@ -130,6 +132,8 @@
   class Match{
     constructor(state=core.newMatch()){
       this.state=clone(validate(state));
+      if(!personas.valid(this.state.personaIds))this.state.personaIds=personas.assignment(this.state.id);
+      this.state.aceAttempts??=[0,0];
       this.state.study??={version:1,choices:{}};
       this.state.study.choices??={};
       this.revision=0;
@@ -140,7 +144,7 @@
     get level(){return this.state.level;}
     get game(){return this.state.game;}
     get phase(){return this.state.phase;}
-    get names(){return this.playerIds.map(id=>core.names[id]);}
+    get names(){return this.playerIds.map(id=>id===0?'你':personas.profile(this.state.personaIds,id).name);}
     get actingSeat(){return this.phase==='give'?core.donor(this.state):this.phase==='return'?this.state.exchanges[this.state.returnIndex]?.to:this.game.currentPlayer;}
     get needsTributeConfirmation(){
       return !this.game.result&&this.phase==='playing'&&!this.game.actionHistory.length&&
@@ -165,11 +169,23 @@
     }
     get canAct(){return !this.game.result&&!this.needsTributeConfirmation&&!this.mustPass&&this.actingSeat===0;}
     get tributeChoices(){return (this.phase==='give'?core.giveChoices(this.state):this.phase==='return'?core.returnChoices(this.state):[]).map(decorate);}
-    chooseTribute(){
+    tributeObservation(seat=this.actingSeat){
+      if(!['give','return'].includes(this.phase)||seat!==this.actingSeat)throw new Error('当前不在此座位的贡还阶段');
+      const isDouble=this.state.tribute?.donors.length===2,exchange=this.state.exchanges[this.state.returnIndex];
+      return clone({phase:this.phase,seat,level:this.level,hand:this.game.players[seat].hand,choices:this.tributeChoices,isDouble,
+        receiver:this.phase==='give'?(isDouble?null:this.state.tribute.winners[0]):exchange?.from,
+        giveRecords:this.state.exchanges.map(item=>({from:item.from,to:item.to,cardId:item.given.id}))});
+    }
+    async chooseTribute(runModel){
       const choices=this.tributeChoices;
       if(!choices.length)throw new Error('当前没有合法的贡还牌');
-      if(this.phase==='give')return {card:choices[0],reason:'按规则进贡最大的非逢人配牌。',assessment:null,candidates:choices.map(card=>({card})),method:'maximum-tribute'};
-      return tributeStrategy.choose({hand:this.game.players[this.actingSeat].hand,level:this.level,choices});
+      if(typeof runModel!=='function')throw new Error('贡还选择必须调用 DanLM 模型');
+      const revision=this.revision,phase=this.phase,seat=this.actingSeat;
+      const response=await runModel({tribute:this.tributeObservation(seat),provider:'danlm'});
+      if(this.revision!==revision||this.phase!==phase||this.actingSeat!==seat)throw new Error('贡还期间牌局已变化');
+      const card=this.tributeChoices.find(card=>card.id===response?.cardId);
+      if(!card||!Number.isFinite(response.score))throw new Error('模型未返回合法的贡还牌');
+      return {card,score:response.score,engine:response.engine,method:'danlm-v1',assessment:null};
     }
     get tributeDisplay(){
       const state=this.state;
@@ -178,7 +194,7 @@
       if(this.isTuo3){
         const t=state.tuo3;
         return {...common,mode:'拖 3',title:'翻牌定搭档 · 本副打 2',
-          reason:core.names[t.flipper]+'翻出 '+core.cardLabel(t.flipped)+'；'+(t.sameHolder?'两张同牌在一家，保留原搭档。':'两张同花同点牌的持有者配对，已安排对坐。'),
+          reason:this.names[this.playerIds.indexOf(t.flipper)]+'翻出 '+core.cardLabel(t.flipped)+'；'+(t.sameHolder?'两张同牌在一家，保留原搭档。':'两张同花同点牌的持有者配对，已安排对坐。'),
           message:'你与'+this.names[2]+'搭档；'+this.names[1]+'与'+this.names[3]+'搭档。'+this.names[this.game.starter]+'先出，首手禁 3。',
           rows:[{kind:'翻牌',from:t.holder,to:null,card:decorate(t.flipped),status:'先手',active:false},
             {kind:'同牌',from:t.other,to:null,card:decorate(t.twin),status:t.sameHolder?'两牌同家':'同牌配对',active:false}]};
@@ -241,7 +257,7 @@
       const play=key?plays.find(play=>play.key===key):plays[0];
       return play?{play,plays}:{error:'所选牌型已失效，请重新选择'};
     }
-    commit(seat,ids,{expectedRevision=this.revision,key,engine=null,teaching=null,strategy=null,automatic=false}={}){
+    commit(seat,ids,{expectedRevision=this.revision,key,engine=null,teaching=null,strategy=null,decision=null,automatic=false}={}){
       if(expectedRevision!==this.revision)throw new Error('牌局已变化，请重新选择');
       if(this.needsTributeConfirmation)throw new Error(this.isTuo3?'请先看清翻牌与搭档，再点击「开始出牌」':'请先看清贡还结果，再点击「开始出牌」');
       if(this.game.result||seat!==this.actingSeat)throw new Error('现在不能由此玩家行动');
@@ -249,7 +265,7 @@
       let checked;
       if(ids.length){
         checked=this.selection(ids,seat,key);if(checked.error)throw new Error(checked.error);
-        if(checked.plays?.length>1&&!key)throw new Error('这组牌有多种解释，请先声明牌型');
+        if(checked.plays?.length>1&&!key&&!(checked.play.cards.length<=2&&checked.play.cards.every(card=>card.isWild)))throw new Error('这组牌有多种解释，请先声明牌型');
       }
       let next;
       if(this.phase==='give'||this.phase==='return'){
@@ -259,7 +275,7 @@
         if(!ids.length&&!this.game.tablePlay)throw new Error('领出时不能不出');
         const game=ids.length?core.applyPlay(this.game,seat,checked.play):core.applyPass(this.game,seat);
         const study=clone(this.state.study);
-        study.choices[this.game.actionHistory.length]={automatic,engine,teaching:seat===0?clone(teaching):null,...(strategy?{strategy:clone(strategy)}:{})};
+        study.choices[this.game.actionHistory.length]={automatic,engine,teaching:seat===0?clone(teaching):null,...(strategy?{strategy:clone(strategy)}:{}),...(decision?{decision:clone(decision)}:{})};
         next=this.isTuo3?(ids.length?tuo3.afterPlay(this.state,game,seat,checked.play):tuo3.afterPass(this.state,game)):{...this.state,game};
         next.study=study;
       }
@@ -268,11 +284,11 @@
     commitModel(response,revision,seat){
       const candidate=response?.result?.candidates?.[0];
       if(!candidate||!['pass','play'].includes(candidate.type))throw new Error('模型未返回有效打法，请重试');
-      const book=response.result.book;
-      const strategy=book?{version:book.version,original:book.original,chosen:book.chosen,changed:book.changed,
-        historyLength:this.game.actionHistory.length,reasons:(book.rows?.[0]?.evidence||[]).filter(e=>e.delta!==0).map(e=>e.reason)}:null;
       this.commit(seat,candidate.type==='play'?candidate.play.cards.map(card=>card.id):[],{
-        expectedRevision:revision,key:candidate.play?.key,engine:response.result.engine,strategy,automatic:true});
+        expectedRevision:revision,key:candidate.play?.key,engine:response.result.engine,automatic:true,
+        decision:{origin:this.isTuo3?'rule-filtered-model':'raw-model',modelActionKey:candidate.play?.key||'pass',
+          rawScore:Number.isFinite(candidate.score)?candidate.score:null,scoreKind:'uncalibrated-model-score',
+          candidatesReported:response.result.candidates.length,elapsedMs:Number.isFinite(response.elapsedMs)?response.elapsedMs:null}});
     }
     adaptModel(response,seat=this.actingSeat){
       if(!this.isTuo3)return response;
@@ -292,7 +308,7 @@
       }
       if(!chosen)throw new Error('没有找到合法的拖 3 打法');
       return {...response,result:{...response.result,candidates:[chosen,...candidates.filter(candidate=>candidate!==chosen)],engine:'DanLM + 拖3规则筛选'},
-        advanced:null,selectedNotes:null,notes:[reason,'本副搭档：'+this.names[(seat+2)%4]+'。'+tuo3.hint(this.state),
+        advanced:null,selectedNotes:null,notes:[reason,'本副搭档：'+this.names[(seat+2)%4]+'。'+personas.notice(tuo3.hint(this.state),this.playerIds,this.names),
           '基础模型仍是掼蛋 DanLM；禁出、拖三和计分由规则层处理，模型权重没有针对拖 3 重新训练。']};
     }
     observation(seat=this.actingSeat){
@@ -300,7 +316,12 @@
       return core.observation(this.game,seat,this.level,this.state.known,this.state.levels,core.tributeRecords(this.state));
     }
     persist(storage){storage.setItem(SAVE_KEY,JSON.stringify(this.state));}
-    next(){if(!this.game.result)throw new Error('本局尚未结束');return new Match(this.isTuo3?tuo3.create(this.state):core.newMatch(this.state));}
+    next(){
+      if(!this.game.result)throw new Error('本局尚未结束');
+      const state=this.isTuo3?tuo3.create(this.state):core.newMatch(this.state);
+      if(!series.settlement(this.state)?.victory)state.personaIds=[...this.state.personaIds];
+      return new Match(state);
+    }
     get events(){
       core.setLevel(this.level);
       const history=this.game.actionHistory;
@@ -313,10 +334,12 @@
         counts=[...counts];counts[entry.seat]-=cards.length;
         table=entry.tablePlayAfter?{owner:entry.tableOwnerAfter,play:decoratePlay(entry.tablePlayAfter)}:null;
         const metadata=this.state.study.choices[index]||{};
-        const event={index,seat:entry.seat,label:entry.play?.label||'不出',cards,kind:entry.play?(core.isBomb(entry.play)?'bomb':entry.play.type):'pass',
+        const event={index,seat:entry.seat,label:entry.play?.label||'不出',cards,kind:entry.play?(core.isBomb(entry.play)?'bomb':entry.play.type):'pass',playType:entry.play?.type||null,playKey:entry.play?.key||null,
           remainingBefore,remaining:[...counts],ownBefore:before,ownAfter:clone(own),tableBefore,tableAfter:clone(table),
           automatic:metadata.automatic??entry.seat!==0,engine:metadata.engine||null,teaching:metadata.teaching||null,
           strategy:this.game.result?clone(metadata.strategy||null):null,
+          decision:this.game.result||entry.seat===0?clone(metadata.decision||null):null,
+          nextLeader:!table&&!(this.game.result&&index===history.length-1)?history[index+1]?.seat??this.game.currentPlayer:null,
           previousOwner:tableBefore?.owner??null,finished:counts[entry.seat]===0,trick};
         if(!table)trick++;return event;
       });
@@ -327,10 +350,12 @@
       const keys=[];const add=event=>{if(event&&!keys.includes(event))keys.push(event);};
       add(my.find(event=>event.teaching));add(my.find(event=>event.kind==='bomb'));add(my.findLast(event=>event.finished));
       for(const event of my){if(keys.length>=3)break;add(event);}
-      return {id:this.id,round:this.state.round,level:this.level,names:[...this.names],playerIds:[...this.playerIds],ruleMode:this.isTuo3?'tuo3':'classic',
+      return {id:this.id,round:this.state.round,level:this.level,names:[...this.names],playerIds:[...this.playerIds],personaIds:[...this.state.personaIds],remote:Boolean(this.remote),humanSeats:[...(this.humanSeats||[0])],ruleMode:this.isTuo3?'tuo3':'classic',
+        phase:this.phase,levels:[...this.state.levels],aceAttempts:[...this.state.aceAttempts],known:clone(this.state.known||[]),tributeRecords:clone(core.tributeRecords(this.state)),starter:this.game.starter,
         settlement:clone(this.state.tuo3?.settlement||null),totals:clone(this.state.tuo3?.totals||null),
         source:'本机实际对局 · DanLM 与规则解读',
         events,initialOwnHand:events[0]?.ownBefore||this.hand,completed:Boolean(result),winnerTeam:result?.winnerTeam??null,
+        seriesOutcome:series.settlement(this.state),
         levelDelta:result?.levelDelta??0,placement:result?.placementKey??null,actuallyFinished:finished,
         finishOrder:result?[...this.game.finishOrder]:[...finished,...[0,1,2,3].filter(seat=>!finished.includes(seat))],
         remaining:this.game.players.map(player=>player.hand.length),revealedHands:this.revealedHands,finalPlay:this.finalPlay,
@@ -348,6 +373,7 @@
     // alongside the compact state instead of falling back to the solo bots.
     for(const key of ['names','playerIds'])if(Array.isArray(record[key])&&record[key].length===4)
       Object.defineProperty(match,key,{value:clone(record[key])});
+    if(record.remote){match.remote=true;match.humanSeats=record.humanSeats||[0];}
     const snapshot=match.snapshot();
     if(typeof record.source==='string')snapshot.source=record.source;
     return snapshot;
@@ -356,7 +382,7 @@
     if(!match.game.result)return;
     // Store each actual card and action once. Replay snapshots are reconstructed on read.
     // Evict the oldest archived rounds before allowing quota pressure to block the next deal.
-    const record={id:match.id,state:clone(match.state),names:[...match.names],playerIds:[...match.playerIds]};
+    const record={id:match.id,state:clone(match.state),names:[...match.names],playerIds:[...match.playerIds],remote:Boolean(match.remote),humanSeats:match.humanSeats||[0]};
     if(typeof source==='string')record.source=source;
     const list=[record,...archiveRecords(storage).filter(item=>item.id!==match.id)].slice(0,8);
     while(list.length>1&&JSON.stringify(list).length>1000000)list.pop();

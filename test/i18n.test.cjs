@@ -19,8 +19,8 @@ test('dynamic counters and legal combination names are translated',()=>{
 test('AI, human and disconnected turn labels translate in English',()=>{
  for(const source of ['思考中','正在出牌','正在进贡','正在还贡','正在重连','等待玩家重连','青岚 · 思考中'])assert.ok(!/[\u3400-\u9fff]/u.test(i18n.t(source,'en')),source);
 });
-test('AI strategy settings and host-only explanations translate in English',()=>{
- for(const source of ['AI 出牌策略','秘籍影响 AI 出牌','开启：结合秘籍调整候选打法。关闭：使用 DanLM 原始评分。下一次 AI 出牌生效。','适用于单人练习，自动保存你的选择。','正在同步房间设置…','更新房主应用后可调整 AI 秘籍策略。','本牌桌所有 AI 共用此设置，其他玩家同步查看。','由房主统一设置，当前显示的是本牌桌的选择。','看建议时使用秘籍','教学建议独立设置。DanLM 只使用行动者的手牌、公开出牌和贡还记录。'])assert.ok(!/[\u3400-\u9fff]/u.test(i18n.t(source,'en')),source);
+test('model and loading status translate in English',()=>{
+ for(const source of ['模型加载完成 · 本机计算','正在准备游戏资源…','正在加载牌面、头像和模型 23%','DanLM 使用原始模型评分，只使用行动者的手牌、公开出牌和贡还记录。'])assert.ok(!/[\u3400-\u9fff]/u.test(i18n.t(source,'en')),source);
 });
 test('tribute, reconnect and invalid selections retain their conditions in English',()=>{
  for(const s of ['知秋持有两张大王，满足抗贡条件。','墨白上副末游；未满足两张大王的抗贡条件，需单贡。','所选牌压不过桌面上的对K','等待 Alice 重新连接'])assert.ok(!/[\u3400-\u9fff]/u.test(i18n.t(s,'en')),i18n.t(s,'en'));
@@ -33,7 +33,7 @@ test('language catalog is loaded before presentation code on all platforms',()=>
  const html=fs.readFileSync(path.join(__dirname,'../web/index.html'),'utf8');assert.ok(html.indexOf('/app/locales/en.js')<html.indexOf('/app/i18n.js'));assert.ok(html.indexOf('/app/i18n.js')<html.indexOf('/app/table.js'));assert.equal((html.match(/id="language-toggle"/g)||[]).length,1);
 });
 test('drag-to-arrange hints explain the gesture and automatic return in both languages',()=>{
- for(const source of ['按住拖动理牌','松手放下 · 自动回到选牌','点选牌面 · 按住拖动理牌','手牌布局','平铺','弧形','弧形双层手牌；点击选牌，按住拖动理牌，空白处左右滚动','双层手牌；按住拖动理牌，空白处左右滚动','双层手牌；点击选牌，按住拖动理牌，空白处左右滚动']){
+ for(const source of ['按住拖动理牌','松手放下 · 自动回到选牌','点选牌面 · 按住拖动理牌','手牌布局','平铺','叠牌','同点数叠放；点击牌头选牌，拖动调整组合']){
   assert.equal(i18n.t(source,'zh-CN'),source);assert.ok(!/[\u3400-\u9fff]/u.test(i18n.t(source,'en')),source);
  }
 });
