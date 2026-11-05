@@ -1,4 +1,5 @@
-掼军 1.8.40 · GitHub 公开版
+掼军 · 公开版
+桌面 1.8.43；Android 1.8.43/build234
 
 本版提供离线练习和同一 Wi-Fi 内的 2–4 人局域网对局，空位由 DanLM 补齐。
 Apple 芯片 Mac 发布包使用官方原生核心；Windows、Android、Intel Mac 使用已对齐 ONNX。
@@ -13,3 +14,5 @@ Mac、Windows请解压完整目录使用；Android手机和平板使用同一APK
 本版不包含线上托管服务、服务器配置或私有更新渠道。
 源码、安装包与许可：https://github.com/RichardLoZC/guandan-study
 DanLM组件仅限非商业用途，详见随附第三方许可。
+
+界面：所有版本应用名均为“掼军”，发行渠道和版本号单列。发牌过程共用牌桌上的同一块丝绸背景；非输入文字不允许鼠标拖选，输入框保留编辑。

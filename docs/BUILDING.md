@@ -1,4 +1,4 @@
-# Building Guandan Study
+# Building 掼军
 
 Use Node.js 22.12+ and `npm ci`. `npm test` runs the rules, saves, LAN, presentation and localization regressions. Production runtime files are explicitly allowlisted by `scripts/package-options.mjs`.
 
