@@ -3,6 +3,7 @@ const path = require('node:path');
 const {spawn} = require('node:child_process');
 const readline = require('node:readline');
 const core = require('./web/app/core.js');
+const models = require('./web/app/model-profiles.js');
 
 const RANKS = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
 const SUITS = ['hearts','spades','clubs','diamonds'];
@@ -21,6 +22,8 @@ function nativeRank(play,level){
   return play.primaryValue===14.5?RANKS.indexOf(level):play.primaryValue-2;
 }
 function convert(payload, reply){
+  const policy=models.resolve(payload?.policyId);
+  if(reply?.policyId!==policy.id||reply?.checkpointSha256!==policy.checkpointSha256)throw new Error('官方核心模型身份不一致');
   const obs=payload?.observation, seat=obs?.seat, state=obs?.state;
   if(!obs||!Number.isInteger(seat)||seat<0||seat>3||!state?.players?.[seat]||!Array.isArray(reply?.candidates))throw new Error('官方模型结果或牌局无效');
   const hand=state.players[seat].hand,byIndex=Array.from({length:54},()=>[]);
@@ -47,7 +50,7 @@ function convert(payload, reply){
     if(!seen.has(key)){seen.add(key);candidates.push({type:'play',play,score:item.score});}
   }
   if(!candidates.length)throw new Error('官方候选与当前牌桌规则不兼容，已停止出牌');
-  return {result:{candidates,engine:'DanLM 官方 Mac 原生核心',samples:0,source:'official-native',
+  return {result:{candidates,engine:policy.id===models.OFFICIAL?'DanLM 官方 Mac 原生核心':'DanLM 新风格 · 官方 Mac 核心',policyId:policy.id,checkpointSha256:policy.checkpointSha256,samples:0,source:'official-native',
     warning:'官方模型使用本人的手牌及公开记录；现有牌桌规则会过滤不兼容的候选。评分不是胜率。',
     officialCandidateCount:reply.candidates.length,filteredCandidateCount:skipped}};
 }
@@ -80,17 +83,20 @@ class OfficialDanLM {
       try{
         if(pending.payload.health)pending.resolve(msg.value);
         else if(pending.payload.tribute){
+          const policy=models.resolve();
+          if(msg.value?.policyId!==policy.id||msg.value?.checkpointSha256!==policy.checkpointSha256)throw new Error('贡还模型身份不一致');
           const choices=pending.payload.tribute.choices;
           if(!Array.isArray(choices)||!Number.isInteger(msg.value?.cardIndex)||!Number.isFinite(msg.value?.score))throw new Error('官方贡还结果无效');
           const card=choices.filter(choice=>cardIndex(choice)===msg.value.cardIndex).sort((a,b)=>a.id.localeCompare(b.id))[0];
           if(!card)throw new Error('官方贡还牌不在本桌合法候选中');
-          pending.resolve({cardId:card.id,score:msg.value.score,engine:'DanLM 官方 Mac 原生核心'});
+          pending.resolve({cardId:card.id,score:msg.value.score,engine:'DanLM 官方 Mac 原生核心',policyId:policy.id,checkpointSha256:policy.checkpointSha256});
         }else pending.resolve(convert(pending.payload,msg.value));
       }catch(error){pending.reject(error);}
     });
   }
   request(payload){
     if(!payload||typeof payload!=='object')return Promise.reject(new Error('官方模型请求无效'));
+    try{models.resolve(payload.policyId);}catch(error){return Promise.reject(error);}
     this.start();const child=this.child,id=++this.sequence;
     return new Promise((resolve,reject)=>{
       const timer=setTimeout(()=>{

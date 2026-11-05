@@ -47,3 +47,6 @@ npm run build:android -- --debug
 需 Node.js 22.12+。Android 还需 JDK17、Gradle8.13、SDK36；维护者的发布构建使用原签名，调试构建使用独立 `.dev` 包。Mac 原生构建见 [native/README.md](native/README.md)。详见 [构建说明](docs/BUILDING.md)与[公开发布边界](docs/PUBLIC-DISTRIBUTION.md)。
 
 **DanLM 组件仅限非商业用途。** 本仓库不代表 DanLM 官方，各组件许可见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+
+
+Ming persona update: 50 imaginative historical portraits; 25 classic and 25 ExpertStyle-v1 AI identities. ExpertStyle is a play-only variant; tribute/return always uses the original DanLM v1 checkpoint. This is a style choice, not a demonstrated strength improvement. Local human advice keeps the classic model. The jade silk tabletop and portrait atlases were generated with OpenAI ImageGen; prompts and asset hashes are in web/card-sources/ming50-generation.json. Existing DanLM license and attribution apply to the derived score head. No training rewards are enabled.

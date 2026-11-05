@@ -85,7 +85,12 @@ class Room {
   connected(m){return this.now()-m.lastSeen<12000;}
   get waiting(){return this.members.filter(m=>!this.connected(m)).map(m=>m.name);}
   identity(id){return this.members.find(m=>m.id===id)?.identity??Number(String(id).split(':')[1]);}
-  names(){return this.seats.map(id=>this.members.find(m=>m.id===id)?.name||personas.profile(this.match?.state.personaIds,this.identity(id))?.name||'AI');}
+  names(){return this.seats.map(id=>this.members.find(m=>m.id===id)?.name||personas.profile(this.match?.state.personaIds,this.identity(id),this.match?.state.personaSeries)?.name||'AI');}
+  policyFor(seat){
+    if(!Number.isInteger(seat)||seat<0||seat>3)throw new Error('AI 座位无效');
+    const profile=personas.profile(this.match?.state.personaIds,this.identity(this.seats[seat]),this.match?.state.personaSeries);
+    if(!profile)throw new Error('缺少本桌 AI 模型分配');return profile.policyId;
+  }
   shuffle(){const slots=[...this.members.map(m=>m.id),...[0,1,2,3].filter(id=>!this.members.some(m=>m.identity===id)).map(id=>'bot:'+id)];for(let i=3;i>0;i--){const j=this.random(i+1);[slots[i],slots[j]]=[slots[j],slots[i]];}this.seats=slots;}
   projected(member){
     const seat=this.seats.indexOf(member.id),waiting=this.waiting;
@@ -172,7 +177,7 @@ class Room {
     try{
       // Inference runs during the visible thinking period, not after it.
       const [response,ready]=await Promise.all([
-        phase==='playing'?this.runModel({observation:this.match.observation(seat),provider:'danlm'}):this.match.chooseTribute(this.runModel),
+        phase==='playing'?this.runModel({observation:this.match.observation(seat),provider:'danlm',policyId:this.policyFor(seat)}):this.match.chooseTribute(this.runModel),
         wait.promise
       ]);
       if(!ready||this.closed||this.version!==version||this.match?.id!==id||this.match.actingSeat!==seat||this.paused||this.waiting.length)return;

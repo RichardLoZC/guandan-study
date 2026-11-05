@@ -1,6 +1,6 @@
 .game-event[hidden],.ace-progress[hidden]{display:none!important}
 .avatar,.deal-avatar,.review-avatar,.reveal-avatar{position:relative;overflow:hidden}
-.avatar img.historical-avatar,.deal-avatar img.historical-avatar,.review-avatar img.historical-avatar,.reveal-avatar img.historical-avatar{position:absolute;left:calc(var(--portrait-col)*-100%);top:calc(var(--portrait-row)*-100%);width:400%;height:300%;max-width:none;object-fit:fill}
+.avatar img.historical-avatar,.deal-avatar img.historical-avatar,.review-avatar img.historical-avatar,.reveal-avatar img.historical-avatar{position:absolute;left:calc(var(--portrait-col)*-100%);top:calc(var(--portrait-row)*-100%);width:calc(var(--portrait-cols,4)*100%);height:calc(var(--portrait-rows,3)*100%);max-width:none;object-fit:fill}
 .hand-heading h1{position:relative}.player-reaction{position:absolute;z-index:70;left:30px;top:-18px;display:flex;align-items:center;gap:3px;padding:3px 6px;background:#fff8e5;color:#315343;border:1px solid #d5bb79;border-radius:14px;box-shadow:0 3px 9px #102d2444;white-space:nowrap;pointer-events:none;line-height:1}.player-reaction span{font-size:20px}.player-reaction b{font-size:10px}.player-reaction[data-motion=true]{animation:reaction-pop .28s cubic-bezier(.16,1.5,.45,1) both}.hand-heading .player-reaction{left:100%;top:-15px}
 .hand-heading h1 span.player-reaction{margin-left:0;color:#315343}.hand-heading h1 span.player-reaction span{margin-left:0;color:inherit}
 html[data-phone=true] .hand-pane > .player-reaction{left:auto;right:min(210px,35vw);top:7px}
@@ -30,3 +30,6 @@ html[data-phone=true] .is-round-over .hand-command-bar{flex:0 0 auto;min-height:
 html[data-phone=true] .is-round-over .end-result{text-align:left}
 html[data-phone=true] .is-round-over .round-end-banner h2{font-size:18px;margin:0 0 3px}
 html[data-phone=true] .is-round-over .round-end-banner p{font-size:12px;line-height:1.35}
+.ai-style-tag{display:inline-block;width:max-content;max-width:100%;margin-top:3px;padding:1px 6px;border:1px solid #e8dbc946;border-radius:5px;background:#0d302744;color:#cdddcd;font-size:11px;line-height:1.35;white-space:nowrap}
+.ai-style-tag[hidden]{display:none}.ai-style-tag[data-policy=expert-style-v1]{color:#f5dfa2;border-color:#dbc17b6b;background:#75602f33}
+html[data-phone=true] .ai-style-tag{font-size:9px;line-height:1.2;padding:1px 4px;margin-top:1px}

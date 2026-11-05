@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "name": "ExpertStyle v1 mixed personas",
+  "personas": "ming-50-v1",
+  "distribution": {
+    "danlm-v1": 25,
+    "expert-style-v1": 25
+  },
+  "phaseContract": {
+    "play": "persona-bound",
+    "give": "danlm-v1",
+    "return": "danlm-v1"
+  },
+  "weights": {
+    "danlm-v1": {
+      "checkpointSha256": "5341d7316bac1ead4098c796ea03f7e38fb47f001cc647a52be3ed0d15cd7244",
+      "scores": "scores.onnx",
+      "scoresSha256": "96cbf7b589b6a8b496d5d8993feefea5dd11665df1dac2da49d9d096ec438791"
+    },
+    "expert-style-v1": {
+      "checkpointSha256": "4738435b59911b10327225d7ef48a5ec5ed9e4f8088215ad168375f6b59e11eb",
+      "scores": "expert-scores-v1.onnx",
+      "scoresSha256": "f6f485f0a48a2316acfb63d94741b8e2d0d717d157e5f445ddf688c5e5b0137e"
+    }
+  },
+  "sharedEncoderSha256": "a9f274f3c50382048f855547579d08d116c3c08cd52b841df6dca66711e4d8a4",
+  "trainingRewardsEnabled": false,
+  "strengthClaim": null
+}

@@ -1,7 +1,7 @@
 {
   "name": "guandan-study-offline",
-  "version": "1.8.41",
-  "description": "Guandan Study: official-aligned DanLM, single-row hands, post-round stats, offline and LAN play",
+  "version": "1.8.42",
+  "description": "Guandan Study: 50 Ming personas, classic and ExpertStyle play models, silk tabletop, offline and LAN",
   "author": "Guandan Study",
   "main": "main.cjs",
   "private": true,

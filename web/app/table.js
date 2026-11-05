@@ -27,7 +27,7 @@ dealView.onSkip=()=>dealMotion.finish();
 const playerAt=(seat,round=liveRound)=>{
   const identity=round?.playerIds?.[seat]??seat,name=round?.names?.[seat]||'你';
   const human=round?.remote?(round.humanSeats||[0]).includes(seat):identity===0;
-  const profile=GuandanPersonas.profile(round?.state?.personaIds||round?.personaIds,identity);
+  const profile=GuandanPersonas.profile(round?.state?.personaIds||round?.personaIds,identity,round?.state?.personaSeries||round?.personaSeries||GuandanPersonas.LEGACY);
   return !human&&profile?{...profile,name}:{name,avatar:seat===0?null:'/assets/brand/app-icon.png'};
 };
 const seatStyle=(seat,round=liveRound)=>'seat-'+seat+' identity-'+(round?.playerIds||[0,1,2,3])[seat];
@@ -318,6 +318,11 @@ function renderTable(){
     for(const id of [0,1,2,3])player.classList.toggle('identity-'+id,liveRound.playerIds[seat]===id);
     const heading=player.querySelector('.player-info strong');let name=heading.querySelector('.player-name');if(!name){name=document.createElement('span');name.className='player-name';heading.firstChild.replaceWith(name);}name.setAttribute('translate',liveRound.remote?'no':'yes');name.textContent=playerAt(seat).name+' ';
     GuandanPersonas.paint(player.querySelector('.avatar img'),playerAt(seat));
+    let style=player.querySelector('.ai-style-tag');
+    if(!style){style=document.createElement('span');style.className='ai-style-tag';player.querySelector('.player-info').append(style);}
+    const profile=playerAt(seat);style.hidden=!profile.policyId;
+    style.textContent=profile.policyId?(GuandanI18n.locale==='en'?profile.styleEnglish:profile.styleName):'';
+    style.dataset.policy=profile.policyId||'';
     let score=player.querySelector('.player-score');
     if(!score){score=document.createElement('span');score.className='player-score';player.querySelector('.player-info').append(score);}
     score.hidden=!liveRound.isTuo3;score.textContent=liveRound.isTuo3?'累计 '+signed(liveRound.state.tuo3.totals[liveRound.playerIds[seat]])+' 分':'';
@@ -627,7 +632,7 @@ function renderGame(){
   document.querySelector('.turn-pill strong').textContent=turn;
   document.querySelector('.turn-pill').classList.toggle('is-self-turn',status?.seat===0);
   renderSeriesOutcome();
-  byId('engine-indicator').textContent=fault?'需要处理提示':activeTask==='health'?'正在加载离线模型…':model.ready?'DanLM · 离线就绪':'模型等待加载';
+  byId('engine-indicator').textContent=fault?'需要处理提示':activeTask==='health'?'正在加载离线模型…':model.ready?'经典＋新风格 · 就绪':'模型等待加载';
   resizeHand();renderHand();window.GuandanLan?.controls();
   window.GuandanAssessmentUI?.afterRender(liveRound);
 }
@@ -657,7 +662,7 @@ function scheduleBots(){
     try{
       const tribute=liveRound.phase!=='playing';
       const [rawResponse,ready]=await Promise.all([
-        tribute?liveRound.chooseTribute(payload=>model.request(payload)):model.request({observation:liveRound.observation(seat),provider:'danlm',variant:liveRound.state.ruleMode}),wait.promise
+        tribute?liveRound.chooseTribute(payload=>model.request(payload)):model.request({observation:liveRound.observation(seat),provider:'danlm',policyId:liveRound.policyFor(seat),variant:liveRound.state.ruleMode}),wait.promise
       ]);
       if(window.GuandanPhone?.blocked()||!ready||epoch!==workEpoch||!liveRound||liveRound.remote||id!==liveRound.id||revision!==liveRound.revision||liveRound.actingSeat!==seat||liveRound.needsTributeConfirmation||paused||fault||dealMotion.active||hasOpenDialog()||document.hidden)return;
       activeTask=null;
@@ -674,7 +679,7 @@ async function checkModel(){
   try{
     const response=await model.request({health:true});
     if(epoch!==workEpoch)return;if(!response.ready)throw new Error('模型没有就绪');
-    clearError('model');byId('model-status').textContent='程序内置模型已加载 · 离线运行，无需联网';
+    clearError('model');byId('model-status').textContent='经典＋新风格模型已加载 · 离线可用';
   }catch(error){if(epoch===workEpoch){byId('model-status').textContent=error.message;reportError(error,'model');}}
   finally{if(epoch===workEpoch){activeTask=null;byId('recheck-model').disabled=false;renderGame();scheduleBots();}}
 }

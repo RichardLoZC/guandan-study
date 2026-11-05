@@ -22,3 +22,6 @@ This repository contains components with different licenses. Public availability
 | Electron and build dependencies | See packaged Electron `LICENSE` / `LICENSES.chromium.html` and dependency package notices | Licenses are retained in desktop distributions; versions pinned in `package-lock.json` |
 
 The former 3D renderer, Three.js runtime and hand meshes were removed in 1.8.6. The current flat and stacked layouts use ordinary 2D card elements and contains no reference photograph. Local game saves, signing keys, device pairing information and internal test reports are excluded from version control and release packages.
+
+
+Ming persona update: 50 imaginative historical portraits; 25 classic and 25 ExpertStyle-v1 AI identities. ExpertStyle is a play-only variant; tribute/return always uses the original DanLM v1 checkpoint. This is a style choice, not a demonstrated strength improvement. Local human advice keeps the classic model. The jade silk tabletop and portrait atlases were generated with OpenAI ImageGen; prompts and asset hashes are in web/card-sources/ming50-generation.json. Existing DanLM license and attribution apply to the derived score head. No training rewards are enabled.

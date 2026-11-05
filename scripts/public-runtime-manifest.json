@@ -21,8 +21,8 @@
       "sha256": "ef723dbbfd93ffdf5637430292193b9be1887cdfb93d16c273ebbe1664a14639"
     },
     "THIRD_PARTY_NOTICES.md": {
-      "size": 3804,
-      "sha256": "b93879e20d5cdba18f2a05432884c622e18ca65c1800d020e2193b81ec531b40"
+      "size": 4377,
+      "sha256": "65ff88c17357856dbc2ef97c4f85c8ba1780f402d25a6f6a9880462c0bc38637"
     },
     "desktop-fit.cjs": {
       "size": 1055,
@@ -57,12 +57,12 @@
       "sha256": "66d18e17b7858dea7436272802828141592bd7a525d0b52430397cff42cb13b7"
     },
     "official-danlm.cjs": {
-      "size": 6711,
-      "sha256": "9b1a054d65fa4a75da2c1b76e055fc1224598b06b8e82041dd866729cd390ba2"
+      "size": 7416,
+      "sha256": "9871369ed4298e48e3914db73707d96ffd41c5112edfa25c4159d18ce3aad22a"
     },
     "package.json": {
-      "size": 1014,
-      "sha256": "7983aaff84a6952d4f4e1dc07f445e4ef7d3804ec16b043d872bdce22b9b7ac6"
+      "size": 1019,
+      "sha256": "7b8db66fc0e25765543254b50f9d4de62b4b31546b219e908454c3debafbdaf4"
     },
     "preload.cjs": {
       "size": 747,
@@ -93,8 +93,8 @@
       "sha256": "e889735991fcb1733e4c852040926dd0c480078dd957cfc788e1c23adc423488"
     },
     "web/app/assessment-provenance.js": {
-      "size": 2964,
-      "sha256": "d623bab236d072648ed5828ab4f3f3da52101f257a71c96060045ac88f07c635"
+      "size": 3248,
+      "sha256": "00ac24d3fe5726621aa49c09c275e86028efafa20147a283c31e320c8c3db535"
     },
     "web/app/assessment-rating-legacy.js": {
       "size": 2658,
@@ -165,8 +165,8 @@
       "sha256": "54d86d3a7e98258d13eb64c331bee37f4d9f4b81e96a0701524ed4e8a4900089"
     },
     "web/app/game-feedback.css": {
-      "size": 6636,
-      "sha256": "04106760202ae5afe435708f42a77034a8a296bf91bb3e32e4cff79afdf13e92"
+      "size": 7160,
+      "sha256": "b666a7f3a88ba2264b567152bedcb93fb8e500fc03f35f5c3e8eab30542e4594"
     },
     "web/app/game-feedback.js": {
       "size": 18056,
@@ -237,8 +237,8 @@
       "sha256": "5b9dc74a80d28dc78988fef8563b5d55fbc7429569319a6c29935c6dbe138a67"
     },
     "web/app/lan-room.js": {
-      "size": 14523,
-      "sha256": "03f390c07259b057742ba46f52dc363531c52d7f9e6966548c714d0365449e25"
+      "size": 14910,
+      "sha256": "ab3c74aa760723d62d9adb104e2ef346c6d7ec41d554eb21217782f61fc49e42"
     },
     "web/app/lan.css": {
       "size": 7551,
@@ -249,20 +249,24 @@
       "sha256": "27f559c4bbcfbc0138d411123a2f5846b68c8861d31aa2da7a4c16843cb9ddce"
     },
     "web/app/match.js": {
-      "size": 32041,
-      "sha256": "cc4f690af3d256964f8bbd42e6129c538b638dbed6f43c6cb6769b23593ee133"
+      "size": 33132,
+      "sha256": "d72a4565c5939c396ccab08164e4d7e7386fbb14748abf5e3d89cdfb8d82b3ec"
     },
     "web/app/mobile.css": {
       "size": 8104,
       "sha256": "6ce5732a9998e87a1eea59340b246610c8f38390571bcdc28e571c1be6c838b9"
     },
     "web/app/model-client.js": {
-      "size": 2488,
-      "sha256": "5853bacd0b050f7c70d94c6d277085f50096f06910ee1e6ba4ac642698b2740b"
+      "size": 3195,
+      "sha256": "f48eb2b5a977a5afbd535494b859eab38f7f6b7f61a0e9bbb51b57de37b1e175"
+    },
+    "web/app/model-profiles.js": {
+      "size": 1378,
+      "sha256": "f223247568172ee22a493c18b819270ae8a37a5f17c5255fd9bd738484816fad"
     },
     "web/app/personas.js": {
-      "size": 1959,
-      "sha256": "fa05cbb65256b6ab93cbe35e17760433c10762bbf4b4241cb192b3f3d6a3a2a6"
+      "size": 4330,
+      "sha256": "f3e4f6522f9df7170ab465b6e681b494f0984f0b73b81fd4c9a15b83fb08112f"
     },
     "web/app/phone-layout.css": {
       "size": 25652,
@@ -321,12 +325,12 @@
       "sha256": "a00c5e56c920d7c68b96021c6bd6e2978a986532cc683544c12dad6ec9cfb6b3"
     },
     "web/app/table.css": {
-      "size": 39972,
-      "sha256": "8d987330f3ead3abbc39b9c71148e9601ce8f878fdffeaf740e81ded2102ed8b"
+      "size": 39616,
+      "sha256": "4e956479db99b152e791898c78ef1963cf43d5631580d6e2de9bd0ea821bc6f1"
     },
     "web/app/table.js": {
-      "size": 73908,
-      "sha256": "40daf92c2943f271d12f8ac0c971eca250f5062eba64d7442cf9a247aa945593"
+      "size": 74426,
+      "sha256": "fa95dca0ec5802fbf105210e89305a7a7e2ce6f8261137244405576c9fee4358"
     },
     "web/app/tribute-strategy.js": {
       "size": 5205,
@@ -772,6 +776,14 @@
       "size": 1137,
       "sha256": "79774236a4b9225f62f2b4d47c8d7208631ccf119bcef34ab9fdb84e31636bdb"
     },
+    "web/assets/avatars/ming-scholars-a-v1.png": {
+      "size": 3116383,
+      "sha256": "8b3f3e5dac08669457654b9fdc16a95f209249280bd8ebef03f5f0b83bb4b75b"
+    },
+    "web/assets/avatars/ming-scholars-b-v1.png": {
+      "size": 3142894,
+      "sha256": "0b975d5f00255b9d9312eb0da8af22aa791bd732a9c5c1e7bc21073c5c5bb0e5"
+    },
     "web/assets/avatars/mo-bai.png": {
       "size": 2052374,
       "sha256": "2dbee79de99d7ee6b5bca86079c23543fa2db7ff99382ac1b02cf69e0e3093e3"
@@ -789,8 +801,8 @@
       "sha256": "aa8bb3eaa98e71f4c50825831c0f7c8a0e372b466ebcd3a810be61c3602766a5"
     },
     "web/assets/fairWorker-CTCwrT35.js": {
-      "size": 84591,
-      "sha256": "407c27f33b8748af0f87ade911b44a01d69c8da01b2d45fd0495e1e835a1fd1b"
+      "size": 86603,
+      "sha256": "5e8506d324d83144b6a9c7547e3467c3e46673a0ce212f028ee76574cc04dc4a"
     },
     "web/assets/index-CJeykJr1.js": {
       "size": 236567,
@@ -1657,8 +1669,12 @@
       "sha256": "943b46dd5b6aade2608628822677a978ed9e0337f67e53dcccbb8a9f1f1df24b"
     },
     "web/assets/preload-manifest.json": {
-      "size": 28544,
-      "sha256": "8a7a3dfc2f1a21f98cee9959b7842838e16e3f8d086b51f9da704969a03290d6"
+      "size": 28970,
+      "sha256": "442ec5b2c4fd5513dc4b824df3e9e10191587c64b71ac93af72588fae421d467"
+    },
+    "web/assets/table/jade-silk-v1.png": {
+      "size": 3868088,
+      "sha256": "36d545331d79d50489ab4b2cf3255d55395cf8df7b52bf4a26c57988a1eaa531"
     },
     "web/card-sources/SVG-cards-LGPL-2.1.txt": {
       "size": 26530,
@@ -1676,6 +1692,10 @@
       "size": 34886,
       "sha256": "d3af48c98be229bd21eeaf9817c78e774ec910799155ee357dbc337f54615224"
     },
+    "web/card-sources/ming50-generation.json": {
+      "size": 7130,
+      "sha256": "538c5a9e88bead0d9deaedde6c440d3238737e986e14fb60273dbc2df2373725"
+    },
     "web/card-sources/minimal-card-source.txt": {
       "size": 161,
       "sha256": "46e288d14feaec10e59095279fe569dc41b17de5aa76c6aa971f4885708c3e13"
@@ -1689,16 +1709,16 @@
       "sha256": "e7809137728bac2256b5e851ef13373992c3827654a6a551348b75e7d041a543"
     },
     "web/engine.html": {
-      "size": 215,
-      "sha256": "db0d38ee131e4526bcb4f31d6496e6760276b06b3de687d22ef6b4da03991cbf"
+      "size": 267,
+      "sha256": "f5f2826c190f9ff9c50fc69c58d1f832b89a2971c89a17e617503d942c7abdb7"
     },
     "web/index-legacy.html": {
       "size": 585,
       "sha256": "f495765bd5dec3154ba6529a814d47d05bad0777d90aee6d299be7a761a9607e"
     },
     "web/index.html": {
-      "size": 29756,
-      "sha256": "7be7e10817dd2ec26413d3d3f6aedb998cb836d3ac53406c7341c99f7307aaf4"
+      "size": 29754,
+      "sha256": "7a2a9acb7ec1f3010f6c85ecba16e7ee9affd3a6a84d70b8032765512cdef194"
     },
     "web/mobile/DanLM-LICENSE.txt": {
       "size": 11709,
@@ -1719,6 +1739,14 @@
     "web/mobile/context.onnx": {
       "size": 3994215,
       "sha256": "a9f274f3c50382048f855547579d08d116c3c08cd52b841df6dca66711e4d8a4"
+    },
+    "web/mobile/expert-scores-v1.onnx": {
+      "size": 12100224,
+      "sha256": "f6f485f0a48a2316acfb63d94741b8e2d0d717d157e5f445ddf688c5e5b0137e"
+    },
+    "web/mobile/model-variants.json": {
+      "size": 931,
+      "sha256": "2e62f3d41b1901cb1fcff78779a9b21b33f88db84a1fd5ab4431a431f943d6f2"
     },
     "web/mobile/ort-wasm-simd-threaded.mjs": {
       "size": 24381,

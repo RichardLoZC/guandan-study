@@ -10,8 +10,8 @@ test('legacy book flags cannot reorder the raw model result',async()=>{
 });
 test('model client strips obsolete flags before sending a worker request',async()=>{
   let sent;
-  class Worker{postMessage(value){sent=value;this.onmessage({data:{id:value.id,ready:true}});}terminate(){}}
-  const context={Worker,setTimeout,clearTimeout};vm.createContext(context);
+  class Worker{postMessage(value){sent=value;this.onmessage({data:{id:value.id,ready:true,policyIds:['danlm-v1','expert-style-v1']}});}terminate(){}}
+  const context={Worker,setTimeout,clearTimeout,GuandanModelProfiles:require('../web/app/model-profiles.js')};vm.createContext(context);
   vm.runInContext(fs.readFileSync(require.resolve('../web/app/model-client.js'),'utf8')+'\nglobalThis.client=new DanLMClient();',context);
   await context.client.request({health:true,book:true,aiBook:true});
   assert.equal(sent.health,true);assert.equal('book' in sent,false);assert.equal('aiBook' in sent,false);
@@ -20,10 +20,10 @@ test('a failed model initialization is reset before retry',async()=>{
   const workers=[];
   class Worker{
     constructor(){this.terminated=false;workers.push(this);}
-    postMessage(value){this.onmessage({data:workers.length===1?{id:value.id,error:'backend aborted'}:{id:value.id,ready:true}});}
+    postMessage(value){this.onmessage({data:workers.length===1?{id:value.id,error:'backend aborted'}:{id:value.id,ready:true,policyIds:['danlm-v1','expert-style-v1']}});}
     terminate(){this.terminated=true;}
   }
-  const context={Worker,setTimeout,clearTimeout};vm.createContext(context);
+  const context={Worker,setTimeout,clearTimeout,GuandanModelProfiles:require('../web/app/model-profiles.js')};vm.createContext(context);
   vm.runInContext(fs.readFileSync(require.resolve('../web/app/model-client.js'),'utf8')+'\nglobalThis.client=new DanLMClient();',context);
   await assert.rejects(context.client.request({health:true}),/backend aborted/);
   context.client.reset();assert.equal(workers[0].terminated,true);assert.equal(context.client.ready,false);

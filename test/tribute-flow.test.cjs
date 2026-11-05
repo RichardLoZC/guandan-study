@@ -7,7 +7,7 @@ function scheduling(begin=()=>({promise:Promise.resolve(true),cancel(){}})){
   const timers=[],calls={commits:0,requests:0};
   const context={botTimer:null,botWait:null,GuandanTurnTiming:{begin},paused:false,fault:null,activeTask:null,workEpoch:0,dealMotion:{active:false},
     liveRound:{state:{},adaptModel:response=>response,id:'test',revision:0,actingSeat:1,game:{result:null},phase:'playing',needsTributeConfirmation:true,
-      observation:()=>({}),commitModel(){calls.commits++;}},
+      observation:()=>({}),policyFor:()=>'danlm-v1',commitModel(){calls.commits++;}},
     window:{},document:{hidden:false},hasOpenDialog:()=>false,
     clearTimeout(){},setTimeout(fn){timers.push(fn);return timers.length;},
     prefs:{book:true,aiBook:true},renderGame(){},reportError(error){throw error;},saveAction:fn=>fn(),

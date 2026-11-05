@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Local, private-pipe adapter for the upstream macOS DanLM core."""
 import dataclasses
+import hashlib
 import json
 import math
 import os
@@ -147,17 +148,28 @@ def prepared(observation):
     return seat, RANKS.index(level) + 2, hand, tokens, lead
 
 
-checkpoint = torch.load(BASE / "upstream/ckpts/DanLM_v1/dansformer_v1_best_eval.pt", map_location="cpu", weights_only=True)
-config = checkpoint.get("model_config") or checkpoint.get("config", {})
-fields = {field.name for field in dataclasses.fields(TransformerConfig)}
-model = TransformerQNetwork(TransformerConfig(**{key: value for key, value in config.items() if key in fields}))
-model.load_state_dict(checkpoint.get("model_state_dict") or checkpoint["model"], strict=True)
-model.eval()
+MODEL_IDENTITIES={
+    'danlm-v1':('upstream/ckpts/DanLM_v1/dansformer_v1_best_eval.pt','5341d7316bac1ead4098c796ea03f7e38fb47f001cc647a52be3ed0d15cd7244'),
+    'expert-style-v1':('upstream/ckpts/DanLM_ExpertStyle_v1/play.pt','4738435b59911b10327225d7ef48a5ec5ed9e4f8088215ad168375f6b59e11eb')
+}
+def load_model(relative,expected):
+    path=BASE/relative
+    if hashlib.sha256(path.read_bytes()).hexdigest()!=expected:raise ValueError('模型文件身份不一致')
+    checkpoint=torch.load(path,map_location='cpu',weights_only=True)
+    config=checkpoint.get('model_config') or checkpoint.get('config',{})
+    fields={field.name for field in dataclasses.fields(TransformerConfig)}
+    result=TransformerQNetwork(TransformerConfig(**{key:value for key,value in config.items() if key in fields}))
+    result.load_state_dict(checkpoint.get('model_state_dict') or checkpoint['model'],strict=True)
+    result.eval();return result
+models={key:load_model(*identity) for key,identity in MODEL_IDENTITIES.items()}
+model=models['danlm-v1']
 
 
 def run(payload):
+    policy_id=payload.get('policyId','danlm-v1')
+    if policy_id not in models:raise ValueError('未知 AI 模型')
     if payload.get("health") is True:
-        return {"ready": True, "engine": "official-danlm-macos", "commit": "d200e455f63fd46aa398e97b69a6bb94cf1ba098"}
+        return {"ready": True, "engine": "official-danlm-macos", "commit": "d200e455f63fd46aa398e97b69a6bb94cf1ba098", "policyIds": list(models)}
     if "tribute" in payload:
         data = payload["tribute"]
         seat, level, phase = data.get("seat"), data.get("level"), data.get("phase")
@@ -193,14 +205,15 @@ def run(payload):
         if scores.shape != (len(legal),) or not np.isfinite(scores).all():
             raise ValueError("官方贡还评分无效")
         best = int(np.argmax(scores))
-        return {"engine": "official-danlm-macos", "cardIndex": legal[best], "score": float(scores[best])}
+        return {"engine": "official-danlm-macos", "cardIndex": legal[best], "score": float(scores[best]), "policyId":"danlm-v1", "checkpointSha256":MODEL_IDENTITIES["danlm-v1"][1]}
     seat, level, hand, tokens, lead = prepared(payload.get("observation"))
     actions = get_legal_actions(hand, level, lead)
     if not isinstance(actions, np.ndarray) or actions.ndim != 2 or actions.shape[1] != 80 or not len(actions) or len(actions) > 50000:
         raise ValueError("官方核心未返回有效候选")
+    play_model=models[policy_id]
     with torch.inference_mode():
-        context = model.encode(torch.tensor([tokens], dtype=torch.int64), self_abs=torch.tensor([seat], dtype=torch.int64))
-        q = model.q_values_with_context(context, torch.from_numpy(hand.astype(np.float32)[None]), torch.from_numpy(actions.astype(np.float32)[None])).numpy().reshape(-1)
+        context = play_model.encode(torch.tensor([tokens], dtype=torch.int64), self_abs=torch.tensor([seat], dtype=torch.int64))
+        q = play_model.q_values_with_context(context, torch.from_numpy(hand.astype(np.float32)[None]), torch.from_numpy(actions.astype(np.float32)[None])).numpy().reshape(-1)
     if len(q) != len(actions) or not np.isfinite(q).all():
         raise ValueError("官方核心返回了无效评分")
     result = []
@@ -212,7 +225,7 @@ def run(payload):
         result.append({"cards": [[int(i), int(row[i])] for i in np.flatnonzero(row[:54])],
                        "type": int(type_slots[0]), "rank": int(rank_slots[0]) if len(rank_slots) else None,
                        "score": float(q[idx])})
-    return {"engine": "official-danlm-macos", "candidates": result}
+    return {"engine": "official-danlm-macos", "candidates": result, "policyId":policy_id, "checkpointSha256":MODEL_IDENTITIES[policy_id][1]}
 
 
 if __name__ == "__main__":

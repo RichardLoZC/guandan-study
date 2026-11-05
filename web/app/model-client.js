@@ -3,6 +3,7 @@ class DanLMClient{
   constructor(){this.worker=null;this.pending=null;this.sequence=0;this.ready=false;}
   request(payload,{timeout=90000}={}){
     if(this.pending)return Promise.reject(new Error('模型正在计算，请稍候'));
+    let policy;try{policy=GuandanModelProfiles.resolve(payload.policyId);}catch(error){return Promise.reject(error);}
     const native=globalThis.GuandanNativeDanLM;
     if(!native&&globalThis.GuandanDesktop?.nativeDanLM===true)return Promise.reject(new Error('官方 Mac 模型连接不可用'));
     const id=++this.sequence,now=()=>globalThis.performance?.now?.()??Date.now(),started=now();
@@ -13,6 +14,14 @@ class DanLMClient{
         if(this.pending?.id!==id)return;
         clearTimeout(timer);this.pending=null;
         if(data.error){reject(new Error(data.error));return;}
+        if(payload.health&&(!Array.isArray(data.policyIds)||!Object.keys(GuandanModelProfiles.profiles).every(id=>data.policyIds.includes(id)))){
+          reject(new Error('AI 模型尚未全部就绪，请重试'));return;
+        }
+        const expected=payload.tribute?GuandanModelProfiles.resolve():policy;
+        const identity=payload.tribute?data:data.result;
+        if(!payload.health&&(identity?.policyId!==expected.id||identity?.checkpointSha256!==expected.checkpointSha256)){
+          reject(new Error('AI 模型身份不一致，已停止本次出牌'));return;
+        }
         this.ready=true;resolve({...data,elapsedMs:Math.round(now()-started)});
       };
       const request={...payload,id};delete request.book;delete request.aiBook;
@@ -27,7 +36,7 @@ class DanLMClient{
         }).catch(error=>finish({error:error.message}));
         return;
       }
-      if(!this.worker)this.worker=new Worker('/assets/fairWorker-CTCwrT35.js?v=225',{type:'module'});
+      if(!this.worker)this.worker=new Worker('/assets/fairWorker-CTCwrT35.js?v=231',{type:'module'});
       this.worker.onmessage=event=>{if(event.data.id===id)finish(event.data);};
       this.worker.onerror=()=>this.cancel('模型线程加载失败，请重试');
       try{this.worker.postMessage(request);}catch(error){this.cancel(error.message);}

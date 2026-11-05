@@ -7,8 +7,8 @@ android {
         applicationId 'com.guandan.study'
         minSdk 26
         targetSdk 36
-        versionCode 229
-        versionName '1.8.41'
+        versionCode 231
+        versionName '1.8.42'
     }
     signingConfigs {
         release {
