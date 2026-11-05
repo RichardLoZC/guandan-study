@@ -18,7 +18,7 @@ function write(file,data){
   console.log(JSON.stringify({output:path.resolve(file),sha256:hash(bytes)}));
 }
 function baseline(){
-  const files=['web/app/core.js','web/app/card-counts.js','web/app/play-rules.js','web/app/series.js','web/app/tuo3.js','web/app/match.js','web/app/hand-assessment.js','web/app/private-hand-score.js','web/app/hand-assessment-legacy.js','web/app/assessment-legacy.js','web/app/assessment-rating-legacy.js','web/app/judge-v2.js','web/app/starting-reference.js','web/app/assessment-pilot.js','web/app/assessment.js','web/app/assessment-rating.js','web/app/evaluation-protocol.js','web/assets/fairWorker-CTCwrT35.js','web/mobile/context.onnx','web/mobile/scores.onnx'];
+  const files=['web/app/core.js','web/app/card-counts.js','web/app/play-rules.js','web/app/series.js','web/app/tuo3.js','web/app/match.js','web/app/hand-assessment.js','web/app/private-hand-score.js','web/app/hand-strength-reference.js','web/app/hand-strength.js','web/app/bomb-resources.js','web/app/round-statistics.js','web/app/hand-assessment-legacy.js','web/app/assessment-legacy.js','web/app/assessment-rating-legacy.js','web/app/judge-v2.js','web/app/starting-reference.js','web/app/assessment-pilot.js','web/app/assessment.js','web/app/assessment-rating.js','web/app/evaluation-protocol.js','web/assets/fairWorker-CTCwrT35.js','web/mobile/context.onnx','web/mobile/scores.onnx'];
   const hashes=Object.fromEntries(files.map(f=>[f,digest(path.join(root,f))]));
   const select=keys=>hash(JSON.stringify(Object.fromEntries(keys.map(k=>[k,hashes[k]]))));
   return {schema:1,version:json(path.join(root,'package.json')).version,hashes,
@@ -63,7 +63,7 @@ export function verifyReplay(round){
     JSON.stringify(round.remaining)!==JSON.stringify(game.players.map(p=>p.hand.length)))throw new Error('规则回放终局或最终余牌不一致');
   return {status:'passed',decisions:round.events.length,roundSha256:hash(JSON.stringify(round)),rulesHash:baseline().rulesHash};
 }
-function readDataset(file){const d=json(file);if(d.kind!=='guandan-performance'||!d.round?.id||!Array.isArray(d.round.events))throw new Error('不是掼军技术统计导出文件');return d;}
+function readDataset(file){const d=json(file);if(!['guandan-performance','guandan-match-statistics'].includes(d.kind)||!d.round?.id||!Array.isArray(d.round.events))throw new Error('不是掼军技术统计导出文件');return d;}
 function verifyEvidence(experiment,evidenceFile){
   const data=json(evidenceFile),verified={};
   for(const key of ['rulesReplay','engineering','exportParity','opponentMatrix']){

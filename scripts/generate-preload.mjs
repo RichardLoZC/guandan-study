@@ -13,6 +13,6 @@ function visit(relative){
 for(const skin of ['jumbo','accessible','minimal'])visit('assets/'+skin);
 files.push('app/danlm-adapter.js','app/card-counts.js','app/play-rules.js','assets/brand/app-icon.png','assets/avatars/historical-figures-v1.png','assets/fairWorker-CTCwrT35.js',
   'mobile/context.onnx','mobile/scores.onnx','mobile/ort-wasm-simd-threaded.wasm','mobile/ort-wasm-simd-threaded.mjs');
-const entries=files.sort().map(file=>({url:'/'+file+(file.startsWith('app/')?'?v=226':file.endsWith('.svg')||file.includes('fairWorker')||file==='assets/brand/app-icon.png'?'?v=226':''),bytes:fs.statSync(path.join(web,file)).size}));
+const entries=files.sort().map(file=>({url:'/'+file+(file.startsWith('app/')?'?v=229':file.endsWith('.svg')||file.includes('fairWorker')||file==='assets/brand/app-icon.png'?'?v=229':''),bytes:fs.statSync(path.join(web,file)).size}));
 fs.writeFileSync(path.join(web,'assets/preload-manifest.json'),JSON.stringify({version:JSON.parse(fs.readFileSync(path.join(root,'package.json'))).version,entries},null,2)+'\n');
 console.log('Prepared '+entries.length+' playable resources.');

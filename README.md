@@ -4,11 +4,13 @@
 
 An offline and local-network Guandan client for macOS, Windows and Android. Professor Yan Feng created the original project; Richard Lo maintains these adaptations. Original credits and component licenses are retained.
 
-## 1.8.40
+## 1.8.41
+
+Starting hands now show the share of same-level reference hands they exceed. Post-round reports show two teams’ starting resources and four players’ lead losses (with/without opponent bombs), lead recoveries, wind receptions and bomb usage. Composite performance ratings and formula panels are removed. Historical feedback remains in local backups. The display comparison is not win probability; training rewards remain off.
 
 The DanLM v1 adapter now matches the official history format, complete action candidates and model-based tribute decisions. Joker/wildcard history and terminal placement handling have been repaired; model weights are unchanged. Fixed-sample validation passed all 1,144 play nodes and 312 tribute cases. This does not prove equivalence for all inputs or stronger play. See [alignment evidence](docs/DANLM-ALIGNMENT.md).
 
-The Apple Silicon release uses the official native core. Windows, Android and Intel Mac use aligned ONNX; development without an optional native runtime also uses ONNX. Shared improvements include a single hand row, flat/stack layouts, manual ordering, historical AI personas and sounds, series feedback, private starting-hand scores, seven-card reporting and local post-round pilot statistics. Automatic arrangement and the strategy-book layer are removed. Trial statistics are uncalibrated and never automatically used as training rewards.
+The Apple Silicon release uses the official native core. Windows, Android and Intel Mac use aligned ONNX; development without an optional native runtime also uses ONNX. Shared improvements include a single hand row, flat/stack layouts, manual ordering, historical AI personas and sounds, series feedback, private relative starting-hand strength, seven-card reporting and compact local post-round statistics. Automatic arrangement and the strategy-book layer are removed. Trial statistics are uncalibrated and never automatically used as training rewards.
 
 ## Downloads and play
 

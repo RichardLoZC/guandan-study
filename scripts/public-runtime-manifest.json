@@ -62,7 +62,7 @@
     },
     "package.json": {
       "size": 1014,
-      "sha256": "925ede22c3f91617c7497064d23d7249eb6ba61790855f2884ffd7a92a94961e"
+      "sha256": "7983aaff84a6952d4f4e1dc07f445e4ef7d3804ec16b043d872bdce22b9b7ac6"
     },
     "preload.cjs": {
       "size": 747,
@@ -93,8 +93,8 @@
       "sha256": "e889735991fcb1733e4c852040926dd0c480078dd957cfc788e1c23adc423488"
     },
     "web/app/assessment-provenance.js": {
-      "size": 2574,
-      "sha256": "c9a3c8e3c8af66241f289db0b9b1d9d4dec615e3025b88c67824923c18d38673"
+      "size": 2964,
+      "sha256": "d623bab236d072648ed5828ab4f3f3da52101f257a71c96060045ac88f07c635"
     },
     "web/app/assessment-rating-legacy.js": {
       "size": 2658,
@@ -113,16 +113,20 @@
       "sha256": "22d53eb0440e1c09e22f4cb89135fffabc7bd96c0497545232469f4454ad89e9"
     },
     "web/app/assessment-ui.js": {
-      "size": 28820,
-      "sha256": "315cc27a05524fc62b65cf03b81f504f5761c59d81369be099ca03696fc1d461"
+      "size": 7051,
+      "sha256": "1cd42cf9939d46e67a588aac1ac2ad3349187461dc05494057b131bc992de3ab"
     },
     "web/app/assessment.css": {
-      "size": 5591,
-      "sha256": "b2d2f3d46d44157b0949d2985e4005a57d13fcbc1631617a9ebd71a7a791d3ff"
+      "size": 3955,
+      "sha256": "9b468c0beaa8388b0b2aaa85d90a1f01775bdf2dab9da282d40d529f78f0f6a0"
     },
     "web/app/assessment.js": {
       "size": 20712,
       "sha256": "2efc0dbe64754b27c42b9355c5a74322166b10deb5f1ba8b688f7439f4f06466"
+    },
+    "web/app/bomb-resources.js": {
+      "size": 4485,
+      "sha256": "5acb938223070f3d747ee4c7bf05d77585ba2e0b20c730a5de247477dd592ffb"
     },
     "web/app/card-art.js": {
       "size": 735,
@@ -208,6 +212,14 @@
       "size": 2891,
       "sha256": "d888d738e1abc824d0ad4a0a6f60706e606e580d49ac8a47eb6f7a49986cd00f"
     },
+    "web/app/hand-strength-reference.js": {
+      "size": 8358,
+      "sha256": "413038096a447e2f1376665a4bf514444e847eb0742618a83c7ee1dff289421e"
+    },
+    "web/app/hand-strength.js": {
+      "size": 1002,
+      "sha256": "e8fb1123baf206b4b04a975b7d690fce4a68550af880e8da13ceeb594558bef6"
+    },
     "web/app/i18n.js": {
       "size": 4125,
       "sha256": "73fb4aaba472dce07b379731d1088e17884c29b83c5ccc43308a24718a674a27"
@@ -277,12 +289,16 @@
       "sha256": "44db467f382406cbb33d620739243eddfbb5579f926f18d95b3765cbf22eda3f"
     },
     "web/app/private-hand-score.js": {
-      "size": 1453,
-      "sha256": "f6aadaf52bf2089ad6ea15cace3b43e4ec300aac9b3bcf60884952dce37a7706"
+      "size": 1569,
+      "sha256": "69ff8ea256b6144cc2de39a00f776a51f371987d811e44d6c220c7ee9fd8c8f2"
     },
     "web/app/review.js": {
       "size": 18985,
       "sha256": "da9e21e9ad51c94ece3ac886238a987ad6c5772cde4309e04dba7009bdd5e569"
+    },
+    "web/app/round-statistics.js": {
+      "size": 4115,
+      "sha256": "121aa52d70896ed5cd19385e4b501df69e0cc4a0edb70f5e5303653899b2b83d"
     },
     "web/app/round-table.css": {
       "size": 4785,
@@ -309,8 +325,8 @@
       "sha256": "8d987330f3ead3abbc39b9c71148e9601ce8f878fdffeaf740e81ded2102ed8b"
     },
     "web/app/table.js": {
-      "size": 73789,
-      "sha256": "dc0625c21ba8ca74b6a54685fcfdb84cb002a4a10380352ad223f81fb2b33282"
+      "size": 73908,
+      "sha256": "40daf92c2943f271d12f8ac0c971eca250f5062eba64d7442cf9a247aa945593"
     },
     "web/app/tribute-strategy.js": {
       "size": 5205,
@@ -1640,6 +1656,10 @@
       "size": 30587,
       "sha256": "943b46dd5b6aade2608628822677a978ed9e0337f67e53dcccbb8a9f1f1df24b"
     },
+    "web/assets/preload-manifest.json": {
+      "size": 28544,
+      "sha256": "8a7a3dfc2f1a21f98cee9959b7842838e16e3f8d086b51f9da704969a03290d6"
+    },
     "web/card-sources/SVG-cards-LGPL-2.1.txt": {
       "size": 26530,
       "sha256": "dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551"
@@ -1677,8 +1697,8 @@
       "sha256": "f495765bd5dec3154ba6529a814d47d05bad0777d90aee6d299be7a761a9607e"
     },
     "web/index.html": {
-      "size": 37982,
-      "sha256": "9c3db7d9b0d838ff6c067efe78f386b24a3bde7a149a3d712065a8b7dabf06f0"
+      "size": 29756,
+      "sha256": "7be7e10817dd2ec26413d3d3f6aedb998cb836d3ac53406c7341c99f7307aaf4"
     },
     "web/mobile/DanLM-LICENSE.txt": {
       "size": 11709,

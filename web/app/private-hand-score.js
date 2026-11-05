@@ -1,9 +1,9 @@
 'use strict';
 (function(root,factory){
-  if(typeof module==='object'&&module.exports)module.exports=factory(require('./hand-assessment.js'));
-  else root.GuandanPrivateHandScore=factory(root.GuandanHandAssessment);
-})(globalThis,function(hand){
-  const VERSION='private-starting-hand-0.1.0';
+  if(typeof module==='object'&&module.exports)module.exports=factory(require('./hand-assessment.js'),require('./hand-strength.js'));
+  else root.GuandanPrivateHandScore=factory(root.GuandanHandAssessment,root.GuandanHandStrength);
+})(globalThis,function(hand,strength){
+  const VERSION='private-starting-hand-0.2.0';
   // The input is the current viewer's Match. Only their hand and their own
   // publicly played cards are used. No seat selector, other hands or network I/O.
   function readOwn(match){
@@ -17,7 +17,7 @@
     if(cards.length!==27)return empty(provisional?'tribute_in_progress':'starting_hand_incomplete');
     const result=hand.evaluate(cards,match.level,'classic');
     if(result.score===null)return empty('invalid_hand');
-    return {version:VERSION,handVersion:result.version,score:result.score,provisional,reason:null,
+    return {version:VERSION,handVersion:result.version,score:result.score,relative:strength.compare(result.score,match.level),provisional,reason:null,
       visibility:'self-only',calibrated:false,eligibleForTraining:false,reward:null};
   }
   return Object.freeze({VERSION,readOwn});

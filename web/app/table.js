@@ -595,11 +595,11 @@ function renderPrivateHandScore(){
   const badge=byId('private-hand-score'),own=GuandanPrivateHandScore.readOwn(liveRound),english=GuandanI18n.locale==='en';
   badge.hidden=!liveRound;
   const label=own.provisional?(english?'Deal':'暂评'):(english?'Start':'起手');
-  badge.textContent=own.score===null?(english?'Start —':'起手 —'):label+' '+own.score+'/100';
+  badge.textContent=!own.relative?(english?'Start —':'起手 —'):label+(english?' · Above ':' · 强于 ')+own.relative.percentile+'%';
   const pending=own.reason==='unsupported_rule_mode'?(english?'Not available for Tuo 3.':'拖 3 的手牌结构分尚未适配。'):
     own.reason==='tribute_in_progress'?(english?'Tribute in progress; updates when your hand is complete.':'贡还进行中，手牌完整后更新。'):(english?'Starting hand unavailable.':'缺少完整起手牌。');
-  const note=own.score===null?pending:own.provisional?(english?'Before-tribute trial score; updates after tribute.':'贡还前暂评，贡还完成后更新并固定。'):(english?'Starting hand after tribute; remains fixed as cards are played.':'贡还后的起手结构分，出牌后保持固定。');
-  badge.title=(english?'Only you can see this. Trial structure score, not win probability. ':'仅自己可见；试行结构分，不是胜率。')+note;
+  const note=own.score===null?pending:own.provisional?(english?'Updates after tribute.':'贡还后更新。'):(english?'Fixed after tribute.':'贡还后固定。');
+  badge.title=(english?'Only you can see this. Compared with same-level random starting hands; not win probability. ':'仅自己可见；与同级随机起手比较，不是胜率。')+note;
   badge.setAttribute('aria-label',badge.textContent+'；'+badge.title);
   badge.classList.toggle('is-provisional',Boolean(own.provisional));
 }
@@ -758,8 +758,9 @@ function openHistory(trigger){
   if(!list.childElementCount){const p=document.createElement('p');p.textContent='本局尚未出牌。';list.append(p);}openDialog(byId('history-dialog'),trigger);
 }
 function exportSave(){
-  if(liveRound?.remote){downloadText('掼蛋-联机复盘.json',JSON.stringify(liveRound.snapshot(),null,2));return;}
-  downloadText('掼蛋-存档备份-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify({exportedAt:new Date().toISOString(),game:localStorage.getItem(GuandanMatch.SAVE_KEY),reviews:localStorage.getItem(GuandanMatch.ARCHIVE_KEY)},null,2));
+  const feedback={expertFeedback:localStorage.getItem(GuandanAssessment.FEEDBACK_KEY),playerFeedback:localStorage.getItem(GuandanAssessmentPilot.KEY)};
+  if(liveRound?.remote){downloadText('掼蛋-联机复盘.json',JSON.stringify({...liveRound.snapshot(),...feedback},null,2));return;}
+  downloadText('掼蛋-存档备份-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify({exportedAt:new Date().toISOString(),game:localStorage.getItem(GuandanMatch.SAVE_KEY),reviews:localStorage.getItem(GuandanMatch.ARCHIVE_KEY),...feedback},null,2));
 }
 function replaceMatch(next){next.persist(localStorage);dealMotion.cancel();liveRound=next;feedback.prime(liveRound);selected.clear();playKey=null;hintSnapshot=null;cardNodes.clear();clearToast();clearError();renderGame();beginDealAnimation();scheduleBots();}
 
