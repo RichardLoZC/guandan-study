@@ -7,8 +7,8 @@ android {
         applicationId 'com.guandan.study'
         minSdk 26
         targetSdk 36
-        versionCode 236
-        versionName '1.8.44'
+        versionCode 238
+        versionName '1.8.45'
     }
     signingConfigs {
         release {
@@ -50,8 +50,8 @@ def prepareWeb = tasks.register('prepareWeb', Sync) {
         def page = layout.buildDirectory.file('generated/guandan-assets/web/index.html').get().asFile
         page.setText(page.getText('UTF-8')
             .replace('<html lang="zh-CN"', '<html lang="zh-CN" data-platform="pad" data-safe-area="native"')
-            .replace('</head>', '<link rel="stylesheet" href="/pad/pad.css?v=236"><link rel="stylesheet" href="/app/mobile.css?v=236"><link rel="stylesheet" href="/app/hand-layout.css?v=236"><link rel="stylesheet" href="/app/round-table.css?v=236"><link rel="stylesheet" href="/app/table-layout.css?v=236"><link rel="stylesheet" href="/app/phone-layout.css?v=236"><script src="/pad/pad.js?v=236" defer></script></head>')
-            .replace('Desktop 1.8.44 · 公开版 · 离线单机与局域网联机', 'Android 1.8.44 · 公开版 · 离线单机与局域网联机')
+            .replace('</head>', '<link rel="stylesheet" href="/pad/pad.css?v=238"><link rel="stylesheet" href="/app/mobile.css?v=238"><link rel="stylesheet" href="/app/hand-layout.css?v=238"><link rel="stylesheet" href="/app/round-table.css?v=238"><link rel="stylesheet" href="/app/table-layout.css?v=238"><link rel="stylesheet" href="/app/phone-layout.css?v=238"><script src="/pad/pad.js?v=238" defer></script></head>')
+            .replace('Desktop 1.8.45 · 公开版 · 离线单机与局域网联机', 'Android 1.8.45 · 公开版 · 离线单机与局域网联机')
             .replace('关闭窗口会保留应用。⌘Q退出，Control+⌘F全屏；⌘+与⌘−调整界面大小。', '手机固定横屏，同点数叠放；平板使用单层手牌。手机点击牌头选牌；系统返回先关闭面板，再返回桌面。每一步自动保存。'), 'UTF-8')
     }
 }

@@ -62,7 +62,7 @@
     },
     "package.json": {
       "size": 1030,
-      "sha256": "364774d2a574c5afe9b5b4fefc5dc24d9e37b736cbe4d6dfeddcf3b9a993848f"
+      "sha256": "5ab2b313217bc0c73fe0a0d6fc9ef88192d23a45e24b2b6df5424fc7d6ba8c39"
     },
     "preload.cjs": {
       "size": 803,
@@ -94,7 +94,7 @@
     },
     "web/app/assessment-provenance.js": {
       "size": 3248,
-      "sha256": "39f72407450615bcba350ff1b00eb67d3e4c7a33ccde9b642fb2441c81828c44"
+      "sha256": "62fcc81a1bd39816aff5c295554f3d9b552762eae466758e6e65a8a49de75360"
     },
     "web/app/assessment-rating-legacy.js": {
       "size": 2658,
@@ -297,8 +297,8 @@
       "sha256": "69ff8ea256b6144cc2de39a00f776a51f371987d811e44d6c220c7ee9fd8c8f2"
     },
     "web/app/pure-black.css": {
-      "size": 3284,
-      "sha256": "1ade56c1a95f1c9f346be23fc2e55a7f6a1cf94bde1de95befd067969fafb79d"
+      "size": 3342,
+      "sha256": "561fc9755d1ed7d4ad8045ff5b78afdb6dcd3be3d05d1e94448893bec5c14c59"
     },
     "web/app/review.js": {
       "size": 18969,
@@ -333,8 +333,8 @@
       "sha256": "450e0d410f528b32cad49c71beba69bbb93da1a4b2280a8ce1b75b0fd6a0d401"
     },
     "web/app/table.js": {
-      "size": 74976,
-      "sha256": "3aeceaabf948b474e52f34711e0b7cdaa8d8801737abad5aaee28c0b0ad48646"
+      "size": 75096,
+      "sha256": "9634b613dd8ca9ee84dfd58b949f2f2e309121a247d021d4a13e6f3243ce69bb"
     },
     "web/app/theme-boot.js": {
       "size": 932,
@@ -2102,7 +2102,7 @@
     },
     "web/assets/preload-manifest.json": {
       "size": 37859,
-      "sha256": "2a9153af57ff0f3f159be785c97a0c45376bbfbce808d5d742967924d6def930"
+      "sha256": "c2b45e725727992f426df6725ca01ad3eabb33a81f80d8b9f15fcac85ed9eefc"
     },
     "web/assets/table/jade-silk-v1.png": {
       "size": 3868088,
@@ -2154,7 +2154,7 @@
     },
     "web/index.html": {
       "size": 30189,
-      "sha256": "b0002f80d0f8c1eb72dd431a15ac381217b1a5342a9e4262c3b2a27e307caeec"
+      "sha256": "a275df6bffe8a0e218e07d859c161b2957a65502d05c837813de98757445d789"
     },
     "web/mobile/DanLM-LICENSE.txt": {
       "size": 11709,
@@ -2198,7 +2198,7 @@
     },
     "使用说明.txt": {
       "size": 2055,
-      "sha256": "59cfb2c0131c3e140bf02217e4c3d3865c14b7ff5b76ec7e6ca88dd188dba1f2"
+      "sha256": "27963ba43fc1cd675441a3724e02e0d51582eb1215b07715bfb5762cefe92507"
     }
   }
 }

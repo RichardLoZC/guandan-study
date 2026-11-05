@@ -1,5 +1,5 @@
 {
-  "version": "1.8.44",
+  "version": "1.8.45",
   "entries": [
     {
       "url": "/app/card-counts.js?v=236",
@@ -19,7 +19,7 @@
     },
     {
       "url": "/app/pure-black.css?v=236",
-      "bytes": 3284
+      "bytes": 3342
     },
     {
       "url": "/app/theme-boot.js?v=236",

@@ -13,11 +13,11 @@
   html[data-theme=black] body,html[data-theme=black] body * {
     --seat:#fff!important;--seat-ink:#fff!important;--group-color:#fff!important;
     color:#fff!important;background-color:#000!important;background-image:none!important;
-    border-color:#444!important;text-shadow:none!important;box-shadow:none!important;accent-color:#fff!important;
+    border-color:#444!important;outline-color:#fff!important;text-shadow:none!important;box-shadow:none!important;accent-color:#fff!important;
   }
   html[data-theme=black] body *::before,html[data-theme=black] body *::after {
     color:#fff!important;background-color:transparent!important;background-image:none!important;
-    border-color:#444!important;text-shadow:none!important;box-shadow:none!important;
+    border-color:#444!important;outline-color:#fff!important;text-shadow:none!important;box-shadow:none!important;
   }
   html[data-theme=black] dialog::backdrop {background:rgba(0,0,0,.72)!important;}
   html[data-theme=black] :is(button,a,input,textarea,summary,[tabindex]):focus-visible {outline-color:#fff!important;}

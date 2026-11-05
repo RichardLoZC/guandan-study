@@ -102,9 +102,9 @@ function loadCardImage(img,skin,face){
   img.onerror=()=>{
     if(img.dataset.imageVersion!==version)return;
     if(attempts++>=2){img.onerror=null;img.src=pathFor('minimal');return;}
-    requestAnimationFrame(()=>{if(img.dataset.imageVersion===version)img.src=pathFor(skin)+'?v=236&r='+attempts;});
+    requestAnimationFrame(()=>{if(img.dataset.imageVersion===version)img.src=pathFor(skin)+'?v=238&r='+attempts;});
   };
-  img.src=pathFor(skin)+'?v=236';
+  img.src=pathFor(skin)+'?v=238';
 }
 function imageFor(face,label='',lockedSkin,level=liveRound?.level){
   const img=document.createElement('img');img.dataset.cardFace=face;img.dataset.levelCard=String(GuandanCardArt.isLevel(face,level));
@@ -195,7 +195,7 @@ function renderHand(){
         if(card.suit==='joker'){
           button.classList.add(card.rank==='BJ'?'big-joker':'small-joker');
           const label=document.createElement('span');label.className='joker-label';label.setAttribute('aria-hidden','true');
-          label.dataset.joker=card.rank;for(const character of (GuandanI18n.locale==='en'?'JOKER':card.label)){const line=document.createElement('span');line.textContent=character;label.append(line);}button.append(label);
+          label.dataset.joker=card.rank;for(const character of jokerText(card.rank)){const line=document.createElement('span');line.textContent=character;label.append(line);}button.append(label);
         }
         if(card.isWild){const wild=document.createElement('span');wild.className='wild-label';wild.textContent='百搭';wild.setAttribute('aria-hidden','true');button.append(wild);}
         button.addEventListener('click',event=>selectCard(card.id,event));
@@ -207,7 +207,7 @@ function renderHand(){
         let index=button.querySelector('.stack-card-index');
         if(!index){index=document.createElement('span');index.className='stack-card-index';index.setAttribute('aria-hidden','true');index.setAttribute('translate','no');button.append(index);}
         index.replaceChildren();index.dataset.suit=card.suit;index.dataset.wild=String(Boolean(card.isWild));index.dataset.joker=card.rank==='BJ'?'big':card.rank==='SJ'?'small':'';
-        const rank=document.createElement('b');rank.textContent=card.suit==='joker'?(GuandanI18n.locale==='en'?'JOKER':card.rank==='BJ'?'大王':'小王'):card.rank;
+        const rank=document.createElement('b');rank.textContent=card.suit==='joker'?jokerText(card.rank):card.rank;
         const suit=document.createElement('span');suit.className='stack-suit';suit.textContent=card.isWild?(GuandanI18n.locale==='en'?'W':'配'):({hearts:'♥',diamonds:'♦',clubs:'♣',spades:'♠'}[card.suit]||'');
         index.append(rank,suit);
         if(isLevel){const star=document.createElement('span');star.className='stack-star';star.textContent='★';index.append(star);}
@@ -390,8 +390,16 @@ function renderTribute(){
     copy.append(route,action,status);item.append(card,copy);(expanded?transfers:receiptCards).append(item);
   }
 }
+function jokerText(rank){
+  const big=rank==='BJ'||rank==='big';
+  return GuandanI18n.locale==='en'?(root.dataset.theme==='black'?(big?'BJ':'SJ'):'JOKER'):(big?'大王':'小王');
+}
+function refreshJokerLabels(){
+  document.querySelectorAll('.stack-card-index[data-suit=joker]').forEach(index=>{index.querySelector('b').textContent=jokerText(index.dataset.joker);});
+  document.querySelectorAll('.joker-label').forEach(label=>{label.replaceChildren(...Array.from(jokerText(label.dataset.joker),ch=>{const span=document.createElement('span');span.textContent=ch;return span;}));});
+}
 function setTheme(theme){
-  theme=GuandanTheme.normalize(theme);GuandanTheme.apply(theme);
+  theme=GuandanTheme.normalize(theme);GuandanTheme.apply(theme);refreshJokerLabels();
   for(const name of ['day','night','black'])byId('theme-'+name).setAttribute('aria-pressed',String(theme===name));
   byId('open-skins').disabled=theme==='black';byId('open-skins').textContent=theme==='black'?'黑白牌面':'牌面样式';
   document.querySelectorAll('img[data-card-face]').forEach(img=>loadCardImage(img,img.dataset.fixedSkin||currentSkin,img.dataset.cardFace));
@@ -903,10 +911,9 @@ root.classList.toggle('large-type',Boolean(prefs.large));byId('large-type').setA
 
 window.addEventListener('guandan-language-change',()=>{
   document.querySelectorAll('.stack-card-index').forEach(index=>{
-    if(index.dataset.suit==='joker')index.querySelector('b').textContent=GuandanI18n.locale==='en'?'JOKER':index.dataset.joker==='big'?'大王':'小王';
     if(index.dataset.wild==='true')index.querySelector('.stack-suit').textContent=GuandanI18n.locale==='en'?'W':'配';
   });
-  document.querySelectorAll('.joker-label').forEach(label=>{const text=GuandanI18n.locale==='en'?'JOKER':label.dataset.joker==='BJ'?'大王':'小王';label.replaceChildren(...Array.from(text,ch=>{const span=document.createElement('span');span.textContent=ch;return span;}));});
+  refreshJokerLabels();
   window.tableView?.sync();resizeHand();
 });
 
