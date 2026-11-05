@@ -159,7 +159,7 @@ function toggleReplay(){
 }
 function reviewText(){
   const round=reviewRound;
-  const lines=['掼蛋研习社'+' · 第'+round.round+'副复盘 · 打'+round.level,round.source,''];
+  const lines=['掼军'+' · 第'+round.round+'副复盘 · 打'+round.level,round.source,''];
   if(round.completed&&round.ruleMode==='tuo3'){
     lines.push('拖 3 · 固定打 2；本副积分：');
     for(const row of round.settlement.rows)lines.push((round.names?.[row.seat]||presentRoundText(row.name,round))+'：名次 '+signed(row.placement)+'，拖三 '+signed(row.drag)+'，余牌 '+signed(row.remainder)+'；本副 '+signed(row.delta)+'，累计 '+signed(row.total));
@@ -197,7 +197,7 @@ function decisionBody(key,round){
 }
 function englishReviewText(){
  const r=reviewRound,t=GuandanI18n.t;
- const lines=[`Guandan Study · Round ${r.round} · Level ${r.level}`,t(r.source),r.completed?(r.winnerTeam===0?'Our team':'Opponents')+(r.ruleMode==='tuo3'?' finished first':r.seriesOutcome?.victory?' cleared A · Match won':r.seriesOutcome?.demotion?' failed A 3/3 · Return to 2':r.seriesOutcome?.attempt?` A attempt ${r.seriesOutcome.attempt}/3 · Stay at A`:` won · +${r.levelDelta} levels`):'Round in progress',`Actions: ${r.stats.actions} · My plays: ${r.stats.myPlays} · My passes: ${r.stats.myPasses}`,''];
+ const lines=[`掼军 · Round ${r.round} · Level ${r.level}`,t(r.source),r.completed?(r.winnerTeam===0?'Our team':'Opponents')+(r.ruleMode==='tuo3'?' finished first':r.seriesOutcome?.victory?' cleared A · Match won':r.seriesOutcome?.demotion?' failed A 3/3 · Return to 2':r.seriesOutcome?.attempt?` A attempt ${r.seriesOutcome.attempt}/3 · Stay at A`:` won · +${r.levelDelta} levels`):'Round in progress',`Actions: ${r.stats.actions} · My plays: ${r.stats.myPlays} · My passes: ${r.stats.myPasses}`,''];
  if(r.ruleMode==='tuo3'&&r.settlement){lines.push('Tuo 3 · Fixed level 2');for(const row of r.settlement.rows)lines.push(`${t(r.names?.[row.seat]||presentRoundText(row.name,r))}: placement ${signed(row.placement)}, bonus ${signed(row.drag)}, unplayed ${signed(row.remainder)}; round ${signed(row.delta)}, total ${signed(row.total)}`);}
  if(r.finalPlay)lines.push('Final play: '+t(r.names[r.finalPlay.seat])+' · '+t(r.finalPlay.label),r.finalPlay.cards.map(c=>t(c.label)).join(', '));
  for(const h of r.revealedHands||[])lines.push(t(r.names[h.seat])+` · ${h.cards.length} cards left: `+h.cards.map(c=>t(c.label)).join(', '));

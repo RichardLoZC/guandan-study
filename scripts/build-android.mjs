@@ -45,7 +45,7 @@ const args=['--no-daemon','--console=plain','test'+variant+'UnitTest','assemble'
 if(process.argv.includes('--offline'))args.push('--offline');
 execFileSync(gradle,args,{cwd:path.join(stage,'project/android'),env,stdio:'inherit'});
 const dist=path.join(root,'dist/GuandanStudy-Android');fs.mkdirSync(dist,{recursive:true});
-const name='GuandanStudy-Android-v'+androidVersion+(mode==='debug'?'-test':'')+'.apk';
+const name='掼军-公开版-Android-v'+androidVersion+'-build'+androidBuild+(mode==='debug'?'-test':'')+'.apk';
 const output=path.join(dist,name);
 const staged=path.join(stage,'project/android/app/build/outputs/apk',mode,'app-'+mode+'.apk');
 const verification=execFileSync(path.join(sdk,'build-tools/36.0.0/apksigner'),['verify','--verbose','--print-certs',staged],{env,encoding:'utf8'});
@@ -75,6 +75,6 @@ if(mode==='release'){
 if(mode!=='release'||!fs.existsSync(output))fs.copyFileSync(staged,output);
 console.log(verification.trim());
 fs.writeFileSync(path.join(dist,mode==='debug'?'SHA256-test.txt':'SHA256.txt'),hash+'  '+name+'\n');
-fs.writeFileSync(path.join(dist,mode==='debug'?'测试构建信息.json':'构建信息.json'),JSON.stringify({version:androidVersion,build:androidBuild,mode,applicationId:'com.guandan.study'+(mode==='debug'?'.dev':''),minSdk:26,targetSdk:36,networkPermission:true,lanProtocol:3,sha256:hash},null,2)+'\n');
+fs.writeFileSync(path.join(dist,mode==='debug'?'测试构建信息.json':'构建信息.json'),JSON.stringify({name:'掼军',distribution:'公开版',version:androidVersion,build:androidBuild,mode,applicationId:'com.guandan.study'+(mode==='debug'?'.dev':''),minSdk:26,targetSdk:36,networkPermission:true,lanProtocol:3,sha256:hash},null,2)+'\n');
 console.log('Android build directory: '+stage);
 console.log('APK: '+output);

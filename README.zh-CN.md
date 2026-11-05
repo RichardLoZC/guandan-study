@@ -1,4 +1,4 @@
-# 掼蛋研习社 · Guandan Study
+# 掼军 · 掼军
 
 [English](README.md) · [下载安装包](https://github.com/RichardLoZC/guandan-study/releases)
 

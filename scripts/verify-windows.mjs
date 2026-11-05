@@ -12,7 +12,8 @@ const project=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const release=path.join(project,'dist','GuandanStudy-Windows');
 const info=JSON.parse(await fs.readFile(path.join(release,'build-info.json'),'utf8'));
 const metadata=JSON.parse(await fs.readFile(path.join(project,'package.json'),'utf8'));
-const archiveName=`GuandanStudy-Windows-v${metadata.version}-${info.arch}.zip`;
+const archiveName=info.archive;
+assert.equal(path.basename(archiveName),archiveName);
 assert.ok(['x64','arm64'].includes(info.arch));
 assert.equal(info.version,metadata.version);
 const archive=path.join(release,archiveName);
@@ -32,10 +33,10 @@ try{
  const folder=`GuandanStudy-win32-${info.arch}`;
  assert.deepEqual(await fs.readdir(extracted),[folder],'ZIP must have one portable application folder');
  const appRoot=path.join(extracted,folder);
- for(const file of ['GuandanStudy.exe','resources/app.asar','icudtl.dat','locales/en-US.pak','locales/zh-CN.pak','LICENSE','LICENSES.chromium.html']){
+ for(const file of ['掼军.exe','resources/app.asar','icudtl.dat','locales/en-US.pak','locales/zh-CN.pak','LICENSE','LICENSES.chromium.html']){
   assert.ok((await fs.stat(path.join(appRoot,file))).size>0,`Missing runtime file: ${file}`);
  }
- const executable=path.join(appRoot,'GuandanStudy.exe');
+ const executable=path.join(appRoot,'掼军.exe');
  const pe=await fs.readFile(executable);
  assert.equal(pe.subarray(0,2).toString(),'MZ');
  const peOffset=pe.readUInt32LE(0x3c);

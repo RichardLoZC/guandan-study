@@ -1,7 +1,6 @@
 /* Cards remain face down until the saved hand opens. No opponent faces are rendered. */
 .deal-stage { position:absolute; inset:0; z-index:6; overflow:hidden; color:var(--on-felt); isolation:isolate; }
-.deal-veil { position:absolute; inset:0; z-index:-1; background:radial-gradient(ellipse at 50% 46%,var(--felt),var(--felt-deep) 88%); transition:opacity .35s; }
-.deal-veil::after { content:""; position:absolute; inset:28px; border:1px solid #e4c88738; border-radius:42% / 24%; }
+.deal-veil { position:absolute; inset:0; z-index:-1; background:transparent; transition:opacity .35s; }
 .deal-intro { position:absolute; left:32px; top:22px; line-height:1.4; }
 .deal-intro > span { font-size:17px; color:var(--gold); letter-spacing:3px; }
 .deal-intro h2 { font-size:32px; margin:4px 0; }
@@ -63,3 +62,8 @@
   .deal-intro p { font-size:17px; }
   .deal-status { right:18px; top:18px; font-size:17px; white-space:normal; text-align:right; }
 }
+
+/* Reveal the same .felt throughout; mask normal cards until their reveal. */
+.arena-layout:is([data-deal-phase=shuffle],[data-deal-phase=deal]) .play-zone > :not(.felt),
+.arena-layout:is([data-deal-phase=shuffle],[data-deal-phase=deal]) > .tribute-receipt,
+.arena-layout:is([data-deal-phase=shuffle],[data-deal-phase=deal]) > .hand-tools{visibility:hidden}

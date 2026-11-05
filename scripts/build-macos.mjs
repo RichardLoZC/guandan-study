@@ -21,7 +21,7 @@ if(nativeSource&&!await fs.stat(path.join(nativeSource,'worker.py')).then(()=>tr
 if(nativeSource)verifyNativeRuntime(nativeSource,{requirePrivateRules:true});
 const staging = await fs.mkdtemp(path.join(os.tmpdir(), 'guandan-macos-build-'));
 const packages = await packager({
-  dir: project, tmpdir:path.join(staging,'packager-temp'), name: '掼蛋研习社',
+  dir: project, tmpdir:path.join(staging,'packager-temp'), name: '掼军',
   appBundleId: 'cn.guandan.study.offline', appCategoryType: 'public.app-category.card-games',
   platform: 'darwin', arch, electronVersion: metadata.devDependencies.electron,
   appVersion: metadata.version, buildVersion: metadata.version,
@@ -29,7 +29,7 @@ const packages = await packager({
   out: path.join(staging, 'packages'), overwrite: true,
   ignore: ignoreRuntimeFile,
   extendInfo: {
-    NSHumanReadableCopyright: 'Guandan Study; third-party licenses included',
+    NSHumanReadableCopyright: '掼军; third-party licenses included',
     NSLocalNetworkUsageDescription: '与同一局域网中的电脑、手机和平板连接，在同一张牌桌上进行掼蛋对局。',
   },
   osxUniversal: { mergeASARs: true },
@@ -41,8 +41,8 @@ const packages = await packager({
 });
 const release = path.join(dist, '掼蛋研习社-macOS离线版');
 await fs.mkdir(release, { recursive: true });
-const appPath = path.join(staging, '掼蛋研习社.app');
-await fs.rename(path.join(packages[0], '掼蛋研习社.app'), appPath);
+const appPath = path.join(staging, '掼军.app');
+await fs.rename(path.join(packages[0], '掼军.app'), appPath);
 if(arch!=='x64'&&nativeSource){
   const target=path.join(appPath,'Contents/Resources/danlm-native');
   // The Python core is arm64-only and is dispatched only on Apple Silicon.
@@ -51,10 +51,10 @@ if(arch!=='x64'&&nativeSource){
   execFileSync('/usr/bin/codesign',['--force','--deep','--sign','-','--timestamp=none',appPath],{stdio:'inherit'});
 }
 execFileSync('/usr/bin/codesign', ['--verify', '--deep', '--strict', appPath], { stdio: 'inherit' });
-const binary = path.join(appPath, 'Contents', 'MacOS', '掼蛋研习社');
+const binary = path.join(appPath, 'Contents', 'MacOS', '掼军');
 const architectures = execFileSync('/usr/bin/lipo', ['-archs', binary], { encoding: 'utf8' }).trim();
 await fs.copyFile(path.join(project, '使用说明.txt'), path.join(release, '使用说明.txt'));
-const zipName = `掼蛋研习社-macOS离线版-v${metadata.version}-${arch}.zip`;
+const zipName = `掼军-${metadata.distributionName}-macOS-v${metadata.version}-${arch}.zip`;
 const zipPath = path.join(release, zipName);
 const localZip = path.join(staging, zipName);
 execFileSync('/usr/bin/ditto', ['-c', '-k', '--sequesterRsrc', '--keepParent', appPath, localZip]);
@@ -62,7 +62,7 @@ await fs.copyFile(localZip, zipPath);
 const hash = createHash('sha256').update(await fs.readFile(zipPath)).digest('hex');
 await fs.writeFile(path.join(release, 'SHA256.txt'), `${hash}  ${zipName}\n`);
 await fs.writeFile(path.join(release, '构建信息.json'), JSON.stringify({
-  name: '掼蛋研习社', version: metadata.version,
+  name: '掼军', distribution:metadata.distributionName, version: metadata.version,
   electron: metadata.devDependencies.electron, architectures,
   archive: zipName,
   ai:{appleSilicon:arch==='x64'?null:nativeSource?'official-native-d200e455':'aligned-onnx-danlm-v1',intel:'aligned-onnx-danlm-v1'},

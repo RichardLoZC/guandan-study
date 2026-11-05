@@ -53,16 +53,16 @@
       "sha256": "6fc3e825be056570cb3aa5b0f905bc6a9d9ad27df0f2105ad0d1819c17ad358c"
     },
     "main.cjs": {
-      "size": 17222,
-      "sha256": "66d18e17b7858dea7436272802828141592bd7a525d0b52430397cff42cb13b7"
+      "size": 17487,
+      "sha256": "19af67ef0d2d2ffbb1f0b67952a2131748628bf5f26b721e32af1cffea2882c8"
     },
     "official-danlm.cjs": {
       "size": 7416,
       "sha256": "9871369ed4298e48e3914db73707d96ffd41c5112edfa25c4159d18ce3aad22a"
     },
     "package.json": {
-      "size": 1019,
-      "sha256": "7b8db66fc0e25765543254b50f9d4de62b4b31546b219e908454c3debafbdaf4"
+      "size": 1030,
+      "sha256": "f1be53d9c516252c2c657ce0fcd171c90b389b33f125e400f384b15961e0284c"
     },
     "preload.cjs": {
       "size": 747,
@@ -94,7 +94,7 @@
     },
     "web/app/assessment-provenance.js": {
       "size": 3248,
-      "sha256": "00ac24d3fe5726621aa49c09c275e86028efafa20147a283c31e320c8c3db535"
+      "sha256": "8c2972c9e21ddb6a6590998241c711ecb24854657d5aced1c782878cecab2224"
     },
     "web/app/assessment-rating-legacy.js": {
       "size": 2658,
@@ -149,12 +149,12 @@
       "sha256": "157699f31925b10cff30629d7ff7d123a0ddcf51552db5cc7cf4224ea381d5ac"
     },
     "web/app/deal-animation.css": {
-      "size": 5239,
-      "sha256": "e84fce2ded88aa7e339d50435c7d4615a76246d0872e89d0ce45b00501f2db09"
+      "size": 5423,
+      "sha256": "e380ae8987bb67d2022c620735e5506e2bdc8d1be80fa73c2bd2af9ac1f10c42"
     },
     "web/app/deal-animation.js": {
-      "size": 7963,
-      "sha256": "4e4f2bbf022ab73ff0d5c8d247dd65419a65248ea18ecf856966241b0255dc50"
+      "size": 8115,
+      "sha256": "424edd1ea39c5155d723fc912452a8d398903016efe21d65a346c3eb59c03026"
     },
     "web/app/desktop.css": {
       "size": 20062,
@@ -245,8 +245,8 @@
       "sha256": "fa1f05875991a0be5ea8efa93f4b938b4111e6b966648901cdd21ce08f9007aa"
     },
     "web/app/locales/en.js": {
-      "size": 67669,
-      "sha256": "27f559c4bbcfbc0138d411123a2f5846b68c8861d31aa2da7a4c16843cb9ddce"
+      "size": 67605,
+      "sha256": "4ef2e1f8f70453cdfa21c7243b3512d04d0d1e08267200360cd603ecc875aa7a"
     },
     "web/app/match.js": {
       "size": 33132,
@@ -297,8 +297,8 @@
       "sha256": "69ff8ea256b6144cc2de39a00f776a51f371987d811e44d6c220c7ee9fd8c8f2"
     },
     "web/app/review.js": {
-      "size": 18985,
-      "sha256": "da9e21e9ad51c94ece3ac886238a987ad6c5772cde4309e04dba7009bdd5e569"
+      "size": 18969,
+      "sha256": "3e58ea5d10a50e75bf1796c692e1441e73aad247acf8b1ed6642e02caf590034"
     },
     "web/app/round-statistics.js": {
       "size": 4115,
@@ -325,8 +325,8 @@
       "sha256": "a00c5e56c920d7c68b96021c6bd6e2978a986532cc683544c12dad6ec9cfb6b3"
     },
     "web/app/table.css": {
-      "size": 39616,
-      "sha256": "4e956479db99b152e791898c78ef1963cf43d5631580d6e2de9bd0ea821bc6f1"
+      "size": 40212,
+      "sha256": "450e0d410f528b32cad49c71beba69bbb93da1a4b2280a8ce1b75b0fd6a0d401"
     },
     "web/app/table.js": {
       "size": 74426,
@@ -1670,7 +1670,7 @@
     },
     "web/assets/preload-manifest.json": {
       "size": 28970,
-      "sha256": "442ec5b2c4fd5513dc4b824df3e9e10191587c64b71ac93af72588fae421d467"
+      "sha256": "c6046c13341bea21e72d03ce097e22dbefa6b5bfb4a714a5ea28fa3ef7d96777"
     },
     "web/assets/table/jade-silk-v1.png": {
       "size": 3868088,
@@ -1713,12 +1713,12 @@
       "sha256": "f5f2826c190f9ff9c50fc69c58d1f832b89a2971c89a17e617503d942c7abdb7"
     },
     "web/index-legacy.html": {
-      "size": 585,
-      "sha256": "f495765bd5dec3154ba6529a814d47d05bad0777d90aee6d299be7a761a9607e"
+      "size": 202,
+      "sha256": "708d2d2f45f7ef6fec7f55e6da68a800d2fc929e9dc0a10e71ff61c080ea8ea9"
     },
     "web/index.html": {
-      "size": 29754,
-      "sha256": "39c42391f3b09e92209877407a0061b677df91b8eca226161f90c0bfdfef95d8"
+      "size": 29858,
+      "sha256": "78979649d698871180d6d6c3dd582d487b3524384885ca17ea0555e316fe7ad0"
     },
     "web/mobile/DanLM-LICENSE.txt": {
       "size": 11709,
@@ -1761,8 +1761,8 @@
       "sha256": "96cbf7b589b6a8b496d5d8993feefea5dd11665df1dac2da49d9d096ec438791"
     },
     "使用说明.txt": {
-      "size": 1282,
-      "sha256": "31759bf907947cad6090bcbfd63bb896f5c5aebb9958c6a19163f68148109a9d"
+      "size": 1273,
+      "sha256": "69a397e7e95001c1b8eebccbb7436d77cbf35cdc20e29964d5d61633aa53fa02"
     }
   }
 }

@@ -18,10 +18,10 @@ if (!appPath) {
   assert.equal(path.basename(build.archive), build.archive);
   const expanded = path.join(scratch, 'release');
   execFileSync('/usr/bin/ditto', ['-x', '-k', path.join(release, build.archive), expanded]);
-  appPath = path.join(expanded, '掼蛋研习社.app');
+  appPath = path.join(expanded, '掼军.app');
   execFileSync('/usr/bin/codesign', ['--verify', '--deep', '--strict', appPath]);
 }
-const executable = path.join(appPath, 'Contents/MacOS/掼蛋研习社');
+const executable = path.join(appPath, 'Contents/MacOS/掼军');
 const resultsDir = path.join(project, 'test-results', testArch);
 await fs.mkdir(resultsDir, { recursive: true });
 const checks = [];

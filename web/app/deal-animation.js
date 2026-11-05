@@ -58,7 +58,7 @@
     }
     begin(meta){
       const doc=this.stage.ownerDocument;this.stage.replaceChildren();this.stage.hidden=false;this.stage.dataset.phase='shuffle';
-      this.table.inert=true;this.receipt.inert=true;this.stage.parentElement.setAttribute('aria-busy','true');
+      this.table.inert=true;this.receipt.inert=true;this.stage.parentElement.setAttribute('aria-busy','true');this.stage.parentElement.dataset.dealPhase='shuffle';
       this.phase=null;this.counts=[];this.focused=false;
       const veil=this.node('div','deal-veil');veil.setAttribute('aria-hidden','true');
       const intro=this.node('header','deal-intro');intro.append(this.node('span','','新的一副'),this.node('h2','','第 '+meta.round+' 副'),this.node('p','',meta.mode+' · 打 '+meta.level));
@@ -95,7 +95,7 @@
     }
     update({phase,counts}){
       if(!this.focused&&!this.stage.ownerDocument.querySelector('dialog[open]')){this.skip.focus({preventScroll:true});this.focused=true;}
-      if(phase!==this.phase){this.phase=phase;this.stage.dataset.phase=phase;this.status.textContent={shuffle:'正在洗牌',deal:'正在发牌 · 每人 27 张',reveal:'展开手牌'}[phase];}
+      if(phase!==this.phase){this.phase=phase;this.stage.dataset.phase=phase;this.stage.parentElement.dataset.dealPhase=phase;this.status.textContent={shuffle:'正在洗牌',deal:'正在发牌 · 每人 27 张',reveal:'展开手牌'}[phase];}
       counts.forEach((count,seat)=>{
         if(this.counts[seat]===count)return;this.counts[seat]=count;
         this.seats[seat].count.textContent=seat===0?count:'';this.seats[seat].pile.style.opacity=count?'1':'0';
@@ -114,7 +114,7 @@
     containsFocus(){return this.stage.contains(this.stage.ownerDocument.activeElement);}
     clear(){
       for(const animation of this.animations)animation.cancel();this.animations=[];
-      this.table.inert=false;this.receipt.inert=false;this.stage.parentElement.removeAttribute('aria-busy');
+      this.table.inert=false;this.receipt.inert=false;this.stage.parentElement.removeAttribute('aria-busy');delete this.stage.parentElement.dataset.dealPhase;
       this.stage.hidden=true;this.stage.replaceChildren();this.phase=null;this.counts=[];
     }
   }

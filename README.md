@@ -1,4 +1,4 @@
-# Guandan Study
+# 掼军
 
 [简体中文](README.zh-CN.md) · [Downloads](https://github.com/RichardLoZC/guandan-study/releases)
 

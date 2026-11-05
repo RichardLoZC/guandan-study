@@ -13,7 +13,7 @@ async function desktop(isMac){
   }
   const context={isMac,nativeAvailable:false,win:null,BrowserWindow:Window,app:{quit(){quitCount++;}},screen:{getPrimaryDisplay:()=>({workAreaSize:{width:1920,height:1080}})},
     fitDesktopWindow(){return ()=>{};},session:{defaultSession:{flushStorageData(){flushCount++;}}},
-    path,__dirname:path.join(__dirname,'..'),APP_NAME:'Fixture',edition:'Fixture',ORIGIN:'guandan://app',log(){}};
+    path,__dirname:path.join(__dirname,'..'),APP_NAME:'Fixture',DISTRIBUTION:'Fixture',edition:'Fixture',ORIGIN:'guandan://app',log(){}};
   vm.createContext(context);vm.runInContext(createWindowSource,context);
   // A hidden model window already exists and deliberately remains open.
   const engine=new Window({show:false});await context.createWindow();

@@ -1,4 +1,4 @@
-掼蛋研习社 1.8.40 · GitHub 公开版
+掼军 1.8.40 · GitHub 公开版
 
 本版提供离线练习和同一 Wi-Fi 内的 2–4 人局域网对局，空位由 DanLM 补齐。
 Apple 芯片 Mac 发布包使用官方原生核心；Windows、Android、Intel Mac 使用已对齐 ONNX。

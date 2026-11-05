@@ -9,7 +9,8 @@ const { fitDesktopWindow } = require('./desktop-fit.cjs');
 const {OfficialDanLM} = require('./official-danlm.cjs');
 
 const ORIGIN = 'guandan://app';
-const APP_NAME = '掼蛋研习社';
+const APP_NAME = '掼军';
+const DISTRIBUTION = require('./package.json').distributionName;
 let uiLanguage='zh-CN';
 const english=require('./web/app/locales/en.js');
 const ui=text=>uiLanguage==='en'?english.translate(text):text;
@@ -118,7 +119,7 @@ ipcMain.handle('guandan-lan',async(event,payload)=>{
 });
 ipcMain.on('guandan-language',(event,locale)=>{
   if(event.sender!==win?.webContents||event.senderFrame!==win.webContents.mainFrame||!event.senderFrame.url.startsWith(ORIGIN+'/index.html')||!['en','zh-CN'].includes(locale))return;
-  uiLanguage=locale;setMenus();win.setTitle((locale==='en'?'Guandan Study':APP_NAME)+' · '+edition);
+  uiLanguage=locale;setMenus();win.setTitle(APP_NAME+' · '+DISTRIBUTION+' · '+edition);
 });
 function showMessage(options) {
   return win && !win.isDestroyed() ? dialog.showMessageBox(win, options) : dialog.showMessageBox(options);
@@ -177,7 +178,7 @@ async function createWindow() {
   const table = new BrowserWindow({
     width: Math.min(1380, area.width), height: Math.min(940, area.height),
     minWidth: 880, minHeight: 640, backgroundColor: '#f6f5ee',
-    title: `${APP_NAME} · ${edition} 离线版`, icon: path.join(__dirname, 'icon.png'),
+    title: `${APP_NAME} · ${DISTRIBUTION} · ${edition}`, icon: path.join(__dirname, 'icon.png'),
     show: false,
     webPreferences: {
       additionalArguments:nativeAvailable?['--guandan-native-danlm']:[],
@@ -217,27 +218,28 @@ async function createWindow() {
     // window-all-closed from firing after the last visible window closes.
     if (!isMac) app.quit();
   });
+  table.on('page-title-updated', event => {event.preventDefault();table.setTitle(`${APP_NAME} · ${DISTRIBUTION} · ${edition}`);});
   table.once('ready-to-show', () => table.show());
   await table.loadURL(ORIGIN + '/index.html');
 }
 
 function setMenus() {
   const about = () => showMessage({
-    type: 'info', title: ui('关于掼蛋研习社'),
-    message: `${ui(APP_NAME)} · ${edition} ${app.getVersion()}`,
-    detail: uiLanguage==='en'?`${officialDanLM?'The official DanLM macOS core and checkpoint run locally.':'The official-aligned DanLM v1 ONNX model runs locally.'} Solo play and locally hosted LAN tables use the local model. The game validates moves against its own rules.\n\nSave folder: ${dataPath}`:`${officialDanLM?'单人及本机房主使用 DanLM 官方 Mac 原生核心与权重。':'单人及本机房主使用已对齐官方接口的 DanLM v1 ONNX 模型。'}游戏按本桌规则检查出牌。\n\n存档位置：${dataPath}`,
+    type: 'info', title: ui('关于掼军'),
+    message: `${APP_NAME} · ${DISTRIBUTION} · ${edition} ${app.getVersion()}`,
+    detail: uiLanguage==='en'?`${officialDanLM?'Classic and new-style play models use the official macOS core. Tribute uses classic DanLM.':'Classic and new-style play models use the aligned ONNX runtime. Tribute uses classic DanLM.'} Solo play and locally hosted LAN tables use the local model. The game validates moves against its own rules.\n\nSave folder: ${dataPath}`:`${officialDanLM?'经典与新风格出牌模型使用 DanLM 官方 Mac 原生核心，贡还使用经典模型。':'经典与新风格出牌模型使用已对齐的 ONNX 引擎，贡还使用经典模型。'}游戏按本桌规则检查出牌。\n\n存档位置：${dataPath}`,
     buttons: [uiLanguage==='en'?'OK':'知道了'],
   });
   const appMenu = { label: APP_NAME, submenu: [
-    { label: '关于掼蛋研习社', click: about },
+    { label: '关于掼军', click: about },
     { label: '打开存档文件夹', click: () => shell.openPath(dataPath) },
     { type: 'separator' },
     ...(isMac ? [
       { role: 'services', label: '服务' }, { type: 'separator' },
-      { role: 'hide', label: '隐藏掼蛋研习社' }, { role: 'hideOthers', label: '隐藏其他' },
+      { role: 'hide', label: '隐藏掼军' }, { role: 'hideOthers', label: '隐藏其他' },
       { role: 'unhide', label: '全部显示' }, { type: 'separator' },
     ] : []),
-    { role: 'quit', label: '退出掼蛋研习社' },
+    { role: 'quit', label: '退出掼军' },
   ] };
   const localize=items=>items.map(item=>({...item,...(item.label?{label:ui(item.label)}:{}),...(item.submenu?{submenu:localize(item.submenu)}:{})}));
   Menu.setApplicationMenu(Menu.buildFromTemplate(localize([
@@ -258,13 +260,13 @@ function setMenus() {
       { type: 'separator' }, { label: '显示牌桌', click: () => focusTable().catch(startupError) },
       ...(isMac ? [{ role: 'front', label: '全部置于前面' }] : []),
     ] },
-    { label: '帮助', submenu: [{ label: '关于离线版', click: about }] },
+    { label: '帮助', submenu: [{ label: '关于掼军', click: about }] },
   ])));
 }
 
 function startupError(error) {
   log(error.stack || error.message);
-  dialog.showErrorBox('无法启动掼蛋研习社', error.message);
+  dialog.showErrorBox('无法启动掼军', error.message);
   app.quit();
 }
 
