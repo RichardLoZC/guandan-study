@@ -1,0 +1,433 @@
+{
+  "method": "code-native SVG palette derivation",
+  "source": "assets/minimal",
+  "output": "assets/mono",
+  "ink": "#ffffff",
+  "paper": "#000000",
+  "cards": {
+    "blackJoker.svg": {
+      "sourceSha256": "91696816a267f085101ffa423736c7e10044a1be3019d185ddfd422119578a2c",
+      "sha256": "bbead7caa8fcaed43bda75ddc65220f67cd6d1259b09d7d943052c14f03724fa"
+    },
+    "club10.svg": {
+      "sourceSha256": "e43c8c8e5e06ee5417380101abfd4a0d8a9a1a8b814f08cdc446dc7c253a281a",
+      "sha256": "44000aedc55e322394014f5d6e1e70723a8c426dc865ced16dd82ebf27ccee35"
+    },
+    "club2.svg": {
+      "sourceSha256": "fcfae8ae62b76170e8fdb3fe224f8ffab1715002be0850c999fc9a2c157dd0d0",
+      "sha256": "05e5d2fa57bd98a777fdf6f2d4d7af0c746869fe0f2807e8d1cb4fc1479f88cc"
+    },
+    "club3.svg": {
+      "sourceSha256": "d64aa6daab3988389fd7802fa116772302a4fcac9281cd90eae34535018c22f2",
+      "sha256": "473657dd34711feb60c5c76fb8d9b17839dc04e5badf68d305a5425b39a88b8c"
+    },
+    "club4.svg": {
+      "sourceSha256": "528b1aab98a25b1e00e53a8cffe4a99682912c112061de59dad6e818f2105795",
+      "sha256": "3469e4336f6416b6996dc292175538c476b1641ad05193c2441f787faecb65e1"
+    },
+    "club5.svg": {
+      "sourceSha256": "ff2507f7787751e2380bc8c09beee1914b385f9f6c78ba5081d5861575a2d475",
+      "sha256": "b7470e42a904fd7f900661fa26d82c3d0c799eb2424680d5f0beab7695060035"
+    },
+    "club6.svg": {
+      "sourceSha256": "b08655a7ed801a9a64bbc2cfbb944570d51312afed08fd61034ee632c8b14efb",
+      "sha256": "7c71e3efb4add7787f3377974d558171034ee5a79c3004c596715cd10e0f8a80"
+    },
+    "club7.svg": {
+      "sourceSha256": "7c874bfdc7aea745f354de4411cec6d0fda9f08ccf873e8238efc059c26b539c",
+      "sha256": "14c0b4864b261670776cf8f0b69c9a839e4f88a3c652b826c3cafaa6cb8b570a"
+    },
+    "club8.svg": {
+      "sourceSha256": "bf267fe780309f39d2167e71733e7363c55fc3bd22248e28dee7dd0d58d03f50",
+      "sha256": "04dc317d051a3248a506f0c775c687f11d92b368ec0c34a48b0fa4149e26ec94"
+    },
+    "club9.svg": {
+      "sourceSha256": "14958e64588b7056f5b959e6d7268df2511dc5c2f38b13238ae513f92c9e4cc4",
+      "sha256": "26d41ab7b3f9a71d7d120d52c84305a0c8388451a9ce33db5c564921aa89fe9a"
+    },
+    "clubAce.svg": {
+      "sourceSha256": "598a0764581929a513da2ecf7ed1083849ab3b5948d0c5e577537d048cd65a35",
+      "sha256": "e71c4b69d900b6dd79b9389f4695168e9fde44e398d7032cc965d80b918d0b6a"
+    },
+    "clubJack.svg": {
+      "sourceSha256": "12b766cb2ee3f655fe319bcbf56429b52d7377d3632d8a4492a30a3ad2dfc0ef",
+      "sha256": "1a87d05149e3113c953297d95ddf7382bb607b04d9ca08c35484a21a6da5e021"
+    },
+    "clubKing.svg": {
+      "sourceSha256": "d1bd6f2c0dcc474ec8f4f542d9b76c7ebd0cbc3d9be90f14117a45f00b85368d",
+      "sha256": "4302752a1c4b049b3a8f111a56cb5c1bb0dd6e891dace73a752d32e74641fbf3"
+    },
+    "clubQueen.svg": {
+      "sourceSha256": "15a23e2511f17c3d76a4457235f195ffa414e82aa6f3427a0fa478b70b522e79",
+      "sha256": "e0aa95dee162f31666f9db6191d99378338bd8f2e600cc95227e4ef139f875e3"
+    },
+    "diamond10.svg": {
+      "sourceSha256": "2e927aef31c08de38391fb21d8c09033d667422bbbe7e01f238747baab1ce97a",
+      "sha256": "505431aa284ba970986c17fb55919b675c0459e8e88c098f315bd5fee38025d0"
+    },
+    "diamond2.svg": {
+      "sourceSha256": "e2935b6bd39ea0a8fe7b1b3ebda3945855f4a0002b141dfcc006079de0f39a26",
+      "sha256": "382004e6873056a8f87411d856de09e5cd6f864f982fc1780524265c74d835ac"
+    },
+    "diamond3.svg": {
+      "sourceSha256": "0b0e53da260e33b8e43072b1b88210fd9ba1df3fa3aa34448e4c315b6280c7a6",
+      "sha256": "f428b1a29d538cf24aa9451e28e10a844c6d15198bb0b9f39ad0b23af42d7304"
+    },
+    "diamond4.svg": {
+      "sourceSha256": "bd4c03a800a0339903ebe5dead68e9be518d80574c4fe0aa295841e22dc55139",
+      "sha256": "84c1085a944723c54d54a0a062318ee7a4390109f2487dd4609f3b1773e94174"
+    },
+    "diamond5.svg": {
+      "sourceSha256": "a45269794cc5519a275bca53fe60e9d712b701450efbe76500caf01f83a358fd",
+      "sha256": "ad7f2df9673af0fd178b8a28b72ca133143f5754cdef466d61a8431380c86673"
+    },
+    "diamond6.svg": {
+      "sourceSha256": "868dcb392b86dfa85ad3536fd2383de3c1753f741d3012fd58f7751e7d8931ca",
+      "sha256": "95eba383c785d80820a17f6022cac512f83ff8f523eb9753e5ecc8b83475acd7"
+    },
+    "diamond7.svg": {
+      "sourceSha256": "491064336fbe8c45b0856883452915f7a27054b412fd2fca3eb0d531dea5e650",
+      "sha256": "0036ccfee0c0b214ce711b91483701c1b37bfb3f64ba1b4314481e2d89a8ff95"
+    },
+    "diamond8.svg": {
+      "sourceSha256": "b27cafc977445c5aee2071d1c6326b6faac430a525418f51dd801df219c59fc0",
+      "sha256": "b766c03a9f6866f0ef469081e5337dd7cbd03dc856a431835e6db184e717b6a9"
+    },
+    "diamond9.svg": {
+      "sourceSha256": "12cb54e428dd5e23b5203a7923613bf99b51203d1842d83619dfbcff4e027068",
+      "sha256": "2820c796ba987fc451b4f38dba54f4794eaeaba4cadff37511876efa0fa82fd1"
+    },
+    "diamondAce.svg": {
+      "sourceSha256": "5ae1cb17325931c48325a24eb5f0281a7a366e70a61f5943371df5aa0f7228e4",
+      "sha256": "995483b945385171fd66b9378838c0da215a7ff57091b39fc2a931304da5f311"
+    },
+    "diamondJack.svg": {
+      "sourceSha256": "9391cf05166fd92be7278dd609777962ae685ad252caceb120afcef93c6376fe",
+      "sha256": "c496c452a40d0102cdd591c13ada3f0374fbd7d41ba827e9ad39529edf382a9f"
+    },
+    "diamondKing.svg": {
+      "sourceSha256": "e266444cd3babb0ceef7132b728b02a27b81547754e94b69fd5a7471cd50ca1b",
+      "sha256": "ac1499837a9b3e669711ca2eb05f36e9f40ee428b51f8b0ff7511ccecf3568c1"
+    },
+    "diamondQueen.svg": {
+      "sourceSha256": "2dd4542b7600cb65cbbd799fba96bdf320ffabe7341cf611480339de9f283350",
+      "sha256": "2e01b89f7bcd500eaf3b062546591c21f64eee5be5277b2502cd53243f19a806"
+    },
+    "heart10.svg": {
+      "sourceSha256": "90cece8880706a3434a6afcb235dd99de8ba1402e5c37fbd902dc1a6c4614caf",
+      "sha256": "46d5a06f5aac99bebb40f7c3fa8d45ba50de87a3825e5a4ae768b4673968fe92"
+    },
+    "heart2.svg": {
+      "sourceSha256": "60493bd69277169a16cd65b1082654cea34870d2752c2c73bd543aa5baadfc35",
+      "sha256": "587707e7081eed293c7bf4509fa98f41f3adb13949d2eb3f96fa8b9e8fa55e7e"
+    },
+    "heart3.svg": {
+      "sourceSha256": "27edb50fb0195bba2420f16bc5d48c7b5cacf1b5e6b00d56f1e02c7d0d994ca6",
+      "sha256": "3fd7017353b641cc5a8e2af7d1732930c2c8dc45f967a6b9da811a732c0d2be5"
+    },
+    "heart4.svg": {
+      "sourceSha256": "ddd5571915dfb0706465d294f5875dd170257ac2d121b34b5ac54995619392cc",
+      "sha256": "0bb99e0c19845781c2e810765bd4db8d500b8baf151f86f4502b90226e77c4a1"
+    },
+    "heart5.svg": {
+      "sourceSha256": "5c6d4ada200d2aa9d6af24d37c62d8eeb30875ec947d9b965f6973d1a1f7d710",
+      "sha256": "b90e28879d532ef020349919f666a634417d7e57665b93b2538572728eb4dce7"
+    },
+    "heart6.svg": {
+      "sourceSha256": "a47bd254e9d31fd426a8ecf9d73a2c32d074177ff94d65d52a111e9feef13437",
+      "sha256": "0af099d9d4e5a856c45d27bae690721217fc0b8eb6068ba780ca46e9c66e848b"
+    },
+    "heart7.svg": {
+      "sourceSha256": "53faa6fcfe4586ad6a3fd325a6f1d49ef82c0d284d1d29cd3d45a901f2c00805",
+      "sha256": "9f418ad15b3ea092eb8e33d816591d2e11e5007314f074468142b8e094d7c1b5"
+    },
+    "heart8.svg": {
+      "sourceSha256": "4b897305a9a4815d5263b75cfded798f7049f3386f2c78885ddbe32130d14199",
+      "sha256": "9f9a7f6921f75ce79057a90eb1bb847f278eba7902b9526c956b2a1918e8749d"
+    },
+    "heart9.svg": {
+      "sourceSha256": "e935714fd42e6c7475b549ea1038827105a231e5a888476dedcf0b71c0234b29",
+      "sha256": "c83848640c8ae357bec5ac5ae5e4290e8882d83d8014248dfd3875e609c07f59"
+    },
+    "heartAce.svg": {
+      "sourceSha256": "25c2428ea6e31b1846901fa672a6e266ad278557f74afecc52ad60a98419ea5b",
+      "sha256": "6e3b9989380e1a50afe13b262c7e6a893eef5050c3e4c01bf763451c132c7bc2"
+    },
+    "heartJack.svg": {
+      "sourceSha256": "599d460f817435816260d653bf5266a30add0217f94dd75663a24c5c4d7b4bb8",
+      "sha256": "924f633447f8046a33a053993191464856e5e17e95160aea5ed59383e9e436bf"
+    },
+    "heartKing.svg": {
+      "sourceSha256": "a7b416e2fb8069a6b41b689b636e417ec123db17652965cb8e4581b7d098762f",
+      "sha256": "cbaf5dc5167050fc3a8ae854b4e1725aaeea2bb4b3d485a97f8a46ff853035c0"
+    },
+    "heartQueen.svg": {
+      "sourceSha256": "6f928b7b2ba47c8f95525d9330b09f77669f92695ea45f4d69a36617c6e4f4ee",
+      "sha256": "730a16b151ed6c8e5c9f32e5ebeb61fa5e6e675502af0b95bb5612e8f423cc94"
+    },
+    "level/club10.svg": {
+      "sourceSha256": "3d34c55403a92a93cf09b16aa4b9143288915acf3410808ad21ca18ac03e3a36",
+      "sha256": "15db657c851c2da80d17e27fed0355d326ea966bfef78ca09836b737296774a0"
+    },
+    "level/club2.svg": {
+      "sourceSha256": "6111cd90a9e7dbba3eda578885cb21101386f7f058975807be8c02b80f4b3288",
+      "sha256": "f6a0207c903d05f09c3e3bc0b0b6feee75e9410fbce51fc1863622def642fa0a"
+    },
+    "level/club3.svg": {
+      "sourceSha256": "4bceaf165f8e9bea7971f3dedef3dbdc75a15ffae4ab4a5555210bbfc6268e68",
+      "sha256": "dfe656b701d192fa006bec3d6cd6c90123cdfefeabeaaa9a308a5aa4d5034b70"
+    },
+    "level/club4.svg": {
+      "sourceSha256": "180e3331f485ad247ae557ff9adc4b709d285feec04fe242f73f982d828ab9c3",
+      "sha256": "f63e4ef76db898193c54a1e6a975f2720c54e93f6d972a0530b8738212f1408a"
+    },
+    "level/club5.svg": {
+      "sourceSha256": "543160fbb27008a9a45e8adafcea1249f05bf7b2b21daa535aa6c4f77d1b51e7",
+      "sha256": "bfc4efb91faeba55fd345bfe6271ba4832c0a689cc4d35af8dc33b3a45811593"
+    },
+    "level/club6.svg": {
+      "sourceSha256": "4c8b61baa4d0268aaa69eb32b800d6aaac78db3ecc517b4f7d0b74006bd8f7ea",
+      "sha256": "862dd039675d0bc99c415d69d85c0bc7e216856b38bb93adcb79f825bccd524c"
+    },
+    "level/club7.svg": {
+      "sourceSha256": "852fc65c74340cd0d4e9153eeaf87739e0fc8a4064dcd714295ba60694eb086c",
+      "sha256": "2b007092267942c2ffe50b6ed3b3b493cf926b5ae566eb650d34ac9e3e7a0402"
+    },
+    "level/club8.svg": {
+      "sourceSha256": "9f66f49f460c5d480d44005b0438e8bc882de6eb975e64d5f6178578f983afad",
+      "sha256": "05e112f75fb169c075b22ea0094abb05f5b6b29be85be88d75c3f468fbefee34"
+    },
+    "level/club9.svg": {
+      "sourceSha256": "0cb19c7b356123ba25d53baa42f71b78d6c342022cd95d2209e569b2eaf362a3",
+      "sha256": "c1753e01696aafb2e26d09165ae92035ef8398760660661e4de9370f73cb3a4f"
+    },
+    "level/clubAce.svg": {
+      "sourceSha256": "c17149847eba805786970f86c6a5580a1a08526b6a705b5c052fcb3852eb768e",
+      "sha256": "57f4294f5c0bc047ea6ba4142c3e49a3d2bee22bd24d0941b285c230e54cec47"
+    },
+    "level/clubJack.svg": {
+      "sourceSha256": "5e98378aac15615c0766e556dbe542d297b7d8c8df148d4066ad62141e295724",
+      "sha256": "f025b82f1bfa7dda2fefa82338ece5f79b7b4a9f0821b5ff50c085d7cdeb89ed"
+    },
+    "level/clubKing.svg": {
+      "sourceSha256": "4ce4569d7c662846e3da5fa8527856d6775773822bc4e46ca28f38c843e80aff",
+      "sha256": "2cb4255af3276c73b3ea1659f094881a6aa0233dcecca760dd1483a7f572f012"
+    },
+    "level/clubQueen.svg": {
+      "sourceSha256": "4d174d7d77187b1c4d990e73dcca48168a60fc8c483af7aa73db51d7724e6341",
+      "sha256": "0f090453db9a92199808d61cef89b6e0c03c3177d4658e8d806afa86864a3d5b"
+    },
+    "level/diamond10.svg": {
+      "sourceSha256": "fe9beaef4354de3b81581bdda7d230fce33861ada2d8b6adfe48942de2fb9995",
+      "sha256": "6002f129227a929d2bacde87f288e4ec2e407a817d867817e4368e3af76a8344"
+    },
+    "level/diamond2.svg": {
+      "sourceSha256": "318c9439d7049660aedc8bdcecf101eef734a45899ebafc1a6db5d89580654f1",
+      "sha256": "cc48f6fc4252b490df4390224b61f6f323d758d8eeab7794f3f5d6cd4c3e7820"
+    },
+    "level/diamond3.svg": {
+      "sourceSha256": "ccb1571654560ea51b16cd0cdd5fecc1b559355d45b4d07bcad0674eb2d2cb36",
+      "sha256": "f3273bf0318dd92f574490d0db255a1e261c1261ab8fbc73285927eed450f951"
+    },
+    "level/diamond4.svg": {
+      "sourceSha256": "1edc98a482317ddcace0ef1dd7d41b8a444f098b5260bc98dbd704523c5b5690",
+      "sha256": "00f5738d4c63684ccf9e93456cdb2262aa2c329d81fab7de47ca52dd830fbac7"
+    },
+    "level/diamond5.svg": {
+      "sourceSha256": "b0b8aaa4b086d63c006d1f8ebbc0cb7e887efb4032435eac35c786f518898b00",
+      "sha256": "316b32a85951946067b0c77c8329011b8e2d86db1f98ddf613eef1d047d03e73"
+    },
+    "level/diamond6.svg": {
+      "sourceSha256": "f095a1debeb5ef3adb273cdb4e712979b79b130a8d5c44eb1f98e8d777e5df6d",
+      "sha256": "7e7e01bace252a82c9be786c28a4fe89b244827a120785bcea9aa8f357acd76f"
+    },
+    "level/diamond7.svg": {
+      "sourceSha256": "68062d502ae9747542238fd3403e564de6957f16c78e89458026dd177433dfaa",
+      "sha256": "0edf1c76fca6d695b6052db3db026934aa453b3c65af19a797c9b482fefe1ab6"
+    },
+    "level/diamond8.svg": {
+      "sourceSha256": "5e6260a3c6b9400a154ced9b3649117290ec8d8142453f6515628c07ce48de4f",
+      "sha256": "fa4c3772ec22aa0e298670d92f58c175dc66b88faab605de39d28e7c45792b6b"
+    },
+    "level/diamond9.svg": {
+      "sourceSha256": "475a56ebd08400b1dcebc503f5b10da52739ef65799eb587e728418faf78fa7c",
+      "sha256": "9b304e62ebdd02f8d72f0cecfef18dd94a4e89a8c75b7ed0afb94949cfc4cce0"
+    },
+    "level/diamondAce.svg": {
+      "sourceSha256": "8d467acdcad513676093e51c9f36da94752c1b37296ad5a32bca08eb43770851",
+      "sha256": "7dbe2868736f55499305edc27a5e67c3152421298a4fb7a4081635670324b8a8"
+    },
+    "level/diamondJack.svg": {
+      "sourceSha256": "c7529e48b87aae3f36f4006e686a50fc7dea043079b230586ed7189956417892",
+      "sha256": "c06b4baa162c790acf2e59860937bdf124fa0dbd530a3db35a280349ab7a3e2e"
+    },
+    "level/diamondKing.svg": {
+      "sourceSha256": "e998f7194ad38678c112b9be1162fd3508e647050369945a69b037d7ab13c437",
+      "sha256": "b261b08a94ac873991e984f5feb79c498b539981c9b8266c03ee19bb77b87a97"
+    },
+    "level/diamondQueen.svg": {
+      "sourceSha256": "386b2ecd59f3d904af7bfa1528758b664add524d08cbea884fac9105232236a4",
+      "sha256": "86a9ddd9da6fbf3833ce563dc19ddf4f8f84a611ce4a67a1681c47db163cf779"
+    },
+    "level/heart10.svg": {
+      "sourceSha256": "9a6342c97140e5f47dc08d7044a12a41a29f0adcc6a4353a8cb628d2a17c7e3f",
+      "sha256": "7051942989adba280a4fa41b39ab199b28b9feb37be94b40a4812ce11bc3d8ae"
+    },
+    "level/heart2.svg": {
+      "sourceSha256": "c7ccce638a2d376a1fae92f37821ddbf122b1de7f92db77ca14733e4542653f0",
+      "sha256": "5fec41765bb30d0380ef078ceb1919287fbb31504ec367fd28c0e07a04fd9d05"
+    },
+    "level/heart3.svg": {
+      "sourceSha256": "0cad16a3bb43ae017e5980b11f5104f23ae63fae06780c89dab73aafd02a6158",
+      "sha256": "40dfd6fd1447e467d5aa53c589e26a7b78960e89f530481abaca5be502feee55"
+    },
+    "level/heart4.svg": {
+      "sourceSha256": "ffb79f364a4792250f7f321e9f5ccba8a25ad5a9ed06969f763807e0adf4982d",
+      "sha256": "9ff3ab8cf4f317f074dcc6841bafb1ee7d7bb118c99a9f385af0e68206954e9e"
+    },
+    "level/heart5.svg": {
+      "sourceSha256": "0fbd2ef72b3eca251405a95ee96c1130aa0bc8d38f0cbbe2e22537192ddc6fca",
+      "sha256": "c0ebf7236af677b5d8147689d3f5b1c7a8b5ed4df4e57dde309d65e023a899c3"
+    },
+    "level/heart6.svg": {
+      "sourceSha256": "af0deba924cd9e2a24c064fd540798802b0ddcb82d0f33d2e115aa95c8ec2993",
+      "sha256": "af414c6965162a7731b0c10f5c88b68767127f434791765048ff549be31e85ad"
+    },
+    "level/heart7.svg": {
+      "sourceSha256": "6d71ad3bedfeceb95e551675b5d5d1ca84b2b281bf6de130ba34f597fe6fcf25",
+      "sha256": "6082e15e9c05b153a21391591dd475406a15561f526c832a71874180ed6e7e3f"
+    },
+    "level/heart8.svg": {
+      "sourceSha256": "77a70898872d5ee90443a5fa5ce15e8234e2ba582771d9584dc68aa1e818d839",
+      "sha256": "195c31c648a7bbdd27b9c60e1a1c5fa634b641fcc3cc316241ffe73f38c9ba7c"
+    },
+    "level/heart9.svg": {
+      "sourceSha256": "e270706d90bcdb4d0e13f017add88f3f3213ea28c168397fa82fed9f17bfbfa3",
+      "sha256": "413da031d4c3fc04d41e2ed4c7bd4e3ee37c8bc10c81129f6110592c155ffd30"
+    },
+    "level/heartAce.svg": {
+      "sourceSha256": "c02e2d28a4c17c95f957881ecdd791c9055af00c65252c893f275061e76286b2",
+      "sha256": "4941fbaa48c4fcbdce09a026c566b3101d8bf5c616c95ec9f4704f7675d36935"
+    },
+    "level/heartJack.svg": {
+      "sourceSha256": "dd5cf1aedf3c60a487fcda1036324c42e7442af6de846247ade81c6abba99854",
+      "sha256": "7ad266633cc6efe3709b1a16b188c09af17814e51e03c993dfdfaffa44d3a1a7"
+    },
+    "level/heartKing.svg": {
+      "sourceSha256": "996f244c0745cd5f70100f9890c9e389b443f0cf492a2097f0b419373ff97a76",
+      "sha256": "78c6cc52227119df2f95d05f57770d449bcc2ce83ce6fa62b8a2507bfc90dff5"
+    },
+    "level/heartQueen.svg": {
+      "sourceSha256": "f22dda77bcac7ef67ad0c563b45d9581a387f61e0d6d2638eb0545b04e07b3fa",
+      "sha256": "83020aa268d42659bf0b1bae379c82e5976f9eb3bfca4e9e31460a4cc3313b4e"
+    },
+    "level/spade10.svg": {
+      "sourceSha256": "fe3c5ae1683f8d385fe2281d8a68bf8e76909075b67724951f5dd9bf912269f0",
+      "sha256": "d66aefdeba5938bb10f7b9229a6f2ebcf98e0cc360198402576cf03f640cd5e1"
+    },
+    "level/spade2.svg": {
+      "sourceSha256": "c688f96a808ec1e8848ab0af542ecac4ba4cdb87fd910608b88bc29c7713c4c7",
+      "sha256": "b642fe6aa5940ba2e9ce599c3c2d66fb96ccfabd576db58a78636243aa6d1ad4"
+    },
+    "level/spade3.svg": {
+      "sourceSha256": "e8d232adb5e0b5cfe189cc28e4425b0b1416bd0ad01d3d97a559e568ce5ec1de",
+      "sha256": "1f6a2e293e051833d9fff7fee8b2e14d85418b4b06a67593fc5fd7776d62adfb"
+    },
+    "level/spade4.svg": {
+      "sourceSha256": "4678d6e56f9d47383688a9b298b312b8d1d5586b110d505cd4df1354f47cc7b3",
+      "sha256": "0bd44b822652c6fbc98600d505d12153a2ce8594d77b0dc54c39ab36bb4d0525"
+    },
+    "level/spade5.svg": {
+      "sourceSha256": "d1d768fe26d48155638ce6be380ce9053e488267509df92544b72cfe062e82fd",
+      "sha256": "bc5017b8ad41646645d76c6a19c0028af0e880c9c981dba3f9843aab7b79c564"
+    },
+    "level/spade6.svg": {
+      "sourceSha256": "6fecb5fdb6e8c28843bec2935c7a2b7b5c43d299a985e6d70a763f8efa908e0e",
+      "sha256": "da5a6e27542347af90c461715b04d05d662ae6e5768c13fc4010b653c7082c68"
+    },
+    "level/spade7.svg": {
+      "sourceSha256": "03f38eaa0d3e12b9c9e6c7b6a31797defd23e2cfebade0b351aa148066dbf98e",
+      "sha256": "797c2060a9ed70875d65b319a0aff7e840850fa429070a51aa3a3c3dd45ff237"
+    },
+    "level/spade8.svg": {
+      "sourceSha256": "6556a22ea348210b84f7c897d2449a31f8c6bed2bba57e16de50740404183ede",
+      "sha256": "83882a67e491d138eea7d93dcbbdda7f9963905c19acb478570be39e4312df51"
+    },
+    "level/spade9.svg": {
+      "sourceSha256": "668e6c4a0f335f7d21aa91f40f1d77df0e75745cc07bf9d725c666bbf5ca0a12",
+      "sha256": "58bd7a7a4af85722c5c1c1741d95b0b9daf128a9fdaafdfdb937b3236136ddf1"
+    },
+    "level/spadeAce.svg": {
+      "sourceSha256": "374c40ecb56e374b2e334eb071b0686c263aafcd47ef0b61d5a044397b983bfb",
+      "sha256": "15590957121b4ba896d9ec86b649234f8e52c6438099a2790a1eed6741ab08ac"
+    },
+    "level/spadeJack.svg": {
+      "sourceSha256": "c4f9b17516ab95c921a222f9dcad8465f7eaf9c345b91de7932e838d7e558f13",
+      "sha256": "b6fffcd5144a32caea597c4a320c663ab1c593614a7601b5e518ffab1228f8eb"
+    },
+    "level/spadeKing.svg": {
+      "sourceSha256": "d0dca0b7c80fc236bbb0eebef206c957ab785ea4fa6c1bd4204beea999a7499d",
+      "sha256": "05bb86580b07e715a61e25b409653228ac9953a91ea1494b0abd3bdd8c5c5e4c"
+    },
+    "level/spadeQueen.svg": {
+      "sourceSha256": "44e8fe071c2d27dfc720770715caa1d7d9b07a49348299b1fb98f4b9110a8ff2",
+      "sha256": "546e442835e79211af55104e8b6448b1044c134ce6ca254528243d1edfb36039"
+    },
+    "redJoker.svg": {
+      "sourceSha256": "416f3e0101359eb994fe321458d2a6734da33f5851652343af0768fc5544acc5",
+      "sha256": "41c32327330b76503a0df412488114dc9892061f2b2dd81999d73024b937942b"
+    },
+    "spade10.svg": {
+      "sourceSha256": "cead428d99dc4573bb4620d34617284c69a4800e711c3b8b1daab9e377144e61",
+      "sha256": "a9c23cf52cdc9b3d4d651ecf140560fa4d11915f1622319ee06a76a41c07fe12"
+    },
+    "spade2.svg": {
+      "sourceSha256": "b91e713826cdae591fb12984925397af4af70948699dfcaa7ce5f50ff225e174",
+      "sha256": "52105e60df35b557cd0cc7ead33eb1fca82776c4aad02dd8f8ba3eeaf5f8d6bf"
+    },
+    "spade3.svg": {
+      "sourceSha256": "8d4bf7e1348934a9c02ab5cb22535604a5e32e606c7c4cf4914d46e775414c5b",
+      "sha256": "db987eaa33f3bdb39e9170524a6ac129bf0b24c1fcaf25e8d6ee5a3d0fa8e25a"
+    },
+    "spade4.svg": {
+      "sourceSha256": "0c487c267b1656087cf4c0d2a355e63cc2eb977c7a3e6e37f9ed44aa1dfb433a",
+      "sha256": "2914de6db86c8d4db376abf2c005e0a3d648b572f7ea97bbd315327b83fd6b63"
+    },
+    "spade5.svg": {
+      "sourceSha256": "0bfbd59b603083e4076026135d463ade6c5b90baf61942790a1af6b06e966f86",
+      "sha256": "32da6ea1e2f972f1e3fafdff160b9f9bda893fb974d315191b6cbe6cb01d3cdb"
+    },
+    "spade6.svg": {
+      "sourceSha256": "68c70056dc8a228f3cb4e9c74f44b11ab772e5fb5d44c8bf3a140bd96be557b7",
+      "sha256": "b660c24aa7344ea39e527625a8bb1d39f0aa516aada3b5d4b432e3712807ff56"
+    },
+    "spade7.svg": {
+      "sourceSha256": "126a236d61c10140a82c89013b14ba6bf94b236e3a34ccf530b5db6af07151f1",
+      "sha256": "a8de566e212b90971542cf613236b9ac6734b0733de39747c071e4cef1b1ace1"
+    },
+    "spade8.svg": {
+      "sourceSha256": "656871b4d71b1edd23f2e10f324589c429e7b185a80558257c63d790d0c17912",
+      "sha256": "02472e089267beace70c25c202211e6b6e6f4acba9b0383ffbc46960cd1cde15"
+    },
+    "spade9.svg": {
+      "sourceSha256": "68589050c4871ef247076df3b3562fe74c724d6ef1056e5b845ea9241a636bcc",
+      "sha256": "f84e6d85c974df549a3be624d5dce849ce9d58faae948c6ec75030aa585dfcb8"
+    },
+    "spadeAce.svg": {
+      "sourceSha256": "515676c41f9a68d7097ac89fee8f86b93997035edf807e33310449ac66fe78d0",
+      "sha256": "009a1e85703b12d01abbb6d507b8fabcd80696be9450ea48e6b1896ea41a086b"
+    },
+    "spadeJack.svg": {
+      "sourceSha256": "67671ff2cc15e342fbdc9da177c823d0a77fdcc5eaefaea266efa98920652652",
+      "sha256": "ee48cb6149ce5c54a0486e3de184c9031c1c61548abe0d74b80edcb5fa0dcffc"
+    },
+    "spadeKing.svg": {
+      "sourceSha256": "12c7ecf43ec6cff1f57fa712476b3c16584437a8854add56c890ca8d1f9525e2",
+      "sha256": "4767ada8c7b9d0c1d5f2027ad83901223f4e29c99dd38251d99d195c00a9c44f"
+    },
+    "spadeQueen.svg": {
+      "sourceSha256": "d82202e50d3b981db1654f048bb75e12715e285b6fb5ee7a37d65c141150fb86",
+      "sha256": "f3c13a819eaf0756487b990e98b5359c3837ffafe5fa37678aeb5ec52cf29883"
+    }
+  }
+}

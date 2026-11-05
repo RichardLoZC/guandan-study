@@ -53,8 +53,8 @@
       "sha256": "6fc3e825be056570cb3aa5b0f905bc6a9d9ad27df0f2105ad0d1819c17ad358c"
     },
     "main.cjs": {
-      "size": 17487,
-      "sha256": "19af67ef0d2d2ffbb1f0b67952a2131748628bf5f26b721e32af1cffea2882c8"
+      "size": 17911,
+      "sha256": "10d1dd35f0efad2a734376ae4eb67acf918dde8de2a316d110e9782d35be5898"
     },
     "official-danlm.cjs": {
       "size": 7416,
@@ -62,11 +62,11 @@
     },
     "package.json": {
       "size": 1030,
-      "sha256": "f1be53d9c516252c2c657ce0fcd171c90b389b33f125e400f384b15961e0284c"
+      "sha256": "364774d2a574c5afe9b5b4fefc5dc24d9e37b736cbe4d6dfeddcf3b9a993848f"
     },
     "preload.cjs": {
-      "size": 747,
-      "sha256": "cd23394b3aae29d7cf1ac66e80f145035fc4a08ca4a649f842b26dede349802d"
+      "size": 803,
+      "sha256": "f2c43bdcb395adcce1d609e7cf9d7c0602b17a0339066cac73bdedff5f3b7de3"
     },
     "storage.cjs": {
       "size": 1986,
@@ -94,7 +94,7 @@
     },
     "web/app/assessment-provenance.js": {
       "size": 3248,
-      "sha256": "8c2972c9e21ddb6a6590998241c711ecb24854657d5aced1c782878cecab2224"
+      "sha256": "39f72407450615bcba350ff1b00eb67d3e4c7a33ccde9b642fb2441c81828c44"
     },
     "web/app/assessment-rating-legacy.js": {
       "size": 2658,
@@ -129,8 +129,8 @@
       "sha256": "5acb938223070f3d747ee4c7bf05d77585ba2e0b20c730a5de247477dd592ffb"
     },
     "web/app/card-art.js": {
-      "size": 735,
-      "sha256": "85ca8d8fe9ecf52a5d33d372515b66c88070fd42a3b78cf9e7078710f5b84131"
+      "size": 807,
+      "sha256": "6684a1aa7f6135c2644de8b0d57f57e8f9d9c8f5d4b7ed35aafead70041331e2"
     },
     "web/app/card-counts.js": {
       "size": 1319,
@@ -245,8 +245,8 @@
       "sha256": "fa1f05875991a0be5ea8efa93f4b938b4111e6b966648901cdd21ce08f9007aa"
     },
     "web/app/locales/en.js": {
-      "size": 67605,
-      "sha256": "4ef2e1f8f70453cdfa21c7243b3512d04d0d1e08267200360cd603ecc875aa7a"
+      "size": 67661,
+      "sha256": "d4d8f599b91fa91cc59ec90d9a1b3d6241ce848631c569857c266546e37e437a"
     },
     "web/app/match.js": {
       "size": 33132,
@@ -265,8 +265,8 @@
       "sha256": "f223247568172ee22a493c18b819270ae8a37a5f17c5255fd9bd738484816fad"
     },
     "web/app/personas.js": {
-      "size": 4330,
-      "sha256": "f3e4f6522f9df7170ab465b6e681b494f0984f0b73b81fd4c9a15b83fb08112f"
+      "size": 4445,
+      "sha256": "f6a7134d6e066205d734674eddd5875c2a3f1d86d62b9c1eb44f534b7557466f"
     },
     "web/app/phone-layout.css": {
       "size": 25652,
@@ -295,6 +295,10 @@
     "web/app/private-hand-score.js": {
       "size": 1569,
       "sha256": "69ff8ea256b6144cc2de39a00f776a51f371987d811e44d6c220c7ee9fd8c8f2"
+    },
+    "web/app/pure-black.css": {
+      "size": 3284,
+      "sha256": "1ade56c1a95f1c9f346be23fc2e55a7f6a1cf94bde1de95befd067969fafb79d"
     },
     "web/app/review.js": {
       "size": 18969,
@@ -329,8 +333,12 @@
       "sha256": "450e0d410f528b32cad49c71beba69bbb93da1a4b2280a8ce1b75b0fd6a0d401"
     },
     "web/app/table.js": {
-      "size": 74426,
-      "sha256": "fa95dca0ec5802fbf105210e89305a7a7e2ce6f8261137244405576c9fee4358"
+      "size": 74976,
+      "sha256": "3aeceaabf948b474e52f34711e0b7cdaa8d8801737abad5aaee28c0b0ad48646"
+    },
+    "web/app/theme-boot.js": {
+      "size": 932,
+      "sha256": "d62aa35d1086a3b8e8aa9d50581e0129f12147bd7c62bb33bbae7c6d1ff76ca5"
     },
     "web/app/tribute-strategy.js": {
       "size": 5205,
@@ -1664,13 +1672,437 @@
       "size": 813,
       "sha256": "d82202e50d3b981db1654f048bb75e12715e285b6fb5ee7a37d65c141150fb86"
     },
+    "web/assets/mono/blackJoker.svg": {
+      "size": 505,
+      "sha256": "bbead7caa8fcaed43bda75ddc65220f67cd6d1259b09d7d943052c14f03724fa"
+    },
+    "web/assets/mono/club10.svg": {
+      "size": 704,
+      "sha256": "44000aedc55e322394014f5d6e1e70723a8c426dc865ced16dd82ebf27ccee35"
+    },
+    "web/assets/mono/club2.svg": {
+      "size": 702,
+      "sha256": "05e5d2fa57bd98a777fdf6f2d4d7af0c746869fe0f2807e8d1cb4fc1479f88cc"
+    },
+    "web/assets/mono/club3.svg": {
+      "size": 702,
+      "sha256": "473657dd34711feb60c5c76fb8d9b17839dc04e5badf68d305a5425b39a88b8c"
+    },
+    "web/assets/mono/club4.svg": {
+      "size": 702,
+      "sha256": "3469e4336f6416b6996dc292175538c476b1641ad05193c2441f787faecb65e1"
+    },
+    "web/assets/mono/club5.svg": {
+      "size": 702,
+      "sha256": "b7470e42a904fd7f900661fa26d82c3d0c799eb2424680d5f0beab7695060035"
+    },
+    "web/assets/mono/club6.svg": {
+      "size": 702,
+      "sha256": "7c71e3efb4add7787f3377974d558171034ee5a79c3004c596715cd10e0f8a80"
+    },
+    "web/assets/mono/club7.svg": {
+      "size": 702,
+      "sha256": "14c0b4864b261670776cf8f0b69c9a839e4f88a3c652b826c3cafaa6cb8b570a"
+    },
+    "web/assets/mono/club8.svg": {
+      "size": 702,
+      "sha256": "04dc317d051a3248a506f0c775c687f11d92b368ec0c34a48b0fa4149e26ec94"
+    },
+    "web/assets/mono/club9.svg": {
+      "size": 702,
+      "sha256": "26d41ab7b3f9a71d7d120d52c84305a0c8388451a9ce33db5c564921aa89fe9a"
+    },
+    "web/assets/mono/clubAce.svg": {
+      "size": 815,
+      "sha256": "e71c4b69d900b6dd79b9389f4695168e9fde44e398d7032cc965d80b918d0b6a"
+    },
+    "web/assets/mono/clubJack.svg": {
+      "size": 815,
+      "sha256": "1a87d05149e3113c953297d95ddf7382bb607b04d9ca08c35484a21a6da5e021"
+    },
+    "web/assets/mono/clubKing.svg": {
+      "size": 815,
+      "sha256": "4302752a1c4b049b3a8f111a56cb5c1bb0dd6e891dace73a752d32e74641fbf3"
+    },
+    "web/assets/mono/clubQueen.svg": {
+      "size": 815,
+      "sha256": "e0aa95dee162f31666f9db6191d99378338bd8f2e600cc95227e4ef139f875e3"
+    },
+    "web/assets/mono/diamond10.svg": {
+      "size": 704,
+      "sha256": "505431aa284ba970986c17fb55919b675c0459e8e88c098f315bd5fee38025d0"
+    },
+    "web/assets/mono/diamond2.svg": {
+      "size": 702,
+      "sha256": "382004e6873056a8f87411d856de09e5cd6f864f982fc1780524265c74d835ac"
+    },
+    "web/assets/mono/diamond3.svg": {
+      "size": 702,
+      "sha256": "f428b1a29d538cf24aa9451e28e10a844c6d15198bb0b9f39ad0b23af42d7304"
+    },
+    "web/assets/mono/diamond4.svg": {
+      "size": 702,
+      "sha256": "84c1085a944723c54d54a0a062318ee7a4390109f2487dd4609f3b1773e94174"
+    },
+    "web/assets/mono/diamond5.svg": {
+      "size": 702,
+      "sha256": "ad7f2df9673af0fd178b8a28b72ca133143f5754cdef466d61a8431380c86673"
+    },
+    "web/assets/mono/diamond6.svg": {
+      "size": 702,
+      "sha256": "95eba383c785d80820a17f6022cac512f83ff8f523eb9753e5ecc8b83475acd7"
+    },
+    "web/assets/mono/diamond7.svg": {
+      "size": 702,
+      "sha256": "0036ccfee0c0b214ce711b91483701c1b37bfb3f64ba1b4314481e2d89a8ff95"
+    },
+    "web/assets/mono/diamond8.svg": {
+      "size": 702,
+      "sha256": "b766c03a9f6866f0ef469081e5337dd7cbd03dc856a431835e6db184e717b6a9"
+    },
+    "web/assets/mono/diamond9.svg": {
+      "size": 702,
+      "sha256": "2820c796ba987fc451b4f38dba54f4794eaeaba4cadff37511876efa0fa82fd1"
+    },
+    "web/assets/mono/diamondAce.svg": {
+      "size": 815,
+      "sha256": "995483b945385171fd66b9378838c0da215a7ff57091b39fc2a931304da5f311"
+    },
+    "web/assets/mono/diamondJack.svg": {
+      "size": 815,
+      "sha256": "c496c452a40d0102cdd591c13ada3f0374fbd7d41ba827e9ad39529edf382a9f"
+    },
+    "web/assets/mono/diamondKing.svg": {
+      "size": 815,
+      "sha256": "ac1499837a9b3e669711ca2eb05f36e9f40ee428b51f8b0ff7511ccecf3568c1"
+    },
+    "web/assets/mono/diamondQueen.svg": {
+      "size": 815,
+      "sha256": "2e01b89f7bcd500eaf3b062546591c21f64eee5be5277b2502cd53243f19a806"
+    },
+    "web/assets/mono/heart10.svg": {
+      "size": 704,
+      "sha256": "46d5a06f5aac99bebb40f7c3fa8d45ba50de87a3825e5a4ae768b4673968fe92"
+    },
+    "web/assets/mono/heart2.svg": {
+      "size": 702,
+      "sha256": "587707e7081eed293c7bf4509fa98f41f3adb13949d2eb3f96fa8b9e8fa55e7e"
+    },
+    "web/assets/mono/heart3.svg": {
+      "size": 702,
+      "sha256": "3fd7017353b641cc5a8e2af7d1732930c2c8dc45f967a6b9da811a732c0d2be5"
+    },
+    "web/assets/mono/heart4.svg": {
+      "size": 702,
+      "sha256": "0bb99e0c19845781c2e810765bd4db8d500b8baf151f86f4502b90226e77c4a1"
+    },
+    "web/assets/mono/heart5.svg": {
+      "size": 702,
+      "sha256": "b90e28879d532ef020349919f666a634417d7e57665b93b2538572728eb4dce7"
+    },
+    "web/assets/mono/heart6.svg": {
+      "size": 702,
+      "sha256": "0af099d9d4e5a856c45d27bae690721217fc0b8eb6068ba780ca46e9c66e848b"
+    },
+    "web/assets/mono/heart7.svg": {
+      "size": 702,
+      "sha256": "9f418ad15b3ea092eb8e33d816591d2e11e5007314f074468142b8e094d7c1b5"
+    },
+    "web/assets/mono/heart8.svg": {
+      "size": 702,
+      "sha256": "9f9a7f6921f75ce79057a90eb1bb847f278eba7902b9526c956b2a1918e8749d"
+    },
+    "web/assets/mono/heart9.svg": {
+      "size": 702,
+      "sha256": "c83848640c8ae357bec5ac5ae5e4290e8882d83d8014248dfd3875e609c07f59"
+    },
+    "web/assets/mono/heartAce.svg": {
+      "size": 815,
+      "sha256": "6e3b9989380e1a50afe13b262c7e6a893eef5050c3e4c01bf763451c132c7bc2"
+    },
+    "web/assets/mono/heartJack.svg": {
+      "size": 815,
+      "sha256": "924f633447f8046a33a053993191464856e5e17e95160aea5ed59383e9e436bf"
+    },
+    "web/assets/mono/heartKing.svg": {
+      "size": 815,
+      "sha256": "cbaf5dc5167050fc3a8ae854b4e1725aaeea2bb4b3d485a97f8a46ff853035c0"
+    },
+    "web/assets/mono/heartQueen.svg": {
+      "size": 815,
+      "sha256": "730a16b151ed6c8e5c9f32e5ebeb61fa5e6e675502af0b95bb5612e8f423cc94"
+    },
+    "web/assets/mono/level/club10.svg": {
+      "size": 990,
+      "sha256": "15db657c851c2da80d17e27fed0355d326ea966bfef78ca09836b737296774a0"
+    },
+    "web/assets/mono/level/club2.svg": {
+      "size": 988,
+      "sha256": "f6a0207c903d05f09c3e3bc0b0b6feee75e9410fbce51fc1863622def642fa0a"
+    },
+    "web/assets/mono/level/club3.svg": {
+      "size": 988,
+      "sha256": "dfe656b701d192fa006bec3d6cd6c90123cdfefeabeaaa9a308a5aa4d5034b70"
+    },
+    "web/assets/mono/level/club4.svg": {
+      "size": 988,
+      "sha256": "f63e4ef76db898193c54a1e6a975f2720c54e93f6d972a0530b8738212f1408a"
+    },
+    "web/assets/mono/level/club5.svg": {
+      "size": 988,
+      "sha256": "bfc4efb91faeba55fd345bfe6271ba4832c0a689cc4d35af8dc33b3a45811593"
+    },
+    "web/assets/mono/level/club6.svg": {
+      "size": 988,
+      "sha256": "862dd039675d0bc99c415d69d85c0bc7e216856b38bb93adcb79f825bccd524c"
+    },
+    "web/assets/mono/level/club7.svg": {
+      "size": 988,
+      "sha256": "2b007092267942c2ffe50b6ed3b3b493cf926b5ae566eb650d34ac9e3e7a0402"
+    },
+    "web/assets/mono/level/club8.svg": {
+      "size": 988,
+      "sha256": "05e112f75fb169c075b22ea0094abb05f5b6b29be85be88d75c3f468fbefee34"
+    },
+    "web/assets/mono/level/club9.svg": {
+      "size": 988,
+      "sha256": "c1753e01696aafb2e26d09165ae92035ef8398760660661e4de9370f73cb3a4f"
+    },
+    "web/assets/mono/level/clubAce.svg": {
+      "size": 1101,
+      "sha256": "57f4294f5c0bc047ea6ba4142c3e49a3d2bee22bd24d0941b285c230e54cec47"
+    },
+    "web/assets/mono/level/clubJack.svg": {
+      "size": 1101,
+      "sha256": "f025b82f1bfa7dda2fefa82338ece5f79b7b4a9f0821b5ff50c085d7cdeb89ed"
+    },
+    "web/assets/mono/level/clubKing.svg": {
+      "size": 1101,
+      "sha256": "2cb4255af3276c73b3ea1659f094881a6aa0233dcecca760dd1483a7f572f012"
+    },
+    "web/assets/mono/level/clubQueen.svg": {
+      "size": 1101,
+      "sha256": "0f090453db9a92199808d61cef89b6e0c03c3177d4658e8d806afa86864a3d5b"
+    },
+    "web/assets/mono/level/diamond10.svg": {
+      "size": 990,
+      "sha256": "6002f129227a929d2bacde87f288e4ec2e407a817d867817e4368e3af76a8344"
+    },
+    "web/assets/mono/level/diamond2.svg": {
+      "size": 988,
+      "sha256": "cc48f6fc4252b490df4390224b61f6f323d758d8eeab7794f3f5d6cd4c3e7820"
+    },
+    "web/assets/mono/level/diamond3.svg": {
+      "size": 988,
+      "sha256": "f3273bf0318dd92f574490d0db255a1e261c1261ab8fbc73285927eed450f951"
+    },
+    "web/assets/mono/level/diamond4.svg": {
+      "size": 988,
+      "sha256": "00f5738d4c63684ccf9e93456cdb2262aa2c329d81fab7de47ca52dd830fbac7"
+    },
+    "web/assets/mono/level/diamond5.svg": {
+      "size": 988,
+      "sha256": "316b32a85951946067b0c77c8329011b8e2d86db1f98ddf613eef1d047d03e73"
+    },
+    "web/assets/mono/level/diamond6.svg": {
+      "size": 988,
+      "sha256": "7e7e01bace252a82c9be786c28a4fe89b244827a120785bcea9aa8f357acd76f"
+    },
+    "web/assets/mono/level/diamond7.svg": {
+      "size": 988,
+      "sha256": "0edf1c76fca6d695b6052db3db026934aa453b3c65af19a797c9b482fefe1ab6"
+    },
+    "web/assets/mono/level/diamond8.svg": {
+      "size": 988,
+      "sha256": "fa4c3772ec22aa0e298670d92f58c175dc66b88faab605de39d28e7c45792b6b"
+    },
+    "web/assets/mono/level/diamond9.svg": {
+      "size": 988,
+      "sha256": "9b304e62ebdd02f8d72f0cecfef18dd94a4e89a8c75b7ed0afb94949cfc4cce0"
+    },
+    "web/assets/mono/level/diamondAce.svg": {
+      "size": 1101,
+      "sha256": "7dbe2868736f55499305edc27a5e67c3152421298a4fb7a4081635670324b8a8"
+    },
+    "web/assets/mono/level/diamondJack.svg": {
+      "size": 1101,
+      "sha256": "c06b4baa162c790acf2e59860937bdf124fa0dbd530a3db35a280349ab7a3e2e"
+    },
+    "web/assets/mono/level/diamondKing.svg": {
+      "size": 1101,
+      "sha256": "b261b08a94ac873991e984f5feb79c498b539981c9b8266c03ee19bb77b87a97"
+    },
+    "web/assets/mono/level/diamondQueen.svg": {
+      "size": 1101,
+      "sha256": "86a9ddd9da6fbf3833ce563dc19ddf4f8f84a611ce4a67a1681c47db163cf779"
+    },
+    "web/assets/mono/level/heart10.svg": {
+      "size": 1263,
+      "sha256": "7051942989adba280a4fa41b39ab199b28b9feb37be94b40a4812ce11bc3d8ae"
+    },
+    "web/assets/mono/level/heart2.svg": {
+      "size": 1261,
+      "sha256": "5fec41765bb30d0380ef078ceb1919287fbb31504ec367fd28c0e07a04fd9d05"
+    },
+    "web/assets/mono/level/heart3.svg": {
+      "size": 1261,
+      "sha256": "40dfd6fd1447e467d5aa53c589e26a7b78960e89f530481abaca5be502feee55"
+    },
+    "web/assets/mono/level/heart4.svg": {
+      "size": 1261,
+      "sha256": "9ff3ab8cf4f317f074dcc6841bafb1ee7d7bb118c99a9f385af0e68206954e9e"
+    },
+    "web/assets/mono/level/heart5.svg": {
+      "size": 1261,
+      "sha256": "c0ebf7236af677b5d8147689d3f5b1c7a8b5ed4df4e57dde309d65e023a899c3"
+    },
+    "web/assets/mono/level/heart6.svg": {
+      "size": 1261,
+      "sha256": "af414c6965162a7731b0c10f5c88b68767127f434791765048ff549be31e85ad"
+    },
+    "web/assets/mono/level/heart7.svg": {
+      "size": 1261,
+      "sha256": "6082e15e9c05b153a21391591dd475406a15561f526c832a71874180ed6e7e3f"
+    },
+    "web/assets/mono/level/heart8.svg": {
+      "size": 1261,
+      "sha256": "195c31c648a7bbdd27b9c60e1a1c5fa634b641fcc3cc316241ffe73f38c9ba7c"
+    },
+    "web/assets/mono/level/heart9.svg": {
+      "size": 1261,
+      "sha256": "413da031d4c3fc04d41e2ed4c7bd4e3ee37c8bc10c81129f6110592c155ffd30"
+    },
+    "web/assets/mono/level/heartAce.svg": {
+      "size": 1374,
+      "sha256": "4941fbaa48c4fcbdce09a026c566b3101d8bf5c616c95ec9f4704f7675d36935"
+    },
+    "web/assets/mono/level/heartJack.svg": {
+      "size": 1374,
+      "sha256": "7ad266633cc6efe3709b1a16b188c09af17814e51e03c993dfdfaffa44d3a1a7"
+    },
+    "web/assets/mono/level/heartKing.svg": {
+      "size": 1374,
+      "sha256": "78c6cc52227119df2f95d05f57770d449bcc2ce83ce6fa62b8a2507bfc90dff5"
+    },
+    "web/assets/mono/level/heartQueen.svg": {
+      "size": 1374,
+      "sha256": "83020aa268d42659bf0b1bae379c82e5976f9eb3bfca4e9e31460a4cc3313b4e"
+    },
+    "web/assets/mono/level/spade10.svg": {
+      "size": 990,
+      "sha256": "d66aefdeba5938bb10f7b9229a6f2ebcf98e0cc360198402576cf03f640cd5e1"
+    },
+    "web/assets/mono/level/spade2.svg": {
+      "size": 988,
+      "sha256": "b642fe6aa5940ba2e9ce599c3c2d66fb96ccfabd576db58a78636243aa6d1ad4"
+    },
+    "web/assets/mono/level/spade3.svg": {
+      "size": 988,
+      "sha256": "1f6a2e293e051833d9fff7fee8b2e14d85418b4b06a67593fc5fd7776d62adfb"
+    },
+    "web/assets/mono/level/spade4.svg": {
+      "size": 988,
+      "sha256": "0bd44b822652c6fbc98600d505d12153a2ce8594d77b0dc54c39ab36bb4d0525"
+    },
+    "web/assets/mono/level/spade5.svg": {
+      "size": 988,
+      "sha256": "bc5017b8ad41646645d76c6a19c0028af0e880c9c981dba3f9843aab7b79c564"
+    },
+    "web/assets/mono/level/spade6.svg": {
+      "size": 988,
+      "sha256": "da5a6e27542347af90c461715b04d05d662ae6e5768c13fc4010b653c7082c68"
+    },
+    "web/assets/mono/level/spade7.svg": {
+      "size": 988,
+      "sha256": "797c2060a9ed70875d65b319a0aff7e840850fa429070a51aa3a3c3dd45ff237"
+    },
+    "web/assets/mono/level/spade8.svg": {
+      "size": 988,
+      "sha256": "83882a67e491d138eea7d93dcbbdda7f9963905c19acb478570be39e4312df51"
+    },
+    "web/assets/mono/level/spade9.svg": {
+      "size": 988,
+      "sha256": "58bd7a7a4af85722c5c1c1741d95b0b9daf128a9fdaafdfdb937b3236136ddf1"
+    },
+    "web/assets/mono/level/spadeAce.svg": {
+      "size": 1101,
+      "sha256": "15590957121b4ba896d9ec86b649234f8e52c6438099a2790a1eed6741ab08ac"
+    },
+    "web/assets/mono/level/spadeJack.svg": {
+      "size": 1101,
+      "sha256": "b6fffcd5144a32caea597c4a320c663ab1c593614a7601b5e518ffab1228f8eb"
+    },
+    "web/assets/mono/level/spadeKing.svg": {
+      "size": 1101,
+      "sha256": "05bb86580b07e715a61e25b409653228ac9953a91ea1494b0abd3bdd8c5c5e4c"
+    },
+    "web/assets/mono/level/spadeQueen.svg": {
+      "size": 1101,
+      "sha256": "546e442835e79211af55104e8b6448b1044c134ce6ca254528243d1edfb36039"
+    },
+    "web/assets/mono/redJoker.svg": {
+      "size": 505,
+      "sha256": "41c32327330b76503a0df412488114dc9892061f2b2dd81999d73024b937942b"
+    },
+    "web/assets/mono/spade10.svg": {
+      "size": 704,
+      "sha256": "a9c23cf52cdc9b3d4d651ecf140560fa4d11915f1622319ee06a76a41c07fe12"
+    },
+    "web/assets/mono/spade2.svg": {
+      "size": 702,
+      "sha256": "52105e60df35b557cd0cc7ead33eb1fca82776c4aad02dd8f8ba3eeaf5f8d6bf"
+    },
+    "web/assets/mono/spade3.svg": {
+      "size": 702,
+      "sha256": "db987eaa33f3bdb39e9170524a6ac129bf0b24c1fcaf25e8d6ee5a3d0fa8e25a"
+    },
+    "web/assets/mono/spade4.svg": {
+      "size": 702,
+      "sha256": "2914de6db86c8d4db376abf2c005e0a3d648b572f7ea97bbd315327b83fd6b63"
+    },
+    "web/assets/mono/spade5.svg": {
+      "size": 702,
+      "sha256": "32da6ea1e2f972f1e3fafdff160b9f9bda893fb974d315191b6cbe6cb01d3cdb"
+    },
+    "web/assets/mono/spade6.svg": {
+      "size": 702,
+      "sha256": "b660c24aa7344ea39e527625a8bb1d39f0aa516aada3b5d4b432e3712807ff56"
+    },
+    "web/assets/mono/spade7.svg": {
+      "size": 702,
+      "sha256": "a8de566e212b90971542cf613236b9ac6734b0733de39747c071e4cef1b1ace1"
+    },
+    "web/assets/mono/spade8.svg": {
+      "size": 702,
+      "sha256": "02472e089267beace70c25c202211e6b6e6f4acba9b0383ffbc46960cd1cde15"
+    },
+    "web/assets/mono/spade9.svg": {
+      "size": 702,
+      "sha256": "f84e6d85c974df549a3be624d5dce849ce9d58faae948c6ec75030aa585dfcb8"
+    },
+    "web/assets/mono/spadeAce.svg": {
+      "size": 815,
+      "sha256": "009a1e85703b12d01abbb6d507b8fabcd80696be9450ea48e6b1896ea41a086b"
+    },
+    "web/assets/mono/spadeJack.svg": {
+      "size": 815,
+      "sha256": "ee48cb6149ce5c54a0486e3de184c9031c1c61548abe0d74b80edcb5fa0dcffc"
+    },
+    "web/assets/mono/spadeKing.svg": {
+      "size": 815,
+      "sha256": "4767ada8c7b9d0c1d5f2027ad83901223f4e29c99dd38251d99d195c00a9c44f"
+    },
+    "web/assets/mono/spadeQueen.svg": {
+      "size": 815,
+      "sha256": "f3c13a819eaf0756487b990e98b5359c3837ffafe5fa37678aeb5ec52cf29883"
+    },
     "web/assets/native-explain-worker.js": {
       "size": 30587,
       "sha256": "943b46dd5b6aade2608628822677a978ed9e0337f67e53dcccbb8a9f1f1df24b"
     },
     "web/assets/preload-manifest.json": {
-      "size": 28970,
-      "sha256": "c6046c13341bea21e72d03ce097e22dbefa6b5bfb4a714a5ea28fa3ef7d96777"
+      "size": 37859,
+      "sha256": "2a9153af57ff0f3f159be785c97a0c45376bbfbce808d5d742967924d6def930"
     },
     "web/assets/table/jade-silk-v1.png": {
       "size": 3868088,
@@ -1700,6 +2132,10 @@
       "size": 161,
       "sha256": "46e288d14feaec10e59095279fe569dc41b17de5aa76c6aa971f4885708c3e13"
     },
+    "web/card-sources/mono-night-source.json": {
+      "size": 21817,
+      "sha256": "df1fa10b8f95b45c555a9402ed1ed508ac1f942e391ca57611f95a3d1b354f96"
+    },
     "web/card-sources/头像生成记录.txt": {
       "size": 2870,
       "sha256": "2a69ebd65dbb5ba315e6d7b093220c19526a4d2a08bab2db94066f7857b83e24"
@@ -1717,8 +2153,8 @@
       "sha256": "708d2d2f45f7ef6fec7f55e6da68a800d2fc929e9dc0a10e71ff61c080ea8ea9"
     },
     "web/index.html": {
-      "size": 29858,
-      "sha256": "78979649d698871180d6d6c3dd582d487b3524384885ca17ea0555e316fe7ad0"
+      "size": 30189,
+      "sha256": "b0002f80d0f8c1eb72dd431a15ac381217b1a5342a9e4262c3b2a27e307caeec"
     },
     "web/mobile/DanLM-LICENSE.txt": {
       "size": 11709,
@@ -1761,8 +2197,8 @@
       "sha256": "96cbf7b589b6a8b496d5d8993feefea5dd11665df1dac2da49d9d096ec438791"
     },
     "使用说明.txt": {
-      "size": 1728,
-      "sha256": "89773f5b8cac8b9675681a817425ac97b2fb8bf9b5b08a6a5e9fc1c66ccc72eb"
+      "size": 2055,
+      "sha256": "59cfb2c0131c3e140bf02217e4c3d3865c14b7ff5b76ec7e6ca88dd188dba1f2"
     }
   }
 }

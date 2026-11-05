@@ -81,9 +81,9 @@ public final class MainActivity extends Activity {
         if (state != null && state.getStringArrayList("notices") != null) notices.addAll(state.getStringArrayList("notices"));
         notices.addAll(unclaimedNotices); unclaimedNotices.clear();
         FrameLayout frame = new FrameLayout(this);
-        frame.setBackgroundColor(Color.rgb(23, 67, 52));
+        frame.setBackgroundColor(Color.BLACK);
         web = new WebView(this);
-        web.setBackgroundColor(Color.rgb(23, 67, 52));
+        web.setBackgroundColor(Color.BLACK);
         web.setKeepScreenOn(true);
         frame.addView(web, new FrameLayout.LayoutParams(-1, -1));
         setContentView(frame);

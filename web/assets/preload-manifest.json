@@ -1,444 +1,452 @@
 {
-  "version": "1.8.43",
+  "version": "1.8.44",
   "entries": [
     {
-      "url": "/app/card-counts.js?v=234",
+      "url": "/app/card-counts.js?v=236",
       "bytes": 1319
     },
     {
-      "url": "/app/danlm-adapter.js?v=234",
+      "url": "/app/danlm-adapter.js?v=236",
       "bytes": 10655
     },
     {
-      "url": "/app/model-profiles.js?v=234",
+      "url": "/app/model-profiles.js?v=236",
       "bytes": 1378
     },
     {
-      "url": "/app/play-rules.js?v=234",
+      "url": "/app/play-rules.js?v=236",
       "bytes": 1575
     },
     {
-      "url": "/assets/accessible/blackJoker.svg?v=234",
+      "url": "/app/pure-black.css?v=236",
+      "bytes": 3284
+    },
+    {
+      "url": "/app/theme-boot.js?v=236",
+      "bytes": 932
+    },
+    {
+      "url": "/assets/accessible/blackJoker.svg?v=236",
       "bytes": 12082
     },
     {
-      "url": "/assets/accessible/club10.svg?v=234",
+      "url": "/assets/accessible/club10.svg?v=236",
       "bytes": 12930
     },
     {
-      "url": "/assets/accessible/club2.svg?v=234",
+      "url": "/assets/accessible/club2.svg?v=236",
       "bytes": 7562
     },
     {
-      "url": "/assets/accessible/club3.svg?v=234",
+      "url": "/assets/accessible/club3.svg?v=236",
       "bytes": 8228
     },
     {
-      "url": "/assets/accessible/club4.svg?v=234",
+      "url": "/assets/accessible/club4.svg?v=236",
       "bytes": 9109
     },
     {
-      "url": "/assets/accessible/club5.svg?v=234",
+      "url": "/assets/accessible/club5.svg?v=236",
       "bytes": 9628
     },
     {
-      "url": "/assets/accessible/club6.svg?v=234",
+      "url": "/assets/accessible/club6.svg?v=236",
       "bytes": 10119
     },
     {
-      "url": "/assets/accessible/club7.svg?v=234",
+      "url": "/assets/accessible/club7.svg?v=236",
       "bytes": 10806
     },
     {
-      "url": "/assets/accessible/club8.svg?v=234",
+      "url": "/assets/accessible/club8.svg?v=236",
       "bytes": 11484
     },
     {
-      "url": "/assets/accessible/club9.svg?v=234",
+      "url": "/assets/accessible/club9.svg?v=236",
       "bytes": 12150
     },
     {
-      "url": "/assets/accessible/clubAce.svg?v=234",
+      "url": "/assets/accessible/clubAce.svg?v=236",
       "bytes": 6886
     },
     {
-      "url": "/assets/accessible/clubJack.svg?v=234",
+      "url": "/assets/accessible/clubJack.svg?v=236",
       "bytes": 430838
     },
     {
-      "url": "/assets/accessible/clubKing.svg?v=234",
+      "url": "/assets/accessible/clubKing.svg?v=236",
       "bytes": 1051299
     },
     {
-      "url": "/assets/accessible/clubQueen.svg?v=234",
+      "url": "/assets/accessible/clubQueen.svg?v=236",
       "bytes": 1041943
     },
     {
-      "url": "/assets/accessible/diamond10.svg?v=234",
+      "url": "/assets/accessible/diamond10.svg?v=236",
       "bytes": 11274
     },
     {
-      "url": "/assets/accessible/diamond2.svg?v=234",
+      "url": "/assets/accessible/diamond2.svg?v=236",
       "bytes": 7057
     },
     {
-      "url": "/assets/accessible/diamond3.svg?v=234",
+      "url": "/assets/accessible/diamond3.svg?v=236",
       "bytes": 7596
     },
     {
-      "url": "/assets/accessible/diamond4.svg?v=234",
+      "url": "/assets/accessible/diamond4.svg?v=236",
       "bytes": 8161
     },
     {
-      "url": "/assets/accessible/diamond5.svg?v=234",
+      "url": "/assets/accessible/diamond5.svg?v=236",
       "bytes": 8710
     },
     {
-      "url": "/assets/accessible/diamond6.svg?v=234",
+      "url": "/assets/accessible/diamond6.svg?v=236",
       "bytes": 9052
     },
     {
-      "url": "/assets/accessible/diamond7.svg?v=234",
+      "url": "/assets/accessible/diamond7.svg?v=236",
       "bytes": 10230
     },
     {
-      "url": "/assets/accessible/diamond8.svg?v=234",
+      "url": "/assets/accessible/diamond8.svg?v=236",
       "bytes": 10191
     },
     {
-      "url": "/assets/accessible/diamond9.svg?v=234",
+      "url": "/assets/accessible/diamond9.svg?v=236",
       "bytes": 10730
     },
     {
-      "url": "/assets/accessible/diamondAce.svg?v=234",
+      "url": "/assets/accessible/diamondAce.svg?v=236",
       "bytes": 6512
     },
     {
-      "url": "/assets/accessible/diamondJack.svg?v=234",
+      "url": "/assets/accessible/diamondJack.svg?v=236",
       "bytes": 370300
     },
     {
-      "url": "/assets/accessible/diamondKing.svg?v=234",
+      "url": "/assets/accessible/diamondKing.svg?v=236",
       "bytes": 616913
     },
     {
-      "url": "/assets/accessible/diamondQueen.svg?v=234",
+      "url": "/assets/accessible/diamondQueen.svg?v=236",
       "bytes": 341138
     },
     {
-      "url": "/assets/accessible/heart10.svg?v=234",
+      "url": "/assets/accessible/heart10.svg?v=236",
       "bytes": 10816
     },
     {
-      "url": "/assets/accessible/heart2.svg?v=234",
+      "url": "/assets/accessible/heart2.svg?v=236",
       "bytes": 6792
     },
     {
-      "url": "/assets/accessible/heart3.svg?v=234",
+      "url": "/assets/accessible/heart3.svg?v=236",
       "bytes": 7281
     },
     {
-      "url": "/assets/accessible/heart4.svg?v=234",
+      "url": "/assets/accessible/heart4.svg?v=236",
       "bytes": 7793
     },
     {
-      "url": "/assets/accessible/heart5.svg?v=234",
+      "url": "/assets/accessible/heart5.svg?v=236",
       "bytes": 8269
     },
     {
-      "url": "/assets/accessible/heart6.svg?v=234",
+      "url": "/assets/accessible/heart6.svg?v=236",
       "bytes": 8629
     },
     {
-      "url": "/assets/accessible/heart7.svg?v=234",
+      "url": "/assets/accessible/heart7.svg?v=236",
       "bytes": 9121
     },
     {
-      "url": "/assets/accessible/heart8.svg?v=234",
+      "url": "/assets/accessible/heart8.svg?v=236",
       "bytes": 9565
     },
     {
-      "url": "/assets/accessible/heart9.svg?v=234",
+      "url": "/assets/accessible/heart9.svg?v=236",
       "bytes": 10064
     },
     {
-      "url": "/assets/accessible/heartAce.svg?v=234",
+      "url": "/assets/accessible/heartAce.svg?v=236",
       "bytes": 6282
     },
     {
-      "url": "/assets/accessible/heartJack.svg?v=234",
+      "url": "/assets/accessible/heartJack.svg?v=236",
       "bytes": 617598
     },
     {
-      "url": "/assets/accessible/heartKing.svg?v=234",
+      "url": "/assets/accessible/heartKing.svg?v=236",
       "bytes": 770513
     },
     {
-      "url": "/assets/accessible/heartQueen.svg?v=234",
+      "url": "/assets/accessible/heartQueen.svg?v=236",
       "bytes": 617987
     },
     {
-      "url": "/assets/accessible/level/club10.svg?v=234",
+      "url": "/assets/accessible/level/club10.svg?v=236",
       "bytes": 13214
     },
     {
-      "url": "/assets/accessible/level/club2.svg?v=234",
+      "url": "/assets/accessible/level/club2.svg?v=236",
       "bytes": 7846
     },
     {
-      "url": "/assets/accessible/level/club3.svg?v=234",
+      "url": "/assets/accessible/level/club3.svg?v=236",
       "bytes": 8512
     },
     {
-      "url": "/assets/accessible/level/club4.svg?v=234",
+      "url": "/assets/accessible/level/club4.svg?v=236",
       "bytes": 9393
     },
     {
-      "url": "/assets/accessible/level/club5.svg?v=234",
+      "url": "/assets/accessible/level/club5.svg?v=236",
       "bytes": 9912
     },
     {
-      "url": "/assets/accessible/level/club6.svg?v=234",
+      "url": "/assets/accessible/level/club6.svg?v=236",
       "bytes": 10403
     },
     {
-      "url": "/assets/accessible/level/club7.svg?v=234",
+      "url": "/assets/accessible/level/club7.svg?v=236",
       "bytes": 11090
     },
     {
-      "url": "/assets/accessible/level/club8.svg?v=234",
+      "url": "/assets/accessible/level/club8.svg?v=236",
       "bytes": 11768
     },
     {
-      "url": "/assets/accessible/level/club9.svg?v=234",
+      "url": "/assets/accessible/level/club9.svg?v=236",
       "bytes": 12434
     },
     {
-      "url": "/assets/accessible/level/clubAce.svg?v=234",
+      "url": "/assets/accessible/level/clubAce.svg?v=236",
       "bytes": 7170
     },
     {
-      "url": "/assets/accessible/level/clubJack.svg?v=234",
+      "url": "/assets/accessible/level/clubJack.svg?v=236",
       "bytes": 431122
     },
     {
-      "url": "/assets/accessible/level/clubKing.svg?v=234",
+      "url": "/assets/accessible/level/clubKing.svg?v=236",
       "bytes": 1051583
     },
     {
-      "url": "/assets/accessible/level/clubQueen.svg?v=234",
+      "url": "/assets/accessible/level/clubQueen.svg?v=236",
       "bytes": 1042227
     },
     {
-      "url": "/assets/accessible/level/diamond10.svg?v=234",
+      "url": "/assets/accessible/level/diamond10.svg?v=236",
       "bytes": 11558
     },
     {
-      "url": "/assets/accessible/level/diamond2.svg?v=234",
+      "url": "/assets/accessible/level/diamond2.svg?v=236",
       "bytes": 7341
     },
     {
-      "url": "/assets/accessible/level/diamond3.svg?v=234",
+      "url": "/assets/accessible/level/diamond3.svg?v=236",
       "bytes": 7880
     },
     {
-      "url": "/assets/accessible/level/diamond4.svg?v=234",
+      "url": "/assets/accessible/level/diamond4.svg?v=236",
       "bytes": 8445
     },
     {
-      "url": "/assets/accessible/level/diamond5.svg?v=234",
+      "url": "/assets/accessible/level/diamond5.svg?v=236",
       "bytes": 8994
     },
     {
-      "url": "/assets/accessible/level/diamond6.svg?v=234",
+      "url": "/assets/accessible/level/diamond6.svg?v=236",
       "bytes": 9336
     },
     {
-      "url": "/assets/accessible/level/diamond7.svg?v=234",
+      "url": "/assets/accessible/level/diamond7.svg?v=236",
       "bytes": 10514
     },
     {
-      "url": "/assets/accessible/level/diamond8.svg?v=234",
+      "url": "/assets/accessible/level/diamond8.svg?v=236",
       "bytes": 10475
     },
     {
-      "url": "/assets/accessible/level/diamond9.svg?v=234",
+      "url": "/assets/accessible/level/diamond9.svg?v=236",
       "bytes": 11014
     },
     {
-      "url": "/assets/accessible/level/diamondAce.svg?v=234",
+      "url": "/assets/accessible/level/diamondAce.svg?v=236",
       "bytes": 6796
     },
     {
-      "url": "/assets/accessible/level/diamondJack.svg?v=234",
+      "url": "/assets/accessible/level/diamondJack.svg?v=236",
       "bytes": 370584
     },
     {
-      "url": "/assets/accessible/level/diamondKing.svg?v=234",
+      "url": "/assets/accessible/level/diamondKing.svg?v=236",
       "bytes": 617197
     },
     {
-      "url": "/assets/accessible/level/diamondQueen.svg?v=234",
+      "url": "/assets/accessible/level/diamondQueen.svg?v=236",
       "bytes": 341422
     },
     {
-      "url": "/assets/accessible/level/heart10.svg?v=234",
+      "url": "/assets/accessible/level/heart10.svg?v=236",
       "bytes": 11100
     },
     {
-      "url": "/assets/accessible/level/heart2.svg?v=234",
+      "url": "/assets/accessible/level/heart2.svg?v=236",
       "bytes": 7076
     },
     {
-      "url": "/assets/accessible/level/heart3.svg?v=234",
+      "url": "/assets/accessible/level/heart3.svg?v=236",
       "bytes": 7565
     },
     {
-      "url": "/assets/accessible/level/heart4.svg?v=234",
+      "url": "/assets/accessible/level/heart4.svg?v=236",
       "bytes": 8077
     },
     {
-      "url": "/assets/accessible/level/heart5.svg?v=234",
+      "url": "/assets/accessible/level/heart5.svg?v=236",
       "bytes": 8553
     },
     {
-      "url": "/assets/accessible/level/heart6.svg?v=234",
+      "url": "/assets/accessible/level/heart6.svg?v=236",
       "bytes": 8913
     },
     {
-      "url": "/assets/accessible/level/heart7.svg?v=234",
+      "url": "/assets/accessible/level/heart7.svg?v=236",
       "bytes": 9405
     },
     {
-      "url": "/assets/accessible/level/heart8.svg?v=234",
+      "url": "/assets/accessible/level/heart8.svg?v=236",
       "bytes": 9849
     },
     {
-      "url": "/assets/accessible/level/heart9.svg?v=234",
+      "url": "/assets/accessible/level/heart9.svg?v=236",
       "bytes": 10348
     },
     {
-      "url": "/assets/accessible/level/heartAce.svg?v=234",
+      "url": "/assets/accessible/level/heartAce.svg?v=236",
       "bytes": 6566
     },
     {
-      "url": "/assets/accessible/level/heartJack.svg?v=234",
+      "url": "/assets/accessible/level/heartJack.svg?v=236",
       "bytes": 617882
     },
     {
-      "url": "/assets/accessible/level/heartKing.svg?v=234",
+      "url": "/assets/accessible/level/heartKing.svg?v=236",
       "bytes": 770797
     },
     {
-      "url": "/assets/accessible/level/heartQueen.svg?v=234",
+      "url": "/assets/accessible/level/heartQueen.svg?v=236",
       "bytes": 618271
     },
     {
-      "url": "/assets/accessible/level/spade10.svg?v=234",
+      "url": "/assets/accessible/level/spade10.svg?v=236",
       "bytes": 12439
     },
     {
-      "url": "/assets/accessible/level/spade2.svg?v=234",
+      "url": "/assets/accessible/level/spade2.svg?v=236",
       "bytes": 7537
     },
     {
-      "url": "/assets/accessible/level/spade3.svg?v=234",
+      "url": "/assets/accessible/level/spade3.svg?v=236",
       "bytes": 8177
     },
     {
-      "url": "/assets/accessible/level/spade4.svg?v=234",
+      "url": "/assets/accessible/level/spade4.svg?v=236",
       "bytes": 8830
     },
     {
-      "url": "/assets/accessible/level/spade5.svg?v=234",
+      "url": "/assets/accessible/level/spade5.svg?v=236",
       "bytes": 9448
     },
     {
-      "url": "/assets/accessible/level/spade6.svg?v=234",
+      "url": "/assets/accessible/level/spade6.svg?v=236",
       "bytes": 9914
     },
     {
-      "url": "/assets/accessible/level/spade7.svg?v=234",
+      "url": "/assets/accessible/level/spade7.svg?v=236",
       "bytes": 10539
     },
     {
-      "url": "/assets/accessible/level/spade8.svg?v=234",
+      "url": "/assets/accessible/level/spade8.svg?v=236",
       "bytes": 11142
     },
     {
-      "url": "/assets/accessible/level/spade9.svg?v=234",
+      "url": "/assets/accessible/level/spade9.svg?v=236",
       "bytes": 11754
     },
     {
-      "url": "/assets/accessible/level/spadeAce.svg?v=234",
+      "url": "/assets/accessible/level/spadeAce.svg?v=236",
       "bytes": 6933
     },
     {
-      "url": "/assets/accessible/level/spadeJack.svg?v=234",
+      "url": "/assets/accessible/level/spadeJack.svg?v=236",
       "bytes": 690770
     },
     {
-      "url": "/assets/accessible/level/spadeKing.svg?v=234",
+      "url": "/assets/accessible/level/spadeKing.svg?v=236",
       "bytes": 392548
     },
     {
-      "url": "/assets/accessible/level/spadeQueen.svg?v=234",
+      "url": "/assets/accessible/level/spadeQueen.svg?v=236",
       "bytes": 426265
     },
     {
-      "url": "/assets/accessible/redJoker.svg?v=234",
+      "url": "/assets/accessible/redJoker.svg?v=236",
       "bytes": 12136
     },
     {
-      "url": "/assets/accessible/spade10.svg?v=234",
+      "url": "/assets/accessible/spade10.svg?v=236",
       "bytes": 12155
     },
     {
-      "url": "/assets/accessible/spade2.svg?v=234",
+      "url": "/assets/accessible/spade2.svg?v=236",
       "bytes": 7253
     },
     {
-      "url": "/assets/accessible/spade3.svg?v=234",
+      "url": "/assets/accessible/spade3.svg?v=236",
       "bytes": 7893
     },
     {
-      "url": "/assets/accessible/spade4.svg?v=234",
+      "url": "/assets/accessible/spade4.svg?v=236",
       "bytes": 8546
     },
     {
-      "url": "/assets/accessible/spade5.svg?v=234",
+      "url": "/assets/accessible/spade5.svg?v=236",
       "bytes": 9164
     },
     {
-      "url": "/assets/accessible/spade6.svg?v=234",
+      "url": "/assets/accessible/spade6.svg?v=236",
       "bytes": 9630
     },
     {
-      "url": "/assets/accessible/spade7.svg?v=234",
+      "url": "/assets/accessible/spade7.svg?v=236",
       "bytes": 10255
     },
     {
-      "url": "/assets/accessible/spade8.svg?v=234",
+      "url": "/assets/accessible/spade8.svg?v=236",
       "bytes": 10858
     },
     {
-      "url": "/assets/accessible/spade9.svg?v=234",
+      "url": "/assets/accessible/spade9.svg?v=236",
       "bytes": 11470
     },
     {
-      "url": "/assets/accessible/spadeAce.svg?v=234",
+      "url": "/assets/accessible/spadeAce.svg?v=236",
       "bytes": 6649
     },
     {
-      "url": "/assets/accessible/spadeJack.svg?v=234",
+      "url": "/assets/accessible/spadeJack.svg?v=236",
       "bytes": 690486
     },
     {
-      "url": "/assets/accessible/spadeKing.svg?v=234",
+      "url": "/assets/accessible/spadeKing.svg?v=236",
       "bytes": 392264
     },
     {
-      "url": "/assets/accessible/spadeQueen.svg?v=234",
+      "url": "/assets/accessible/spadeQueen.svg?v=236",
       "bytes": 425981
     },
     {
@@ -454,864 +462,1288 @@
       "bytes": 3142894
     },
     {
-      "url": "/assets/brand/app-icon.png?v=234",
+      "url": "/assets/brand/app-icon.png?v=236",
       "bytes": 29178
     },
     {
-      "url": "/assets/fairWorker-CTCwrT35.js?v=234",
+      "url": "/assets/fairWorker-CTCwrT35.js?v=236",
       "bytes": 86603
     },
     {
-      "url": "/assets/jumbo/blackJoker.svg?v=234",
+      "url": "/assets/jumbo/blackJoker.svg?v=236",
       "bytes": 12082
     },
     {
-      "url": "/assets/jumbo/blueBack.svg?v=234",
+      "url": "/assets/jumbo/blueBack.svg?v=236",
       "bytes": 250590
     },
     {
-      "url": "/assets/jumbo/club10.svg?v=234",
+      "url": "/assets/jumbo/club10.svg?v=236",
       "bytes": 12873
     },
     {
-      "url": "/assets/jumbo/club2.svg?v=234",
+      "url": "/assets/jumbo/club2.svg?v=236",
       "bytes": 7564
     },
     {
-      "url": "/assets/jumbo/club3.svg?v=234",
+      "url": "/assets/jumbo/club3.svg?v=236",
       "bytes": 8274
     },
     {
-      "url": "/assets/jumbo/club4.svg?v=234",
+      "url": "/assets/jumbo/club4.svg?v=236",
       "bytes": 9155
     },
     {
-      "url": "/assets/jumbo/club5.svg?v=234",
+      "url": "/assets/jumbo/club5.svg?v=236",
       "bytes": 9674
     },
     {
-      "url": "/assets/jumbo/club6.svg?v=234",
+      "url": "/assets/jumbo/club6.svg?v=236",
       "bytes": 10165
     },
     {
-      "url": "/assets/jumbo/club7.svg?v=234",
+      "url": "/assets/jumbo/club7.svg?v=236",
       "bytes": 10852
     },
     {
-      "url": "/assets/jumbo/club8.svg?v=234",
+      "url": "/assets/jumbo/club8.svg?v=236",
       "bytes": 11530
     },
     {
-      "url": "/assets/jumbo/club9.svg?v=234",
+      "url": "/assets/jumbo/club9.svg?v=236",
       "bytes": 12196
     },
     {
-      "url": "/assets/jumbo/clubAce.svg?v=234",
+      "url": "/assets/jumbo/clubAce.svg?v=236",
       "bytes": 6932
     },
     {
-      "url": "/assets/jumbo/clubJack.svg?v=234",
+      "url": "/assets/jumbo/clubJack.svg?v=236",
       "bytes": 458822
     },
     {
-      "url": "/assets/jumbo/clubKing.svg?v=234",
+      "url": "/assets/jumbo/clubKing.svg?v=236",
       "bytes": 1134081
     },
     {
-      "url": "/assets/jumbo/clubQueen.svg?v=234",
+      "url": "/assets/jumbo/clubQueen.svg?v=236",
       "bytes": 1113886
     },
     {
-      "url": "/assets/jumbo/diamond10.svg?v=234",
+      "url": "/assets/jumbo/diamond10.svg?v=236",
       "bytes": 11274
     },
     {
-      "url": "/assets/jumbo/diamond2.svg?v=234",
+      "url": "/assets/jumbo/diamond2.svg?v=236",
       "bytes": 7013
     },
     {
-      "url": "/assets/jumbo/diamond3.svg?v=234",
+      "url": "/assets/jumbo/diamond3.svg?v=236",
       "bytes": 7596
     },
     {
-      "url": "/assets/jumbo/diamond4.svg?v=234",
+      "url": "/assets/jumbo/diamond4.svg?v=236",
       "bytes": 8161
     },
     {
-      "url": "/assets/jumbo/diamond5.svg?v=234",
+      "url": "/assets/jumbo/diamond5.svg?v=236",
       "bytes": 8710
     },
     {
-      "url": "/assets/jumbo/diamond6.svg?v=234",
+      "url": "/assets/jumbo/diamond6.svg?v=236",
       "bytes": 9052
     },
     {
-      "url": "/assets/jumbo/diamond7.svg?v=234",
+      "url": "/assets/jumbo/diamond7.svg?v=236",
       "bytes": 10342
     },
     {
-      "url": "/assets/jumbo/diamond8.svg?v=234",
+      "url": "/assets/jumbo/diamond8.svg?v=236",
       "bytes": 10191
     },
     {
-      "url": "/assets/jumbo/diamond9.svg?v=234",
+      "url": "/assets/jumbo/diamond9.svg?v=236",
       "bytes": 10730
     },
     {
-      "url": "/assets/jumbo/diamondAce.svg?v=234",
+      "url": "/assets/jumbo/diamondAce.svg?v=236",
       "bytes": 6512
     },
     {
-      "url": "/assets/jumbo/diamondJack.svg?v=234",
+      "url": "/assets/jumbo/diamondJack.svg?v=236",
       "bytes": 398919
     },
     {
-      "url": "/assets/jumbo/diamondKing.svg?v=234",
+      "url": "/assets/jumbo/diamondKing.svg?v=236",
       "bytes": 616968
     },
     {
-      "url": "/assets/jumbo/diamondQueen.svg?v=234",
+      "url": "/assets/jumbo/diamondQueen.svg?v=236",
       "bytes": 341138
     },
     {
-      "url": "/assets/jumbo/heart10.svg?v=234",
+      "url": "/assets/jumbo/heart10.svg?v=236",
       "bytes": 10804
     },
     {
-      "url": "/assets/jumbo/heart2.svg?v=234",
+      "url": "/assets/jumbo/heart2.svg?v=236",
       "bytes": 6780
     },
     {
-      "url": "/assets/jumbo/heart3.svg?v=234",
+      "url": "/assets/jumbo/heart3.svg?v=236",
       "bytes": 7269
     },
     {
-      "url": "/assets/jumbo/heart4.svg?v=234",
+      "url": "/assets/jumbo/heart4.svg?v=236",
       "bytes": 7781
     },
     {
-      "url": "/assets/jumbo/heart5.svg?v=234",
+      "url": "/assets/jumbo/heart5.svg?v=236",
       "bytes": 8257
     },
     {
-      "url": "/assets/jumbo/heart6.svg?v=234",
+      "url": "/assets/jumbo/heart6.svg?v=236",
       "bytes": 8617
     },
     {
-      "url": "/assets/jumbo/heart7.svg?v=234",
+      "url": "/assets/jumbo/heart7.svg?v=236",
       "bytes": 9109
     },
     {
-      "url": "/assets/jumbo/heart8.svg?v=234",
+      "url": "/assets/jumbo/heart8.svg?v=236",
       "bytes": 9578
     },
     {
-      "url": "/assets/jumbo/heart9.svg?v=234",
+      "url": "/assets/jumbo/heart9.svg?v=236",
       "bytes": 10052
     },
     {
-      "url": "/assets/jumbo/heartAce.svg?v=234",
+      "url": "/assets/jumbo/heartAce.svg?v=236",
       "bytes": 6339
     },
     {
-      "url": "/assets/jumbo/heartJack.svg?v=234",
+      "url": "/assets/jumbo/heartJack.svg?v=236",
       "bytes": 617586
     },
     {
-      "url": "/assets/jumbo/heartKing.svg?v=234",
+      "url": "/assets/jumbo/heartKing.svg?v=236",
       "bytes": 770501
     },
     {
-      "url": "/assets/jumbo/heartQueen.svg?v=234",
+      "url": "/assets/jumbo/heartQueen.svg?v=236",
       "bytes": 618032
     },
     {
-      "url": "/assets/jumbo/level/club10.svg?v=234",
+      "url": "/assets/jumbo/level/club10.svg?v=236",
       "bytes": 13157
     },
     {
-      "url": "/assets/jumbo/level/club2.svg?v=234",
+      "url": "/assets/jumbo/level/club2.svg?v=236",
       "bytes": 7848
     },
     {
-      "url": "/assets/jumbo/level/club3.svg?v=234",
+      "url": "/assets/jumbo/level/club3.svg?v=236",
       "bytes": 8558
     },
     {
-      "url": "/assets/jumbo/level/club4.svg?v=234",
+      "url": "/assets/jumbo/level/club4.svg?v=236",
       "bytes": 9439
     },
     {
-      "url": "/assets/jumbo/level/club5.svg?v=234",
+      "url": "/assets/jumbo/level/club5.svg?v=236",
       "bytes": 9958
     },
     {
-      "url": "/assets/jumbo/level/club6.svg?v=234",
+      "url": "/assets/jumbo/level/club6.svg?v=236",
       "bytes": 10449
     },
     {
-      "url": "/assets/jumbo/level/club7.svg?v=234",
+      "url": "/assets/jumbo/level/club7.svg?v=236",
       "bytes": 11136
     },
     {
-      "url": "/assets/jumbo/level/club8.svg?v=234",
+      "url": "/assets/jumbo/level/club8.svg?v=236",
       "bytes": 11814
     },
     {
-      "url": "/assets/jumbo/level/club9.svg?v=234",
+      "url": "/assets/jumbo/level/club9.svg?v=236",
       "bytes": 12480
     },
     {
-      "url": "/assets/jumbo/level/clubAce.svg?v=234",
+      "url": "/assets/jumbo/level/clubAce.svg?v=236",
       "bytes": 7216
     },
     {
-      "url": "/assets/jumbo/level/clubJack.svg?v=234",
+      "url": "/assets/jumbo/level/clubJack.svg?v=236",
       "bytes": 459106
     },
     {
-      "url": "/assets/jumbo/level/clubKing.svg?v=234",
+      "url": "/assets/jumbo/level/clubKing.svg?v=236",
       "bytes": 1134365
     },
     {
-      "url": "/assets/jumbo/level/clubQueen.svg?v=234",
+      "url": "/assets/jumbo/level/clubQueen.svg?v=236",
       "bytes": 1114170
     },
     {
-      "url": "/assets/jumbo/level/diamond10.svg?v=234",
+      "url": "/assets/jumbo/level/diamond10.svg?v=236",
       "bytes": 11558
     },
     {
-      "url": "/assets/jumbo/level/diamond2.svg?v=234",
+      "url": "/assets/jumbo/level/diamond2.svg?v=236",
       "bytes": 7297
     },
     {
-      "url": "/assets/jumbo/level/diamond3.svg?v=234",
+      "url": "/assets/jumbo/level/diamond3.svg?v=236",
       "bytes": 7880
     },
     {
-      "url": "/assets/jumbo/level/diamond4.svg?v=234",
+      "url": "/assets/jumbo/level/diamond4.svg?v=236",
       "bytes": 8445
     },
     {
-      "url": "/assets/jumbo/level/diamond5.svg?v=234",
+      "url": "/assets/jumbo/level/diamond5.svg?v=236",
       "bytes": 8994
     },
     {
-      "url": "/assets/jumbo/level/diamond6.svg?v=234",
+      "url": "/assets/jumbo/level/diamond6.svg?v=236",
       "bytes": 9336
     },
     {
-      "url": "/assets/jumbo/level/diamond7.svg?v=234",
+      "url": "/assets/jumbo/level/diamond7.svg?v=236",
       "bytes": 10626
     },
     {
-      "url": "/assets/jumbo/level/diamond8.svg?v=234",
+      "url": "/assets/jumbo/level/diamond8.svg?v=236",
       "bytes": 10475
     },
     {
-      "url": "/assets/jumbo/level/diamond9.svg?v=234",
+      "url": "/assets/jumbo/level/diamond9.svg?v=236",
       "bytes": 11014
     },
     {
-      "url": "/assets/jumbo/level/diamondAce.svg?v=234",
+      "url": "/assets/jumbo/level/diamondAce.svg?v=236",
       "bytes": 6796
     },
     {
-      "url": "/assets/jumbo/level/diamondJack.svg?v=234",
+      "url": "/assets/jumbo/level/diamondJack.svg?v=236",
       "bytes": 399203
     },
     {
-      "url": "/assets/jumbo/level/diamondKing.svg?v=234",
+      "url": "/assets/jumbo/level/diamondKing.svg?v=236",
       "bytes": 617252
     },
     {
-      "url": "/assets/jumbo/level/diamondQueen.svg?v=234",
+      "url": "/assets/jumbo/level/diamondQueen.svg?v=236",
       "bytes": 341422
     },
     {
-      "url": "/assets/jumbo/level/heart10.svg?v=234",
+      "url": "/assets/jumbo/level/heart10.svg?v=236",
       "bytes": 11088
     },
     {
-      "url": "/assets/jumbo/level/heart2.svg?v=234",
+      "url": "/assets/jumbo/level/heart2.svg?v=236",
       "bytes": 7064
     },
     {
-      "url": "/assets/jumbo/level/heart3.svg?v=234",
+      "url": "/assets/jumbo/level/heart3.svg?v=236",
       "bytes": 7553
     },
     {
-      "url": "/assets/jumbo/level/heart4.svg?v=234",
+      "url": "/assets/jumbo/level/heart4.svg?v=236",
       "bytes": 8065
     },
     {
-      "url": "/assets/jumbo/level/heart5.svg?v=234",
+      "url": "/assets/jumbo/level/heart5.svg?v=236",
       "bytes": 8541
     },
     {
-      "url": "/assets/jumbo/level/heart6.svg?v=234",
+      "url": "/assets/jumbo/level/heart6.svg?v=236",
       "bytes": 8901
     },
     {
-      "url": "/assets/jumbo/level/heart7.svg?v=234",
+      "url": "/assets/jumbo/level/heart7.svg?v=236",
       "bytes": 9393
     },
     {
-      "url": "/assets/jumbo/level/heart8.svg?v=234",
+      "url": "/assets/jumbo/level/heart8.svg?v=236",
       "bytes": 9862
     },
     {
-      "url": "/assets/jumbo/level/heart9.svg?v=234",
+      "url": "/assets/jumbo/level/heart9.svg?v=236",
       "bytes": 10336
     },
     {
-      "url": "/assets/jumbo/level/heartAce.svg?v=234",
+      "url": "/assets/jumbo/level/heartAce.svg?v=236",
       "bytes": 6623
     },
     {
-      "url": "/assets/jumbo/level/heartJack.svg?v=234",
+      "url": "/assets/jumbo/level/heartJack.svg?v=236",
       "bytes": 617870
     },
     {
-      "url": "/assets/jumbo/level/heartKing.svg?v=234",
+      "url": "/assets/jumbo/level/heartKing.svg?v=236",
       "bytes": 770785
     },
     {
-      "url": "/assets/jumbo/level/heartQueen.svg?v=234",
+      "url": "/assets/jumbo/level/heartQueen.svg?v=236",
       "bytes": 618316
     },
     {
-      "url": "/assets/jumbo/level/spade10.svg?v=234",
+      "url": "/assets/jumbo/level/spade10.svg?v=236",
       "bytes": 12484
     },
     {
-      "url": "/assets/jumbo/level/spade2.svg?v=234",
+      "url": "/assets/jumbo/level/spade2.svg?v=236",
       "bytes": 7593
     },
     {
-      "url": "/assets/jumbo/level/spade3.svg?v=234",
+      "url": "/assets/jumbo/level/spade3.svg?v=236",
       "bytes": 8222
     },
     {
-      "url": "/assets/jumbo/level/spade4.svg?v=234",
+      "url": "/assets/jumbo/level/spade4.svg?v=236",
       "bytes": 8875
     },
     {
-      "url": "/assets/jumbo/level/spade5.svg?v=234",
+      "url": "/assets/jumbo/level/spade5.svg?v=236",
       "bytes": 9493
     },
     {
-      "url": "/assets/jumbo/level/spade6.svg?v=234",
+      "url": "/assets/jumbo/level/spade6.svg?v=236",
       "bytes": 9959
     },
     {
-      "url": "/assets/jumbo/level/spade7.svg?v=234",
+      "url": "/assets/jumbo/level/spade7.svg?v=236",
       "bytes": 10584
     },
     {
-      "url": "/assets/jumbo/level/spade8.svg?v=234",
+      "url": "/assets/jumbo/level/spade8.svg?v=236",
       "bytes": 11187
     },
     {
-      "url": "/assets/jumbo/level/spade9.svg?v=234",
+      "url": "/assets/jumbo/level/spade9.svg?v=236",
       "bytes": 11799
     },
     {
-      "url": "/assets/jumbo/level/spadeAce.svg?v=234",
+      "url": "/assets/jumbo/level/spadeAce.svg?v=236",
       "bytes": 6978
     },
     {
-      "url": "/assets/jumbo/level/spadeJack.svg?v=234",
+      "url": "/assets/jumbo/level/spadeJack.svg?v=236",
       "bytes": 690815
     },
     {
-      "url": "/assets/jumbo/level/spadeKing.svg?v=234",
+      "url": "/assets/jumbo/level/spadeKing.svg?v=236",
       "bytes": 392593
     },
     {
-      "url": "/assets/jumbo/level/spadeQueen.svg?v=234",
+      "url": "/assets/jumbo/level/spadeQueen.svg?v=236",
       "bytes": 426310
     },
     {
-      "url": "/assets/jumbo/redJoker.svg?v=234",
+      "url": "/assets/jumbo/redJoker.svg?v=236",
       "bytes": 12136
     },
     {
-      "url": "/assets/jumbo/spade10.svg?v=234",
+      "url": "/assets/jumbo/spade10.svg?v=236",
       "bytes": 12200
     },
     {
-      "url": "/assets/jumbo/spade2.svg?v=234",
+      "url": "/assets/jumbo/spade2.svg?v=236",
       "bytes": 7309
     },
     {
-      "url": "/assets/jumbo/spade3.svg?v=234",
+      "url": "/assets/jumbo/spade3.svg?v=236",
       "bytes": 7938
     },
     {
-      "url": "/assets/jumbo/spade4.svg?v=234",
+      "url": "/assets/jumbo/spade4.svg?v=236",
       "bytes": 8591
     },
     {
-      "url": "/assets/jumbo/spade5.svg?v=234",
+      "url": "/assets/jumbo/spade5.svg?v=236",
       "bytes": 9209
     },
     {
-      "url": "/assets/jumbo/spade6.svg?v=234",
+      "url": "/assets/jumbo/spade6.svg?v=236",
       "bytes": 9675
     },
     {
-      "url": "/assets/jumbo/spade7.svg?v=234",
+      "url": "/assets/jumbo/spade7.svg?v=236",
       "bytes": 10300
     },
     {
-      "url": "/assets/jumbo/spade8.svg?v=234",
+      "url": "/assets/jumbo/spade8.svg?v=236",
       "bytes": 10903
     },
     {
-      "url": "/assets/jumbo/spade9.svg?v=234",
+      "url": "/assets/jumbo/spade9.svg?v=236",
       "bytes": 11515
     },
     {
-      "url": "/assets/jumbo/spadeAce.svg?v=234",
+      "url": "/assets/jumbo/spadeAce.svg?v=236",
       "bytes": 6694
     },
     {
-      "url": "/assets/jumbo/spadeJack.svg?v=234",
+      "url": "/assets/jumbo/spadeJack.svg?v=236",
       "bytes": 690531
     },
     {
-      "url": "/assets/jumbo/spadeKing.svg?v=234",
+      "url": "/assets/jumbo/spadeKing.svg?v=236",
       "bytes": 392309
     },
     {
-      "url": "/assets/jumbo/spadeQueen.svg?v=234",
+      "url": "/assets/jumbo/spadeQueen.svg?v=236",
       "bytes": 426026
     },
     {
-      "url": "/assets/minimal/blackJoker.svg?v=234",
+      "url": "/assets/minimal/blackJoker.svg?v=236",
       "bytes": 501
     },
     {
-      "url": "/assets/minimal/club10.svg?v=234",
+      "url": "/assets/minimal/club10.svg?v=236",
       "bytes": 702
     },
     {
-      "url": "/assets/minimal/club2.svg?v=234",
+      "url": "/assets/minimal/club2.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/club3.svg?v=234",
+      "url": "/assets/minimal/club3.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/club4.svg?v=234",
+      "url": "/assets/minimal/club4.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/club5.svg?v=234",
+      "url": "/assets/minimal/club5.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/club6.svg?v=234",
+      "url": "/assets/minimal/club6.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/club7.svg?v=234",
+      "url": "/assets/minimal/club7.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/club8.svg?v=234",
+      "url": "/assets/minimal/club8.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/club9.svg?v=234",
+      "url": "/assets/minimal/club9.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/clubAce.svg?v=234",
+      "url": "/assets/minimal/clubAce.svg?v=236",
       "bytes": 813
     },
     {
-      "url": "/assets/minimal/clubJack.svg?v=234",
+      "url": "/assets/minimal/clubJack.svg?v=236",
       "bytes": 813
     },
     {
-      "url": "/assets/minimal/clubKing.svg?v=234",
+      "url": "/assets/minimal/clubKing.svg?v=236",
       "bytes": 813
     },
     {
-      "url": "/assets/minimal/clubQueen.svg?v=234",
+      "url": "/assets/minimal/clubQueen.svg?v=236",
       "bytes": 813
     },
     {
-      "url": "/assets/minimal/diamond10.svg?v=234",
+      "url": "/assets/minimal/diamond10.svg?v=236",
       "bytes": 702
     },
     {
-      "url": "/assets/minimal/diamond2.svg?v=234",
+      "url": "/assets/minimal/diamond2.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/diamond3.svg?v=234",
+      "url": "/assets/minimal/diamond3.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/diamond4.svg?v=234",
+      "url": "/assets/minimal/diamond4.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/diamond5.svg?v=234",
+      "url": "/assets/minimal/diamond5.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/diamond6.svg?v=234",
+      "url": "/assets/minimal/diamond6.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/diamond7.svg?v=234",
+      "url": "/assets/minimal/diamond7.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/diamond8.svg?v=234",
+      "url": "/assets/minimal/diamond8.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/diamond9.svg?v=234",
+      "url": "/assets/minimal/diamond9.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/diamondAce.svg?v=234",
+      "url": "/assets/minimal/diamondAce.svg?v=236",
       "bytes": 813
     },
     {
-      "url": "/assets/minimal/diamondJack.svg?v=234",
+      "url": "/assets/minimal/diamondJack.svg?v=236",
       "bytes": 813
     },
     {
-      "url": "/assets/minimal/diamondKing.svg?v=234",
+      "url": "/assets/minimal/diamondKing.svg?v=236",
       "bytes": 813
     },
     {
-      "url": "/assets/minimal/diamondQueen.svg?v=234",
+      "url": "/assets/minimal/diamondQueen.svg?v=236",
       "bytes": 813
     },
     {
-      "url": "/assets/minimal/heart10.svg?v=234",
+      "url": "/assets/minimal/heart10.svg?v=236",
       "bytes": 702
     },
     {
-      "url": "/assets/minimal/heart2.svg?v=234",
+      "url": "/assets/minimal/heart2.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/heart3.svg?v=234",
+      "url": "/assets/minimal/heart3.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/heart4.svg?v=234",
+      "url": "/assets/minimal/heart4.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/heart5.svg?v=234",
+      "url": "/assets/minimal/heart5.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/heart6.svg?v=234",
+      "url": "/assets/minimal/heart6.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/heart7.svg?v=234",
+      "url": "/assets/minimal/heart7.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/heart8.svg?v=234",
+      "url": "/assets/minimal/heart8.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/heart9.svg?v=234",
+      "url": "/assets/minimal/heart9.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/heartAce.svg?v=234",
+      "url": "/assets/minimal/heartAce.svg?v=236",
       "bytes": 813
     },
     {
-      "url": "/assets/minimal/heartJack.svg?v=234",
+      "url": "/assets/minimal/heartJack.svg?v=236",
       "bytes": 813
     },
     {
-      "url": "/assets/minimal/heartKing.svg?v=234",
+      "url": "/assets/minimal/heartKing.svg?v=236",
       "bytes": 813
     },
     {
-      "url": "/assets/minimal/heartQueen.svg?v=234",
+      "url": "/assets/minimal/heartQueen.svg?v=236",
       "bytes": 813
     },
     {
-      "url": "/assets/minimal/level/club10.svg?v=234",
+      "url": "/assets/minimal/level/club10.svg?v=236",
       "bytes": 986
     },
     {
-      "url": "/assets/minimal/level/club2.svg?v=234",
+      "url": "/assets/minimal/level/club2.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/club3.svg?v=234",
+      "url": "/assets/minimal/level/club3.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/club4.svg?v=234",
+      "url": "/assets/minimal/level/club4.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/club5.svg?v=234",
+      "url": "/assets/minimal/level/club5.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/club6.svg?v=234",
+      "url": "/assets/minimal/level/club6.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/club7.svg?v=234",
+      "url": "/assets/minimal/level/club7.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/club8.svg?v=234",
+      "url": "/assets/minimal/level/club8.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/club9.svg?v=234",
+      "url": "/assets/minimal/level/club9.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/clubAce.svg?v=234",
+      "url": "/assets/minimal/level/clubAce.svg?v=236",
       "bytes": 1097
     },
     {
-      "url": "/assets/minimal/level/clubJack.svg?v=234",
+      "url": "/assets/minimal/level/clubJack.svg?v=236",
       "bytes": 1097
     },
     {
-      "url": "/assets/minimal/level/clubKing.svg?v=234",
+      "url": "/assets/minimal/level/clubKing.svg?v=236",
       "bytes": 1097
     },
     {
-      "url": "/assets/minimal/level/clubQueen.svg?v=234",
+      "url": "/assets/minimal/level/clubQueen.svg?v=236",
       "bytes": 1097
     },
     {
-      "url": "/assets/minimal/level/diamond10.svg?v=234",
+      "url": "/assets/minimal/level/diamond10.svg?v=236",
       "bytes": 986
     },
     {
-      "url": "/assets/minimal/level/diamond2.svg?v=234",
+      "url": "/assets/minimal/level/diamond2.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/diamond3.svg?v=234",
+      "url": "/assets/minimal/level/diamond3.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/diamond4.svg?v=234",
+      "url": "/assets/minimal/level/diamond4.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/diamond5.svg?v=234",
+      "url": "/assets/minimal/level/diamond5.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/diamond6.svg?v=234",
+      "url": "/assets/minimal/level/diamond6.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/diamond7.svg?v=234",
+      "url": "/assets/minimal/level/diamond7.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/diamond8.svg?v=234",
+      "url": "/assets/minimal/level/diamond8.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/diamond9.svg?v=234",
+      "url": "/assets/minimal/level/diamond9.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/diamondAce.svg?v=234",
+      "url": "/assets/minimal/level/diamondAce.svg?v=236",
       "bytes": 1097
     },
     {
-      "url": "/assets/minimal/level/diamondJack.svg?v=234",
+      "url": "/assets/minimal/level/diamondJack.svg?v=236",
       "bytes": 1097
     },
     {
-      "url": "/assets/minimal/level/diamondKing.svg?v=234",
+      "url": "/assets/minimal/level/diamondKing.svg?v=236",
       "bytes": 1097
     },
     {
-      "url": "/assets/minimal/level/diamondQueen.svg?v=234",
+      "url": "/assets/minimal/level/diamondQueen.svg?v=236",
       "bytes": 1097
     },
     {
-      "url": "/assets/minimal/level/heart10.svg?v=234",
+      "url": "/assets/minimal/level/heart10.svg?v=236",
       "bytes": 986
     },
     {
-      "url": "/assets/minimal/level/heart2.svg?v=234",
+      "url": "/assets/minimal/level/heart2.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/heart3.svg?v=234",
+      "url": "/assets/minimal/level/heart3.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/heart4.svg?v=234",
+      "url": "/assets/minimal/level/heart4.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/heart5.svg?v=234",
+      "url": "/assets/minimal/level/heart5.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/heart6.svg?v=234",
+      "url": "/assets/minimal/level/heart6.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/heart7.svg?v=234",
+      "url": "/assets/minimal/level/heart7.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/heart8.svg?v=234",
+      "url": "/assets/minimal/level/heart8.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/heart9.svg?v=234",
+      "url": "/assets/minimal/level/heart9.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/heartAce.svg?v=234",
+      "url": "/assets/minimal/level/heartAce.svg?v=236",
       "bytes": 1097
     },
     {
-      "url": "/assets/minimal/level/heartJack.svg?v=234",
+      "url": "/assets/minimal/level/heartJack.svg?v=236",
       "bytes": 1097
     },
     {
-      "url": "/assets/minimal/level/heartKing.svg?v=234",
+      "url": "/assets/minimal/level/heartKing.svg?v=236",
       "bytes": 1097
     },
     {
-      "url": "/assets/minimal/level/heartQueen.svg?v=234",
+      "url": "/assets/minimal/level/heartQueen.svg?v=236",
       "bytes": 1097
     },
     {
-      "url": "/assets/minimal/level/spade10.svg?v=234",
+      "url": "/assets/minimal/level/spade10.svg?v=236",
       "bytes": 986
     },
     {
-      "url": "/assets/minimal/level/spade2.svg?v=234",
+      "url": "/assets/minimal/level/spade2.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/spade3.svg?v=234",
+      "url": "/assets/minimal/level/spade3.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/spade4.svg?v=234",
+      "url": "/assets/minimal/level/spade4.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/spade5.svg?v=234",
+      "url": "/assets/minimal/level/spade5.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/spade6.svg?v=234",
+      "url": "/assets/minimal/level/spade6.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/spade7.svg?v=234",
+      "url": "/assets/minimal/level/spade7.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/spade8.svg?v=234",
+      "url": "/assets/minimal/level/spade8.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/spade9.svg?v=234",
+      "url": "/assets/minimal/level/spade9.svg?v=236",
       "bytes": 984
     },
     {
-      "url": "/assets/minimal/level/spadeAce.svg?v=234",
+      "url": "/assets/minimal/level/spadeAce.svg?v=236",
       "bytes": 1097
     },
     {
-      "url": "/assets/minimal/level/spadeJack.svg?v=234",
+      "url": "/assets/minimal/level/spadeJack.svg?v=236",
       "bytes": 1097
     },
     {
-      "url": "/assets/minimal/level/spadeKing.svg?v=234",
+      "url": "/assets/minimal/level/spadeKing.svg?v=236",
       "bytes": 1097
     },
     {
-      "url": "/assets/minimal/level/spadeQueen.svg?v=234",
+      "url": "/assets/minimal/level/spadeQueen.svg?v=236",
       "bytes": 1097
     },
     {
-      "url": "/assets/minimal/redJoker.svg?v=234",
+      "url": "/assets/minimal/redJoker.svg?v=236",
       "bytes": 501
     },
     {
-      "url": "/assets/minimal/spade10.svg?v=234",
+      "url": "/assets/minimal/spade10.svg?v=236",
       "bytes": 702
     },
     {
-      "url": "/assets/minimal/spade2.svg?v=234",
+      "url": "/assets/minimal/spade2.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/spade3.svg?v=234",
+      "url": "/assets/minimal/spade3.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/spade4.svg?v=234",
+      "url": "/assets/minimal/spade4.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/spade5.svg?v=234",
+      "url": "/assets/minimal/spade5.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/spade6.svg?v=234",
+      "url": "/assets/minimal/spade6.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/spade7.svg?v=234",
+      "url": "/assets/minimal/spade7.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/spade8.svg?v=234",
+      "url": "/assets/minimal/spade8.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/spade9.svg?v=234",
+      "url": "/assets/minimal/spade9.svg?v=236",
       "bytes": 700
     },
     {
-      "url": "/assets/minimal/spadeAce.svg?v=234",
+      "url": "/assets/minimal/spadeAce.svg?v=236",
       "bytes": 813
     },
     {
-      "url": "/assets/minimal/spadeJack.svg?v=234",
+      "url": "/assets/minimal/spadeJack.svg?v=236",
       "bytes": 813
     },
     {
-      "url": "/assets/minimal/spadeKing.svg?v=234",
+      "url": "/assets/minimal/spadeKing.svg?v=236",
       "bytes": 813
     },
     {
-      "url": "/assets/minimal/spadeQueen.svg?v=234",
+      "url": "/assets/minimal/spadeQueen.svg?v=236",
       "bytes": 813
+    },
+    {
+      "url": "/assets/mono/blackJoker.svg?v=236",
+      "bytes": 505
+    },
+    {
+      "url": "/assets/mono/club10.svg?v=236",
+      "bytes": 704
+    },
+    {
+      "url": "/assets/mono/club2.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/club3.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/club4.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/club5.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/club6.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/club7.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/club8.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/club9.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/clubAce.svg?v=236",
+      "bytes": 815
+    },
+    {
+      "url": "/assets/mono/clubJack.svg?v=236",
+      "bytes": 815
+    },
+    {
+      "url": "/assets/mono/clubKing.svg?v=236",
+      "bytes": 815
+    },
+    {
+      "url": "/assets/mono/clubQueen.svg?v=236",
+      "bytes": 815
+    },
+    {
+      "url": "/assets/mono/diamond10.svg?v=236",
+      "bytes": 704
+    },
+    {
+      "url": "/assets/mono/diamond2.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/diamond3.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/diamond4.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/diamond5.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/diamond6.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/diamond7.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/diamond8.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/diamond9.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/diamondAce.svg?v=236",
+      "bytes": 815
+    },
+    {
+      "url": "/assets/mono/diamondJack.svg?v=236",
+      "bytes": 815
+    },
+    {
+      "url": "/assets/mono/diamondKing.svg?v=236",
+      "bytes": 815
+    },
+    {
+      "url": "/assets/mono/diamondQueen.svg?v=236",
+      "bytes": 815
+    },
+    {
+      "url": "/assets/mono/heart10.svg?v=236",
+      "bytes": 704
+    },
+    {
+      "url": "/assets/mono/heart2.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/heart3.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/heart4.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/heart5.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/heart6.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/heart7.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/heart8.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/heart9.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/heartAce.svg?v=236",
+      "bytes": 815
+    },
+    {
+      "url": "/assets/mono/heartJack.svg?v=236",
+      "bytes": 815
+    },
+    {
+      "url": "/assets/mono/heartKing.svg?v=236",
+      "bytes": 815
+    },
+    {
+      "url": "/assets/mono/heartQueen.svg?v=236",
+      "bytes": 815
+    },
+    {
+      "url": "/assets/mono/level/club10.svg?v=236",
+      "bytes": 990
+    },
+    {
+      "url": "/assets/mono/level/club2.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/club3.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/club4.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/club5.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/club6.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/club7.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/club8.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/club9.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/clubAce.svg?v=236",
+      "bytes": 1101
+    },
+    {
+      "url": "/assets/mono/level/clubJack.svg?v=236",
+      "bytes": 1101
+    },
+    {
+      "url": "/assets/mono/level/clubKing.svg?v=236",
+      "bytes": 1101
+    },
+    {
+      "url": "/assets/mono/level/clubQueen.svg?v=236",
+      "bytes": 1101
+    },
+    {
+      "url": "/assets/mono/level/diamond10.svg?v=236",
+      "bytes": 990
+    },
+    {
+      "url": "/assets/mono/level/diamond2.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/diamond3.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/diamond4.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/diamond5.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/diamond6.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/diamond7.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/diamond8.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/diamond9.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/diamondAce.svg?v=236",
+      "bytes": 1101
+    },
+    {
+      "url": "/assets/mono/level/diamondJack.svg?v=236",
+      "bytes": 1101
+    },
+    {
+      "url": "/assets/mono/level/diamondKing.svg?v=236",
+      "bytes": 1101
+    },
+    {
+      "url": "/assets/mono/level/diamondQueen.svg?v=236",
+      "bytes": 1101
+    },
+    {
+      "url": "/assets/mono/level/heart10.svg?v=236",
+      "bytes": 1263
+    },
+    {
+      "url": "/assets/mono/level/heart2.svg?v=236",
+      "bytes": 1261
+    },
+    {
+      "url": "/assets/mono/level/heart3.svg?v=236",
+      "bytes": 1261
+    },
+    {
+      "url": "/assets/mono/level/heart4.svg?v=236",
+      "bytes": 1261
+    },
+    {
+      "url": "/assets/mono/level/heart5.svg?v=236",
+      "bytes": 1261
+    },
+    {
+      "url": "/assets/mono/level/heart6.svg?v=236",
+      "bytes": 1261
+    },
+    {
+      "url": "/assets/mono/level/heart7.svg?v=236",
+      "bytes": 1261
+    },
+    {
+      "url": "/assets/mono/level/heart8.svg?v=236",
+      "bytes": 1261
+    },
+    {
+      "url": "/assets/mono/level/heart9.svg?v=236",
+      "bytes": 1261
+    },
+    {
+      "url": "/assets/mono/level/heartAce.svg?v=236",
+      "bytes": 1374
+    },
+    {
+      "url": "/assets/mono/level/heartJack.svg?v=236",
+      "bytes": 1374
+    },
+    {
+      "url": "/assets/mono/level/heartKing.svg?v=236",
+      "bytes": 1374
+    },
+    {
+      "url": "/assets/mono/level/heartQueen.svg?v=236",
+      "bytes": 1374
+    },
+    {
+      "url": "/assets/mono/level/spade10.svg?v=236",
+      "bytes": 990
+    },
+    {
+      "url": "/assets/mono/level/spade2.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/spade3.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/spade4.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/spade5.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/spade6.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/spade7.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/spade8.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/spade9.svg?v=236",
+      "bytes": 988
+    },
+    {
+      "url": "/assets/mono/level/spadeAce.svg?v=236",
+      "bytes": 1101
+    },
+    {
+      "url": "/assets/mono/level/spadeJack.svg?v=236",
+      "bytes": 1101
+    },
+    {
+      "url": "/assets/mono/level/spadeKing.svg?v=236",
+      "bytes": 1101
+    },
+    {
+      "url": "/assets/mono/level/spadeQueen.svg?v=236",
+      "bytes": 1101
+    },
+    {
+      "url": "/assets/mono/redJoker.svg?v=236",
+      "bytes": 505
+    },
+    {
+      "url": "/assets/mono/spade10.svg?v=236",
+      "bytes": 704
+    },
+    {
+      "url": "/assets/mono/spade2.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/spade3.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/spade4.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/spade5.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/spade6.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/spade7.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/spade8.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/spade9.svg?v=236",
+      "bytes": 702
+    },
+    {
+      "url": "/assets/mono/spadeAce.svg?v=236",
+      "bytes": 815
+    },
+    {
+      "url": "/assets/mono/spadeJack.svg?v=236",
+      "bytes": 815
+    },
+    {
+      "url": "/assets/mono/spadeKing.svg?v=236",
+      "bytes": 815
+    },
+    {
+      "url": "/assets/mono/spadeQueen.svg?v=236",
+      "bytes": 815
     },
     {
       "url": "/assets/table/jade-silk-v1.png",

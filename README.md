@@ -36,3 +36,6 @@ Node22.12+ is required. Android needs JDK17, Gradle8.13 and SDK36. Release APK b
 
 
 Ming persona update: 50 imaginative historical portraits; 25 classic and 25 ExpertStyle-v1 AI identities. ExpertStyle is a play-only variant; tribute/return always uses the original DanLM v1 checkpoint. This is a style choice, not a demonstrated strength improvement. Local human advice keeps the classic model. The jade silk tabletop and portrait atlases were generated with OpenAI ImageGen; prompts and asset hashes are in web/card-sources/ming50-generation.json. Existing DanLM license and attribution apply to the derived score head. No training rewards are enabled.
+
+
+纯黑皮肤：设置 → 外观与显示 → 纯黑。黑底白字纸牌与纯黑界面，保留花色形状、大小王与逢人配标记；退出后恢复原牌面选择。

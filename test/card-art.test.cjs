@@ -16,7 +16,7 @@ test('all skins supply complete starred faces without changing the source artwor
 });
 test('explicit historical levels override live level; switching skin or falling back retains the star',()=>{
  const src=fs.readFileSync(require.resolve('../web/app/table.js'),'utf8'),nodes=[];
- const c={GuandanCardArt:art,liveRound:{level:'Q'},currentSkin:'accessible',requestAnimationFrame:fn=>fn(),document:{createElement(){const node={dataset:{},setAttribute(){},removeAttribute(){}};nodes.push(node);return node;}}};
+ const c={root:{dataset:{theme:"day"}},GuandanCardArt:art,liveRound:{level:'Q'},currentSkin:'accessible',requestAnimationFrame:fn=>fn(),document:{createElement(){const node={dataset:{},setAttribute(){},removeAttribute(){}};nodes.push(node);return node;}}};
  vm.createContext(c);vm.runInContext(src.slice(src.indexOf('function loadCardImage('),src.indexOf('function setCardSkin(')),c);
  const old=c.imageFor('spade2','♠2',undefined,'2');assert.equal(old.dataset.levelCard,'true');assert.match(old.src,/accessible\/level\/spade2.svg/);
  c.loadCardImage(old,'minimal','spade2');assert.match(old.src,/minimal\/level\/spade2.svg/);

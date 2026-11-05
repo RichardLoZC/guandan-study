@@ -97,12 +97,14 @@ function clearToast(){clearTimeout(toastTimer);byId('toast').classList.remove('v
 function loadCardImage(img,skin,face){
   const pathFor=key=>GuandanCardArt.path(key,face,img.dataset.levelCard==='true');
   const version=String(Number(img.dataset.imageVersion||0)+1);img.dataset.imageVersion=version;let attempts=0;
+  if(root.dataset.theme==='black')img.dataset.monoPending='true';else delete img.dataset.monoPending;
+  img.onload=()=>{if(img.dataset.imageVersion===version)delete img.dataset.monoPending;};
   img.onerror=()=>{
     if(img.dataset.imageVersion!==version)return;
     if(attempts++>=2){img.onerror=null;img.src=pathFor('minimal');return;}
-    requestAnimationFrame(()=>{if(img.dataset.imageVersion===version)img.src=pathFor(skin)+'?v=213&r='+attempts;});
+    requestAnimationFrame(()=>{if(img.dataset.imageVersion===version)img.src=pathFor(skin)+'?v=236&r='+attempts;});
   };
-  img.src=pathFor(skin)+'?v=213';
+  img.src=pathFor(skin)+'?v=236';
 }
 function imageFor(face,label='',lockedSkin,level=liveRound?.level){
   const img=document.createElement('img');img.dataset.cardFace=face;img.dataset.levelCard=String(GuandanCardArt.isLevel(face,level));
@@ -389,7 +391,11 @@ function renderTribute(){
   }
 }
 function setTheme(theme){
-  root.dataset.theme=theme;window.tableView?.sync();byId('theme-day').setAttribute('aria-pressed',String(theme==='day'));byId('theme-night').setAttribute('aria-pressed',String(theme==='night'));
+  theme=GuandanTheme.normalize(theme);GuandanTheme.apply(theme);
+  for(const name of ['day','night','black'])byId('theme-'+name).setAttribute('aria-pressed',String(theme===name));
+  byId('open-skins').disabled=theme==='black';byId('open-skins').textContent=theme==='black'?'黑白牌面':'牌面样式';
+  document.querySelectorAll('img[data-card-face]').forEach(img=>loadCardImage(img,img.dataset.fixedSkin||currentSkin,img.dataset.cardFace));
+  window.tableView?.sync();
 }
 
 function revealAvatar(seat,round=liveRound){
@@ -771,6 +777,7 @@ function replaceMatch(next){next.persist(localStorage);dealMotion.cancel();liveR
 
 byId('theme-day').addEventListener('click',()=>{setTheme('day');prefs.theme='day';savePrefs();});
 byId('theme-night').addEventListener('click',()=>{setTheme('night');prefs.theme='night';savePrefs();});
+byId('theme-black').addEventListener('click',()=>{setTheme('black');prefs.theme='black';savePrefs();});
 byId('large-type').addEventListener('click',()=>{prefs.large=root.classList.toggle('large-type');byId('large-type').setAttribute('aria-pressed',String(prefs.large));savePrefs();});
 byId('pause-button').addEventListener('click',()=>{if(window.GuandanLan?.active){window.GuandanLan.command('pause').catch(()=>{});return;}paused=!paused;prefs.paused=paused;savePrefs();dealMotion.finish();stopBots();renderGame();if(!paused)scheduleBots();});
 byId('confirm-tribute').addEventListener('click',()=>{
@@ -891,7 +898,7 @@ handSelection=GuandanHandSelection.create({table:document.querySelector('.play-z
   }
 });
 byId('sort-hand').addEventListener('click',sortHand);
-buildSkinOptions();setCardSkin(currentSkin);setTheme(prefs.theme==='night'?'night':'day');
+buildSkinOptions();setCardSkin(currentSkin);setTheme(prefs.theme);
 root.classList.toggle('large-type',Boolean(prefs.large));byId('large-type').setAttribute('aria-pressed',String(Boolean(prefs.large)));
 
 window.addEventListener('guandan-language-change',()=>{

@@ -40,6 +40,7 @@
     return String(value).replace(/你|青岚|知秋|墨白/g,name=>{const seat=playerIds.indexOf(legacy.indexOf(name));return seat<0?name:displayNames[seat];});
   }
   function paint(img,player){
+    if(img.parentElement?.dataset)img.parentElement.dataset.monoInitial=Array.from(player?.name||'你')[0]||'你';
     img.classList.toggle('historical-avatar',Number.isInteger(player?.portrait));
     if(Number.isInteger(player?.portrait)){
       const cols=player.portraitCols||4,rows=player.portraitRows||3;

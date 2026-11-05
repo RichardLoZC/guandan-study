@@ -1,5 +1,5 @@
 'use strict';
-const { app, BrowserWindow, Menu, protocol, session, dialog, shell, screen, ipcMain, powerSaveBlocker } = require('electron');
+const { app, BrowserWindow, Menu, protocol, session, dialog, shell, screen, ipcMain, powerSaveBlocker, nativeTheme } = require('electron');
 const fs = require('node:fs');
 const path = require('node:path');
 const lan = require('./lan-server.cjs');
@@ -121,6 +121,10 @@ ipcMain.on('guandan-language',(event,locale)=>{
   if(event.sender!==win?.webContents||event.senderFrame!==win.webContents.mainFrame||!event.senderFrame.url.startsWith(ORIGIN+'/index.html')||!['en','zh-CN'].includes(locale))return;
   uiLanguage=locale;setMenus();win.setTitle(APP_NAME+' · '+DISTRIBUTION+' · '+edition);
 });
+ipcMain.on('guandan-theme',(event,theme)=>{
+  if(!win||win.isDestroyed()||event.sender!==win.webContents||event.senderFrame!==win.webContents.mainFrame||event.senderFrame.url.split(/[?#]/)[0]!==ORIGIN+'/index.html'||!['day','night','black'].includes(theme))return;
+  nativeTheme.themeSource=theme==='day'?'light':'dark';win.setBackgroundColor(theme==='black'?'#000000':theme==='night'?'#141d1a':'#f4f1e9');
+});
 function showMessage(options) {
   return win && !win.isDestroyed() ? dialog.showMessageBox(win, options) : dialog.showMessageBox(options);
 }
@@ -177,7 +181,7 @@ async function createWindow() {
   const area = screen.getPrimaryDisplay().workAreaSize;
   const table = new BrowserWindow({
     width: Math.min(1380, area.width), height: Math.min(940, area.height),
-    minWidth: 880, minHeight: 640, backgroundColor: '#f6f5ee',
+    minWidth: 880, minHeight: 640, backgroundColor: '#000000',
     title: `${APP_NAME} · ${DISTRIBUTION} · ${edition}`, icon: path.join(__dirname, 'icon.png'),
     show: false,
     webPreferences: {

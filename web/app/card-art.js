@@ -7,7 +7,7 @@
     return match?({Ace:'A',King:'K',Queen:'Q',Jack:'J'}[match[1]]||match[1]):null;
   }
   function isLevel(face,level){return Boolean(level&&rank(face)===level);}
-  function path(skin,face,levelCard=false){return 'assets/'+skin+'/'+(levelCard?'level/':'')+face+'.svg';}
+  function path(skin,face,levelCard=false){if(scope.document?.documentElement?.dataset.theme==='black')skin='mono';return 'assets/'+skin+'/'+(levelCard?'level/':'')+face+'.svg';}
   const api={rank,isLevel,path};
   if(typeof module==='object'&&module.exports)module.exports=api;else scope.GuandanCardArt=Object.freeze(api);
 })(globalThis);

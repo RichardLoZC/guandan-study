@@ -1,0 +1,42 @@
+/* Scoped, important layer keeps the optional black palette ahead of platform
+   styles, without changing layout, hidden states or pointer interactions. */
+@layer guanjun-pure-black {
+  html[data-theme=black] {
+    color-scheme:dark;
+    --page:#000!important;--surface:#000!important;--panel:#000!important;
+    --text:#fff!important;--muted:#b8b8b8!important;--line:#444!important;--subtle:#000!important;
+    --green:#fff!important;--felt:#000!important;--felt-deep:#000!important;
+    --on-felt:#fff!important;--felt-muted:#b8b8b8!important;--gold:#fff!important;--gold-ink:#fff!important;
+    --primary:#000!important;--primary-text:#fff!important;--shadow:none!important;
+    background:#000!important;
+  }
+  html[data-theme=black] body,html[data-theme=black] body * {
+    --seat:#fff!important;--seat-ink:#fff!important;--group-color:#fff!important;
+    color:#fff!important;background-color:#000!important;background-image:none!important;
+    border-color:#444!important;text-shadow:none!important;box-shadow:none!important;accent-color:#fff!important;
+  }
+  html[data-theme=black] body *::before,html[data-theme=black] body *::after {
+    color:#fff!important;background-color:transparent!important;background-image:none!important;
+    border-color:#444!important;text-shadow:none!important;box-shadow:none!important;
+  }
+  html[data-theme=black] dialog::backdrop {background:rgba(0,0,0,.72)!important;}
+  html[data-theme=black] :is(button,a,input,textarea,summary,[tabindex]):focus-visible {outline-color:#fff!important;}
+  html[data-theme=black] button:is([aria-pressed=true],[aria-selected=true]) {outline:1px solid #fff!important;outline-offset:-2px!important;}
+  html[data-theme=black] :is(.playing-card.selected,.playing-card.marquee-hit) {outline:3px solid #fff!important;outline-offset:-2px!important;}
+  html[data-theme=black] :is(.selected-mark,.level-badge,.wild-badge,.stack-card-index) {color:#fff!important;background:#000!important;}
+  html[data-theme=black] .hand-marquee {background:transparent!important;border-color:#fff!important;}
+  html[data-theme=black] .hand-marquee[data-crossing=true] {border-style:dashed!important;}
+  html[data-theme=black] .deal-card-back {border-color:#fff!important;}
+  html[data-theme=black] .group-marker {background:#fff!important;}
+  html[data-theme=black] img[data-mono-pending=true] {visibility:hidden!important;}
+  html[data-theme=black] .brand-icon {display:none!important;}
+  html[data-theme=black] :is(.avatar,.deal-avatar,.review-avatar,.reveal-avatar) img {visibility:hidden!important;}
+  html[data-theme=black] :is(.avatar,.deal-avatar,.review-avatar,.reveal-avatar)::after {
+    content:attr(data-mono-initial);position:absolute;inset:0;display:grid;place-items:center;
+    font:600 20px/1 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;filter:grayscale(1);
+  }
+  html[data-theme=black] :is(.player-reaction,.game-event,.round-end-banner,.toast) {filter:grayscale(1);}
+  html[data-theme=black] .event-confetti {display:none!important;}
+  html[data-theme=black] input:-webkit-autofill {-webkit-text-fill-color:#fff!important;box-shadow:0 0 0 1000px #000 inset!important;}
+  html[data-theme=black] :is(input,textarea,[contenteditable=true])::selection {background:#fff!important;color:#000!important;}
+}
