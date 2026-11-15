@@ -6,36 +6,42 @@ window.GuandanAssessmentUI=(()=>{
   try{const saved=JSON.parse(localStorage.getItem(seenKey)||'[]');if(Array.isArray(saved))for(const id of saved.slice(-16))if(typeof id==='string')seen.add(id);}catch{}
   function remember(id){seen.add(id);try{localStorage.setItem(seenKey,JSON.stringify([...seen].slice(-16)));}catch{}}
   function prepare(snapshot){round=snapshot;render();if(round.completed){remember(round.id);if(reportTarget===round.id){clearTimeout(reportTimer);reportTimer=null;reportTarget=null;}}}
-  function row(label,value,title){const item=node('div',null,'match-stat-row');item.append(node('span',label),node('strong',value));if(title)item.title=title;return item;}
-  const relative=value=>value?say('强于 '+value.percentile+'%','Above '+value.percentile+'%'):'—';
+  const points=(n,decimal=false)=>Number.isFinite(n)?decimal?n.toFixed(1):String(n):'—';
+  function stat(label,value,title){const n=node('div',null,'match-summary-stat');n.append(node('span',label),node('b',value));if(title)n.title=title;return n;}
   function render(){
     if(!round)return;facts=GuandanRoundStatistics.summarize(round);
     const teams=by('assessment-teams'),players=by('assessment-scoreboard');teams.replaceChildren();players.replaceChildren();
-    by('assessment-result').textContent=round.completed?say('第 '+round.round+' 副 · 打 '+round.level+' · '+(round.winnerTeam===0?'我方获胜':'对方获胜'),'Round '+round.round+' · Level '+round.level+' · '+(round.winnerTeam===0?'Our team wins':'Opponents win')):say('本副进行中 · 起手资源在结束后揭晓','Round in progress · Starting resources appear after the round');
+    by('assessment-result').textContent=round.completed?say('第 '+round.round+' 副 · 打 '+round.level+' · '+(round.winnerTeam===0?'我方胜':'对方胜'),'Round '+round.round+' · Level '+round.level+' · '+(round.winnerTeam===0?'Our team wins':'Opponents win')):say('本副进行中 · 结束后公开评分和起手资源','In progress · Scores and starting resources appear after this round');
     for(const t of facts.teams){
       const card=node('article',null,'match-team-card'+(t.won?' is-winner':'')),heading=node('div',null,'match-team-heading');
       heading.append(node('h4',t.team===0?say('我方','Our team'):say('对方','Opponents')));
       if(round.completed)heading.append(node('span',t.won?say('胜方','Winners'):say('负方','Runners-up'),'match-team-result'));card.append(heading);
-      card.append(node('p',t.seats.map(s=>round.names[s]).join(' · '),'match-team-names'));
-      card.append(row(say('起手牌力','Starting strength'),relative(t.starting?.strength),say('与同级牌的随机队伍起手比较；不是胜率。','Compared with same-level random starting teams; not win probability.')));
-      card.append(row(say('最多可组炸','Maximum bombs'),t.starting?.peakBombs??'—',say('两人起手可同时组成的炸弹总数，含同花顺和四王炸；每张牌只用一次。','Disjoint bombs across both starting hands, including straight flushes and four jokers.')));
-      const high=t.starting?say(Math.round(100*t.starting.highCards/t.starting.cards)+'% · '+t.starting.highCards+' 张',Math.round(100*t.starting.highCards/t.starting.cards)+'% · '+t.starting.highCards+' cards'):'—';
-      card.append(row(say('10 及以上／级牌','10+ / level cards'),high,say('10、J、Q、K、A、级牌和大小王，重叠只计一次。','10, J, Q, K, A, level cards and jokers; each card counted once.')));
-      card.append(row(say('保住牌权','Leads retained'),t.retainedLeads+' / '+t.freeLeads,say('本队领出的已结束小轮，下一轮仍由本队先出。','Completed tricks started by this team that retain the next free lead.')));
-      teams.append(card);
+      const names=node('p',t.seats.map(s=>round.names[s]).join(' · '),'match-team-names');names.title=names.textContent;card.append(names);
+      const resources=node('div',null,'match-team-resources');
+      resources.append(stat(say('起手均分','Avg. hand'),points(t.starting?.score),say('两名队员各自起手牌力的平均分，满分100。','Mean of the two individual starting-hand scores, out of 100.')));
+      resources.append(stat(say('最多炸弹','Max bombs'),t.starting?.peakBombs??'—',say('起手可同时组成的炸弹总数，含同花顺及四王；每张牌只用一次。','Disjoint starting bombs, including straight flushes and four jokers.')));
+      resources.append(stat(say('高牌比例','High cards'),t.starting?Math.round(100*t.starting.highCards/t.starting.cards)+'%':'—',say('10、J、Q、K、A、级牌和大小王，重叠只计一次。','10, J, Q, K, A, level cards and jokers, counted once.')));
+      resources.append(stat(say('保住先手','Leads kept'),t.retainedLeads+'/'+t.freeLeads));card.append(resources);teams.append(card);
     }
-    for(const p of facts.players){
-      const card=node('article',null,'assessment-player-card'),heading=node('div',null,'assessment-player-heading');
-      heading.append(avatarFor(p.seat),node('strong',round.names[p.seat]));
-      heading.append(node('b',p.place?say('第 '+p.place+' 名','#'+p.place):'—','match-player-place'));card.append(heading);
-      card.append(node('p',p.seat%2===0?say('我方','Our team'):say('对方','Opponents'),'assessment-player-place'));
-      card.append(row(say('普通丢权','Lost · no bomb'),p.lostWithoutBomb,say('本人先出的一小轮结束后，对方取得牌权，且这轮未遇到对方炸弹。','A trick you led ends with opponents taking the next free lead, without an opponent bomb.')));
-      card.append(row(say('遇炸丢权','Lost · bomb faced'),p.lostToBomb,say('本人先出的一小轮中遇到对方炸弹，最后由对方取得牌权。','A trick you led includes an opponent bomb and ends with opponents taking the next free lead.')));
-      card.append(row(say('夺回牌权','Lead regained'),p.regainedControl,say('对方先出的一小轮，由本人最后压住，下一轮由本队先出；同一轮只计一次。','You make the last play in an opponent-led trick and your team gains the next free lead; once per trick.')));
-      card.append(row(say('领牌轮次','Tricks led'),p.freeLeads,say('已结束且产生下一轮先手的小轮；本副结束的最后一轮不计。','Completed tricks with a next free lead; the round-ending trick is excluded.')));
-      card.append(row(say('接风次数','Inherited leads'),p.windsReceived));card.append(row(say('用炸次数','Bombs played'),p.bombsPlayed));players.append(card);
+    const table=node('table',null,'match-player-table');table.setAttribute('aria-label',say('个人赛后表现与技术统计','Individual post-match scores and statistics'));
+    const headers=[['玩家','Player'],['起手','Hand'],['表现','Rating'],['普通丢权','No-bomb loss'],['遇炸丢权','Bomb loss'],['夺回','Regained'],['接风','Inherited'],['用炸','Bombs']];
+    const tr=node('tr'),thead=node('thead');
+    for(const [zh,en]of headers){const th=node('th',say(zh,en));th.scope='col';tr.append(th);}thead.append(tr);table.append(thead);
+    const body=node('tbody');
+    for(const seat of [0,2,1,3]){
+      const p=facts.players[seat],row=node('tr',null,'assessment-player-card');row.dataset.team=String(seat%2);row.dataset.seat=String(seat);
+      const nameCell=node('th');nameCell.scope='row';const identity=node('div',null,'assessment-player-heading'),text=node('div',null,'match-player-identity');
+      const name=node('strong',round.names[seat]);name.title=round.names[seat];text.append(name);
+      const ending=p.remaining===null?'':p.remaining===0?say('出完','Finished'):say('余'+p.remaining+'张',p.remaining+' left');
+      text.append(node('small',(seat%2===0?say('我方','Us'):say('对方','Them'))+(p.place?' · #'+p.place:'')+(ending?' · '+ending:'')));
+      identity.append(avatarFor(seat),text);nameCell.append(identity);row.append(nameCell);
+      const hand=node('td',points(p.starting?.score),'match-hand-points');hand.title=say('本人贡还后的起手牌力，满分100。','Individual starting-hand score after tribute, out of 100.');row.append(hand);
+      const rating=node('td',points(p.rating?.score,true),'match-performance-points');rating.title=say('本副终局表现，10分制试评；不是每步打法的正确率。','Trial round-outcome score out of 10, not tactical accuracy.');row.append(rating);
+      for(const [value,title]of [[p.lostWithoutBomb,say('本人领出、未遇对方炸弹、结束后由对方获得先手。','Your lead ends with opponents taking the next lead without an opponent bomb.')],[p.lostToBomb,say('本人领出的小轮遇到对方炸弹后丢权；不直接判为打错。','Your led trick faces an opponent bomb and loses the next lead; not automatically a mistake.')],[p.regainedControl,say('对方领出，本人最后压住并夺回下一轮先手。','Your last play wins your team the next lead from an opponent-led trick.')],[p.windsReceived,say('接到队友出完后留下的先手。','Inherited the lead after your partner finished.')],[p.bombsPlayed,say('本人打出的炸弹，含同花顺及四王。','Bombs played, including straight flushes and four jokers.')]]){const cell=node('td',value);cell.title=title;row.append(cell);}
+      body.append(row);
     }
-    by('assessment-resource-note').textContent=say('起手以贡还结束为准；牌力与同级随机起手比较，非胜率。','Starting resources are fixed after tribute; strength compares same-level random starts, not win probability.');
+    table.append(body);players.append(table);
+    by('assessment-resource-note').textContent=round.completed?say('起手分 /100 · 表现分 /10（试评）','Hand /100 · Rating /10 (trial)'):say('其他玩家的起手和评分在本副结束后公开。','Other players’ starting scores remain hidden until this round ends.');
   }
   function afterRender(current){
     if(!current?.game.result){clearTimeout(reportTimer);reportTimer=null;reportTarget=null;return;}
@@ -49,7 +55,7 @@ window.GuandanAssessmentUI=(()=>{
   }
   function exportData(){
     try{const reports=[0,1,2,3].map(s=>GuandanAssessment.assess(round,s));
-      downloadText('掼军-赛后统计-'+round.id+'.json',JSON.stringify({schema:2,kind:'guandan-match-statistics',round,statistics:facts,reports,feedback:GuandanAssessment.readFeedback(localStorage).filter(r=>r.roundId===round.id),playerFeedback:GuandanAssessmentPilot.read(localStorage).filter(r=>r.roundId===round.id),trainingEligible:false}));
+      downloadText('掼军-赛后统计-'+round.id+'.json',JSON.stringify({schema:3,kind:'guandan-match-statistics',round,statistics:facts,reports,feedback:GuandanAssessment.readFeedback(localStorage).filter(r=>r.roundId===round.id),playerFeedback:GuandanAssessmentPilot.read(localStorage).filter(r=>r.roundId===round.id),trainingEligible:false}));
       toast(say('已准备导出，请选择保存位置。','Export prepared; choose a save location.'));
     }catch(error){toast(error.message);}
   }

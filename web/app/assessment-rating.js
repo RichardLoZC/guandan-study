@@ -1,33 +1,32 @@
 'use strict';
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.GuandanAssessmentRating=factory();})(globalThis,function(){
-  const VERSION='pilot-rating-0.3.0';
-  // A transparent pilot display rubric, not a calibrated estimate of tactical quality.
-  // These contributions must never become move-selection rules or training rewards.
+  const VERSION='post-match-outcome-0.4.0';
+  // Outcome display rubric only. A lost lead or bomb is not a proven mistake.
+  // No action-count, Q-value, hidden-hand, initial-strength or training reward term.
   function rate(round,report){
-    const empty=reason=>({version:VERSION,score:null,reason,trial:true,startingHandAdjusted:false,tacticalGrade:null,components:[]});
+    const empty=reason=>({version:VERSION,score:null,reason,trial:true,outcomeBased:true,startingHandAdjusted:false,tacticalGrade:null,components:[],eligibleForTraining:false,reward:null});
     if(!round.completed)return empty('round_in_progress');
-    const metric=id=>report.metrics.find(m=>m.id===id),quality=metric('Q01');
-    if(quality?.status==='invalid'||!Array.isArray(round.remaining)||round.remaining.length!==4||round.remaining.some(n=>!Number.isInteger(n)||n<0||n>27)||
-      !round.events.length||round.remaining.some((n,s)=>n!==round.events.at(-1).remaining[s])||![0,1].includes(round.winnerTeam))return empty('invalid_data');
-    if(!Array.isArray(round.finishOrder)||round.finishOrder.length!==4||new Set(round.finishOrder).size!==4||round.finishOrder.some(s=>!Number.isInteger(s)||s<0||s>3)||!Number.isInteger(report.seat)||report.seat<0||report.seat>3)return empty('invalid_data');
-    const takeover=metric('P01');
-    if(takeover?.definitionVersion!=='unique-seat-contest-0.2.0')return empty('definition_mismatch');
-    const successes=takeover.numerator,total=takeover.denominator;
-    if(!Number.isInteger(successes)||!Number.isInteger(total)||successes<0||successes>total)return empty('invalid_data');
-    const seat=report.seat,won=seat%2===round.winnerTeam;
-    const double=round.finishOrder?.length===4&&round.finishOrder[0]%2===round.finishOrder[1]%2;
-    const cards=27-round.remaining[seat],smoothed=(successes+2)/(total+4);
-    const components=[{id:'base',value:6,formula:'6.0'},
-      {id:'team-result',value:won?0.2:-0.2,formula:'本队本副获胜 +0.2，失利 −0.2'},
-      {id:'double-finish',value:double?(won?0.1:-0.1):0,formula:'本队双上 +0.1，双下 −0.1，否则 0'},
-      {id:'cards-played',value:0.8*(2*cards/27-1),formula:'0.8 × (2 × 本人实际打出张数 / 27 − 1)',numerator:cards,denominator:27},
-      {id:'unique-control',value:0.7*(2*smoothed-1),
-        formula:'0.7 × (2 × (成功争墩 + 2) / (争墩数 + 4) − 1)',numerator:successes,denominator:total,
-        priorAlpha:2,priorBeta:2,smoothedRate:smoothed,calibrated:false},
-      {id:'partner-continuation',value:0,formula:'队友接续只作事实统计，是否有益待评，暂不加分',reason:'helpfulness_not_validated'}];
-    const raw=components.reduce((sum,c)=>sum+c.value,0),score=Math.round(Math.max(1,Math.min(10,raw))*10)/10;
-    return {version:VERSION,score,raw,reason:null,trial:true,startingHandAdjusted:false,tacticalGrade:null,components,
-      note:'优化试评版：非终局争墩去重并作固定先验平滑；终局与接续另列。队伍起手参考不加入个人分，训练奖惩关闭。'};
+    const quality=report.metrics?.find(m=>m.id==='Q01'),s=report.seat,order=round.finishOrder,remaining=round.remaining;
+    if(!quality||quality.status!=='observed'||!Number.isInteger(s)||s<0||s>3||
+      !Array.isArray(remaining)||remaining.length!==4||remaining.some(n=>!Number.isInteger(n)||n<0||n>27)||
+      !Array.isArray(order)||order.length!==4||new Set(order).size!==4||order.some(n=>!Number.isInteger(n)||n<0||n>3)||
+      ![0,1].includes(round.winnerTeam)||round.winnerTeam!==order[0]%2||!round.events?.length||
+      remaining.some((n,i)=>n!==round.events.at(-1).remaining?.[i]))return empty('invalid_data');
+    const finished=round.events.filter(e=>e.cards.length&&e.remainingBefore?.[e.seat]>0&&e.remaining?.[e.seat]===0).map(e=>e.seat);
+    if(finished.length<2||new Set(finished).size!==finished.length||finished.some((n,i)=>n!==order[i])||
+      remaining.some((n,i)=>(n===0)!==finished.includes(i))||
+      round.actuallyFinished&&JSON.stringify(round.actuallyFinished)!==JSON.stringify(finished))return empty('invalid_data');
+    const won=s%2===round.winnerTeam,sweep=finished[0]%2===finished[1]%2,played=27-remaining[s],finish=finished.indexOf(s);
+    const bonus=finish===0?.8:finish===1?.4:0;
+    const components=[{id:'base',value:5.5,formula:'5.5'},
+      {id:'team-result',value:won?1:-1,formula:'本队获胜 +1，失利 −1'},
+      {id:'double-finish',value:sweep?(won?.2:-.2):0,formula:'双上 +0.2，双下 −0.2，否则 0'},
+      {id:'cards-played',value:1.5*(2*played/27-1),numerator:played,denominator:27,formula:'1.5 × (2 × 本人实际出牌张数 / 27 − 1)'},
+      {id:'actual-finish',value:bonus,actualFinish:finish<0?null:finish+1,formula:'真实头游 +0.8，真实二游 +0.4，其他及补排名 0'}];
+    const raw=components.reduce((sum,c)=>sum+c.value,0);
+    return {...empty(null),score:Math.round(Math.max(1,Math.min(10,raw))*10)/10,raw,components,
+      actualFinish:finish<0?null:finish+1,cardsPlayed:played,scope:'one-round-outcome',
+      note:'终局表现试评；丢权、遇炸、用炸和让牌只作事实统计，不直接判为失误。未校准个人战术能力。'};
   }
   return Object.freeze({VERSION,rate});
 });

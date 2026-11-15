@@ -1,19 +1,26 @@
 .review-tabs{flex-wrap:wrap}
-.assessment-match-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:18px 0}
-.assessment-match-heading h3{font-size:1.45em;margin:5px 0}.assessment-match-heading p{margin:0;font-size:.9em;opacity:.78}
-.match-section-title{font-size:1.05em;margin:20px 0 10px}.match-team-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.match-team-card,.assessment-player-card{padding:16px;border:1px solid #688a7240;border-radius:14px;background:#6c94650a;min-width:0;color:inherit}
-.match-team-card.is-winner{border-color:#ba934c80;background:#b8913b0c}.match-team-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}.match-team-heading h4{font-size:1.2em;margin:0}.match-team-result{font-size:.82em;color:#967331}.match-team-names{font-size:.88em;opacity:.75;overflow-wrap:anywhere;margin:8px 0 12px}
-.match-stat-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:8px 0;font-size:.94em;line-height:1.35}.match-stat-row+.match-stat-row{border-top:1px solid #6d89751c}.match-stat-row span{min-width:0}.match-stat-row strong{white-space:nowrap;font-variant-numeric:tabular-nums;text-align:right}
-.match-resource-note{font-size:.82em;line-height:1.5;opacity:.7;margin:10px 0}
-.assessment-scoreboard{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.assessment-player-heading{display:flex;gap:8px;align-items:center}.assessment-player-heading strong{flex:1;min-width:0;overflow-wrap:anywhere}.match-player-place{font-size:.9em;white-space:nowrap;color:#967331}.assessment-player-place{margin:8px 0 10px;font-size:.8em;opacity:.7}.assessment-player-heading .player-avatar{flex-shrink:0}
-.assessment-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0 4px}
+.assessment-match-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:8px 0}
+.assessment-match-heading h3{font-size:1.2em;margin:0}.assessment-match-heading p{margin:0;font-size:.86em;opacity:.8}.assessment-match-heading .section-label{display:none}
+.match-section-title{font-size:.95em;margin:12px 0 6px}.match-section-title small{font-size:.8em;font-weight:400;opacity:.7}
+.match-team-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.match-team-card{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--subtle);min-width:0;color:inherit}
+.match-team-card.is-winner{border-color:#ba934c80}.match-team-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}.match-team-heading h4{font-size:1.05em;margin:0}.match-team-result{font-size:.78em;opacity:.8}
+.match-team-names{font-size:.8em;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:4px 0 8px}
+.match-team-resources{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.match-summary-stat{display:flex;flex-direction:column;gap:3px;min-width:0}.match-summary-stat span{font-size:11px;line-height:16px;opacity:.75;white-space:nowrap}.match-summary-stat b{font-size:20px;line-height:24px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.match-resource-note{font-size:11px;line-height:16px;opacity:.7;margin:6px 0}
+.assessment-scoreboard{display:block;min-width:0}.match-player-table{table-layout:fixed;width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.match-player-table th,.match-player-table td{padding:8px 4px;border:0;border-bottom:1px solid var(--line);text-align:center;vertical-align:middle;color:inherit;background:transparent}
+.match-player-table thead th{font-size:12px;font-weight:500;line-height:16px;overflow-wrap:anywhere;opacity:.8}.match-player-table th:first-child{width:27%;text-align:left}.match-player-table td{white-space:nowrap}
+.match-player-table tbody tr:nth-child(3)>*{border-top:2px solid var(--line)}
+.assessment-player-heading{display:flex;gap:6px;align-items:center;min-width:0}.assessment-player-heading .review-avatar{flex:0 0 28px;width:28px;height:28px}
+.match-player-identity{min-width:0}.match-player-identity strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}.match-player-identity small{display:block;font-weight:400;font-size:10px;line-height:15px;white-space:nowrap;opacity:.7}
+.match-player-table .match-performance-points{font-size:21px;font-weight:750}.match-hand-points{font-weight:600}
+.assessment-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 0}.assessment-toolbar button{font-size:12px;padding:7px 10px}
 html .hand-heading h1{display:flex;align-items:center;gap:5px;white-space:nowrap}
 html #private-hand-score{display:inline-block;margin-left:5px;padding:2px 7px;border:1px solid #dbc17b70;border-radius:7px;background:#ffe5a512;color:#f7df9b;font-size:12px;line-height:18px;font-weight:600;font-variant-numeric:tabular-nums}
 html #private-hand-score[hidden]{display:none}html #private-hand-score.is-provisional{border-style:dashed}
 html[data-phone=true] #private-hand-score{font-size:10px;line-height:16px;padding:0 4px;margin-left:2px}
-@media(max-width:600px){.match-team-grid,.assessment-scoreboard{grid-template-columns:1fr}.match-team-card,.assessment-player-card{padding:13px}.assessment-match-heading{gap:6px}}
-@media(max-height:450px){.match-stat-row{padding:6px 0}.review-tabs button{padding:8px 10px}}
+@media(max-width:680px){.match-team-card{padding:8px}.match-team-grid{gap:6px}.match-summary-stat b{font-size:16px;line-height:20px}.match-summary-stat span{font-size:10px}.match-player-table{font-size:12px}.match-player-table th,.match-player-table td{padding:7px 3px}.match-player-table thead th{font-size:11px}.assessment-player-heading{gap:4px}.assessment-player-heading .review-avatar{display:none}.match-player-table th:first-child{width:24%}.match-player-identity strong{font-size:12px}.match-player-identity small{font-size:9px}.match-player-table .match-performance-points{font-size:18px}}
 /* On landscape phones, keep the first statistics visible below one compact
    selector/close row and the existing replay tabs. Other review tabs are unchanged. */
 @media(max-height:500px){
@@ -26,4 +33,23 @@ html[data-phone=true] #private-hand-score{font-size:10px;line-height:16px;paddin
   #review-dialog:has(#tab-performance[aria-selected=true]) .assessment-match-heading .section-label{display:none}
   #review-dialog:has(#tab-performance[aria-selected=true]) .assessment-match-heading h3{font-size:18px;margin:0}
   #review-dialog:has(#tab-performance[aria-selected=true]) .match-section-title{font-size:16px;margin:8px 0}
+}
+
+/* Short landscape screens keep resource summaries and personal ratings together. */
+@media(max-height:500px){
+ html[data-phone=true] #review-performance>.assessment-match-heading,html[data-phone=true] #review-performance>.match-section-title{display:none}
+ html[data-phone=true] #review-performance .match-team-names{display:none}
+ html[data-phone=true] #review-performance .match-team-card{padding:6px 8px}
+ html[data-phone=true] #review-performance .match-team-heading h4{font-size:14px;line-height:18px}
+ html[data-phone=true] #review-performance .match-team-result{font-size:11px}
+ html[data-phone=true] #review-performance .match-team-resources{margin-top:5px}
+ html[data-phone=true] #review-performance .match-summary-stat span{font-size:10px;line-height:12px}
+ html[data-phone=true] #review-performance .match-summary-stat b{font-size:18px;line-height:20px}
+ html[data-phone=true] #review-performance .match-resource-note{font-size:10px;line-height:14px;margin:5px 0}
+ html[data-phone=true] #review-performance .match-player-table th,html[data-phone=true] #review-performance .match-player-table td{padding:5px 3px}
+ html[data-phone=true] #review-performance .assessment-player-heading .review-avatar{width:24px;height:24px;flex-basis:24px}
+ html[data-phone=true] #review-performance .match-player-identity strong{font-size:12px;line-height:14px}
+ html[data-phone=true] #review-performance .match-player-identity small{font-size:9px;line-height:12px}
+ html[data-phone=true] #review-performance .match-player-table .match-performance-points{font-size:18px}
+ html[data-phone=true] #review-performance .assessment-toolbar{margin:6px 0 0}
 }

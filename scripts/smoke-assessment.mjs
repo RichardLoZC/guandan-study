@@ -40,21 +40,21 @@ try{
    const downloadEvent=page.waitForEvent('download');await page.click('#assessment-export');const download=await downloadEvent,file=path.join(output,device.name+'-round.json');await download.saveAs(file);
    const data=JSON.parse(fs.readFileSync(file,'utf8'));assert.equal(data.kind,'guandan-match-statistics');assert.equal(data.reports.length,4);assert.deepEqual(data.statistics,expected);assert.equal(data.trainingEligible,false);assert.equal(data.feedback.length,1);assert.equal(data.feedback[0].id,'current');assert.equal(data.playerFeedback.length,0);
    execFileSync(process.execPath,[path.join(root,'scripts/team-evaluation.mjs'),'verify','--input',file,'--output',path.join(output,device.name+'-recomputed.json')],{stdio:'pipe'});
-   await page.evaluate(()=>GuandanI18n.setLocale('en'));assert.match(await page.locator('#review-performance').innerText(),/Lead regained/);
+   await page.evaluate(()=>GuandanI18n.setLocale('en'));assert.match(await page.locator('#review-performance').innerText(),/Regained/);
    await page.screenshot({path:path.join(output,device.name+'-en.png')});
    await page.locator('#review-dialog [data-close-dialog=review-dialog]').first().click();await page.waitForTimeout(400);assert.equal(await page.locator('#review-dialog').evaluate(n=>n.open),false,'same round must not reopen');
    const backupEvent=page.waitForEvent('download');await page.evaluate(()=>exportSave());const backup=await backupEvent,backupPath=path.join(output,device.name+'-backup.json');await backup.saveAs(backupPath);
    const saved=JSON.parse(fs.readFileSync(backupPath,'utf8'));assert.equal(JSON.parse(saved.expertFeedback).length,2);assert.equal(JSON.parse(saved.playerFeedback).length,1);
    const current=new Match();await page.evaluate(state=>{stopBots();feedback.clear();liveRound=new GuandanMatch.Match(state);renderGame();},current.state);
-   const badge=page.locator('#private-hand-score');assert.equal(await badge.isVisible(),true);assert.match(await badge.innerText(),/Above \d+%/);assert.doesNotMatch(await badge.innerText(),/\/100/);assert.match(await badge.getAttribute('title'),/Only you/);
+   const badge=page.locator('#private-hand-score');assert.equal(await badge.isVisible(),true);assert.match(await badge.innerText(),/My start \d+ \/100/);assert.doesNotMatch(await badge.innerText(),/Above|强于/);assert.match(await badge.getAttribute('title'),/Only you/);
    assert.equal(await page.locator('#private-hand-score').count(),1);assert.equal(await page.locator('.table-seats #private-hand-score').count(),0);
    const bounds=await badge.boundingBox();assert.ok(bounds&&bounds.x>=0&&bounds.x+bounds.width<=device.width,device.name+' own strength must fit');
    await page.screenshot({path:path.join(output,device.name+'-private-hand.png')});
    await page.evaluate(()=>window.openCurrentReview(document.querySelector('#open-review')));await page.locator('[data-review-tab=performance]').click();
    const live=await page.evaluate(()=>GuandanRoundStatistics.summarize(liveRound.snapshot()));assert.ok(live.teams.every(t=>t.starting===null));assert.ok(live.players.every(p=>p.starting===null));
-   assert.ok((await page.locator('#assessment-teams .match-stat-row').allTextContents()).every(v=>!v.includes('Above')));
+   assert.ok((await page.locator('#assessment-teams .match-summary-stat').allTextContents()).every(v=>!v.includes('Above')));
    assert.equal(await page.evaluate(()=>GuandanAssessment.readFeedback(localStorage).length),2);
-   checks.push(device.name+': automatic compact report, exact facts, no formulas/composite scores, export/replay and historical feedback backup, English, private relative strength, no live team resources');
+   checks.push(device.name+': automatic compact report, exact facts, no formulas; four trial ratings, export/replay and historical feedback backup, English, private individual points, no live team resources');
   }finally{await context.close();}
  }
  assert.deepEqual(errors,[]);fs.writeFileSync(path.join(output,'result.json'),JSON.stringify({checks,errors},null,2));console.log(JSON.stringify({checks,errors,output},null,2));

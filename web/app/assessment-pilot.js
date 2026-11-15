@@ -1,9 +1,9 @@
 'use strict';
 (function(root,factory){
-  if(typeof module==='object'&&module.exports)module.exports=factory(require('./assessment.js'),require('./assessment-rating.js'));
-  else root.GuandanAssessmentPilot=factory(root.GuandanAssessment,root.GuandanAssessmentRating);
-})(globalThis,function(assessment,rating){
-  const VERSION='player-pilot-0.2.0',KEY='guandan-player-pilot-v1',REVIEWER_KEY='guandan-player-pilot-reviewer-v1';
+  if(typeof module==='object'&&module.exports)module.exports=factory(require('./assessment.js'),require('./assessment-rating.js'),require('./hand-strength.js'));
+  else root.GuandanAssessmentPilot=factory(root.GuandanAssessment,root.GuandanAssessmentRating,root.GuandanHandStrength);
+})(globalThis,function(assessment,rating,strength){
+  const VERSION='player-pilot-0.3.0',KEY='guandan-player-pilot-v1',REVIEWER_KEY='guandan-player-pilot-reviewer-v1';
   const VERDICTS=['high','fair','low','unsure'],MAX_RECORDS=160,MAX_CHARS=384000;
   function read(storage){
     const list=JSON.parse(storage.getItem(KEY)||'[]');
@@ -15,7 +15,7 @@
   }
   async function save(storage,round,seat,input){
     if(!round?.completed||!Number.isInteger(seat)||seat<0||seat>3)throw new Error('请在本副结束后选择玩家试评');
-    const report=assessment.assess(round,seat),score=rating.rate(round,report),hand=report.handAssessment;
+    const report=assessment.assess(round,seat),score=rating.rate(round,report),rawHand=report.handAssessment,scale=strength.points(rawHand.score,round.level,{handVersion:rawHand.version}),hand={...rawHand,score:scale.score,version:strength.VERSION+'/'+rawHand.version};
     if(score.score===null)throw new Error('本副记录不足，暂不能提交评分试评');
     const handVerdict=input.handVerdict,performanceVerdict=input.performanceVerdict;
     if(!VERDICTS.includes(handVerdict)||!VERDICTS.includes(performanceVerdict)||handVerdict==='unsure'&&performanceVerdict==='unsure')throw new Error('请至少评价一项评分');
@@ -36,7 +36,7 @@
       const record={id:crypto.randomUUID(),schema:1,kind:'player-rating-feedback',version:VERSION,createdAt:new Date().toISOString(),
         roundId:round.id,roundSha256,seat,seatFrame:'viewer-relative',subjectId,reviewerId,reviewContext:seat===0?'self':'other-player',revisionOf:prior?.id||null,
         ratingVersion:score.version,handVersion:hand.version,ruleMode:round.ruleMode,level:round.level,
-        displayed:{handScore:hand.score,performanceScore:score.score,handComponents:hand.components,performanceComponents:score.components,
+        displayed:{handScore:hand.score,rawStructureScore:rawHand.score,handScale:scale,performanceScore:score.score,handComponents:hand.components,performanceComponents:score.components,
           teamReference:report.teamReference?.available?{version:report.teamReference.version,probabilities:report.teamReference.probabilities,
             teamScores:report.teamReference.teamScores,outcomeResiduals:report.teamReference.outcomeResiduals}:null},
         implementationVersion:assessment.VERSION,keyNodeVersion:report.keyNodeVersion,

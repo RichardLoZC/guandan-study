@@ -6,13 +6,13 @@ const fixture=require('./helpers/judge-development-fixtures.json');
 function round(){const m=new Match(fixture.round.initialState);for(const a of fixture.round.actions){
   if(a.forced)m.passForced();else m.commit(a.seat,a.ids,{key:a.key,automatic:true,engine:'DanLM',decision:a.decision});}return m.snapshot();}
 function storage(){const values=new Map();return {getItem:k=>values.get(k)||null,setItem:(k,v)=>values.set(k,v)};}
-test('production pilot uses verified research counts and weights without training signals',()=>{
+test('production keeps verified structural/count metrics while the new outcome score stays separate',()=>{
   const r=round();for(let seat=0;seat<4;seat++){
     const current=assessment.assess(r,seat),expected=judge.assess(r,seat,legacy.assess(r,seat)),score=rating.rate(r,current),p=current.metrics.find(m=>m.id==='P01'),old=expected.metrics.find(m=>m.id==='P01');
     assert.equal(current.handAssessment.score,expected.handAssessment.score);assert.equal(p.numerator,old.numerator);assert.equal(p.denominator,old.denominator);
     assert.deepEqual(p.value.contests,old.value.contests);assert.deepEqual(p.value.terminalContests,old.value.terminalContests);
-    assert.equal(score.score,expected.statisticsRating.score);assert.ok(Math.abs(score.raw-expected.statisticsRating.raw)<1e-12);
-    assert.equal(score.components.find(c=>c.id==='partner-continuation').value,0);assert.equal(score.startingHandAdjusted,false);
+    assert.equal(score.version,'post-match-outcome-0.4.0');assert.equal(score.scope,'one-round-outcome');assert.ok(score.score>=1&&score.score<=10);
+    assert.ok(!score.components.some(c=>['partner-continuation','unique-control'].includes(c.id)));assert.equal(score.startingHandAdjusted,false);
     assert.equal(current.trainingSignal.eligible,false);for(const c of current.cases){assert.equal(c.reward,null);assert.equal(c.eligibleForTraining,false);}
   }
 });
@@ -33,8 +33,8 @@ test('old opinions survive upgrade and are not superseded by a different formula
   const summary=pilot.summarize(pilot.read(s));assert.equal(summary.groups.length,2);assert.equal(summary.records,3);assert.equal(summary.revisionsExcluded,1);
   for(const v of pilot.read(s)){assert.equal(v.reward,null);assert.equal(v.eligibleForTraining,false);}
 });
-test('new formula refuses old control definitions and malformed placements',()=>{
-  const r=round(),report=assessment.assess(r,0);assert.equal(rating.rate(r,legacy.assess(r,0)).reason,'definition_mismatch');
+test('outcome formula ignores old control definitions but refuses malformed placements',()=>{
+  const r=round(),report=assessment.assess(r,0);assert.equal(rating.rate(r,legacy.assess(r,0)).score,rating.rate(r,report).score);
   assert.equal(rating.rate({...r,finishOrder:[0,1,2,4]},report).reason,'invalid_data');
 });
 test('conflicting recorded results or counts cannot produce personal points or team reference',()=>{

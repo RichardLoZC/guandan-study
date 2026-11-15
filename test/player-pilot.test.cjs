@@ -1,7 +1,7 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict');
 const core=require('../web/app/core.js'),{Match}=require('../web/app/match.js');
-const hand=require('../web/app/hand-assessment.js'),assessment=require('../web/app/assessment.js'),rating=require('../web/app/assessment-rating.js'),pilot=require('../web/app/assessment-pilot.js');
+const hand=require('../web/app/hand-assessment.js'),assessment=require('../web/app/assessment.js'),rating=require('../web/app/assessment-rating.js'),pilot=require('../web/app/assessment-pilot.js'),strength=require('../web/app/hand-strength.js');
 function complete(){const m=new Match();let guard=2000;while(!m.game.result&&guard--){const s=m.actingSeat,c=m.game.players[s].hand.find(c=>m.selection([c.id],s).play);m.commit(s,c?[c.id]:[]);}assert.ok(m.game.result);return m.snapshot();}
 function storage(){const data=new Map();return {getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,v)};}
 let seed=82909;function random(){seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;}
@@ -33,12 +33,12 @@ test('hand strength rejects incomplete/mislabelled cards and never changes the g
   assert.equal(hand.evaluate(cards,'A','tuo3').score,null);
   const cached=hand.evaluate(cards,'A');cached.groups[0].cardIds=[];assert.ok(hand.evaluate(cards,'A').groups[0].cardIds.length);
 });
-test('pilot can rate a losing player above a winning player, without awarding strong hands',()=>{
-  const round=complete(),seat=round.winnerTeam===0?1:0,report=assessment.assess(round,seat);
-  const lose=structuredClone(round);lose.remaining[seat]=0;lose.events.at(-1).remaining[seat]=0;
-  const high=structuredClone(report);Object.assign(high.metrics.find(m=>m.id==='P01'),{denominator:4,numerator:4,rate:1});Object.assign(high.metrics.find(m=>m.id==='T01'),{numerator:3});
-  const low=structuredClone(high);low.seat=(seat+1)%4;Object.assign(low.metrics.find(m=>m.id==='P01'),{denominator:4,numerator:0,rate:0});Object.assign(low.metrics.find(m=>m.id==='T01'),{numerator:0});
-  const a=rating.rate(lose,high),b=rating.rate(lose,low);assert.ok(a.score>b.score);assert.equal(a.startingHandAdjusted,false);assert.ok(!a.components.some(c=>c.id.includes('hand')));
+test('outcome score cannot be farmed with more passes, contests or a stronger starting hand',()=>{
+  const round=complete(),report=assessment.assess(round),expected=rating.rate(round,report);
+  const changed=structuredClone(report);Object.assign(changed.metrics.find(m=>m.id==='P01'),{denominator:10000,numerator:10000,rate:1});
+  changed.handAssessment.score=100;changed.teamReference={available:true,probabilities:[1,0]};
+  assert.deepEqual(rating.rate(round,changed),expected);assert.equal(expected.startingHandAdjusted,false);
+  assert.ok(!expected.components.some(c=>/hand|control|bomb|pass|continuation/.test(c.id)));
 });
 test('pilot opinions preserve versions, score snapshots, revisions and stable subjects',async()=>{
   const round=complete(),s=storage(),input={handVerdict:'low',performanceVerdict:'fair',reason:'散牌比展示的少',eventIndex:round.events.find(e=>e.seat===0).index,suggestedHand:60};
@@ -46,7 +46,7 @@ test('pilot opinions preserve versions, score snapshots, revisions and stable su
   const a=await pilot.save(s,round,0,input);round.names[0]='改了显示名';
   const b=await pilot.save(s,round,0,{...input,handVerdict:'fair'}),c=await pilot.save(s,round,0,{...input,handVerdict:'high'});
   assert.equal(a.subjectId,0);assert.equal(b.subjectId,0);
-  assert.equal(b.revisionOf,a.id);assert.equal(c.revisionOf,b.id);assert.equal(a.eligibleForTraining,false);assert.equal(a.reward,null);assert.equal(a.seatFrame,'viewer-relative');assert.equal(a.displayed.handScore,assessment.assess(round).handAssessment.score);
+  assert.equal(b.revisionOf,a.id);assert.equal(c.revisionOf,b.id);assert.equal(a.eligibleForTraining,false);assert.equal(a.reward,null);assert.equal(a.seatFrame,'viewer-relative');assert.equal(a.displayed.handScore,strength.points(assessment.assess(round).handAssessment.score,round.level).score);
   assert.match(a.roundSha256,/^[a-f0-9]{64}$/);assert.equal(a.ratingVersion,rating.VERSION);
   const sameTime=[a,b,c].map(r=>({...r,createdAt:'2026-10-29T00:00:00.000Z'}));
   const summary=pilot.summarize([sameTime[2],sameTime[0],sameTime[1],sameTime[1]]);assert.equal(summary.records,3);assert.equal(summary.revisionsExcluded,2);assert.equal(summary.groups[0].hand.high,1);

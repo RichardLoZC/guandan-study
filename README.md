@@ -39,3 +39,5 @@ Ming persona update: 50 imaginative historical portraits; 25 classic and 25 Expe
 
 
 纯黑皮肤：设置 → 外观与显示 → 纯黑。黑底白字纸牌与纯黑界面，保留花色形状、大小王与逢人配标记；退出后恢复原牌面选择。
+
+Starting-hand strength is now a private 0–100 point score. Post-match reports show four individual trial outcome ratings on a compact table. In-progress exports contain only the current player view; full local backups remain available after the round. Game rules, AI inputs and model weights are unchanged.

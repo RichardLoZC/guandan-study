@@ -102,9 +102,9 @@ function loadCardImage(img,skin,face){
   img.onerror=()=>{
     if(img.dataset.imageVersion!==version)return;
     if(attempts++>=2){img.onerror=null;img.src=pathFor('minimal');return;}
-    requestAnimationFrame(()=>{if(img.dataset.imageVersion===version)img.src=pathFor(skin)+'?v=238&r='+attempts;});
+    requestAnimationFrame(()=>{if(img.dataset.imageVersion===version)img.src=pathFor(skin)+'?v=240&r='+attempts;});
   };
-  img.src=pathFor(skin)+'?v=238';
+  img.src=pathFor(skin)+'?v=240';
 }
 function imageFor(face,label='',lockedSkin,level=liveRound?.level){
   const img=document.createElement('img');img.dataset.cardFace=face;img.dataset.levelCard=String(GuandanCardArt.isLevel(face,level));
@@ -613,14 +613,14 @@ function renderSeriesOutcome(){
 function renderPrivateHandScore(){
   const badge=byId('private-hand-score'),own=GuandanPrivateHandScore.readOwn(liveRound),english=GuandanI18n.locale==='en';
   badge.hidden=!liveRound;
-  const label=own.provisional?(english?'Deal':'暂评'):(english?'Start':'起手');
-  badge.textContent=!own.relative?(english?'Start —':'起手 —'):label+(english?' · Above ':' · 强于 ')+own.relative.percentile+'%';
-  const pending=own.reason==='unsupported_rule_mode'?(english?'Not available for Tuo 3.':'拖 3 的手牌结构分尚未适配。'):
-    own.reason==='tribute_in_progress'?(english?'Tribute in progress; updates when your hand is complete.':'贡还进行中，手牌完整后更新。'):(english?'Starting hand unavailable.':'缺少完整起手牌。');
+  const label=own.provisional?(english?'Deal':'暂评'):(english?'My start':'我的起手');
+  badge.textContent=own.score===null?(english?'My start —':'我的起手 —'):label+' '+own.score+(english?' /100':'分');
+  const pending=own.reason==='unsupported_rule_mode'?(english?'Not available for Tuo 3.':'拖 3 的手牌分尚未适配。'):
+    own.reason==='tribute_in_progress'?(english?'Updates when your hand is complete.':'手牌完整后更新。'):(english?'Starting hand unavailable.':'缺少完整起手牌。');
   const note=own.score===null?pending:own.provisional?(english?'Updates after tribute.':'贡还后更新。'):(english?'Fixed after tribute.':'贡还后固定。');
-  badge.title=(english?'Only you can see this. Compared with same-level random starting hands; not win probability. ':'仅自己可见；与同级随机起手比较，不是胜率。')+note;
-  badge.setAttribute('aria-label',badge.textContent+'；'+badge.title);
-  badge.classList.toggle('is-provisional',Boolean(own.provisional));
+  badge.title=(english?'Only your own starting cards. Only you can see this. 0–100 structure scale; not win probability. ':'只评本人的起手牌，仅自己可见；百分制结构分，非胜率。')+note;
+  badge.setAttribute('aria-label',badge.textContent+'；'+badge.title);badge.classList.toggle('is-provisional',Boolean(own.provisional));
+  for(const id of ['export-save','export-raw']){const button=byId(id);if(button)button.textContent=liveRound?.game.result&&!liveRound.remote?(english?'Export save backup':'导出存档备份'):(english?'Export my view':'导出当前视角');}
 }
 function renderGame(){
   renderPrivateHandScore();
@@ -777,9 +777,11 @@ function openHistory(trigger){
   if(!list.childElementCount){const p=document.createElement('p');p.textContent='本局尚未出牌。';list.append(p);}openDialog(byId('history-dialog'),trigger);
 }
 function exportSave(){
-  const feedback={expertFeedback:localStorage.getItem(GuandanAssessment.FEEDBACK_KEY),playerFeedback:localStorage.getItem(GuandanAssessmentPilot.KEY)};
-  if(liveRound?.remote){downloadText('掼蛋-联机复盘.json',JSON.stringify({...liveRound.snapshot(),...feedback},null,2));return;}
-  downloadText('掼蛋-存档备份-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify({exportedAt:new Date().toISOString(),game:localStorage.getItem(GuandanMatch.SAVE_KEY),reviews:localStorage.getItem(GuandanMatch.ARCHIVE_KEY),...feedback},null,2));
+  try{
+    const prepared=GuandanSaveExport.prepare(liveRound,localStorage,{game:GuandanMatch.SAVE_KEY,archive:GuandanMatch.ARCHIVE_KEY,expert:GuandanAssessment.FEEDBACK_KEY,player:GuandanAssessmentPilot.KEY});
+    const view=prepared.mode==='view';downloadText('掼军-'+(view?'当前视角-':'存档备份-')+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(prepared.data,null,2));
+    if(view)toast(GuandanI18n.locale==='en'?'View exported; this file cannot restore a saved game.':'已导出当前视角；此文件不能用于恢复存档。');
+  }catch(error){toast(error.message);}
 }
 function replaceMatch(next){next.persist(localStorage);dealMotion.cancel();liveRound=next;feedback.prime(liveRound);selected.clear();playKey=null;hintSnapshot=null;cardNodes.clear();clearToast();clearError();renderGame();beginDealAnimation();scheduleBots();}
 
