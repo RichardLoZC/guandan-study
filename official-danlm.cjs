@@ -50,7 +50,7 @@ function convert(payload, reply){
     if(!seen.has(key)){seen.add(key);candidates.push({type:'play',play,score:item.score});}
   }
   if(!candidates.length)throw new Error('官方候选与当前牌桌规则不兼容，已停止出牌');
-  return {result:{candidates,engine:policy.id===models.OFFICIAL?'DanLM 官方 Mac 原生核心':'DanLM 新风格 · 官方 Mac 核心',policyId:policy.id,checkpointSha256:policy.checkpointSha256,samples:0,source:'official-native',
+  return {result:{candidates,engine:'DanLM 官方 Mac 原生核心',policyId:policy.id,checkpointSha256:policy.checkpointSha256,samples:0,source:'official-native',
     warning:'官方模型使用本人的手牌及公开记录；现有牌桌规则会过滤不兼容的候选。评分不是胜率。',
     officialCandidateCount:reply.candidates.length,filteredCandidateCount:skipped}};
 }
@@ -96,7 +96,7 @@ class OfficialDanLM {
   }
   request(payload){
     if(!payload||typeof payload!=='object')return Promise.reject(new Error('官方模型请求无效'));
-    try{models.resolve(payload.policyId);}catch(error){return Promise.reject(error);}
+    try{payload={...payload,policyId:models.resolve(payload.policyId).id};}catch(error){return Promise.reject(error);}
     this.start();const child=this.child,id=++this.sequence;
     return new Promise((resolve,reject)=>{
       const timer=setTimeout(()=>{

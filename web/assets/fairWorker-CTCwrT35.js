@@ -1,6 +1,6 @@
-import "../app/model-profiles.js?v=231";
-import "../app/play-rules.js?v=225";
-import "../app/danlm-adapter.js?v=225";
+import "../app/model-profiles.js?v=242";
+import "../app/play-rules.js?v=242";
+import "../app/danlm-adapter.js?v=242";
 /*!
  * ONNX Runtime Web v1.30.0
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -52,7 +52,7 @@ async function Rs(payload){
   const profile=globalThis.GuandanModelProfiles.resolve(payload.policyId);
   const values=await scoreOfficialTensors(As(payload),payload.seat,jn(payload.hand),payload.actions.map(action=>ks(action.play,payload.level)),profile.id);
   const scores=values.map((score,i)=>({actionId:payload.actions[i].id,score}));
-  return {protocol:'guandan-policy-v1',engine:'danlm',trained:true,model:profile.id==='danlm-v1'?'DanLM v1':'DanLM ExpertStyle v1',actionId:scores.reduce((a,b)=>b.score>a.score?b:a).actionId,scores};
+  return {protocol:'guandan-policy-v1',engine:'danlm',trained:true,model:'DanLM v1',actionId:scores.reduce((a,b)=>b.score>a.score?b:a).actionId,scores};
 }
 async function alignedTribute(data){
   const input=globalThis.GuandanDanLMAdapter.tribute(data),scores=await scoreOfficialTensors(input.tokens,input.seat,input.hand,input.actions,'danlm-v1');

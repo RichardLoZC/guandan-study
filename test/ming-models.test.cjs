@@ -2,11 +2,11 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const personas=require('../web/app/personas.js'),models=require('../web/app/model-profiles.js'),core=require('../web/app/core.js');
 const {Match,archives,ARCHIVE_KEY}=require('../web/app/match.js'),{Room,PROTOCOL}=require('../web/app/lan-room.js'),{finished}=require('./helpers/series-fixtures.cjs');
-test('all fifty Ming personas have distinct atlas cells and exactly twenty-five use each policy',()=>{
+test('all fifty Ming personas retain distinct atlas cells and use only official DanLM',()=>{
   assert.equal(personas.names.length,50);assert.equal(new Set(personas.names).size,50);const cells=new Set(),counts={};
   for(let id=0;id<50;id++){const p=personas.profile([id],0);cells.add(p.avatar+':'+p.portrait);assert.equal(p.portraitCols,5);assert.equal(p.portraitRows,5);assert.ok(p.portrait<25);counts[p.policyId]=(counts[p.policyId]||0)+1;}
-  assert.equal(cells.size,50);assert.deepEqual(counts,{[models.EXPERT]:25,[models.OFFICIAL]:25});
-  const seen=new Set();for(let i=0;i<500;i++){const ids=personas.assignment('ming-'+i);assert.ok(personas.valid(ids));ids.forEach(id=>seen.add(id));assert.equal(new Set(ids.slice(1).map(id=>personas.profile([id],0).policyId)).size,2);assert.deepEqual(personas.assignment('ming-'+i),ids);}
+  assert.equal(cells.size,50);assert.deepEqual(counts,{[models.OFFICIAL]:50});
+  const seen=new Set();for(let i=0;i<500;i++){const ids=personas.assignment('ming-'+i);assert.ok(personas.valid(ids));ids.forEach(id=>seen.add(id));assert.equal(new Set(ids.slice(1).map(id=>personas.profile([id],0).policyId)).size,1);assert.deepEqual(personas.assignment('ming-'+i),ids);}
   assert.equal(seen.size,50);
 });
 test('the expanded random roster does not strongly favor a small subset of names',()=>{
@@ -45,19 +45,37 @@ test('LAN authoritative AI model choice follows member identity rather than shuf
     const restored=new Room({restored:room.serialize()});assert.equal(restored.policyFor(seat),room.policyFor(seat));
   }
 });
-test('both personas always use the original tribute head and unknown model IDs are rejected',()=>{
-  for(const id of [models.EXPERT,models.OFFICIAL]){assert.equal(models.forPhase(id,'give').id,models.OFFICIAL);assert.equal(models.forPhase(id,'return').id,models.OFFICIAL);assert.equal(models.forPhase(id,'play').id,id);}
+test('retired model requests route to original DanLM in every phase; unknown IDs fail closed',()=>{
+  assert.deepEqual(Object.keys(models.profiles),['danlm-v1']);
+  for(const id of ['expert-style-v1',models.OFFICIAL,undefined])for(const phase of ['play','give','return'])assert.equal(models.forPhase(id,phase).id,models.OFFICIAL);
+  assert.throws(()=>models.forPhase('danlm-v1','unknown'));
   for(const id of ['../custom.onnx','https://example.com/model',null,{}])assert.throws(()=>models.resolve(id));
 });
-test('model client refuses mismatched or missing model identity and can request the correct new policy',async()=>{
+test('model client canonicalizes retired requests and rejects old checkpoint replies',async()=>{
   let reply,sent;
   class Worker{postMessage(value){sent=value;this.onmessage({data:{id:value.id,...reply}});}terminate(){}}
   const context={Worker,setTimeout,clearTimeout,GuandanModelProfiles:models};vm.createContext(context);vm.runInContext(fs.readFileSync(require.resolve('../web/app/model-client.js'),'utf8')+'\nglobalThis.client=new DanLMClient()',context);
-  const official=models.resolve(),expert=models.resolve(models.EXPERT);
+  const official=models.resolve();
+  reply={result:{policyId:'expert-style-v1',checkpointSha256:'4738435b59911b10327225d7ef48a5ec5ed9e4f8088215ad168375f6b59e11eb',candidates:[]}};
+  await assert.rejects(context.client.request({observation:{},policyId:'expert-style-v1'}),/身份不一致/);
+  assert.equal(sent.policyId,'danlm-v1');
   reply={result:{policyId:official.id,checkpointSha256:official.checkpointSha256,candidates:[]}};
-  await assert.rejects(context.client.request({observation:{},policyId:expert.id}),/身份不一致/);
-  reply={result:{policyId:expert.id,checkpointSha256:expert.checkpointSha256,candidates:[]}};
-  assert.equal((await context.client.request({observation:{},policyId:expert.id})).result.policyId,expert.id);assert.equal(sent.policyId,expert.id);
+  assert.equal((await context.client.request({observation:{},policyId:'expert-style-v1'})).result.policyId,'danlm-v1');
   reply={result:{candidates:[]}};await assert.rejects(context.client.request({observation:{}}),/身份不一致/);
-  reply={policyId:official.id,checkpointSha256:official.checkpointSha256,cardId:'test',score:0};await context.client.request({tribute:{phase:'return'},policyId:expert.id});
+  reply={policyId:official.id,checkpointSha256:official.checkpointSha256,cardId:'test',score:0};await context.client.request({tribute:{phase:'return'},policyId:'expert-style-v1'});
+  reply={ready:true,policyIds:['danlm-v1','expert-style-v1']};await assert.rejects(context.client.request({health:true}),/尚未就绪/);
+  reply={ready:true,policyIds:['danlm-v1']};await context.client.request({health:true});
+});
+test('old expert decisions stay historical while resumed games and rotated seats use classic',()=>{
+  const state=new Match().state;state.personaIds=[0,1,2,3];
+  state.study.choices['0']={decision:{policyId:'expert-style-v1',checkpointSha256:'4738435b59911b10327225d7ef48a5ec5ed9e4f8088215ad168375f6b59e11eb'}};
+  const before=structuredClone(state),resumed=new Match(state);
+  assert.deepEqual(state,before);assert.deepEqual(resumed.state.study.choices,state.study.choices);assert.deepEqual(resumed.state.personaIds,state.personaIds);
+  for(let s=0;s<4;s++)assert.equal(resumed.policyFor(s),'danlm-v1');
+  Object.defineProperty(resumed,'playerIds',{value:[2,3,0,1]});for(let s=0;s<4;s++)assert.equal(resumed.policyFor(s),'danlm-v1');
+});
+test('seeded identity selection remains compatible with the previous release',()=>{
+  // Frozen outputs from 1.8.46. Removing a model must not reshuffle identities.
+  const prior=JSON.parse(fs.readFileSync(require.resolve('./helpers/classic-persona-compatibility.json'),'utf8'));
+  for(const item of prior)assert.deepEqual(personas.assignment(item.seed,item.series),item.ids);
 });

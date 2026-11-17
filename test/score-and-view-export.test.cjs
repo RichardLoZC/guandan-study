@@ -14,15 +14,15 @@ test('personal points use a linear scale, not a percentile renamed as a score',(
 test('fixed individual scales are monotone at every level',()=>{
  for(const level of ['2','3','4','5','6','7','8','9','10','J','Q','K','A']){let prior=-1;for(let raw=0;raw<=100;raw++){const r=strength.points(raw,level);assert.ok(r.score>=prior);prior=r.score;assert.equal(r.method,'fixed-same-level-individual-linear-standard-score');}}
 });
-test('new personal scores ignore attempts, passes, bomb statistics and initial hand estimates',()=>{
+test('personal scores ignore action counters and forged report estimates; own starting hand is recomputed',()=>{
  const r=complete().snapshot(),a=assessment.assess(r,0),before=rating.rate(r,a),b=structuredClone(a);Object.assign(b.metrics.find(m=>m.id==='P01'),{numerator:1000000,denominator:1000000,definitionVersion:'anything'});b.handAssessment.score=0;b.teamReference={available:true,probabilities:[0,1]};
- assert.deepEqual(rating.rate(r,b),before);assert.equal(before.eligibleForTraining,false);assert.equal(before.reward,null);assert.equal(before.tacticalGrade,null);assert.ok(!before.components.some(c=>/control|hand|pass|bomb|wind/.test(c.id)));
+ assert.deepEqual(rating.rate(r,b),before);assert.equal(before.eligibleForTraining,false);assert.equal(before.reward,null);assert.equal(before.tacticalGrade,null);assert.equal(before.startingHandAdjusted,true);assert.ok(before.components.some(c=>c.id==='starting-hand-adjustment'));assert.ok(!before.components.some(c=>/control|pass|bomb|wind/.test(c.id)));
 });
 test('supplemental places after a double-finish have no effect on any rating',()=>{
  const r=complete().snapshot();let counts=[27,27,27,27];const events=[];
  // Numeric endpoint fixture tests the rubric, not a claim of legal 27-card plays.
  for(const seat of [0,2]){const after=[...counts];after[seat]=0;events.push({seat,cards:Array(27).fill({}),remainingBefore:counts,remaining:after});counts=after;}
- Object.assign(r,{events,completed:true,remaining:counts,finishOrder:[0,2,1,3],actuallyFinished:[0,2],winnerTeam:0});
+ Object.assign(r,{ruleMode:'tuo3',events,completed:true,remaining:counts,finishOrder:[0,2,1,3],actuallyFinished:[0,2],winnerTeam:0});
  for(let s=0;s<4;s++){const report={seat:s,metrics:[{id:'Q01',status:'observed'}]},a=rating.rate(r,report),b=rating.rate({...r,finishOrder:[0,2,3,1]},report);assert.notEqual(a.score,null);assert.deepEqual(a,b);assert.equal(a.actualFinish,s===0?1:s===2?2:null);}
  assert.equal(rating.rate({...r,actuallyFinished:[0,2,1]},{seat:0,metrics:[{id:'Q01',status:'observed'}]}).score,null);
 });

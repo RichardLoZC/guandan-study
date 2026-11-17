@@ -102,9 +102,9 @@ function loadCardImage(img,skin,face){
   img.onerror=()=>{
     if(img.dataset.imageVersion!==version)return;
     if(attempts++>=2){img.onerror=null;img.src=pathFor('minimal');return;}
-    requestAnimationFrame(()=>{if(img.dataset.imageVersion===version)img.src=pathFor(skin)+'?v=240&r='+attempts;});
+    requestAnimationFrame(()=>{if(img.dataset.imageVersion===version)img.src=pathFor(skin)+'?v=242&r='+attempts;});
   };
-  img.src=pathFor(skin)+'?v=240';
+  img.src=pathFor(skin)+'?v=242';
 }
 function imageFor(face,label='',lockedSkin,level=liveRound?.level){
   const img=document.createElement('img');img.dataset.cardFace=face;img.dataset.levelCard=String(GuandanCardArt.isLevel(face,level));
@@ -646,7 +646,7 @@ function renderGame(){
   document.querySelector('.turn-pill strong').textContent=turn;
   document.querySelector('.turn-pill').classList.toggle('is-self-turn',status?.seat===0);
   renderSeriesOutcome();
-  byId('engine-indicator').textContent=fault?'需要处理提示':activeTask==='health'?'正在加载离线模型…':model.ready?'经典＋新风格 · 就绪':'模型等待加载';
+  byId('engine-indicator').textContent=fault?'需要处理提示':activeTask==='health'?'正在加载离线模型…':model.ready?'DanLM · 就绪':'模型等待加载';
   resizeHand();renderHand();window.GuandanLan?.controls();
   window.GuandanAssessmentUI?.afterRender(liveRound);
 }
@@ -693,7 +693,7 @@ async function checkModel(){
   try{
     const response=await model.request({health:true});
     if(epoch!==workEpoch)return;if(!response.ready)throw new Error('模型没有就绪');
-    clearError('model');byId('model-status').textContent='经典＋新风格模型已加载 · 离线可用';
+    clearError('model');byId('model-status').textContent='DanLM模型已加载 · 离线可用';
   }catch(error){if(epoch===workEpoch){byId('model-status').textContent=error.message;reportError(error,'model');}}
   finally{if(epoch===workEpoch){activeTask=null;byId('recheck-model').disabled=false;renderGame();scheduleBots();}}
 }

@@ -31,5 +31,5 @@ html[data-phone=true] .is-round-over .end-result{text-align:left}
 html[data-phone=true] .is-round-over .round-end-banner h2{font-size:18px;margin:0 0 3px}
 html[data-phone=true] .is-round-over .round-end-banner p{font-size:12px;line-height:1.35}
 .ai-style-tag{display:inline-block;width:max-content;max-width:100%;margin-top:3px;padding:1px 6px;border:1px solid #e8dbc946;border-radius:5px;background:#0d302744;color:#cdddcd;font-size:11px;line-height:1.35;white-space:nowrap}
-.ai-style-tag[hidden]{display:none}.ai-style-tag[data-policy=expert-style-v1]{color:#f5dfa2;border-color:#dbc17b6b;background:#75602f33}
+.ai-style-tag[hidden]{display:none}
 html[data-phone=true] .ai-style-tag{font-size:9px;line-height:1.2;padding:1px 4px;margin-top:1px}

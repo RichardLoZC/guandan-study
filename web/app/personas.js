@@ -1,4 +1,4 @@
-/* Display identities plus an explicit, fixed play-model assignment per persona. */
+/* Display identities; every persona uses the official DanLM policy. */
 (function(root,factory){
   if(typeof module==='object'&&module.exports)module.exports=factory(require('./model-profiles.js'));
   else root.GuandanPersonas=Object.freeze(factory(root.GuandanModelProfiles));
@@ -21,8 +21,8 @@
     const pool=(series===LEGACY?legacyNames:names).map((_,index)=>index);
     for(let i=pool.length-1;i>0;i--){const j=step(i+1);[pool[i],pool[j]]=[pool[j],pool[i]];}
     if(series===LEGACY)return pool.slice(0,4);
-    // Two of each policy across the four identities guarantees a mix among
-    // the three solo opponents, while sampling all 50 names across matches.
+    // Preserve the established seeded identity draw for saved games and replay.
+    // Odd/even IDs no longer select different models.
     const result=[...pool.filter(i=>i%2===0).slice(0,2),...pool.filter(i=>i%2===1).slice(0,2)];
     for(let i=3;i>0;i--){const j=step(i+1);[result[i],result[j]]=[result[j],result[i]];}return result;
   }
@@ -30,7 +30,7 @@
   function profile(ids,identity,series=SERIES){
     const index=ids?.[identity],list=series===LEGACY?legacyNames:series===SERIES?names:[];
     if(!Number.isInteger(index)||!list[index])return null;
-    const policy=models.resolve(series===LEGACY||index%2?models.OFFICIAL:models.EXPERT);
+    const policy=models.resolve();
     return {name:list[index],avatar:series===LEGACY?'/assets/avatars/historical-figures-v1.png':atlases[Math.floor(index/25)],
       portrait:series===LEGACY?index:index%25,portraitCols:series===LEGACY?4:5,portraitRows:series===LEGACY?3:5,
       series,policyId:policy.id,styleName:policy.name,styleEnglish:policy.english};

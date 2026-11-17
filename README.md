@@ -1,5 +1,7 @@
 # 掼军
 
+All 50 Ming AI personas, tribute and hints use official DanLM v1. The compact post-match view shows individual starting bombs and a 10-point trial rating adjusted for the player’s own starting hand. Review tabs share fixed navigation. Training rewards remain disabled.
+
 [简体中文](README.zh-CN.md) · [Downloads](https://github.com/RichardLoZC/guandan-study/releases)
 
 An offline and local-network Guandan client for macOS, Windows and Android. Professor Yan Feng created the original project; Richard Lo maintains these adaptations. Original credits and component licenses are retained.

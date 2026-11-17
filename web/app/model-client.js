@@ -14,8 +14,8 @@ class DanLMClient{
         if(this.pending?.id!==id)return;
         clearTimeout(timer);this.pending=null;
         if(data.error){reject(new Error(data.error));return;}
-        if(payload.health&&(!Array.isArray(data.policyIds)||!Object.keys(GuandanModelProfiles.profiles).every(id=>data.policyIds.includes(id)))){
-          reject(new Error('AI 模型尚未全部就绪，请重试'));return;
+        if(payload.health&&(!Array.isArray(data.policyIds)||data.policyIds.length!==Object.keys(GuandanModelProfiles.profiles).length||!Object.keys(GuandanModelProfiles.profiles).every(id=>data.policyIds.includes(id)))){
+          reject(new Error('DanLM 模型尚未就绪，请重试'));return;
         }
         const expected=payload.tribute?GuandanModelProfiles.resolve():policy;
         const identity=payload.tribute?data:data.result;
@@ -24,7 +24,7 @@ class DanLMClient{
         }
         this.ready=true;resolve({...data,elapsedMs:Math.round(now()-started)});
       };
-      const request={...payload,id};delete request.book;delete request.aiBook;
+      const request={...payload,policyId:policy.id,id};delete request.book;delete request.aiBook;
       if(native){
         native.request(request).then(data=>{
           if(this.pending?.id!==id)return;
@@ -36,7 +36,7 @@ class DanLMClient{
         }).catch(error=>finish({error:error.message}));
         return;
       }
-      if(!this.worker)this.worker=new Worker('/assets/fairWorker-CTCwrT35.js?v=231',{type:'module'});
+      if(!this.worker)this.worker=new Worker('/assets/fairWorker-CTCwrT35.js?v=242',{type:'module'});
       this.worker.onmessage=event=>{if(event.data.id===id)finish(event.data);};
       this.worker.onerror=()=>this.cancel('模型线程加载失败，请重试');
       try{this.worker.postMessage(request);}catch(error){this.cancel(error.message);}

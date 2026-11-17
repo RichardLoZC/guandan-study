@@ -11,8 +11,8 @@ function visit(relative){
   }
 }
 for(const skin of ['jumbo','accessible','minimal','mono'])visit('assets/'+skin);
-files.push('app/save-export.js','app/theme-boot.js','app/pure-black.css','app/danlm-adapter.js','app/card-counts.js','app/play-rules.js','assets/brand/app-icon.png','assets/avatars/historical-figures-v1.png','assets/avatars/ming-scholars-a-v1.png','assets/avatars/ming-scholars-b-v1.png','assets/table/jade-silk-v1.png','app/model-profiles.js','assets/fairWorker-CTCwrT35.js',
-  'mobile/context.onnx','mobile/scores.onnx','mobile/expert-scores-v1.onnx','mobile/ort-wasm-simd-threaded.wasm','mobile/ort-wasm-simd-threaded.mjs');
+files.push('app/post-match-hand.js','app/save-export.js','app/theme-boot.js','app/pure-black.css','app/danlm-adapter.js','app/card-counts.js','app/play-rules.js','assets/brand/app-icon.png','assets/avatars/historical-figures-v1.png','assets/avatars/ming-scholars-a-v1.png','assets/avatars/ming-scholars-b-v1.png','assets/table/jade-silk-v1.png','app/model-profiles.js','assets/fairWorker-CTCwrT35.js',
+  'mobile/context.onnx','mobile/scores.onnx','mobile/ort-wasm-simd-threaded.wasm','mobile/ort-wasm-simd-threaded.mjs');
 const cacheVersion=fs.readFileSync(path.join(root,'android/app/build.gradle'),'utf8').match(/versionCode (\d+)/)[1];
 const entries=files.sort().map(file=>({url:'/'+file+(file.startsWith('app/')?'?v='+cacheVersion:file.endsWith('.svg')||file.includes('fairWorker')||file==='assets/brand/app-icon.png'?'?v='+cacheVersion:''),bytes:fs.statSync(path.join(web,file)).size}));
 fs.writeFileSync(path.join(web,'assets/preload-manifest.json'),JSON.stringify({version:JSON.parse(fs.readFileSync(path.join(root,'package.json'))).version,entries},null,2)+'\n');

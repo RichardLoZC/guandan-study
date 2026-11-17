@@ -1,8 +1,8 @@
 'use strict';
 (function(root,factory){
-  if(typeof module==='object'&&module.exports)module.exports=factory(require('./assessment.js'),require('./hand-assessment.js'),require('./hand-strength.js'),require('./bomb-resources.js'),require('./assessment-rating.js'));
-  else root.GuandanRoundStatistics=factory(root.GuandanAssessment,root.GuandanHandAssessment,root.GuandanHandStrength,root.GuandanBombResources,root.GuandanAssessmentRating);
-})(globalThis,function(assessment,hand,strength,bombs,rating){
+  if(typeof module==='object'&&module.exports)module.exports=factory(require('./assessment.js'),require('./hand-assessment.js'),require('./hand-strength.js'),require('./bomb-resources.js'),require('./assessment-rating.js'),require('./post-match-hand.js'));
+  else root.GuandanRoundStatistics=factory(root.GuandanAssessment,root.GuandanHandAssessment,root.GuandanHandStrength,root.GuandanBombResources,root.GuandanAssessmentRating,root.GuandanPostMatchHand);
+})(globalThis,function(assessment,hand,strength,bombs,rating,starting){
   const VERSION='round-facts-2',seat=n=>Number.isInteger(n)&&n>=0&&n<4;
   const bomb=e=>e.cards.length>0&&['bomb','straight-flush','joker-bomb'].includes(e.playType||e.kind);
   function controlWindows(round){
@@ -26,7 +26,7 @@
     const windows=controlWindows(round),players=[0,1,2,3].map(s=>{
       const lead=windows.filter(w=>w.resolved&&w.leader===s),lost=lead.filter(w=>w.lost),plays=round.events.filter(e=>e.seat===s&&e.cards.length);
       // Team resources are deliberately withheld until the round has ended.
-      const cards=round.completed?assessment.visibleHand(round,0,s):null;
+      const cards=round.completed?starting.read(round,s).cards:null;
       const evaluation=round.completed?hand.evaluate(cards,round.level,round.ruleMode):null;
       const valid=round.ruleMode==='classic'&&evaluation?.score!==null&&evaluation?.score!==undefined;
       const scale=valid?strength.points(evaluation.score,round.level,{handVersion:evaluation.version}):null;

@@ -16,7 +16,8 @@ function showReviewTab(name){
   });
   for(const tab of ['overview','decisions','replay','performance'])byId('review-'+tab).hidden=tab!==name;
   if(name==='replay')renderReplay();
-  byId('review-dialog').scrollTop=0;
+  // Navigation stays fixed; only the shared content viewport scrolls.
+  byId('review-body').scrollTop=0;
 }
 function prepareReview(snapshot,trigger){
   stopReplay();reviewRound=snapshot;replayIndex=0;
@@ -217,7 +218,7 @@ document.querySelectorAll('[data-review-tab]').forEach(button=>{
     if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();
     const tabs=[...document.querySelectorAll('[data-review-tab]')],index=tabs.indexOf(button);
     const next=event.key==='Home'?0:event.key==='End'?tabs.length-1:(index+(event.key==='ArrowRight'?1:tabs.length-1))%tabs.length;
-    showReviewTab(tabs[next].dataset.reviewTab);tabs[next].focus();
+    showReviewTab(tabs[next].dataset.reviewTab);tabs[next].focus({preventScroll:true});
   });
 });
 document.querySelectorAll('[data-go-review]').forEach(button=>button.addEventListener('click',()=>{showReviewTab(button.dataset.goReview);document.querySelector('[data-review-tab="'+button.dataset.goReview+'"]').focus({preventScroll:true});}));

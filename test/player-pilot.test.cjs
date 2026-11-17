@@ -33,12 +33,12 @@ test('hand strength rejects incomplete/mislabelled cards and never changes the g
   assert.equal(hand.evaluate(cards,'A','tuo3').score,null);
   const cached=hand.evaluate(cards,'A');cached.groups[0].cardIds=[];assert.ok(hand.evaluate(cards,'A').groups[0].cardIds.length);
 });
-test('outcome score cannot be farmed with more passes, contests or a stronger starting hand',()=>{
+test('outcome score cannot be farmed with forged report hand scores, passes or contests',()=>{
   const round=complete(),report=assessment.assess(round),expected=rating.rate(round,report);
   const changed=structuredClone(report);Object.assign(changed.metrics.find(m=>m.id==='P01'),{denominator:10000,numerator:10000,rate:1});
   changed.handAssessment.score=100;changed.teamReference={available:true,probabilities:[1,0]};
-  assert.deepEqual(rating.rate(round,changed),expected);assert.equal(expected.startingHandAdjusted,false);
-  assert.ok(!expected.components.some(c=>/hand|control|bomb|pass|continuation/.test(c.id)));
+  assert.deepEqual(rating.rate(round,changed),expected);assert.equal(expected.startingHandAdjusted,true);
+  assert.ok(!expected.components.some(c=>/control|bomb|pass|continuation/.test(c.id)));
 });
 test('pilot opinions preserve versions, score snapshots, revisions and stable subjects',async()=>{
   const round=complete(),s=storage(),input={handVerdict:'low',performanceVerdict:'fair',reason:'散牌比展示的少',eventIndex:round.events.find(e=>e.seat===0).index,suggestedHand:60};

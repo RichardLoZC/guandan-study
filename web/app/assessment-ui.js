@@ -19,12 +19,12 @@ window.GuandanAssessmentUI=(()=>{
       const names=node('p',t.seats.map(s=>round.names[s]).join(' · '),'match-team-names');names.title=names.textContent;card.append(names);
       const resources=node('div',null,'match-team-resources');
       resources.append(stat(say('起手均分','Avg. hand'),points(t.starting?.score),say('两名队员各自起手牌力的平均分，满分100。','Mean of the two individual starting-hand scores, out of 100.')));
-      resources.append(stat(say('最多炸弹','Max bombs'),t.starting?.peakBombs??'—',say('起手可同时组成的炸弹总数，含同花顺及四王；每张牌只用一次。','Disjoint starting bombs, including straight flushes and four jokers.')));
+      resources.append(stat(say('起手炸弹','Starting bombs'),t.starting?.peakBombs??'—',say('起手可同时组成的炸弹总数，含同花顺及四王；每张牌只用一次。','Disjoint starting bombs, including straight flushes and four jokers.')));
       resources.append(stat(say('高牌比例','High cards'),t.starting?Math.round(100*t.starting.highCards/t.starting.cards)+'%':'—',say('10、J、Q、K、A、级牌和大小王，重叠只计一次。','10, J, Q, K, A, level cards and jokers, counted once.')));
       resources.append(stat(say('保住先手','Leads kept'),t.retainedLeads+'/'+t.freeLeads));card.append(resources);teams.append(card);
     }
     const table=node('table',null,'match-player-table');table.setAttribute('aria-label',say('个人赛后表现与技术统计','Individual post-match scores and statistics'));
-    const headers=[['玩家','Player'],['起手','Hand'],['表现','Rating'],['普通丢权','No-bomb loss'],['遇炸丢权','Bomb loss'],['夺回','Regained'],['接风','Inherited'],['用炸','Bombs']];
+    const headers=[['玩家','Player'],['表现','Rating'],['起手 / 炸','Hand / bombs'],['普通丢权','No-bomb loss'],['遇炸丢权','Bomb loss'],['夺回','Regained'],['接风','Inherited'],['用炸','Bombs']];
     const tr=node('tr'),thead=node('thead');
     for(const [zh,en]of headers){const th=node('th',say(zh,en));th.scope='col';tr.append(th);}thead.append(tr);table.append(thead);
     const body=node('tbody');
@@ -35,13 +35,15 @@ window.GuandanAssessmentUI=(()=>{
       const ending=p.remaining===null?'':p.remaining===0?say('出完','Finished'):say('余'+p.remaining+'张',p.remaining+' left');
       text.append(node('small',(seat%2===0?say('我方','Us'):say('对方','Them'))+(p.place?' · #'+p.place:'')+(ending?' · '+ending:'')));
       identity.append(avatarFor(seat),text);nameCell.append(identity);row.append(nameCell);
-      const hand=node('td',points(p.starting?.score),'match-hand-points');hand.title=say('本人贡还后的起手牌力，满分100。','Individual starting-hand score after tribute, out of 100.');row.append(hand);
-      const rating=node('td',points(p.rating?.score,true),'match-performance-points');rating.title=say('本副终局表现，10分制试评；不是每步打法的正确率。','Trial round-outcome score out of 10, not tactical accuracy.');row.append(rating);
+      const rating=node('td',points(p.rating?.score,true),'match-performance-points');rating.title=say('结合本人起手牌力、终局结果、出牌进度与实际名次的10分制试评。','Trial rating out of 10, adjusted for your starting hand, outcome, progress and actual finish.');row.append(rating);
+      const hand=node('td',null,'match-hand-points');
+      hand.append(node('b',points(p.starting?.score)),node('small',p.starting?.peakBombs==null?'—':say(p.starting.peakBombs+' 炸',p.starting.peakBombs+' bombs'),'match-starting-bombs'));
+      hand.title=say('本人贡还后的起手分 /100；起手炸弹取可同时组成的最多数量，含同花顺及四王，每张牌只用一次。','Your starting hand after tribute, out of 100; maximum disjoint bombs including straight flushes and four jokers.');row.append(hand);
       for(const [value,title]of [[p.lostWithoutBomb,say('本人领出、未遇对方炸弹、结束后由对方获得先手。','Your lead ends with opponents taking the next lead without an opponent bomb.')],[p.lostToBomb,say('本人领出的小轮遇到对方炸弹后丢权；不直接判为打错。','Your led trick faces an opponent bomb and loses the next lead; not automatically a mistake.')],[p.regainedControl,say('对方领出，本人最后压住并夺回下一轮先手。','Your last play wins your team the next lead from an opponent-led trick.')],[p.windsReceived,say('接到队友出完后留下的先手。','Inherited the lead after your partner finished.')],[p.bombsPlayed,say('本人打出的炸弹，含同花顺及四王。','Bombs played, including straight flushes and four jokers.')]]){const cell=node('td',value);cell.title=title;row.append(cell);}
       body.append(row);
     }
     table.append(body);players.append(table);
-    by('assessment-resource-note').textContent=round.completed?say('起手分 /100 · 表现分 /10（试评）','Hand /100 · Rating /10 (trial)'):say('其他玩家的起手和评分在本副结束后公开。','Other players’ starting scores remain hidden until this round ends.');
+    by('assessment-resource-note').textContent=round.completed?(facts.players.every(p=>p.rating?.startingHandAdjusted)?say('起手 /100 · 表现 /10，已结合起手牌力（试评）','Hand /100 · Rating /10, adjusted for starting hand (trial)'):say('起手 /100 · 表现 /10（试评）','Hand /100 · Rating /10 (trial)')):say('其他玩家的起手和评分在本副结束后公开。','Other players’ starting scores remain hidden until this round ends.');
   }
   function afterRender(current){
     if(!current?.game.result){clearTimeout(reportTimer);reportTimer=null;reportTarget=null;return;}

@@ -21,35 +21,88 @@ html #private-hand-score{display:inline-block;margin-left:5px;padding:2px 7px;bo
 html #private-hand-score[hidden]{display:none}html #private-hand-score.is-provisional{border-style:dashed}
 html[data-phone=true] #private-hand-score{font-size:10px;line-height:16px;padding:0 4px;margin-left:2px}
 @media(max-width:680px){.match-team-card{padding:8px}.match-team-grid{gap:6px}.match-summary-stat b{font-size:16px;line-height:20px}.match-summary-stat span{font-size:10px}.match-player-table{font-size:12px}.match-player-table th,.match-player-table td{padding:7px 3px}.match-player-table thead th{font-size:11px}.assessment-player-heading{gap:4px}.assessment-player-heading .review-avatar{display:none}.match-player-table th:first-child{width:24%}.match-player-identity strong{font-size:12px}.match-player-identity small{font-size:9px}.match-player-table .match-performance-points{font-size:18px}}
-/* On landscape phones, keep the first statistics visible below one compact
-   selector/close row and the existing replay tabs. Other review tabs are unchanged. */
+/* The same chrome and fixed viewport serve all four tabs. Content length
+   must never recenter the dialog or move the navigation on a tab change. */
+html #review-dialog{width:min(1160px,calc(100vw - 32px));height:min(820px,calc(100dvh - 32px));max-height:calc(100dvh - 32px);box-sizing:border-box;padding:18px 22px;overflow:hidden}
+html #review-dialog[open]{display:flex;flex-direction:column;gap:0}
+html #review-dialog>.dialog-header{position:static;flex:0 0 auto;min-height:40px;margin:0 0 10px;padding:0;background:transparent;align-items:center}
+html #review-dialog .dialog-header h2{font-size:22px;line-height:1.3;margin:2px 0 0}
+html #review-dialog .dialog-header .section-label{font-size:12px;line-height:16px}
+html #review-dialog .close-button{flex:0 0 40px;width:40px;min-width:40px;height:40px;min-height:40px;padding:0}
+html #review-dialog .review-navigation{display:flex;align-items:center;gap:16px;flex:0 0 auto;padding:0 0 10px;border-bottom:1px solid var(--line);min-width:0}
+html #review-dialog .review-selector{flex:0 1 200px;min-width:0;margin:0;gap:6px;font-size:13px;white-space:nowrap;flex-wrap:nowrap}
+html #review-dialog .review-selector select{width:100%;min-width:0;max-width:175px;font-size:13px;min-height:36px;height:36px;padding:4px 8px}
+html #review-dialog .review-tabs{position:static;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));flex:1;min-width:0;gap:4px;margin:0;padding:0;border:0;background:transparent}
+html #review-dialog .review-tabs button{min-width:0;min-height:36px;margin:0;padding:7px 6px;font-size:14px;line-height:18px;white-space:normal}
+html #review-dialog .review-body{flex:1 1 0;min-height:0;min-width:0;overflow:auto;scrollbar-gutter:stable;scrollbar-width:thin;overflow-anchor:none;overscroll-behavior:contain;padding:8px 4px 10px 0}
+html #review-dialog .review-body>[role=tabpanel]{min-width:0}
+html #review-dialog .review-footer{position:static;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0;padding:10px 0 0;border-top:1px solid var(--line);font-size:12px;background:transparent}
+html #review-dialog .review-footer>span{flex:1 1 auto}
+html #review-dialog .review-footer>div{display:flex;flex-wrap:nowrap;gap:8px}
+html #review-dialog .review-footer button{min-height:36px;padding:6px 12px;font-size:13px}
+.match-hand-points b{display:block;font-size:15px;line-height:20px}
+.match-hand-points .match-starting-bombs{display:block;font-size:10px;font-weight:400;line-height:15px;opacity:.65}
 @media(max-height:500px){
-  #review-dialog:has(#tab-performance[aria-selected=true])>.dialog-header{position:relative;top:auto;min-height:0;height:0;margin:0;padding:0;overflow:visible;background:transparent}
-  #review-dialog:has(#tab-performance[aria-selected=true])>.dialog-header>div{display:none}
-  #review-dialog:has(#tab-performance[aria-selected=true])>.dialog-header>.close-button{position:absolute;right:0;top:0;z-index:25}
-  #review-dialog:has(#tab-performance[aria-selected=true])>.review-selector{margin:0;padding-right:50px;min-height:42px}
-  #review-dialog:has(#tab-performance[aria-selected=true])>.review-tabs{position:relative;top:auto;padding:6px 0;margin:0 0 4px;gap:4px}
-  #review-dialog:has(#tab-performance[aria-selected=true]) .assessment-match-heading{margin:6px 0;gap:6px}
-  #review-dialog:has(#tab-performance[aria-selected=true]) .assessment-match-heading .section-label{display:none}
-  #review-dialog:has(#tab-performance[aria-selected=true]) .assessment-match-heading h3{font-size:18px;margin:0}
-  #review-dialog:has(#tab-performance[aria-selected=true]) .match-section-title{font-size:16px;margin:8px 0}
+ html #review-dialog{height:calc(100dvh - 16px);max-height:calc(100dvh - 16px);padding:8px 14px}
+ html #review-dialog>.dialog-header{min-height:30px;margin-bottom:4px}
+ html #review-dialog .dialog-header h2{font-size:16px;margin:0}
+ html #review-dialog .dialog-header .section-label{font-size:11px;line-height:14px}
+ html #review-dialog .close-button{width:30px;flex-basis:30px;min-width:30px;height:30px;min-height:30px}
+ html #review-dialog .review-navigation{gap:8px;padding-bottom:6px}
+ html #review-dialog .review-selector{flex-basis:160px}
+ html #review-dialog .review-tabs button{font-size:13px;line-height:16px;min-height:34px;padding:5px 3px}
+ html #review-dialog .review-body{padding-top:4px}
+ html #review-dialog .review-footer{padding-top:6px}
+ html #review-dialog .review-footer button{min-height:30px;padding:4px 10px;font-size:12px}
+ html #review-performance>.assessment-match-heading,html #review-performance>.match-section-title{display:none}
+ html #review-performance .match-team-names{display:none}
+ html #review-performance .match-team-card{padding:6px 8px}
+ html #review-performance .match-team-heading h4{font-size:14px;line-height:18px}
+ html #review-performance .match-team-result{font-size:11px}
+ html #review-performance .match-team-resources{margin-top:4px}
+ html #review-performance .match-summary-stat span{font-size:10px;line-height:12px}
+ html #review-performance .match-summary-stat b{font-size:17px;line-height:20px}
+ html #review-performance .match-resource-note{font-size:10px;line-height:14px;margin:5px 0}
+ html #review-performance .match-player-table th,html #review-performance .match-player-table td{padding:4px 3px}
+ html #review-performance .assessment-player-heading .review-avatar{width:24px;height:24px;flex-basis:24px}
+ html #review-performance .match-player-identity strong{font-size:12px;line-height:14px}
+ html #review-performance .match-player-identity small{font-size:9px;line-height:12px}
+ html #review-performance .match-player-table .match-performance-points{font-size:18px}
+ html #review-performance .assessment-toolbar{margin:6px 0 0}
 }
+@media(max-width:680px){
+ html #review-dialog .review-selector{flex-basis:128px;font-size:12px}
+ html #review-dialog .review-selector select{font-size:12px;padding-inline:4px}
+ html #review-dialog .review-tabs button{font-size:12px}
+ html #review-dialog .review-footer>span{display:none}
+ html #review-dialog .review-footer{justify-content:flex-end}
+}
+/* Put score, level and round in the existing top bar on computers/tablets. */
+html:not([data-phone=true]) .app-top>.match-strip{position:static;inset:auto;display:flex;flex:1 1 auto;min-width:0;justify-content:center;align-items:center;gap:clamp(10px,2vw,28px);margin:0 12px;color:var(--muted);white-space:nowrap}
+html:not([data-phone=true]) .app-top>.match-strip .score-pair,html:not([data-phone=true]) .app-top>.match-strip .level-label{font-size:14px;gap:8px;flex-wrap:nowrap}
+html:not([data-phone=true]) .app-top>.match-strip .score-pair span{gap:6px}
+html:not([data-phone=true]) .app-top>.match-strip b{font-size:23px;color:var(--text)}
+html:not([data-phone=true]) .app-top>.match-strip .wild-reference{font-size:12px;padding-left:8px;border-color:var(--line);color:var(--gold-ink)}
+@media(max-width:1120px){html:not([data-phone=true]) .app-top>.match-strip .wild-reference{display:none}html:not([data-phone=true]) .app-top>.match-strip{gap:10px;margin-inline:6px}}
+@media(max-width:920px){html:not([data-phone=true]) .app-top>.match-strip #round-label{display:none}html:not([data-phone=true]) .app-top>.match-strip .score-pair,html:not([data-phone=true]) .app-top>.match-strip .level-label{font-size:12px;gap:5px}html:not([data-phone=true]) .app-top>.match-strip b{font-size:19px}}
 
-/* Short landscape screens keep resource summaries and personal ratings together. */
+@media(max-width:720px),(max-height:500px){
+ html:not([data-phone=true]) .app-top{flex-wrap:nowrap}
+ html:not([data-phone=true]) .app-top>.top-controls{width:auto;flex:0 0 auto}
+ html:not([data-phone=true]) .app-top>.match-strip{justify-content:flex-start}
+}
+html:not([data-phone=true]) .app-top #current-partner{max-width:130px;overflow:hidden;text-overflow:ellipsis}
+
+/* Selected labels must not change tab height when bold text wraps in English. */
+html #review-dialog .review-tabs button{height:44px;min-height:44px;padding-block:4px;font-weight:600;overflow:hidden}
+@media(max-height:500px){html #review-dialog .review-tabs button{height:40px;min-height:40px;padding-block:4px}}
+
+/* One selector/tab row on landscape phones; keep the labelled title accessible. */
 @media(max-height:500px){
- html[data-phone=true] #review-performance>.assessment-match-heading,html[data-phone=true] #review-performance>.match-section-title{display:none}
- html[data-phone=true] #review-performance .match-team-names{display:none}
- html[data-phone=true] #review-performance .match-team-card{padding:6px 8px}
- html[data-phone=true] #review-performance .match-team-heading h4{font-size:14px;line-height:18px}
- html[data-phone=true] #review-performance .match-team-result{font-size:11px}
- html[data-phone=true] #review-performance .match-team-resources{margin-top:5px}
- html[data-phone=true] #review-performance .match-summary-stat span{font-size:10px;line-height:12px}
- html[data-phone=true] #review-performance .match-summary-stat b{font-size:18px;line-height:20px}
- html[data-phone=true] #review-performance .match-resource-note{font-size:10px;line-height:14px;margin:5px 0}
- html[data-phone=true] #review-performance .match-player-table th,html[data-phone=true] #review-performance .match-player-table td{padding:5px 3px}
- html[data-phone=true] #review-performance .assessment-player-heading .review-avatar{width:24px;height:24px;flex-basis:24px}
- html[data-phone=true] #review-performance .match-player-identity strong{font-size:12px;line-height:14px}
- html[data-phone=true] #review-performance .match-player-identity small{font-size:9px;line-height:12px}
- html[data-phone=true] #review-performance .match-player-table .match-performance-points{font-size:18px}
- html[data-phone=true] #review-performance .assessment-toolbar{margin:6px 0 0}
+ html[data-phone=true] #review-dialog>.dialog-header{position:relative;min-height:0;height:0;margin:0;padding:0;overflow:visible}
+ html[data-phone=true] #review-dialog>.dialog-header>div{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ html[data-phone=true] #review-dialog>.dialog-header>.close-button{position:absolute;right:0;top:4px;z-index:25}
+ html[data-phone=true] #review-dialog .review-navigation{padding-right:36px}
+ html[data-phone=true] #review-dialog .review-footer>span{display:none}
+ html[data-phone=true] #review-dialog .review-footer{justify-content:flex-end}
 }

@@ -11,8 +11,8 @@ test('production keeps verified structural/count metrics while the new outcome s
     const current=assessment.assess(r,seat),expected=judge.assess(r,seat,legacy.assess(r,seat)),score=rating.rate(r,current),p=current.metrics.find(m=>m.id==='P01'),old=expected.metrics.find(m=>m.id==='P01');
     assert.equal(current.handAssessment.score,expected.handAssessment.score);assert.equal(p.numerator,old.numerator);assert.equal(p.denominator,old.denominator);
     assert.deepEqual(p.value.contests,old.value.contests);assert.deepEqual(p.value.terminalContests,old.value.terminalContests);
-    assert.equal(score.version,'post-match-outcome-0.4.0');assert.equal(score.scope,'one-round-outcome');assert.ok(score.score>=1&&score.score<=10);
-    assert.ok(!score.components.some(c=>['partner-continuation','unique-control'].includes(c.id)));assert.equal(score.startingHandAdjusted,false);
+    assert.equal(score.version,'post-match-hand-adjusted-0.5.0');assert.equal(score.scope,'one-round-hand-adjusted-outcome');assert.ok(score.score>=1&&score.score<=10);
+    assert.ok(!score.components.some(c=>['partner-continuation','unique-control'].includes(c.id)));assert.equal(score.startingHandAdjusted,true);
     assert.equal(current.trainingSignal.eligible,false);for(const c of current.cases){assert.equal(c.reward,null);assert.equal(c.eligibleForTraining,false);}
   }
 });

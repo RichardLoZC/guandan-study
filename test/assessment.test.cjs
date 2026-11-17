@@ -75,8 +75,8 @@ test('completed reports reconstruct actor-only hands; full replay rejects corrup
 });
 test('trial post-match score is reproducible, explained, and separate from tactical grading',()=>{
   const round=complete().snapshot(),report=assessment.assess(round),a=rating.rate(round,report),b=rating.rate(round,report);
-  assert.deepEqual(a,b);assert.ok(a.score>=1&&a.score<=10);assert.equal(a.trial,true);assert.equal(a.startingHandAdjusted,false);assert.equal(a.tacticalGrade,null);
-  assert.equal(Math.round(a.components.reduce((n,c)=>n+c.value,0)*10)/10,a.score);
+  assert.deepEqual(a,b);assert.ok(a.score>=1&&a.score<=10);assert.equal(a.trial,true);assert.equal(a.startingHandAdjusted,true);assert.equal(a.tacticalGrade,null);
+  assert.equal(Math.round(Math.max(1,Math.min(10,a.components.reduce((n,c)=>n+c.value,0)))*10)/10,a.score);
   const partner=rating.rate(round,{...report,seat:2});
   assert.equal(a.components.find(c=>c.id==='team-result').value,partner.components.find(c=>c.id==='team-result').value,'team result is symmetric');
   round.remaining[0]=-100;assert.equal(rating.rate(round,report).score,null);

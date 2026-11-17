@@ -149,8 +149,7 @@ def prepared(observation):
 
 
 MODEL_IDENTITIES={
-    'danlm-v1':('upstream/ckpts/DanLM_v1/dansformer_v1_best_eval.pt','5341d7316bac1ead4098c796ea03f7e38fb47f001cc647a52be3ed0d15cd7244'),
-    'expert-style-v1':('upstream/ckpts/DanLM_ExpertStyle_v1/play.pt','4738435b59911b10327225d7ef48a5ec5ed9e4f8088215ad168375f6b59e11eb')
+    'danlm-v1':('upstream/ckpts/DanLM_v1/dansformer_v1_best_eval.pt','5341d7316bac1ead4098c796ea03f7e38fb47f001cc647a52be3ed0d15cd7244')
 }
 def load_model(relative,expected):
     path=BASE/relative
@@ -167,6 +166,8 @@ model=models['danlm-v1']
 
 def run(payload):
     policy_id=payload.get('policyId','danlm-v1')
+    # Compatibility only: never load the retired checkpoint for old requests.
+    if policy_id == 'expert-style-v1':policy_id = 'danlm-v1'
     if policy_id not in models:raise ValueError('未知 AI 模型')
     if payload.get("health") is True:
         return {"ready": True, "engine": "official-danlm-macos", "commit": "d200e455f63fd46aa398e97b69a6bb94cf1ba098", "policyIds": list(models)}

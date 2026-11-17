@@ -10,7 +10,7 @@ test('legacy book flags cannot reorder the raw model result',async()=>{
 });
 test('model client strips obsolete flags before sending a worker request',async()=>{
   let sent;
-  class Worker{postMessage(value){sent=value;this.onmessage({data:{id:value.id,ready:true,policyIds:['danlm-v1','expert-style-v1']}});}terminate(){}}
+  class Worker{postMessage(value){sent=value;this.onmessage({data:{id:value.id,ready:true,policyIds:['danlm-v1']}});}terminate(){}}
   const context={Worker,setTimeout,clearTimeout,GuandanModelProfiles:require('../web/app/model-profiles.js')};vm.createContext(context);
   vm.runInContext(fs.readFileSync(require.resolve('../web/app/model-client.js'),'utf8')+'\nglobalThis.client=new DanLMClient();',context);
   await context.client.request({health:true,book:true,aiBook:true});
@@ -20,7 +20,7 @@ test('a failed model initialization is reset before retry',async()=>{
   const workers=[];
   class Worker{
     constructor(){this.terminated=false;workers.push(this);}
-    postMessage(value){this.onmessage({data:workers.length===1?{id:value.id,error:'backend aborted'}:{id:value.id,ready:true,policyIds:['danlm-v1','expert-style-v1']}});}
+    postMessage(value){this.onmessage({data:workers.length===1?{id:value.id,error:'backend aborted'}:{id:value.id,ready:true,policyIds:['danlm-v1']}});}
     terminate(){this.terminated=true;}
   }
   const context={Worker,setTimeout,clearTimeout,GuandanModelProfiles:require('../web/app/model-profiles.js')};vm.createContext(context);
