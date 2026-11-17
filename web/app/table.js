@@ -102,9 +102,9 @@ function loadCardImage(img,skin,face){
   img.onerror=()=>{
     if(img.dataset.imageVersion!==version)return;
     if(attempts++>=2){img.onerror=null;img.src=pathFor('minimal');return;}
-    requestAnimationFrame(()=>{if(img.dataset.imageVersion===version)img.src=pathFor(skin)+'?v=242&r='+attempts;});
+    requestAnimationFrame(()=>{if(img.dataset.imageVersion===version)img.src=pathFor(skin)+'?v=244&r='+attempts;});
   };
-  img.src=pathFor(skin)+'?v=242';
+  img.src=pathFor(skin)+'?v=244';
 }
 function imageFor(face,label='',lockedSkin,level=liveRound?.level){
   const img=document.createElement('img');img.dataset.cardFace=face;img.dataset.levelCard=String(GuandanCardArt.isLevel(face,level));
@@ -599,7 +599,7 @@ function renderSeriesOutcome(){
   banner.classList.toggle('is-series-victory',Boolean(result?.victory));banner.classList.toggle('is-demotion',Boolean(result?.demotion));
   standings.hidden=!game.result;standings.replaceChildren();
   if(!game.result)return;
-  const kind=result?.victory?'victory':result?.demotion?'demotion':result?.attempt?'attempt':result?'upgrade':'round';
+  const kind=result?.victory?'victory':result?.demotion?'demotion':result?.attempt?'attempt':result?.reclaimed?'reclaim':result?'upgrade':'round';
   const text=GuandanFeedback.words({kind,result},liveRound,english);
   const heading=banner.querySelector('h2'),detail=banner.querySelector('p');
   heading.setAttribute('translate','no');detail.setAttribute('translate','no');standings.setAttribute('translate','no');
@@ -635,6 +635,10 @@ function renderGame(){
   if(liveRound.isTuo3){byId('my-points').textContent=signed(state.tuo3.totals[0]);byId('current-partner').textContent=liveRound.names[2];}
   byId('our-level').textContent=state.levels[0];byId('their-level').textContent=state.levels[1];
   byId('round-label').textContent=(liveRound.isTuo3?'拖 3 · ':'')+'第'+state.round+'副';byId('current-level').textContent=state.level;byId('wild-reference').textContent='♥'+state.level+' 逢人配';
+  const owner=GuandanSeries.levelTeam(state),english=GuandanI18n.locale==='en',ownerLabel=byId('level-owner-label');
+  ownerLabel.textContent=owner===0?(english?'Us ·':'我方打'):owner===1?(english?'Opp ·':'对方打'):(english?'Level':'打');
+  ownerLabel.title=owner===null?(english?'No level owner on the opening deal':'首副双方从 2 开始，无固定打级方'):(english?'Level owner: '+(owner===0?'our team':'opponents'):'本副打级方：'+(owner===0?'我方':'对方'));
+  document.querySelector('.match-strip').dataset.levelTeam=owner===null?'none':String(owner);
   document.querySelector('.hand-pane').hidden=false;byId('round-end-banner').hidden=!game.result;
   document.querySelector('.play-zone').classList.toggle('is-round-over',Boolean(game.result));
   document.querySelector('.arena-layout')?.classList.toggle('is-round-over',Boolean(game.result));

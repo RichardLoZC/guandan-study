@@ -82,7 +82,7 @@ test('restoring an old-host session rejects the snapshot before using its rules'
   const original=h.context.liveRound;await flush();
   assert.equal(h.api.ready,false);assert.equal(h.context.liveRound,original);
   assert.match(h.node('lan-message').textContent,/联机规则版本不同/);
-  assert.match(h.node('lan-status-text').textContent,/1\.8\.40/);
+  assert.match(h.node('lan-status-text').textContent,/1\.8\.48/);
   assert.equal(h.calls.at(-1).body.protocol,PROTOCOL);
 });
 test('an old poll cannot suppress the new session poll or its heartbeat', async () => {

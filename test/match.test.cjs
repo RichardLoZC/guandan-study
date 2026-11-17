@@ -118,7 +118,7 @@ test('migration backup quota failure does not prevent reading a valid old save',
   const store=new MemoryStorage(),state=core.newMatch();store.setItem(SAVE_KEY,JSON.stringify(state));store.limit=0;
   const restored=read(store);assert.equal(restored.id,state.id);assert.ok(restored.loadWarning);assert.deepEqual(JSON.parse(store.getItem(SAVE_KEY)),state);
 });
-test('J is a valid team level in existing saves',()=>{const state=core.newMatch();state.levels=['J','Q'];assert.doesNotThrow(()=>new Match(state));});
+test('J is a valid team level in existing saves',()=>{const state=core.newMatch();state.levels=['2','J'];assert.doesNotThrow(()=>new Match(state));});
 test('replay reconstructs before/after counts and hand exactly from actual events',()=>{
   const m=new Match();for(let i=0;i<15;i++)act(m);const events=m.events;
   for(let i=0;i<events.length;i++){const e=events[i];assert.equal(e.remainingBefore[e.seat]-e.remaining[e.seat],e.cards.length);assert.equal(e.ownBefore.length-e.ownAfter.length,e.seat===0?e.cards.length:0);if(i){assert.deepEqual(e.remainingBefore,events[i-1].remaining);assert.deepEqual(e.ownBefore,events[i-1].ownAfter);}}

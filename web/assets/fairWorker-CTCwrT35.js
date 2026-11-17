@@ -1,6 +1,6 @@
-import "../app/model-profiles.js?v=242";
-import "../app/play-rules.js?v=242";
-import "../app/danlm-adapter.js?v=242";
+import "../app/model-profiles.js?v=244";
+import "../app/play-rules.js?v=244";
+import "../app/danlm-adapter.js?v=244";
 /*!
  * ONNX Runtime Web v1.30.0
  * Copyright (c) Microsoft Corporation. All rights reserved.

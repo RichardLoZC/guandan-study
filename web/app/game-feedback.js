@@ -46,7 +46,7 @@
         events.push({kind:'tribute',id:round.id+':tribute',seat:game.starter});
       if(!this.ended&&game.result){
         const result=series.settlement(round.state);
-        events.push({kind:result?.victory?'victory':result?.demotion?'demotion':result?.attempt?'attempt':result?'upgrade':'round',id:round.id+':result',result});
+        events.push({kind:result?.victory?'victory':result?.demotion?'demotion':result?.attempt?'attempt':result?.reclaimed?'reclaim':result?'upgrade':'round',id:round.id+':result',result});
       }
       this.prime(round);return events;
     }
@@ -67,6 +67,7 @@
     if(event.kind==='victory')return {symbol:'♛',title:say(team+'过 A · 整场胜利',team+' cleared A · Match won'),detail:pair+say(' · 第一＋第'+result.partnerPlace+'名',' · 1st + '+(result.partnerPlace===2?'2nd':'3rd'))};
     if(event.kind==='demotion')return {symbol:'A → 2',title:say(team+'退回 2',team+' returns to 2'),detail:say('冲 A 受阻 3/3 · 连续三副第一＋第四','A attempt 3/3 · Three consecutive 1st + 4th finishes')};
     if(event.kind==='attempt')return {symbol:result.attempt+'/3',title:say(team+'冲 A 受阻',team+' has not cleared A'),detail:say('第一＋第四 · 连续第 '+result.attempt+' 次；继续打 A','1st + 4th · Consecutive attempt '+result.attempt+'; stay on A')};
+    if(event.kind==='reclaim')return {symbol:'A',title:say(team+'取得打级权',team+' takes level ownership'),detail:say('下一副由'+team+'打 A，届时才可过关','That team plays A next deal and can then clear A')};
     if(event.kind==='upgrade')return {symbol:result.from+' → '+result.to,title:say(team+'本副获胜',team+' won the deal'),detail:say('下一副打 '+result.to+' · 第一＋第'+result.partnerPlace+'名','Next level '+result.to+' · Partner placed '+result.partnerPlace)};
     return {symbol:'◆',title:say('本副结束','Deal complete'),detail:round.game.result?.summary||''};
   }
@@ -109,7 +110,7 @@
         wind:[[392,0,.1],[523,.1,.14]],give:[[440,0,.1],[554,.09,.13]],return:[[554,0,.1],[440,.09,.13]],tribute:[[440,0,.1],[660,.12,.14]],anti:[[523,0,.12],[659,.13,.12],[784,.26,.25]],
         rank:[[523,0,.1],[659,.1,.1],[784,.2,.2]],attempt:[[440,0,.16],[392,.18,.19]],
         demotion:[[523,0,.22],[440,.23,.22],[349,.46,.22],[262,.69,.38]],
-        upgrade:[[523,0,.12],[659,.12,.12],[784,.24,.25]],round:[[440,0,.14],[523,.16,.2]],
+        reclaim:[[392,0,.12],[523,.14,.2]],upgrade:[[523,0,.12],[659,.12,.12],[784,.24,.25]],round:[[440,0,.14],[523,.16,.2]],
         victory:[[523,0,.16],[659,.17,.16],[784,.34,.18],[1047,.55,.28],[784,.9,.18],[1047,1.1,.6]]};
       for(const [frequency,delay,duration] of melodies[kind]||[]){
         try{

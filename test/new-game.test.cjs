@@ -6,7 +6,7 @@ const GuandanMatch=require('../web/app/match.js');
 const source=fs.readFileSync(require('node:path').join(__dirname,'../web/app/table.js'),'utf8');
 function harness(failSave=false,mode='classic'){
   const previous=GuandanMatch.create(mode);previous.state.round=6;
-  if(!previous.isTuo3){previous.state.levels=['J','Q'];previous.commit(previous.actingSeat,[previous.game.players[previous.actingSeat].hand[0].id]);}
+  if(!previous.isTuo3){previous.state.levels=['2','Q'];previous.commit(previous.actingSeat,[previous.game.players[previous.actingSeat].hand[0].id]);}
   const raw=JSON.stringify(previous.state),archive='[{"id":"preserved-archive"}]';
   const saved=new Map([[GuandanMatch.SAVE_KEY,raw],[GuandanMatch.ARCHIVE_KEY,archive]]),nodes=new Map();let handler;
   const context={feedback:{prime(){}},GuandanMatch,liveRound:previous,paused:true,prefs:{paused:true},selected:new Set(['old-selection']),cardNodes:new Map(),

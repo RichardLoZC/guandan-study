@@ -5,7 +5,7 @@ class LanHostStorage{
   parse(file){
     if(!fs.existsSync(file))return null;
     const bytes=fs.readFileSync(file),state=JSON.parse(bytes);
-    if(!/^[a-f0-9]{48}$/.test(state?.id||'')||![1,2,3].includes(state.protocol))throw new Error('局域网牌桌存档无效，请先导出备份。');
+    if(!/^[a-f0-9]{48}$/.test(state?.id||'')||![1,2,3,4].includes(state.protocol))throw new Error('局域网牌桌存档无效，请先导出备份。');
     return {bytes,state};
   }
   write(file,bytes){

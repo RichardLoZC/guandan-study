@@ -75,6 +75,6 @@ if(mode==='release'){
 if(mode!=='release'||!fs.existsSync(output))fs.copyFileSync(staged,output);
 console.log(verification.trim());
 fs.writeFileSync(path.join(dist,mode==='debug'?'SHA256-test.txt':'SHA256.txt'),hash+'  '+name+'\n');
-fs.writeFileSync(path.join(dist,mode==='debug'?'测试构建信息.json':'构建信息.json'),JSON.stringify({name:'掼军',distribution:'公开版',version:androidVersion,build:androidBuild,mode,applicationId:'com.guandan.study'+(mode==='debug'?'.dev':''),minSdk:26,targetSdk:36,networkPermission:true,lanProtocol:3,sha256:hash},null,2)+'\n');
+fs.writeFileSync(path.join(dist,mode==='debug'?'测试构建信息.json':'构建信息.json'),JSON.stringify({name:'掼军',distribution:'公开版',version:androidVersion,build:androidBuild,mode,applicationId:'com.guandan.study'+(mode==='debug'?'.dev':''),minSdk:26,targetSdk:36,networkPermission:true,lanProtocol:4,sha256:hash},null,2)+'\n');
 console.log('Android build directory: '+stage);
 console.log('APK: '+output);

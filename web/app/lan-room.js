@@ -11,8 +11,8 @@ function randomInt(min,max){
   do{crypto.getRandomValues(bytes);}while(bytes[0]>=limit);
   return min+bytes[0]%span;
 }
-// Gameplay protocol3 aligns official declarations; discovery remains version1.
-const PROTOCOL=3;
+// Protocol 4 includes level ownership; discovery remains version 1.
+const PROTOCOL=4;
 const nameOf=value=>String(value||'玩家').trim().replace(/[\x00-\x1f\x7f]/g,'').slice(0,12)||'玩家';
 
 // Build a complete rotated state only inside the host. Mask before serialization.
@@ -37,6 +37,7 @@ function perspective(match,seat,names){
   if(g.winnerTeam!=null)g.winnerTeam=(g.winnerTeam+seat)%2;
   g.message=text(g.message);
   if(seat%2){s.levels.reverse();s.wins.reverse();s.aceAttempts?.reverse();}
+  if(Number.isInteger(s.levelTeam))s.levelTeam=(s.levelTeam+seat)%2;
   s.notice=(s.notice||[]).map(text);
   s.exchanges=s.exchanges.map(e=>({...e,from:rot(e.from),to:rot(e.to)}));
   if(s.tribute){s.tribute.donors=s.tribute.donors.map(rot);s.tribute.winners=s.tribute.winners.map(rot);s.tribute.offers=s.tribute.offers.map(o=>({...o,from:rot(o.from)}));}
@@ -111,7 +112,7 @@ class Room {
   }
   async request(auth,body){
     if(this.closed)throw new Error('房间已关闭');
-    if(body.protocol!==PROTOCOL)throw new Error('联机规则版本不同，请所有设备更新至1.8.40 或兼容的新版本');
+    if(body.protocol!==PROTOCOL)throw new Error('联机规则版本不同，请所有设备更新至1.8.48 或兼容的新版本');
     const m=this.authenticate(auth),op=body.op;
     if(op==='poll')return this.projected(m);
     if(typeof body.requestId!=='string'||body.requestId.length>80)throw new Error('缺少操作编号');

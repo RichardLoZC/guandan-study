@@ -84,7 +84,19 @@ html:not([data-phone=true]) .app-top>.match-strip .score-pair span{gap:6px}
 html:not([data-phone=true]) .app-top>.match-strip b{font-size:23px;color:var(--text)}
 html:not([data-phone=true]) .app-top>.match-strip .wild-reference{font-size:12px;padding-left:8px;border-color:var(--line);color:var(--gold-ink)}
 @media(max-width:1120px){html:not([data-phone=true]) .app-top>.match-strip .wild-reference{display:none}html:not([data-phone=true]) .app-top>.match-strip{gap:10px;margin-inline:6px}}
-@media(max-width:920px){html:not([data-phone=true]) .app-top>.match-strip #round-label{display:none}html:not([data-phone=true]) .app-top>.match-strip .score-pair,html:not([data-phone=true]) .app-top>.match-strip .level-label{font-size:12px;gap:5px}html:not([data-phone=true]) .app-top>.match-strip b{font-size:19px}}
+@media(max-width:920px){html:not([data-phone=true]) .app-top>.match-strip #round-context{display:none}html:not([data-phone=true]) .app-top>.match-strip .score-pair,html:not([data-phone=true]) .app-top>.match-strip .level-label{font-size:12px;gap:5px}html:not([data-phone=true]) .app-top>.match-strip b{font-size:19px}}
+/* Counters appearing or disappearing must not wrap the controls or move the table. */
+@media(max-width:920px){
+ html:not([data-phone=true]) .app-top{height:56px;min-height:56px;flex-wrap:nowrap}
+ html:not([data-phone=true]) .app-top>.top-controls{width:auto;flex:0 0 auto;flex-wrap:nowrap}
+ html:not([data-phone=true]) .app-top>.brand{min-width:0;flex:0 0 76px}
+ html:not([data-phone=true]) .app-top>.match-strip{justify-content:flex-start}
+ html:not([data-phone=true]) .app-top .top-controls>button{font-size:13px;min-height:36px;padding-inline:6px}
+ html:not([data-phone=true]) .app-top .mode-entry{font-size:14px;white-space:nowrap;max-width:none}
+ html:not([data-phone=true]) .app-top .app-edition{display:none}
+ html:not([data-phone=true]) .app-top #engine-indicator{display:block;max-width:76px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+ html:not([data-phone=true]) .app-top .ace-progress{font-size:10px;padding:2px 4px}
+}
 
 @media(max-width:720px),(max-height:500px){
  html:not([data-phone=true]) .app-top{flex-wrap:nowrap}

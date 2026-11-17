@@ -47,7 +47,7 @@ function renderOverview(){
   byId('result-summary').textContent=round.completed?round.names[round.finishOrder[0]]+'第1，'+round.names[round.finishOrder[1]]+'第2。复盘关注当时的选择与条件。':'已记录'+round.events.length+'次行动，可回看当前进度。';
   byId('result-badge').textContent=round.completed?(round.ruleMode==='tuo3'?'你 '+signed(round.settlement.rows.find(row=>row.identity===0).delta)+' 分':team+' +'+round.levelDelta+'级'):'进行中';
   if(round.seriesOutcome){
-    const out=round.seriesOutcome,kind=out.victory?'victory':out.demotion?'demotion':out.attempt?'attempt':'upgrade';
+    const out=round.seriesOutcome,kind=out.victory?'victory':out.demotion?'demotion':out.attempt?'attempt':out.reclaimed?'reclaim':'upgrade';
     const label=GuandanFeedback.words({kind,result:out},round,GuandanI18n.locale==='en');
     for(const id of ['result-title','result-badge'])byId(id).setAttribute('translate','no');
     byId('result-title').textContent=label.title;byId('result-badge').textContent=label.symbol;
@@ -168,7 +168,7 @@ function reviewText(){
     lines.push('本副每项加减由两名搭档共同承担，另一队反向记分。');
   }else if(round.completed){
     const out=round.seriesOutcome,team=round.winnerTeam===0?'我方':'对方';
-    lines.push(team+(out?.victory?'过 A，赢得整场':out?.demotion?'连续三副第一＋第四，冲 A 受阻 3/3，退回 2':out?.attempt?'冲 A 受阻 '+out.attempt+'/3，继续打 A':'升'+round.levelDelta+'级')+'；我方名次：'+round.placement+'。');
+    lines.push(team+(out?.victory?'过 A，赢得整场':out?.demotion?'连续三副第一＋第四，冲 A 受阻 3/3，退回 2':out?.attempt?'冲 A 受阻 '+out.attempt+'/3，继续打 A':out?.reclaimed?'取得打级权，下一副才可过 A':'升'+round.levelDelta+'级')+'；我方名次：'+round.placement+'。');
   }
   else lines.push('本局进行中，以下为已经发生的行动。');
   lines.push('全局'+round.stats.actions+'次行动；我的出牌'+round.stats.myPlays+'次，不出'+round.stats.myPasses+'次。','');
@@ -198,7 +198,7 @@ function decisionBody(key,round){
 }
 function englishReviewText(){
  const r=reviewRound,t=GuandanI18n.t;
- const lines=[`掼军 · Round ${r.round} · Level ${r.level}`,t(r.source),r.completed?(r.winnerTeam===0?'Our team':'Opponents')+(r.ruleMode==='tuo3'?' finished first':r.seriesOutcome?.victory?' cleared A · Match won':r.seriesOutcome?.demotion?' failed A 3/3 · Return to 2':r.seriesOutcome?.attempt?` A attempt ${r.seriesOutcome.attempt}/3 · Stay at A`:` won · +${r.levelDelta} levels`):'Round in progress',`Actions: ${r.stats.actions} · My plays: ${r.stats.myPlays} · My passes: ${r.stats.myPasses}`,''];
+ const lines=[`掼军 · Round ${r.round} · Level ${r.level}`,t(r.source),r.completed?(r.winnerTeam===0?'Our team':'Opponents')+(r.ruleMode==='tuo3'?' finished first':r.seriesOutcome?.victory?' cleared A · Match won':r.seriesOutcome?.demotion?' failed A 3/3 · Return to 2':r.seriesOutcome?.attempt?` A attempt ${r.seriesOutcome.attempt}/3 · Stay at A`:r.seriesOutcome?.reclaimed?' takes level ownership · May clear A next deal':` won · +${r.levelDelta} levels`):'Round in progress',`Actions: ${r.stats.actions} · My plays: ${r.stats.myPlays} · My passes: ${r.stats.myPasses}`,''];
  if(r.ruleMode==='tuo3'&&r.settlement){lines.push('Tuo 3 · Fixed level 2');for(const row of r.settlement.rows)lines.push(`${t(r.names?.[row.seat]||presentRoundText(row.name,r))}: placement ${signed(row.placement)}, bonus ${signed(row.drag)}, unplayed ${signed(row.remainder)}; round ${signed(row.delta)}, total ${signed(row.total)}`);}
  if(r.finalPlay)lines.push('Final play: '+t(r.names[r.finalPlay.seat])+' · '+t(r.finalPlay.label),r.finalPlay.cards.map(c=>t(c.label)).join(', '));
  for(const h of r.revealedHands||[])lines.push(t(r.names[h.seat])+` · ${h.cards.length} cards left: `+h.cards.map(c=>t(c.label)).join(', '));

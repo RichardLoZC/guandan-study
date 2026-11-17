@@ -102,8 +102,8 @@ const messages={
   "试听": "Preview sound",
   "再开一场 · 从 2 开始": "New match · Start from 2",
   "打 A 与整场胜负": "Level A and winning a match",
-  "打 A 时，本方级别为 A，且本方取得第一名、队友第二或第三名，才算过 A、赢得整场。双方都是 A 时也相同。": "To win a match, play a deal at A while your team is at A, finish first, and have your partner finish second or third. The same rule applies when both teams are at A.",
-  "第一＋第四不算过 A；同一队连续三副在打 A 时取得第一＋第四，第三副后仅该队退回 2，另一队级别保留。其他结果打断连续计数。旧存档从 0 次开始记录。": "First plus fourth does not clear A. If the same team finishes first plus fourth in three consecutive A deals, only that team returns to 2. Other results reset the streak. Existing saves start counting from zero.",
+  "只有本副打级方能过 A：本方打 A，取得第一名、队友第二或第三名，赢得整场。A 对 A 时，非打级方先赢回资格，下一副才能过 A。": "Only the level-owning team can clear A by finishing first with its partner second or third. At A versus A, the other team must first win level ownership and can clear A from the next deal.",
+  "第一＋第四不算过 A；同一队连续三副作为打级方打 A，并取得第一＋第四，第三副后仅该队退回 2。其他结果清零；赢回资格这一副不计尝试。": "First plus fourth does not clear A. Three consecutive such finishes as the A level owner return only that team to 2. Other results reset the streak; the deal that wins back ownership is not an A attempt.",
   "过 A 后先展示整场胜队和四人名次，点击“再开一场”后双方才从 2 开始；拖 3 不使用升级、贡还或冲 A 计数。": "Clearing A shows the winning team and all four placements. Both teams restart at 2 after you choose New match. Tuo 3 has no levels, tribute or A attempt counter.",
 
   "叠牌": "Stacks",

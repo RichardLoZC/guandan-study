@@ -20,17 +20,20 @@ function applyLegalPlay(game,seat,play){
   }
   return next;
 }
-// Leave the original rule body intact. The agreed house rule only changes
-// progression after the third consecutive 1+4 on A; tribute still follows the
-// actual finish order. Feed the legacy dealer a zero-step target so wild cards
-// are dealt at 2 from the outset, rather than relabelling an A deck afterwards.
+// Series is the only progression authority. Feed its projected levels and a
+// zero-step result to the legacy dealer, disabling its old any-team-at-A win
+// branch. Physical wild cards and tribute are then dealt correctly at source.
 function newMatch(previous,random){
+  if(previous&&!previous.game?.result)throw new Error('本副尚未结束，不能创建下一副');
   const result=series.settlement(previous);
-  const prior=result?.demotion?{...previous,levels:result.levels,
+  const prior=result&&!result.victory?{...previous,level:'2',levels:result.levels,wins:result.wins,
     game:{...previous.game,result:{...previous.game.result,levelDelta:0}}}:previous;
   const next=Ts(prior,random);
   next.aceAttempts=result?result.attempts:[...(previous?.aceAttempts||[0,0])];
+  next.seriesRules=series.RULES;
+  next.levelTeam=result?result.nextLevelTeam:null;
   if(result?.demotion)next.notice.unshift((result.team===0?'我方':'对方')+'连续三副冲 A 为第一＋第四，退回 2。');
+  if(result?.reclaimed)next.notice.unshift((result.team===0?'我方':'对方')+'取得打级权，下一副才可过 A。');
   return next;
 }
 return Object.freeze({setLevel:sl,recognize,recognizeRecorded,filterPlays:Py,beats:Qd,isBomb:mo,sortCards:al,cardLabel:qn,newMatch,donor:Ar,giveChoices:Ps,give:cc,returnChoices:_s,returnCard:fc,applyPlay:applyLegalPlay,applyPass:uc,observation:pc,tributeRecords:dc,rankValue:ce,deck:xy,names:Le});

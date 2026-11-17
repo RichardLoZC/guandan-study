@@ -1,7 +1,8 @@
 'use strict';
 const core=require('../../web/app/core.js'),{Match}=require('../../web/app/match.js');
-function finished(order=[0,1,3,2],{level='A',levels=['A','A'],attempts=[0,0]}={}){
+function finished(order=[0,1,3,2],{level='A',levels=['A','A'],attempts=[0,0],levelTeam=levels.filter(rank=>rank===level).length===1?levels.indexOf(level):0}={}){
   const state=core.newMatch();state.level=level;state.levels=[...levels];state.aceAttempts=[...attempts];
+  state.levelTeam=levelTeam;
   core.setLevel(level);
   for(const player of state.game.players)for(const card of player.hand)card.isWild=card.suit==='hearts'&&card.rank===level;
   const count=order[0]%2===order[1]%2?2:3;

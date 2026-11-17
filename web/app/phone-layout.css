@@ -25,7 +25,7 @@ html[data-phone=true] #phone-top-info:has(.tribute-receipt:not([hidden])) .wild-
 html[data-phone=true] .score-pair,html[data-phone=true] .level-label { font-size:13px; gap:6px; }
 html[data-phone=true] .score-pair b,html[data-phone=true] .level-label b { font-size:19px; }
 html[data-phone=true] .wild-reference { color:var(--gold-ink); font-size:12px; padding-left:7px; border-left:1px solid var(--line); }
-html[data-phone=true] #round-label { display:none; }
+html[data-phone=true] #round-context { display:none; }
 html[data-phone=true] .arena-layout { flex:1 1 0; min-height:0; position:relative; }
 html[data-phone=true] .arena-layout > .play-zone { container-type:inline-size; display:flex; flex-direction:column; flex:1 1 0; min-height:0; padding:0 8px; overflow:hidden; gap:0; }
 html[data-phone=true] .table-seats { --phone-play-width:calc((100cqw - 220px) / 4); flex:1 0 auto; min-height:calc(var(--hand-card-height) + 42px); display:block; padding:0; overflow:visible; }

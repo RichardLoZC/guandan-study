@@ -18,7 +18,7 @@
     const event=history[index],play=event.play||event;
     return {index,seat:event.seat,label:play.label,cards:play.cards.map(decorate),place:finishOrder.indexOf(event.seat)+1||null};
   }
-  function validate(state){
+  function validate(state,{historical=false}={}){
     const seat=value=>Number.isInteger(value)&&value>=0&&value<4;
     const seats=value=>Array.isArray(value)&&value.every(seat)&&new Set(value).size===value.length;
     const record=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
@@ -117,6 +117,10 @@
     if(state.study!=null&&(!record(state.study)||(state.study.choices!=null&&!record(state.study.choices))))fail('复盘记录结构无效');
     if(state.ruleMode&&!['classic','tuo3'].includes(state.ruleMode))throw new Error('不支持此存档的玩法');
     tuo3.validate(state);
+    const legacyHistory=historical&&(state.seriesRules==null||state.seriesRules==='legacy-any-ace');
+    if(legacyHistory){
+      if(state.levelTeam!=null&&state.levelTeam!==0&&state.levelTeam!==1)fail('本副打级方无效');
+    }else series.validate(state);
     return state;
   }
   function read(storage){
@@ -130,8 +134,10 @@
     return match;
   }
   class Match{
-    constructor(state=core.newMatch(),{preservePersonas=false}={}){
-      this.state=clone(validate(state));
+    constructor(state=core.newMatch(),{preservePersonas=false,historical=false}={}){
+      this.state=clone(validate(state,{historical}));
+      this.historical=historical;
+      if(!historical){this.state.levelTeam=series.levelTeam(this.state);this.state.seriesRules=series.RULES;}
       if(this.state.personaSeries==null){
         this.state.personaSeries=preservePersonas?personas.LEGACY:personas.SERIES;
         if(!preservePersonas||!personas.valid(this.state.personaIds,personas.LEGACY))this.state.personaIds=personas.assignment(this.state.id,this.state.personaSeries);
@@ -328,6 +334,7 @@
     }
     persist(storage){storage.setItem(SAVE_KEY,JSON.stringify(this.state));}
     next(){
+      if(this.historical)throw new Error('历史复盘不能继续为当前牌局');
       if(!this.game.result)throw new Error('本局尚未结束');
       const state=this.isTuo3?tuo3.create(this.state):core.newMatch(this.state);
       if(!series.settlement(this.state)?.victory){state.personaIds=[...this.state.personaIds];state.personaSeries=this.state.personaSeries;}
@@ -362,11 +369,11 @@
       add(my.find(event=>event.teaching));add(my.find(event=>event.kind==='bomb'));add(my.findLast(event=>event.finished));
       for(const event of my){if(keys.length>=3)break;add(event);}
       return {id:this.id,round:this.state.round,level:this.level,names:[...this.names],playerIds:[...this.playerIds],personaIds:[...this.state.personaIds],personaSeries:this.state.personaSeries,remote:Boolean(this.remote),humanSeats:[...(this.humanSeats||[0])],ruleMode:this.isTuo3?'tuo3':'classic',
-        phase:this.phase,levels:[...this.state.levels],aceAttempts:[...this.state.aceAttempts],known:clone(this.state.known||[]),tributeRecords:clone(core.tributeRecords(this.state)),starter:this.game.starter,
+        phase:this.phase,levels:[...this.state.levels],aceAttempts:[...this.state.aceAttempts],seriesRules:this.state.seriesRules||'legacy-any-ace',levelTeam:this.historical&&this.state.seriesRules!==series.RULES?null:series.levelTeam(this.state),known:clone(this.state.known||[]),tributeRecords:clone(core.tributeRecords(this.state)),starter:this.game.starter,
         settlement:clone(this.state.tuo3?.settlement||null),totals:clone(this.state.tuo3?.totals||null),
         source:'本机实际对局 · DanLM 与规则解读',
         events,initialOwnHand:events[0]?.ownBefore||this.hand,completed:Boolean(result),winnerTeam:result?.winnerTeam??null,
-        seriesOutcome:series.settlement(this.state),
+        seriesOutcome:series.settlement(this.state,{legacy:this.historical&&this.state.seriesRules!==series.RULES}),
         levelDelta:result?.levelDelta??0,placement:result?.placementKey??null,actuallyFinished:finished,
         finishOrder:result?[...this.game.finishOrder]:[...finished,...[0,1,2,3].filter(seat=>!finished.includes(seat))],
         remaining:this.game.players.map(player=>player.hand.length),revealedHands:this.revealedHands,finalPlay:this.finalPlay,
@@ -379,7 +386,7 @@
   function archiveRecords(storage){const raw=storage.getItem(ARCHIVE_KEY);if(!raw)return[];const list=JSON.parse(raw);if(!Array.isArray(list))throw new Error('历史复盘数据损坏，请先导出存档');return list;}
   function archives(storage){return archiveRecords(storage).map(record=>{
     if(!record.state)return {...record,finalPlay:record.completed?endingPlay(record.events||[],record.finishOrder||[]):null};
-    const match=new Match(record.state,{preservePersonas:true});
+    const match=new Match(record.state,{preservePersonas:true,historical:true});
     // LAN seats are relative to this device; restore the names and identities
     // alongside the compact state instead of falling back to the solo bots.
     for(const key of ['names','playerIds'])if(Array.isArray(record[key])&&record[key].length===4)

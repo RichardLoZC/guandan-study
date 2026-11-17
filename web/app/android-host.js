@@ -21,7 +21,7 @@
     }
     function parse(raw){
       if(!raw)return null;const saved=JSON.parse(raw);
-      if(!/^[a-f0-9]{48}$/.test(saved?.id||'')||![1,2,3].includes(saved.protocol))throw new Error('房间存档版本不兼容');
+      if(!/^[a-f0-9]{48}$/.test(saved?.id||'')||![1,2,3,4].includes(saved.protocol))throw new Error('房间存档版本不兼容');
       return saved;
     }
     async function host(payload={}){

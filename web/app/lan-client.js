@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const KEY='guandan.lan.session.v1',PROTOCOL=3,dialog=byId('lan-dialog');
+  const KEY='guandan.lan.session.v1',PROTOCOL=4,dialog=byId('lan-dialog');
   const key=()=>KEY;
   let session=null,room=null,offline=null,pollTimer=null,busy=false,connecting=false,pollingEpoch=null,online=false,generation=0,lastRender='',lastEnded=null,lastArchiveWarning=null;
   let compatibilityError='',mode='solo',nearby=[],scanning=false,scanEpoch=0,memberSignature='',configuredNetwork=null,parkedSignature='';
@@ -138,7 +138,7 @@
   }
   function apply(data){
     if(!data?.room||!session||data.room.id!==session.roomId||room&&data.room.version<room.version)return;
-    if(data.room.protocol!==PROTOCOL){compatibilityError='联机规则版本不同，请所有设备更新至1.8.40 或更新版本';throw new Error(compatibilityError);}
+    if(data.room.protocol!==PROTOCOL){compatibilityError='联机规则版本不同，请所有设备更新至1.8.48 或更新版本';throw new Error(compatibilityError);}
     compatibilityError='';
     const started=room?.started,wasOnline=online;room=data.room;online=true;
     const signature=[room.id,room.version,room.paused,room.error,room.modelReady,room.waiting.join('|'),room.members.map(m=>m.id+':'+m.connected).join('|')].join('/');
@@ -197,7 +197,7 @@
       try{localStorage.setItem(key()+'.device',clientId);localStorage.setItem(key()+'.name',name);}catch{}
       const result=host?await transport({action:'host',name,fresh:true}):await transport({action:'request',address,body:{op:'join',code,name,clientId,protocol:PROTOCOL}});
       if(epoch!==generation)return;
-      if(result.protocol!==PROTOCOL)throw new Error('联机规则版本不同，请所有设备更新至1.8.40 或更新版本');
+      if(result.protocol!==PROTOCOL)throw new Error('联机规则版本不同，请所有设备更新至1.8.48 或更新版本');
       suspendOffline();session={...result,address:result.address||address,host,name};generation++;mode='multi';remember();lastRender='';await poll();
     }catch(error){message(error.message);}
     finally{busy=false;connecting=false;controls();renderNearby();}

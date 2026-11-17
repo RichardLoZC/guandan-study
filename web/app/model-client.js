@@ -36,7 +36,7 @@ class DanLMClient{
         }).catch(error=>finish({error:error.message}));
         return;
       }
-      if(!this.worker)this.worker=new Worker('/assets/fairWorker-CTCwrT35.js?v=242',{type:'module'});
+      if(!this.worker)this.worker=new Worker('/assets/fairWorker-CTCwrT35.js?v=244',{type:'module'});
       this.worker.onmessage=event=>{if(event.data.id===id)finish(event.data);};
       this.worker.onerror=()=>this.cancel('模型线程加载失败，请重试');
       try{this.worker.postMessage(request);}catch(error){this.cancel(error.message);}

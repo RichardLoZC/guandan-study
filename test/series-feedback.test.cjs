@@ -16,17 +16,20 @@ test('third consecutive A first/last demotes only that team; the new physical de
     assert.ok(next.state.tribute||next.state.antiTribute);attempts=next.state.aceAttempts;
   }
 });
-test('A vs A: either team wins with 1/2 or 1/3; first/last stays A until the third attempt',()=>{
+test('A vs A: only the level owner clears A; opponents first win back next-deal eligibility',()=>{
   for(const order of [[0,2,1,3],[0,1,2,3],[1,3,0,2],[1,0,3,2]]){
-    const round=finished(order,{attempts:[2,0]}),team=order[0]%2;
+    const team=order[0]%2,round=finished(order,{attempts:[2,0],levelTeam:team});
     assert.equal(series.settlement(round.state).victory,true);
     const next=round.next();assert.deepEqual(next.state.levels,['2','2']);assert.deepEqual(next.state.aceAttempts,[0,0]);
     assert.equal(next.state.wins[team],1);assert.equal(next.state.wins[1-team],0);
+    const reclaim=finished(order,{attempts:[2,0],levelTeam:1-team}),out=series.settlement(reclaim.state),following=reclaim.next();
+    assert.equal(out.victory,false);assert.equal(out.reclaimed,true);assert.equal(out.attempt,0);
+    assert.deepEqual(following.state.levels,['A','A']);assert.deepEqual(following.state.wins,[0,0]);assert.equal(following.state.levelTeam,team);
   }
-  const opposite=finished([1,0,2,3],{attempts:[0,2]}).next();assert.deepEqual(opposite.state.levels,['A','2']);
+  const opposite=finished([1,0,2,3],{attempts:[0,2],levelTeam:1}).next();assert.deepEqual(opposite.state.levels,['A','2']);
 });
 test('other outcomes break the streak, and reaching A is not passing A',()=>{
-  const interrupted=finished([1,0,2,3],{attempts:[2,0]});assert.deepEqual(interrupted.next().state.aceAttempts,[0,1]);
+  const interrupted=finished([1,0,2,3],{attempts:[2,0]});assert.deepEqual(interrupted.next().state.aceAttempts,[0,0]);
   for(const options of [{level:'K',levels:['K','A']},{level:'A',levels:['K','A']},{level:'K',levels:['A','K'],attempts:[2,0]}]){
     const round=finished([0,2,1,3],options),out=series.settlement(round.state);
     assert.equal(out.victory,false);assert.equal(out.attempt,0);assert.deepEqual(round.next().state.aceAttempts,[0,0]);

@@ -1,5 +1,7 @@
 # 掼军
 
+Version 1.8.48 uses traditional level ownership: at A versus A, challengers first win eligibility and can clear A from the next deal. The compact header identifies the level owner. The existing three consecutive owner-side first/fourth demotion rule is retained. All devices at a table need protocol 4.
+
 All 50 Ming AI personas, tribute and hints use official DanLM v1. The compact post-match view shows individual starting bombs and a 10-point trial rating adjusted for the player’s own starting hand. Review tabs share fixed navigation. Training rewards remain disabled.
 
 [简体中文](README.zh-CN.md) · [Downloads](https://github.com/RichardLoZC/guandan-study/releases)

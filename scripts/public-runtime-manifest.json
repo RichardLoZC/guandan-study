@@ -41,12 +41,12 @@
       "sha256": "92ab8656d78ad372bb642c598b203a292328b0cd165f7a7e84395d8747715ee9"
     },
     "lan-host-storage.cjs": {
-      "size": 2297,
-      "sha256": "6b4b843f0d8e4a9849b7df1efc18d276b7ad59bbb38a91dc2a9e7be947e57e3a"
+      "size": 2299,
+      "sha256": "5ad342e7b8f1413a5d40bc55328991c187f8fc8f4ce0ce5163cb7d0c5981d29a"
     },
     "lan-room.cjs": {
-      "size": 916,
-      "sha256": "8b8ce29476e4a4008e61c4deced5cbdf612de3b31d5e1be04069ef138aaf62cd"
+      "size": 918,
+      "sha256": "747713a26a38896a40a2fba7542eb4ea2694d0fc58e09a57f0dbe015e005d28a"
     },
     "lan-server.cjs": {
       "size": 7228,
@@ -61,8 +61,8 @@
       "sha256": "99341971a129ef800ecd7b9cca458e91a0a176e84f81be34d8e0a26c199a477d"
     },
     "package.json": {
-      "size": 1032,
-      "sha256": "e853f7f80d61a40b5370c4ea8432a14a1f3ad5a9b62d74c5e8a7ebba20636ba3"
+      "size": 1028,
+      "sha256": "14c1d2b58e2f09749232d522950549bd8e971326c88324858146e20d62040d0c"
     },
     "preload.cjs": {
       "size": 803,
@@ -73,8 +73,8 @@
       "sha256": "51a5b5dc08f28dbbea8e64080ae623d7950389d2b31c3ef61adc8434e3c4a62b"
     },
     "web/app/android-host.js": {
-      "size": 5152,
-      "sha256": "089d8f7fd26cc1cdc6c6a5004ac8a91287535c5fb767747a8964f2c855e2d699"
+      "size": 5154,
+      "sha256": "4f7267d6bbb21d0a5d2aff5b192f21b7a8b325f7c208e476bbf9d255e831a1aa"
     },
     "web/app/arrange-search.js": {
       "size": 9488,
@@ -94,7 +94,7 @@
     },
     "web/app/assessment-provenance.js": {
       "size": 3385,
-      "sha256": "8194685fad22ba3aa47cc937ccf9c3db886fb422a8b6ddb5ea2d7f3efb6c85da"
+      "sha256": "c6473e065dad9f1ed6067d118550a11d2082e6226e9a824a4a0324311ad2bf0a"
     },
     "web/app/assessment-rating-legacy.js": {
       "size": 2658,
@@ -117,8 +117,8 @@
       "sha256": "6a7f835fb68b446b81a479fc54cfcb3fcff76192ff7f308c8a4bcf0afe344aea"
     },
     "web/app/assessment.css": {
-      "size": 11658,
-      "sha256": "d78729270be3102f459b35af4f249cc47b632ad7f1404b54aa87182d37662188"
+      "size": 12622,
+      "sha256": "fefdec3d379f068efe78972cea486942bb8e88993d089e156470735c1e08a02c"
     },
     "web/app/assessment.js": {
       "size": 20712,
@@ -141,8 +141,8 @@
       "sha256": "644a26c672be81f1225d8656639e4abcce5c55177aae6cf9023ac47cd2af371b"
     },
     "web/app/core.js": {
-      "size": 17365,
-      "sha256": "aaedeb0f0a0c5807aa28eccfc7309b1d41d0c582440eb874ec8d61612a3b9954"
+      "size": 17628,
+      "sha256": "1fdea475bad0a336fb360adfdd922c8d6e8b8ab0620b16fa0736b84542c39fd1"
     },
     "web/app/danlm-adapter.js": {
       "size": 10655,
@@ -169,8 +169,8 @@
       "sha256": "b3f5b6af7c75dec5bfd21fb802726b15b53de6dd79c4f3155585f40e2791dbd6"
     },
     "web/app/game-feedback.js": {
-      "size": 18056,
-      "sha256": "aaee78ea872d5db90da11cea206658deeff7e5035ecfb73f55a5ca2d4690afe1"
+      "size": 18346,
+      "sha256": "bd9bd51c07637f3bf03cb687031a5e2e8027cef3365bc5bed66867c2c18f1bf4"
     },
     "web/app/hand-assessment-legacy.js": {
       "size": 7453,
@@ -230,27 +230,27 @@
     },
     "web/app/lan-client.js": {
       "size": 23884,
-      "sha256": "dd6bfb0952f1d6d2cacde7e5ffdfae6d49f0cf345729de841bc3e0bd57442c31"
+      "sha256": "54c08b26bd457255facfe8bf0554d25844d013f758dab436a2f8aae8f3469dbd"
     },
     "web/app/lan-engine.js": {
       "size": 250,
       "sha256": "5b9dc74a80d28dc78988fef8563b5d55fbc7429569319a6c29935c6dbe138a67"
     },
     "web/app/lan-room.js": {
-      "size": 14910,
-      "sha256": "ab3c74aa760723d62d9adb104e2ef346c6d7ec41d554eb21217782f61fc49e42"
+      "size": 14968,
+      "sha256": "ace8f2e2a63117392b1560add1e3523e69632c1e500b2c3f29fae7b895b49e39"
     },
     "web/app/lan.css": {
       "size": 7551,
       "sha256": "fa1f05875991a0be5ea8efa93f4b938b4111e6b966648901cdd21ce08f9007aa"
     },
     "web/app/locales/en.js": {
-      "size": 67982,
-      "sha256": "a824157376ef4e39a76a4ea9e0ba76466289fd400e5703a831e63662dc873222"
+      "size": 68006,
+      "sha256": "1e8cf4660aa824e4ce065c32d93ee48c053667a137aa4a9a27c5cb8ff8c7595e"
     },
     "web/app/match.js": {
-      "size": 33132,
-      "sha256": "d72a4565c5939c396ccab08164e4d7e7386fbb14748abf5e3d89cdfb8d82b3ec"
+      "size": 33907,
+      "sha256": "197e10958ce416f57f90c03f874d0047100c917e834e46845a67d9ea4d41c697"
     },
     "web/app/mobile.css": {
       "size": 8104,
@@ -258,7 +258,7 @@
     },
     "web/app/model-client.js": {
       "size": 3286,
-      "sha256": "253ae453baa55806eb89844f5964ef00a6aae44535d27818829add51da4f2bc6"
+      "sha256": "b6142657c339768edfe3c5a172b783c82f07351870388409a0da7b35c64f0550"
     },
     "web/app/model-profiles.js": {
       "size": 1283,
@@ -269,8 +269,8 @@
       "sha256": "f9d383d1d4a86e3c658917df2aadd78ab3e396a23a51c99e1b3301f854d253d3"
     },
     "web/app/phone-layout.css": {
-      "size": 25652,
-      "sha256": "f58b8ae0e52556e9d1ef6424c5feec3ecca4a9441bab6e5d0110e279ac354db7"
+      "size": 25654,
+      "sha256": "0bb641c5e256cbd04e038543e106f37907cdae4ecd0b33552e26fee596303e54"
     },
     "web/app/phone-layout.js": {
       "size": 5268,
@@ -305,8 +305,8 @@
       "sha256": "561fc9755d1ed7d4ad8045ff5b78afdb6dcd3be3d05d1e94448893bec5c14c59"
     },
     "web/app/review.js": {
-      "size": 19058,
-      "sha256": "b2d5ceef7acd7097aeee30426f0dcba364c192838a5bcf39648728ed8cb1f0b9"
+      "size": 19215,
+      "sha256": "b48f2b3672792ffbd0eddff21a5f0ed14e1e752dc9d9e50337e1f618dafc76c5"
     },
     "web/app/round-statistics.js": {
       "size": 4562,
@@ -321,8 +321,8 @@
       "sha256": "bb9787965acbae28b0da3660d707178fa6bfb75d7f798179ef7c7124ffec1d67"
     },
     "web/app/series.js": {
-      "size": 1324,
-      "sha256": "72d3b0886fe63f3036639f174140baf4924d476ef0f7c7ba92c2d86ad5edc847"
+      "size": 3421,
+      "sha256": "5c13c7a7ca605e45e7274c74285825a3d9e02551ba8dfdb67ba4ac52e87151b9"
     },
     "web/app/starting-reference.js": {
       "size": 1824,
@@ -341,8 +341,8 @@
       "sha256": "450e0d410f528b32cad49c71beba69bbb93da1a4b2280a8ce1b75b0fd6a0d401"
     },
     "web/app/table.js": {
-      "size": 75331,
-      "sha256": "438ec98c900f5d4d81011e3ac4903873fc184383141d2244b94509934392ae65"
+      "size": 75941,
+      "sha256": "c58942778913ff28e8a338efb3d7a826b546a06b72de3a5cf4997c546bade5f3"
     },
     "web/app/theme-boot.js": {
       "size": 932,
@@ -818,7 +818,7 @@
     },
     "web/assets/fairWorker-CTCwrT35.js": {
       "size": 86556,
-      "sha256": "824916452f741c612a519f8cbda5655fed6b71a1166e0ac02f8b99c88ceaec09"
+      "sha256": "463c6178b4b13d09c7519f1ecb10a1dfec1deb2db564a579e2aa41e8c2bfe591"
     },
     "web/assets/index-CJeykJr1.js": {
       "size": 236567,
@@ -2110,7 +2110,7 @@
     },
     "web/assets/preload-manifest.json": {
       "size": 37930,
-      "sha256": "b2383fd3921ed04506b9217ff0888e6d503b73d6c4392f4b76e25a458dd3eb05"
+      "sha256": "b6844dee87d595f95fb9d2f9dfb2574f90a7fb769995e4098576a27893edd188"
     },
     "web/assets/table/jade-silk-v1.png": {
       "size": 3868088,
@@ -2161,8 +2161,8 @@
       "sha256": "708d2d2f45f7ef6fec7f55e6da68a800d2fc929e9dc0a10e71ff61c080ea8ea9"
     },
     "web/index.html": {
-      "size": 30431,
-      "sha256": "3a5fd2e597e4978457dd21542ea86c85d5c670d58bf3d60e68358292cfb53931"
+      "size": 30523,
+      "sha256": "e4ddea89577d1d348d8b1f249472cb4e2d2a326012c317f5f5d0176b6423d9a2"
     },
     "web/mobile/DanLM-LICENSE.txt": {
       "size": 11709,
@@ -2202,7 +2202,7 @@
     },
     "使用说明.txt": {
       "size": 2555,
-      "sha256": "786357e937dfb23be5d6f9701f48b9314025aade0185b1fe76205ddf78739356"
+      "sha256": "97a1320ead63b15a7a0ecdadd83bfa7dceaf961d7aeaba42ac8746f067e3f897"
     }
   }
 }

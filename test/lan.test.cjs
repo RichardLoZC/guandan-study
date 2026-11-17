@@ -6,9 +6,9 @@ async function setup(options={}){const r=new Room({random:(...args)=>args.length
 function complete(m){let guard=2000;while(!m.game.result&&guard--){if(m.needsTributeConfirmation){m.acknowledgeTribute();continue;}if(m.phase!=='playing'){m.commit(m.actingSeat,[m.tributeChoices[0].id]);continue;}const seat=m.actingSeat,card=m.game.players[seat].hand.find(c=>m.selection([c.id],seat).play);m.commit(seat,card?[card.id]:[]);}assert.ok(m.game.result);}
 test('gameplay protocol rejects old joins and saved-token requests, while migrating old host saves',async()=>{
   const {r,host}=await setup();
-  for(const old of [1,2])assert.throws(()=>r.join({protocol:old,code:r.code,name:'Old client'}),/联机版本不同/);
+  for(const old of [1,2,3])assert.throws(()=>r.join({protocol:old,code:r.code,name:'Old client'}),/联机版本不同/);
   await assert.rejects(r.request(host.token,{op:'poll'}),/联机规则版本不同/);
-  for(const old of [1,2])await assert.rejects(r.request(host.token,{op:'poll',protocol:old}),/联机规则版本不同/);
+  for(const old of [1,2,3])await assert.rejects(r.request(host.token,{op:'poll',protocol:old}),/联机规则版本不同/);
   const before=JSON.stringify(r.match.state),legacy=r.serialize();legacy.protocol=1;delete legacy.state.aceAttempts;
   const directory=fs.mkdtempSync(path.join(os.tmpdir(),'guandan-protocol-migration-')),savePath=path.join(directory,'room.json');
   try{
@@ -56,8 +56,7 @@ test('only host resets game, and fresh games shuffle while a normal next deal re
 });
 test('clearing Ace resets levels and triggers a fresh seat shuffle',async()=>{
   const {r,host}=await setup();complete(r.match);
-  const state=r.match.state;state.level='A';state.levels=['A','A'];state.game.result.winnerTeam=0;state.game.finishOrder=[0,2,1,3];
-  function mark(value){if(!value||typeof value!=='object')return;if(value.suit&&value.rank)value.isWild=value.suit==='hearts'&&value.rank==='A';for(const child of Object.values(value))if(child&&typeof child==='object')mark(child);}mark(state);
+  r.match=require('./helpers/series-fixtures.cjs').finished([0,2,1,3],{levelTeam:0});
   const initial=[...r.seats];r.random=n=>n-1;await command(r,host.token,'next');
   assert.deepEqual(r.match.state.levels,['2','2']);assert.equal(r.match.state.wins[0],1);assert.notDeepEqual(r.seats,initial);
 });
@@ -115,7 +114,7 @@ test('tribute choices are private, and every connected player acknowledges the p
 });
 test('a LAN bot and local Match use the same model tribute decision',async()=>{
   let modelCalls=0;const runModel=async payload=>{modelCalls++;assert.equal(payload.tribute.phase,'return');assert.equal(payload.tribute.seat,2);return {cardId:payload.tribute.choices.at(-1).id,score:0.125,engine:'model-fixture'};};
-  const {r}=await setup({runModel});r.match.state.phase='give';r.match.state.tribute={donors:[3],winners:[2],offers:[]};r.match.commit(3,[r.match.tributeChoices[0].id]);
+  const {r}=await setup({runModel});r.match.state.phase='give';r.match.state.levelTeam=0;r.match.state.tribute={donors:[3],winners:[2],offers:[]};r.match.commit(3,[r.match.tributeChoices[0].id]);
   assert.equal(r.match.phase,'return');assert.equal(r.match.actingSeat,2);
   const local=new Match(r.match.state),expected=await local.chooseTribute(runModel);local.commit(2,[expected.card.id],{automatic:true});modelCalls=0;
   const choose=r.match.chooseTribute.bind(r.match);let calls=0;r.match.chooseTribute=(...args)=>{calls++;return choose(...args);};await r.tick();

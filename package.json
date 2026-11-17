@@ -1,7 +1,7 @@
 {
   "name": "guandan-study-offline",
-  "version": "1.8.47",
-  "description": "掼军 · 公开版 — 明朝人物与官方 DanLM 掼蛋",
+  "version": "1.8.48",
+  "description": "掼军 · 公开版 — 传统打级权与官方 DanLM",
   "author": "掼军",
   "main": "main.cjs",
   "private": true,
